@@ -397,6 +397,55 @@ void medDatabaseView::onRemoveSelectedItemRequested( void )
     }
 }
 
+void medDatabaseView::onImportRequested(void)
+{
+    QStringList paths;
+    QFileDialog dialog(this);
+    dialog.setFileMode(QFileDialog::AnyFile);
+    dialog.setViewMode(QFileDialog::Detail);
+
+    if(dialog.exec())
+    {
+        paths = dialog.selectedFiles();
+        qDebug()<<"paths : "<<paths;
+        // remove paths that are subpaths of some other path in the list
+        QStringList purgedList = removeNestedPaths(paths);
+        qDebug()<<"purgedList : "<<purgedList;
+        foreach(QString path, purgedList)
+        {
+            medDataManager::instance()->importPath(path, false, true);
+        }
+    }
+}
+
+QStringList medDatabaseView::removeNestedPaths(const QStringList& paths)
+{
+    QStringList toRemove;
+
+    for(int i = 0; i < paths.size(); i++)
+    {
+        for(int j = 0; j < paths.size(); j++)
+        {
+            if(j != i)
+            {
+                QString path_i = paths.at(i);
+                QString path_j = paths.at(j);
+
+                // if path_i is contained in path_j we remove it
+                if(path_i.startsWith(path_j))
+                    toRemove << path_i;
+            }
+        }
+    }
+
+    QStringList purgedList = paths;
+
+    foreach(QString path, toRemove)
+        purgedList.removeAll(path);
+
+    return purgedList;
+}
+
 /** Saves the currently selected item. */
 void medDatabaseView::onSaveSelectedItemRequested(void)
 {

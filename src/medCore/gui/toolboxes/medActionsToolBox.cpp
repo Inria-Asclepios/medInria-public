@@ -24,13 +24,13 @@ class medActionsToolBoxPrivate
 public:
 
     QWidget* buttonsWidget;
-    QWidget* noButtonsSelectedWidget;
 
     QPushButton* removeBt;
     QPushButton* viewBt;
     QPushButton* exportBt;
     QPushButton* bookmarkBt;
     QPushButton* importBt;
+    QPushButton* b_import;
     QPushButton* loadBt;
     QPushButton* indexBt;
     QPushButton* saveBt;
@@ -56,9 +56,15 @@ medActionsToolBox::medActionsToolBox( QWidget *parent /*= 0*/, bool FILE_SYSTEM 
      */
 
     d->buttonsWidget = new QWidget(this);
-    d->noButtonsSelectedWidget = new QWidget(this);
 
     initializeItemToActionsMap();
+
+    d->b_import = new QPushButton(d->buttonsWidget);
+    d->b_import->setAccessibleName("BImport");
+    d->b_import->setText(tr("Import"));
+    d->b_import->setToolTip(tr("Import (copy) item(s) into medInria's database."));
+    d->b_import->setIcon(QIcon(":/icons/import.png"));
+    connect(d->b_import, SIGNAL(clicked()), this, SIGNAL(b_importClicked()));
 
 
     d->viewBt = new QPushButton(d->buttonsWidget);
@@ -148,7 +154,7 @@ medActionsToolBox::medActionsToolBox( QWidget *parent /*= 0*/, bool FILE_SYSTEM 
         connect(d->newStudyBt, SIGNAL(clicked()), this, SIGNAL(newStudyClicked()));
         connect(d->editBt, SIGNAL(clicked()), this, SIGNAL(editClicked()));
         
-        d->buttonsList << d->viewBt << d->saveBt << d->exportBt << d->removeBt;
+        d->buttonsList << d->b_import << d->viewBt << d->saveBt << d->exportBt << d->removeBt;
         d->buttonsList << d->newPatientBt << d->newStudyBt << d->editBt;
     }
 
@@ -166,16 +172,7 @@ medActionsToolBox::medActionsToolBox( QWidget *parent /*= 0*/, bool FILE_SYSTEM 
     }
 
     this->addWidget(d->buttonsWidget);
-    d->buttonsWidget->setVisible(false);
-
-    QLabel* noButtonsSelectedLabel = new QLabel(
-                tr("Select any item to see possible actions."),
-                d->noButtonsSelectedWidget);
-    noButtonsSelectedLabel->setObjectName("actionToolBoxLabel");
-    // we use a layout to center the label
-    QHBoxLayout* noButtonsSelectedLayout = new QHBoxLayout(d->noButtonsSelectedWidget);
-    noButtonsSelectedLayout->addWidget(noButtonsSelectedLabel, 0, Qt::AlignCenter);
-    this->addWidget(d->noButtonsSelectedWidget);
+    noPatientOrSeriesSelected();
 
     this->setTitle(tr("Actions"));
 }
@@ -272,21 +269,11 @@ void medActionsToolBox::updateButtons(QString selectedItem)
 
     foreach(QAbstractButton* bt, d->buttonsList)
     {
-        bt->setVisible(true); 
-        bool showButton = actions.contains( bt->accessibleName() );
-        bt->setEnabled(showButton); // Not accessible buttons are disabled
-    }
-
-    // insert an explanatory label if no button is being displayed
-    if(actions.size() == 0)
-    {
-        d->noButtonsSelectedWidget->setVisible(true);
-        d->buttonsWidget->setVisible(false);
-    }
-    else
-    {
-        d->noButtonsSelectedWidget->setVisible(false);
-        d->buttonsWidget->setVisible(true);
+        if(bt != d->b_import) //b_import always enabled
+        {
+            bool showButton = actions.contains( bt->accessibleName() );
+            bt->setEnabled(showButton); // Not accessible buttons are disabled
+        }
     }
 }
 

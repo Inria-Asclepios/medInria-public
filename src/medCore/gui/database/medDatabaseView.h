@@ -31,6 +31,7 @@ public:
 
     void setModel(QAbstractItemModel *model);
     int sizeHintForColumn(int column) const;
+    QStringList removeNestedPaths(const QStringList& paths);
 
 signals:
 
@@ -66,6 +67,7 @@ public slots:
     void onCreatePatientRequested();
     void onCreateStudyRequested();
     void onEditRequested();
+    void onImportRequested();
 
 protected slots:
     virtual void updateContextMenu(const QPoint&);

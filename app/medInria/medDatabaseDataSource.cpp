@@ -89,6 +89,7 @@ QWidget* medDatabaseDataSource::mainViewWidget()
             connect(d->actionsToolBox, SIGNAL(newPatientClicked()), d->largeView, SLOT(onCreatePatientRequested()));
             connect(d->actionsToolBox, SIGNAL(newStudyClicked()), d->largeView, SLOT(onCreateStudyRequested()));
             connect(d->actionsToolBox, SIGNAL(editClicked()), d->largeView, SLOT(onEditRequested()));
+            connect(d->actionsToolBox, SIGNAL(b_importClicked()), d->largeView, SLOT(onImportRequested()));
 
             connect(d->largeView, SIGNAL(patientClicked(const medDataIndex&)), d->actionsToolBox, SLOT(patientSelected(const medDataIndex&)));
             connect(d->largeView, SIGNAL(studyClicked(const medDataIndex&)), d->actionsToolBox, SLOT(studySelected(const medDataIndex&)));
@@ -167,6 +168,8 @@ QList<medToolBox*> medDatabaseDataSource::getToolBoxes()
             connect(d->actionsToolBox, SIGNAL(newPatientClicked()), d->largeView, SLOT(onCreatePatientRequested()));
             connect(d->actionsToolBox, SIGNAL(newStudyClicked()), d->largeView, SLOT(onCreateStudyRequested()));
             connect(d->actionsToolBox, SIGNAL(editClicked()), d->largeView, SLOT(onEditRequested()));
+            connect(d->actionsToolBox, SIGNAL(b_importClicked()), d->largeView, SLOT(onImportRequested()));
+
 
             connect(d->largeView, SIGNAL(patientClicked(const medDataIndex&)), d->actionsToolBox, SLOT(patientSelected(const medDataIndex&)));
             connect(d->largeView, SIGNAL(studyClicked(const medDataIndex&)), d->actionsToolBox, SLOT(studySelected(const medDataIndex&)));

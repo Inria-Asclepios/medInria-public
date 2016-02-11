@@ -61,6 +61,8 @@ signals:
     /** Emitted when the 'Edit' button is clicked. */   
     void editClicked();
 
+    void b_importClicked();
+
 public slots:
 
     void patientSelected(const medDataIndex& index);

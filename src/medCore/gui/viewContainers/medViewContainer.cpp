@@ -723,29 +723,17 @@ void medViewContainer::closeEvent(QCloseEvent * /*event*/)
 
 void medViewContainer::openFromSystem()
 {
-    //  get last directory opened in settings.
     QString path;
     QFileDialog dialog(this);
-
-    dialog.setFileMode(QFileDialog::ExistingFile);
+    dialog.setFileMode(QFileDialog::AnyFile);
     dialog.setViewMode(QFileDialog::Detail);
-    dialog.restoreState(medSettingsManager::instance()->value("state", "openFromSystem").toByteArray());
-    dialog.restoreGeometry(medSettingsManager::instance()->value("geometry", "openFromSystem").toByteArray());
+
     if(dialog.exec())
+    {
         path = dialog.selectedFiles().first();
-
-    medSettingsManager::instance()->setValue("state", "openFromSystem", dialog.saveState());
-    medSettingsManager::instance()->setValue("geometry", "openFromSystem", dialog.saveGeometry());
-
-
-    if (path.isEmpty())
-        return;
-
-    connect(medDataManager::instance(), SIGNAL(dataImported(medDataIndex,QUuid)), this, SLOT(dataReady(medDataIndex,QUuid)));
-    d->expectedUuid = medDataManager::instance()->importPath(path, true, false);
-
-    //  save last directory opened in settings.
-    medSettingsManager::instance()->setValue("path", "medViewContainer", path);
+        connect(medDataManager::instance(), SIGNAL(dataImported(medDataIndex,QUuid)), this, SLOT(dataReady(medDataIndex,QUuid)));
+        d->expectedUuid = medDataManager::instance()->importPath(path, true, false);
+    }
 }
 
 void medViewContainer::updateToolBar()
