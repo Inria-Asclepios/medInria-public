@@ -31,7 +31,6 @@ public:
 
     void setModel(QAbstractItemModel *model);
     int sizeHintForColumn(int column) const;
-    QStringList removeNestedPaths(const QStringList& paths);
 
 signals:
 
@@ -76,6 +75,10 @@ protected slots:
 
 private:
     medDatabaseViewPrivate *d;
+
+    /** This function takes a list of paths as an input and creates
+* another list by removing the paths that are subpaths of others. */
+    QStringList removeNestedPaths(const QStringList& paths);
 };
 
 

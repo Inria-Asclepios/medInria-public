@@ -93,6 +93,10 @@ medBrowserArea::medBrowserArea(QWidget *parent) : QWidget(parent), d(new medBrow
     //dataSources
     foreach (medAbstractDataSource *dataSource, medDataSourceManager::instance()->dataSources())
         addDataSource(dataSource);
+
+    //no need to display tabs if there's only one data source
+    if(medDataSourceManager::instance()->dataSources().size() == 1)
+        d->sourceSelectorToolBox->hide();
  }
 
 medBrowserArea::~medBrowserArea(void)

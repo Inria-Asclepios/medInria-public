@@ -24,7 +24,6 @@
 #include <medStorage.h>
 #include <medMessageController.h>
 
-#include <medFileSystemDataSource.h>
 #include <medDatabaseDataSource.h>
 #include <medPacsDataSource.h>
 
@@ -36,7 +35,6 @@ public:
     QList <medAbstractDataSource*> dataSources;
 
     medDatabaseDataSource *dbSource;
-    medFileSystemDataSource *fsSource;
     medPacsDataSource *pacsSource;
 };
 
@@ -46,11 +44,6 @@ medDataSourceManager::medDataSourceManager(): d(new medDataSourceManagerPrivate)
     d->dbSource = new medDatabaseDataSource();
     d->dataSources.push_back(d->dbSource);
     connectDataSource(d->dbSource);
-
-    // File system data source
-    d->fsSource = new medFileSystemDataSource();
-    d->dataSources.push_back(d->fsSource);
-    connectDataSource(d->fsSource);
 
     // Pacs data source
     medPacsDataSource *pacsDataSource = new medPacsDataSource;
@@ -75,10 +68,6 @@ medDataSourceManager::medDataSourceManager(): d(new medDataSourceManagerPrivate)
         connectDataSource(dataSource);
     }
 
-    connect(d->fsSource, SIGNAL(open(QString)),
-            this, SLOT(openFromPath(QString)));
-    connect(d->fsSource, SIGNAL(load(QString)),
-            this, SLOT(loadFromPath(QString)));
     connect(d->dbSource, SIGNAL(open(const medDataIndex&)),
             this, SLOT(openFromIndex(medDataIndex)));
 }
