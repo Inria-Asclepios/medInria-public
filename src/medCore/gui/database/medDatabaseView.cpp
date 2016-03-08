@@ -417,10 +417,10 @@ void medDatabaseView::import(bool persistently)
     if(dialog.exec())
     {
         paths = dialog.selectedFiles();
-        qDebug()<<"paths : "<<paths;
+
         // remove paths that are subpaths of some other path in the list
         QStringList purgedList = removeNestedPaths(paths);
-        qDebug()<<"purgedList : "<<purgedList;
+
         foreach(QString path, purgedList)
         {
             medDataManager::instance()->importPath(path, false, persistently);
