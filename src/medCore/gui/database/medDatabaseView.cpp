@@ -399,6 +399,16 @@ void medDatabaseView::onRemoveSelectedItemRequested( void )
 
 void medDatabaseView::onImportRequested(void)
 {
+    import(true);
+}
+
+void medDatabaseView::onLoadRequested(void)
+{
+    import(false);
+}
+
+void medDatabaseView::import(bool persistently)
+{
     QStringList paths;
     QFileDialog dialog(this);
     dialog.setFileMode(QFileDialog::AnyFile);
@@ -413,7 +423,7 @@ void medDatabaseView::onImportRequested(void)
         qDebug()<<"purgedList : "<<purgedList;
         foreach(QString path, purgedList)
         {
-            medDataManager::instance()->importPath(path, false, true);
+            medDataManager::instance()->importPath(path, false, persistently);
         }
     }
 }

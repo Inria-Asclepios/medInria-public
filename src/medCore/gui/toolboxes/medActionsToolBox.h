@@ -40,12 +40,6 @@ signals:
     /** Emitted when the 'Import' button is clicked. */
     void importClicked();
 
-    /** Emitted when the 'Index' button is clicked. */
-    void indexClicked();
-
-    /** Emitted when the 'Bookmark' button is clicked. */
-    void bookmarkClicked();
-
     /** Emitted when the 'Export' button is clicked. */
     void exportClicked();
 
@@ -61,15 +55,12 @@ signals:
     /** Emitted when the 'Edit' button is clicked. */   
     void editClicked();
 
-    void b_importClicked();
-
 public slots:
 
     void patientSelected(const medDataIndex& index);
     void studySelected(const medDataIndex& index);
     void seriesSelected(const medDataIndex& index);
     void noPatientOrSeriesSelected();
-    void selectedPathsChanged(const QStringList& paths);
 
 protected:
 

@@ -67,6 +67,7 @@ public slots:
     void onCreateStudyRequested();
     void onEditRequested();
     void onImportRequested();
+    void onLoadRequested();
 
 protected slots:
     virtual void updateContextMenu(const QPoint&);
@@ -79,6 +80,9 @@ private:
     /** This function takes a list of paths as an input and creates
 * another list by removing the paths that are subpaths of others. */
     QStringList removeNestedPaths(const QStringList& paths);
+
+    //called for loading and importing
+    void import(bool persistently);
 };
 
 

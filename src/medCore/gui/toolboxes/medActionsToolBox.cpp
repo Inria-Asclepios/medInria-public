@@ -28,11 +28,8 @@ public:
     QPushButton* removeBt;
     QPushButton* viewBt;
     QPushButton* exportBt;
-    QPushButton* bookmarkBt;
     QPushButton* importBt;
-    QPushButton* b_import;
     QPushButton* loadBt;
-    QPushButton* indexBt;
     QPushButton* saveBt;
     QPushButton* newPatientBt;
     QPushButton* newStudyBt;
@@ -59,13 +56,19 @@ medActionsToolBox::medActionsToolBox( QWidget *parent /*= 0*/, bool FILE_SYSTEM 
 
     initializeItemToActionsMap();
 
-    d->b_import = new QPushButton(d->buttonsWidget);
-    d->b_import->setAccessibleName("BImport");
-    d->b_import->setText(tr("Import"));
-    d->b_import->setToolTip(tr("Import (copy) item(s) into medInria's database."));
-    d->b_import->setIcon(QIcon(":/icons/import.png"));
-    connect(d->b_import, SIGNAL(clicked()), this, SIGNAL(b_importClicked()));
+    d->importBt = new QPushButton(d->buttonsWidget);
+    d->importBt->setAccessibleName("Import");
+    d->importBt->setText(tr("Import"));
+    d->importBt->setToolTip(tr("Import (copy) item(s) into MUSIC's database."));
+    d->importBt->setIcon(QIcon(":/icons/import.png"));
+    connect(d->importBt, SIGNAL(clicked()), this, SIGNAL(importClicked()));
 
+    d->loadBt = new QPushButton(d->buttonsWidget);
+    d->loadBt->setAccessibleName("Load");
+    d->loadBt->setText(tr("Load"));
+    d->loadBt->setToolTip(tr("Temporary load the item(s) so as they can be used inside MUSIC,\nbut do not include them in the database."));
+    d->loadBt->setIcon(QIcon(":/icons/document-open.png"));
+    connect(d->loadBt, SIGNAL(clicked()), this, SIGNAL(loadClicked()));
 
     d->viewBt = new QPushButton(d->buttonsWidget);
     d->viewBt->setAccessibleName("View");
@@ -74,91 +77,53 @@ medActionsToolBox::medActionsToolBox( QWidget *parent /*= 0*/, bool FILE_SYSTEM 
     d->viewBt->setIcon(QIcon(":/icons/eye.png"));
     connect(d->viewBt, SIGNAL(clicked()), this, SIGNAL(viewClicked()));
 
+    d->saveBt = new QPushButton(d->buttonsWidget);
+    d->saveBt->setAccessibleName("Save");
+    d->saveBt->setText(tr("Save"));
+    d->saveBt->setToolTip(tr("Save selected item into the database."));
+    d->saveBt->setIcon(QIcon(":/icons/save.png"));
+    connect(d->saveBt, SIGNAL(clicked()), this, SIGNAL(saveClicked()));
+    
+    d->newPatientBt = new QPushButton(d->buttonsWidget);
+    d->newPatientBt->setAccessibleName("New Patient");
+    d->newPatientBt->setText("Patient");
+    d->newPatientBt->setToolTip(tr("Create a new patient."));
+    d->newPatientBt->setIcon(QIcon(":/icons/user_add.png"));
+    connect(d->newPatientBt, SIGNAL(clicked()), this, SIGNAL(newPatientClicked()));
+    
+    d->newStudyBt = new QPushButton(d->buttonsWidget);
+    d->newStudyBt->setAccessibleName("New Study");
+    d->newStudyBt->setText("Study");
+    d->newStudyBt->setToolTip(tr("Create a new study."));
+    d->newStudyBt->setIcon(QIcon(":/icons/page_add.png"));
+    connect(d->newStudyBt, SIGNAL(clicked()), this, SIGNAL(newStudyClicked()));
+    
+    d->editBt = new QPushButton(d->buttonsWidget);
+    d->editBt->setAccessibleName("Edit");
+    d->editBt->setText("Edit");
+    d->editBt->setToolTip(tr("Edit item."));
+    d->editBt->setIcon(QIcon(":/icons/page_edit.png"));
+    connect(d->editBt, SIGNAL(clicked()), this, SIGNAL(editClicked()));
 
-    if (FILE_SYSTEM)
-    {
-        d->loadBt = new QPushButton(d->buttonsWidget);
-        d->loadBt->setAccessibleName("Load");
-        d->loadBt->setText(tr("Load"));
-        d->loadBt->setToolTip(tr("Temporary load the item(s) so as they can be used inside medInria,\nbut do not include them in the database."));
-        d->loadBt->setIcon(QIcon(":/icons/document-open.png"));
+    d->exportBt = new QPushButton(d->buttonsWidget);
+    d->exportBt->setAccessibleName("Export");
+    d->exportBt->setText(tr("Export"));
+    d->exportBt->setToolTip(tr("Export the series."));
+    d->exportBt->setIcon(QIcon(":/icons/export.png"));
+    connect(d->exportBt, SIGNAL(clicked()), this, SIGNAL(exportClicked()));
 
-        d->importBt = new QPushButton(d->buttonsWidget);
-        d->importBt->setAccessibleName("Import");
-        d->importBt->setText(tr("Import"));
-        d->importBt->setToolTip(tr("Import (copy) item(s) into medInria's database."));
-        d->importBt->setIcon(QIcon(":/icons/import.png"));
+    d->removeBt = new QPushButton(d->buttonsWidget);
+    d->removeBt->setAccessibleName("Remove");
+    d->removeBt->setText(tr("Remove"));
+    d->removeBt->setToolTip(tr("Remove selected item from the database."));
+    d->removeBt->setIcon(QIcon(":/icons/cross.svg"));
+    connect(d->removeBt, SIGNAL(clicked()), this, SIGNAL(removeClicked()));
 
-        d->indexBt = new QPushButton(d->buttonsWidget);
-        d->indexBt->setAccessibleName("Index");
-        d->indexBt->setText(tr("Index"));
-        d->indexBt->setToolTip(tr("Include the item(s) into medInria's database but do not import (copy) them."));
-        d->indexBt->setIcon(QIcon(":/icons/finger.png"));
-
-        d->bookmarkBt = new QPushButton(d->buttonsWidget);
-        d->bookmarkBt->setAccessibleName("Bookmark");
-        d->bookmarkBt->setText(tr("Bookmark"));
-        d->bookmarkBt->setToolTip(tr("Bookmark selected folder/resource."));
-        d->bookmarkBt->setIcon(QIcon(":/icons/star.svg"));
         
-        connect(d->bookmarkBt, SIGNAL(clicked()), this, SIGNAL(bookmarkClicked()));
-        connect(d->importBt, SIGNAL(clicked()), this, SIGNAL(importClicked()));
-        connect(d->loadBt, SIGNAL(clicked()), this, SIGNAL(loadClicked()));
-        connect(d->indexBt, SIGNAL(clicked()), this, SIGNAL(indexClicked()));
+    d->buttonsList << d->importBt << d->loadBt << d->viewBt << d->saveBt << d->exportBt << d->removeBt;
+    d->buttonsList << d->newPatientBt << d->newStudyBt << d->editBt;
 
-        // the order of the buttons in this list determines the order used to place them in the grid layout
-        d->buttonsList << d->viewBt << d->loadBt << d->importBt << d->indexBt <<d->bookmarkBt;}
-
-    else //IF DATABASE
-    {
-        d->saveBt = new QPushButton(d->buttonsWidget);
-        d->saveBt->setAccessibleName("Save");
-        d->saveBt->setText(tr("Save"));
-        d->saveBt->setToolTip(tr("Save selected item into the database."));
-        d->saveBt->setIcon(QIcon(":/icons/save.png"));
-    
-        d->newPatientBt = new QPushButton(d->buttonsWidget);
-        d->newPatientBt->setAccessibleName("New Patient");
-        d->newPatientBt->setText("Patient");
-        d->newPatientBt->setToolTip(tr("Create a new patient."));
-        d->newPatientBt->setIcon(QIcon(":/icons/user_add.png"));
-    
-        d->newStudyBt = new QPushButton(d->buttonsWidget);
-        d->newStudyBt->setAccessibleName("New Study");
-        d->newStudyBt->setText("Study");
-        d->newStudyBt->setToolTip(tr("Create a new study."));
-        d->newStudyBt->setIcon(QIcon(":/icons/page_add.png"));
-    
-        d->editBt = new QPushButton(d->buttonsWidget);
-        d->editBt->setAccessibleName("Edit");
-        d->editBt->setText("Edit");
-        d->editBt->setToolTip(tr("Edit item."));
-        d->editBt->setIcon(QIcon(":/icons/page_edit.png"));
-
-        d->exportBt = new QPushButton(d->buttonsWidget);
-        d->exportBt->setAccessibleName("Export");
-        d->exportBt->setText(tr("Export"));
-        d->exportBt->setToolTip(tr("Export the series."));
-        d->exportBt->setIcon(QIcon(":/icons/export.png"));
-
-        d->removeBt = new QPushButton(d->buttonsWidget);
-        d->removeBt->setAccessibleName("Remove");
-        d->removeBt->setText(tr("Remove"));
-        d->removeBt->setToolTip(tr("Remove selected item from the database."));
-        d->removeBt->setIcon(QIcon(":/icons/cross.svg"));
-
-        connect(d->removeBt, SIGNAL(clicked()), this, SIGNAL(removeClicked()));
-        connect(d->exportBt, SIGNAL(clicked()), this, SIGNAL(exportClicked()));
-        connect(d->saveBt, SIGNAL(clicked()), this, SIGNAL(saveClicked()));
-        connect(d->newPatientBt, SIGNAL(clicked()), this, SIGNAL(newPatientClicked()));
-        connect(d->newStudyBt, SIGNAL(clicked()), this, SIGNAL(newStudyClicked()));
-        connect(d->editBt, SIGNAL(clicked()), this, SIGNAL(editClicked()));
-        
-        d->buttonsList << d->b_import << d->viewBt << d->saveBt << d->exportBt << d->removeBt;
-        d->buttonsList << d->newPatientBt << d->newStudyBt << d->editBt;
-    }
-
-    int COLUMNS = 4; // we will use 3 rows of 4 buttons each
+    int COLUMNS = 3; // we will use 3 rows of 3 buttons each
     int i = 0;
     QGridLayout *gridLayout = new QGridLayout(d->buttonsWidget);
     gridLayout->setHorizontalSpacing(4);
@@ -233,43 +198,13 @@ void medActionsToolBox::noPatientOrSeriesSelected()
     updateButtons("None");
 }
 
-/**
-* Slot to call when items representing files and/or folders have been selected.
-* The appropriate buttons will appear in the toolbox.
-* @param paths – a QStringList with all the selected paths
-**/
-void medActionsToolBox::selectedPathsChanged(const QStringList& paths)
-{
-    bool containsFolders = false;
-    bool containsFiles = false;
-
-    foreach(QString path, paths)
-    {
-        QFileInfo fi(path);
-
-        if (fi.isDir())
-            containsFolders = true;
-        else
-            containsFiles = true;
-    }
-
-    if (containsFolders && containsFiles)
-        updateButtons("Files & Folders");
-    else if (containsFolders)
-        updateButtons("Folders");
-    else if (containsFiles)
-        updateButtons("Files");
-    else
-        updateButtons("None");
-}
-
 void medActionsToolBox::updateButtons(QString selectedItem)
 {
     QList<QString> actions = d->itemToActions.values(selectedItem);
 
     foreach(QAbstractButton* bt, d->buttonsList)
     {
-        if(bt != d->b_import) //b_import always enabled
+        if(bt != d->importBt && bt != d->loadBt) //import and load always enabled
         {
             bool showButton = actions.contains( bt->accessibleName() );
             bt->setEnabled(showButton); // Not accessible buttons are disabled
@@ -315,20 +250,4 @@ void medActionsToolBox::initializeItemToActionsMap()
     d->itemToActions.insert("Unsaved Series", "Export");
     d->itemToActions.insert("Unsaved Series", "New Patient");
     d->itemToActions.insert("Unsaved Series", "Edit");
-
-    d->itemToActions.insert("Folders", "Bookmark");
-    d->itemToActions.insert("Folders", "Import");
-    d->itemToActions.insert("Folders", "Index");
-    d->itemToActions.insert("Folders", "Load");
-    d->itemToActions.insert("Folders", "View");
-
-    d->itemToActions.insert("Files", "Import");
-    d->itemToActions.insert("Files", "Index");
-    d->itemToActions.insert("Files", "Load");
-    d->itemToActions.insert("Files", "View");
-
-    d->itemToActions.insert("Files & Folders", "Import");
-    d->itemToActions.insert("Files & Folders", "Index");
-    d->itemToActions.insert("Files & Folders", "Load");
-    d->itemToActions.insert("Files & Folders", "View");
 }
