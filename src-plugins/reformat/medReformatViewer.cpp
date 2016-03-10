@@ -117,7 +117,7 @@ medReformatViewer::medReformatViewer(medAbstractView * view,QWidget * parent): m
     vtkViewData->DeepCopy(view3d->GetInput());
     imageDims = vtkViewData->GetDimensions();
 
-    viewBody = new QWidget(parent);
+    viewBody = new QWidget();
     for (int i = 0; i < 3; i++)
     {
         riw[i] = vtkSmartPointer<vtkResliceImageViewer>::New();
