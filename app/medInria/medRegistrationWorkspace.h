@@ -13,7 +13,6 @@
 
 #pragma once
 
-
 #include <QtCore>
 
 #include <medAbstractWorkspace.h>
@@ -34,6 +33,7 @@ public:
 
     static bool isUsable();
     void setupViewContainerStack ();
+    void setInitialGroups();
 
 protected slots:
     void updateFromFixedContainer();

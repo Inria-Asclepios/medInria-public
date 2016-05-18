@@ -13,11 +13,11 @@
 
 #pragma once
 
-#include <medFilteringAbstractToolBox.h>
+#include <medAbstractSelectableToolBox.h>
 
 class itkFiltersToolBoxPrivate;
 
-class itkFiltersToolBox : public medFilteringAbstractToolBox
+class itkFiltersToolBox : public medAbstractSelectableToolBox
 {
     Q_OBJECT
     MED_TOOLBOX_INTERFACE("ITK Basic Filters",
