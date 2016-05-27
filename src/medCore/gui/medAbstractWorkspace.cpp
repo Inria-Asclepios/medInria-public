@@ -139,6 +139,7 @@ void medAbstractWorkspace::addToolBox(medToolBox *toolbox)
 {
     toolbox->setWorkspace(this);
     d->toolBoxes.append(toolbox);
+    toolbox->setTitle(toolbox->name());
 }
 
 void medAbstractWorkspace::removeToolBox(medToolBox *toolbox)
@@ -177,6 +178,15 @@ void medAbstractWorkspace::clear()
     this->setupViewContainerStack();
     this->clearWorkspaceToolBoxes();
     return;
+}
+
+void medAbstractWorkspace::setupViewContainerStack()
+{
+    if (!stackedViewContainers()->count())
+    {
+        this->stackedViewContainers()->addContainerInTab(this->name());
+    }
+    this->stackedViewContainers()->unlockTabs();
 }
 
 void medAbstractWorkspace::setToolBoxesVisibility (bool value)
@@ -894,6 +904,16 @@ void medAbstractWorkspace::setLayerGroups(QList<medLayerParameterGroup*> groups)
 {
     foreach(medLayerParameterGroup* group, groups)
         addLayerGroup(group);
+}
+
+void medAbstractWorkspace::setInitialGroups()
+{
+    medViewParameterGroup *viewGroup1 = new medViewParameterGroup("View Group 1", this, this->identifier());
+    viewGroup1->setLinkAllParameters(true);
+    viewGroup1->removeParameter("DataList");
+
+    medLayerParameterGroup *layerGroup1 = new medLayerParameterGroup("Layer Group 1", this, this->identifier());
+    layerGroup1->setLinkAllParameters(true);
 }
 
 void medAbstractWorkspace::changeViewGroupColor(QString group, QColor color)

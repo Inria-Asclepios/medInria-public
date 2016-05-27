@@ -13,10 +13,10 @@
 
 #include <medSegmentationWorkspace.h>
 
+#include <medAbstractSelectableToolBox.h>
 #include <medDataManager.h>
 #include <medLayerParameterGroup.h>
-#include <medSegmentationAbstractToolBox.h>
-#include <medSegmentationSelectorToolBox.h>
+#include <medSelectorToolBox.h>
 #include <medTabbedViewContainers.h>
 #include <medToolBoxFactory.h>
 #include <medViewParameterGroup.h>
@@ -28,50 +28,30 @@ class medSegmentationWorkspacePrivate
 public:
     // Give values to items without a constructor.
     medSegmentationWorkspacePrivate() :
-       segmentationToolBox(NULL)
+       selectorToolBox(NULL)
     {}
 
-    medSegmentationSelectorToolBox *segmentationToolBox;
-    medToolBox * roiManagementToolBox;
+    medSelectorToolBox *selectorToolBox;
 };
 
 
 medSegmentationWorkspace::medSegmentationWorkspace(QWidget * parent /* = NULL */ ) :
 medAbstractWorkspace(parent), d(new medSegmentationWorkspacePrivate)
 {
-    d->segmentationToolBox = new medSegmentationSelectorToolBox(parent);
-
-    connect(d->segmentationToolBox,SIGNAL(success()),this,SLOT(onSuccess()));
+    d->selectorToolBox = new medSelectorToolBox(parent, "segmentation");
+    connect(d->selectorToolBox,SIGNAL(success()),this,SLOT(onSuccess()));
 
     // Always have a parent.
     if (!parent)
         throw (std::runtime_error ("Must have a parent widget"));
     
-    this->addToolBox(d->segmentationToolBox);
-    if(medToolBoxFactory::instance()->createToolBox("medRoiManagementToolBox"))
-	{
-		d->roiManagementToolBox= medToolBoxFactory::instance()->createToolBox("medRoiManagementToolBox");
-		d->roiManagementToolBox->setWorkspace(this);
-		this->addToolBox(d->roiManagementToolBox);
-	}
+    this->addToolBox(d->selectorToolBox);
+    d->selectorToolBox->setTitle(this->name()); // get workspace name
 
-    medViewParameterGroup *viewGroup1 = new medViewParameterGroup("View Group 1", this, this->identifier());
-    viewGroup1->setLinkAllParameters(true);
-    viewGroup1->removeParameter("DataList");
-
-    medLayerParameterGroup *layerGroup1 = new medLayerParameterGroup("Layer Group 1", this, this->identifier());
-    layerGroup1->setLinkAllParameters(true);
+    setInitialGroups();
 
     connect(this->stackedViewContainers(), SIGNAL(containersSelectedChanged()),
-            d->segmentationToolBox, SIGNAL(inputChanged()));
-}
-
-void medSegmentationWorkspace::setupViewContainerStack()
-{
-    if (!stackedViewContainers()->count()) {
-        this->stackedViewContainers()->addContainerInTab(this->name());
-    }
-    this->stackedViewContainers()->unlockTabs();
+            d->selectorToolBox, SIGNAL(inputChanged()));
 }
 
 medSegmentationWorkspace::~medSegmentationWorkspace(void)
@@ -80,11 +60,10 @@ medSegmentationWorkspace::~medSegmentationWorkspace(void)
     d = NULL;
 }
 
-medSegmentationSelectorToolBox * medSegmentationWorkspace::segmentationToobox()
+medSelectorToolBox * medSegmentationWorkspace::segmentationToobox()
 {
-    return d->segmentationToolBox;
+    return d->selectorToolBox;
 }
-
 
 bool medSegmentationWorkspace::isUsable()
 {
@@ -92,9 +71,8 @@ bool medSegmentationWorkspace::isUsable()
     return (tbFactory->toolBoxesFromCategory("segmentation").size()!=0); 
 }
 
-//TODO: not tested yet
 void medSegmentationWorkspace::onSuccess()
 {
-    medAbstractData * output = d->segmentationToolBox->currentToolBox()->processOutput();
+    medAbstractData * output = d->selectorToolBox->currentToolBox()->processOutput();
     medDataManager::instance()->importData(output);
 }
