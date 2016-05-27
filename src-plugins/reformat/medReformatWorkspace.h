@@ -14,12 +14,12 @@
 #pragma once
 
 #include <medAbstractWorkspace.h>
-
 #include "reformatPluginExport.h"
 
-class reformatWorkspacePrivate;
+class medSelectorToolBox;
+class medReformatWorkspacePrivate;
     
-class REFORMATPLUGIN_EXPORT reformatWorkspace : public medAbstractWorkspace
+class REFORMATPLUGIN_EXPORT medReformatWorkspace : public medAbstractWorkspace
 {
     Q_OBJECT
     MED_WORKSPACE_INTERFACE("Reformat",
@@ -27,16 +27,17 @@ class REFORMATPLUGIN_EXPORT reformatWorkspace : public medAbstractWorkspace
                             "Methodology")
     
 public:
-    reformatWorkspace(QWidget *parent = 0);
-    virtual ~reformatWorkspace();
-    
-    virtual void setupViewContainerStack();
+    medReformatWorkspace(QWidget *parent = NULL);
+    virtual ~medReformatWorkspace();
 
     static bool isUsable();
     static bool registered();
 
-    void showViewPropertiesToolBox(bool val);
-        
+    medSelectorToolBox *selectorToolBox();
+
+protected slots:
+    void onSuccess();
+
 private:
-    reformatWorkspacePrivate *d;
+    medReformatWorkspacePrivate *d;
 };

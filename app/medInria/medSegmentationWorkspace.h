@@ -16,7 +16,7 @@
 #include <medAbstractWorkspace.h>
 
 class medSegmentationWorkspacePrivate;
-class medSegmentationSelectorToolBox;
+class medSelectorToolBox;
 
 /**
  * class medSegmentationWorkspace
@@ -35,10 +35,7 @@ public:
 
     static bool isUsable();
 
-    //! Implement abstract method in base class.
-    void setupViewContainerStack();
-
-    medSegmentationSelectorToolBox * segmentationToobox();
+    medSelectorToolBox *segmentationToobox();
 
 protected slots:
     void onSuccess();

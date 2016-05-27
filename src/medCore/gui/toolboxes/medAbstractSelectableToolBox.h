@@ -17,27 +17,38 @@
 #include <medCoreExport.h>
 
 class medAbstractData;
-class medSegmentationSelectorToolBox;
-class medSegmentationAbstractToolBoxPrivate;
+class medSelectorToolBox;
+class medAbstractSelectableToolBoxPrivate;
 
-//! Base class for custom segmentation algoithms
-class MEDCORE_EXPORT medSegmentationAbstractToolBox : public medToolBox
+//! Base class for custom toolboxes in combobox
+class MEDCORE_EXPORT medAbstractSelectableToolBox : public medToolBox
 {
     Q_OBJECT
 
 public:
-    medSegmentationAbstractToolBox(QWidget *parent = 0);
-    virtual ~medSegmentationAbstractToolBox();
+    medAbstractSelectableToolBox(QWidget *parent = 0);
+    virtual ~medAbstractSelectableToolBox();
 
     virtual dtkPlugin* plugin() = 0;
 
     virtual medAbstractData *processOutput() = 0;
 
+    virtual void updateType(medAbstractData *data){}
+
+    void setSelectorToolBox(medSelectorToolBox *toolbox);
+
+    //! Launched when scrolled in medSelectorToolBox
+    void showEvent(QShowEvent *event);
+
+public slots:
+
+    void updateView(){}
+
 protected:
-    medSegmentationSelectorToolBox *segmentationToolBox();
+    medSelectorToolBox *selectorToolBox();
 
 private:
-    medSegmentationAbstractToolBoxPrivate *d;
+    medAbstractSelectableToolBoxPrivate *d;
 };
 
 
