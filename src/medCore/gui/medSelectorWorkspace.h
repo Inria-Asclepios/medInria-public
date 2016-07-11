@@ -28,10 +28,11 @@ class medSelectorWorkspace : public medAbstractWorkspace
 
 public:
     medSelectorWorkspace(QWidget * parent, QString name);
+    medSelectorWorkspace(QWidget * parent, QString name, medSelectorToolBox *selectorToolbox);
 
     virtual ~medSelectorWorkspace();
 
-    QPointer<medSelectorToolBox> selectorToolBox();
+    medSelectorToolBox *selectorToolBox();
 
 protected slots:
     virtual void onProcessSuccess(){}
