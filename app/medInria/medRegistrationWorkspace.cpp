@@ -116,6 +116,7 @@ void medRegistrationWorkspace::setInitialGroups()
     d->viewGroup->setLinkAllParameters(true);
     d->viewGroup->removeParameter("DataList");
     d->viewGroup->removeParameter("Position");
+    d->viewGroup->removeParameter("Orientation");
 
     d->fixedLayerGroup->setLinkAllParameters(true);
     d->fixedLayerGroup->removeParameter("Slicing");
