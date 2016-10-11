@@ -109,9 +109,10 @@ int main(int argc,char* argv[]) {
     dtkLogger::instance().attachFile(dtkLogPath(&application));
     dtkLogger::instance().attachConsole();
 
-    dtkDebug() << "####################################";
-    dtkDebug() << "Version: "    << MEDINRIA_VERSION;
-    dtkDebug() << "Build Date: " << MEDINRIA_BUILD_DATE;
+    dtkInfo() << "####################################";
+    dtkInfo() << "### Application is loading...";
+    dtkInfo() << "Version: "    << MEDINRIA_VERSION;
+    dtkInfo() << "Build Date: " << MEDINRIA_BUILD_DATE;
 
     medSplashScreen splash(QPixmap(":music_logo.png"));
     setlocale(LC_NUMERIC, "C");
@@ -273,6 +274,8 @@ int main(int argc,char* argv[]) {
     application.setMainWindow(mainwindow);
 
     forceShow(*mainwindow);
+
+    dtkInfo() << "### Application is running...";
 
     //  Start main loop.
     const int status = application.exec();

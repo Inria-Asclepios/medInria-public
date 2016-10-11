@@ -699,6 +699,10 @@ void medMainWindow::closeEvent(QCloseEvent *event)
     }
     this->saveSettings();
 
+
+    dtkInfo() << "### Application is closing...";
+    dtkInfo() << "####################################";
+
     // Close boost::iostreams open in main.cpp for logs
     logger.close();
     loggerErr.close();
