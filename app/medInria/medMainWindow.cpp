@@ -11,6 +11,9 @@
 
 =========================================================================*/
 
+#include <boost/iostreams/tee.hpp>
+#include <boost/iostreams/stream.hpp>
+
 #include <medMainWindow.h>
 
 #include <QtGui>
@@ -46,6 +49,11 @@
 #else
 # define CONTROL_KEY "Ctrl"
 #endif
+
+typedef boost::iostreams::tee_device<std::ostream, std::ofstream> TeeDevice;
+typedef boost::iostreams::stream<TeeDevice> TeeStream;
+extern TeeStream logger;
+extern TeeStream loggerErr;
 
 //--------------------------------------------------------------------------
 // medMainWindowStyle
@@ -690,6 +698,15 @@ void medMainWindow::closeEvent(QCloseEvent *event)
         return;
     }
     this->saveSettings();
+
+
+    dtkInfo() << "### Application is closing...";
+    dtkInfo() << "####################################";
+
+    // Close boost::iostreams open in main.cpp for logs
+    logger.close();
+    loggerErr.close();
+
     event->accept();
 }
 
