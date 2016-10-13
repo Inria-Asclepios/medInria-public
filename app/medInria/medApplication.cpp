@@ -90,7 +90,7 @@ medApplication::medApplication(int & argc, char**argv) :
                      this,SLOT(redirectMessageToLog(QString)));
 
     QObject::connect(&medQtMessageHandler::instance(), SIGNAL(newQtMsg(QtMsgType, const char*)),
-                    this,SLOT(receiveQtMsg(QtMsgType , const char*)));
+                    this,SLOT(receiveQtMsg(QtMsgType , const char*)), Qt::DirectConnection);
 
     this->initialize();
 }
