@@ -11,34 +11,17 @@
 
 =========================================================================*/
 
-#include <medRegistrationSelectorToolBox.h>
+#include "medRegistrationSelectorToolBox.h"
 
-#include <dtkCore/dtkAbstractViewFactory.h>
-#include <medAbstractDataFactory.h>
-#include <medAbstractData.h>
-#include <dtkCore/dtkAbstractProcessFactory.h>
-#include <dtkCore/dtkAbstractProcess.h>
-#include <dtkCore/dtkAbstractViewInteractor.h>
 #include <dtkCore/dtkSmartPointer.h>
-
+#include <medAbstractRegistrationProcess.h>
+#include <medAbstractSelectableToolBox.h>
 #include <medDataManager.h>
-#include <medJobManager.h>
 #include <medMessageController.h>
 #include <medMetaDataKeys.h>
-#include <medAbstractView.h>
-#include <medAbstractImageView.h>
-#include <medAbstractRegistrationProcess.h>
-
-#include <medAbstractImageData.h>
-#include <medToolBoxTab.h>
+#include <medRegistrationAbstractToolBox.h>
 #include <medToolBoxFactory.h>
 #include <medToolBoxHeader.h>
-
-#include <medRegistrationAbstractToolBox.h>
-#include <medAbstractSelectableToolBox.h>
-
-
-#include <QtGui>
 
 class medRegistrationSelectorToolBoxPrivate
 {
@@ -191,8 +174,6 @@ QString medRegistrationSelectorToolBox::getNameOfCurrentAlgorithm()
 //! Saves the transformation.
 void medRegistrationSelectorToolBox::onSaveTrans()
 {
-    qDebug()<<"## medRegistrationSelectorToolBox::onSaveTrans";
-
     if (!d->movingData)
     {
         emit showError(tr  ("Please select a moving image before saving"),3000);
@@ -204,31 +185,27 @@ void medRegistrationSelectorToolBox::onSaveTrans()
         return;
     }
 
-    //get the transformation type: affine or deformation field.
+    // Get the transformation type
     QString fileTypeSuggestion;
     QString filterSelected;
     QHash<QString,QString> suffix;
     if (d->process->hasProperty("transformType"))
     {
-        qDebug()<<"## medRegistrationSelectorToolBox::onSaveTrans -> "<<d->process->property("transformType");
-
-//        if ( d->process->property("transformType") == "text")
-//        {
+        if ( d->process->property("transformType") == "text")
+        {
             suffix[ tr("Transformation (*.txt)") ] = ".txt";
-//            qDebug()<<"## medRegistrationSelectorToolBox::onSaveTrans TXT";
-//        }
-//        else
-//        {
-//            suffix[ tr("MetaFile (*.mha)") ] = ".mha";
-//            suffix[ tr("MetaFile (*.mhd)") ] = ".mhd";
-//            suffix[ tr("Nifti (*.nii)") ] = ".nii";
-//            suffix[ tr("Analyse (*.hdr)") ] = ".hdr";
-//            suffix[ tr("Nrrd (*.nrrd)") ] = ".nrrd";
-//            suffix[ tr("VTK (*.vtk)") ] = ".vtk";
-//            suffix[ tr("All supported files "
-//                "(*.mha *.mhd *.nii *.hdr *.nrrd *.vtk)") ] = ".mha";
-//            qDebug()<<"## medRegistrationSelectorToolBox::onSaveTrans notTXT";
-//        }
+        }
+        else
+        {
+            suffix[ tr("MetaFile (*.mha)") ] = ".mha";
+            suffix[ tr("MetaFile (*.mhd)") ] = ".mhd";
+            suffix[ tr("Nifti (*.nii)") ] = ".nii";
+            suffix[ tr("Analyse (*.hdr)") ] = ".hdr";
+            suffix[ tr("Nrrd (*.nrrd)") ] = ".nrrd";
+            suffix[ tr("VTK (*.vtk)") ] = ".vtk";
+            suffix[ tr("All supported files "
+                "(*.mha *.mhd *.nii *.hdr *.nrrd *.vtk)") ] = ".mha";
+        }
         QHashIterator<QString, QString> i(suffix);
         while (i.hasNext())
         {
@@ -315,23 +292,28 @@ void medRegistrationSelectorToolBox::handleOutput(typeOfOperation type, QString 
         {
             algoName = d->nameOfCurrentAlgorithm.remove(" "); // we remove the spaces to reduce the size of the QString as much as possible
         }
-        if (newDescription.contains("registered"))
-            newDescription += "-" + algoName + "\n";
-        else
-            newDescription += " registered\n-" + algoName+ "\n";
+
+        if (!newDescription.contains("registered"))
+        {
+            newDescription += " registered";
+        }
+        if (algoName != "")
+        {
+            newDescription += "(" + algoName + ")";
+        }
     }
-    else if (type == undo)
+    else if (type == undo || type == reset)
     {
-        newDescription.remove(newDescription.lastIndexOf("-"),newDescription.size()-1);
-        if (newDescription.count("-") == 0)
-            newDescription.remove(" registered\n");
+        int last = newDescription.lastIndexOf(" registered");
+        newDescription.remove(last, newDescription.size()-last);
     }
-    else if (type == reset)
+
+    if (type == reset)
     {
-        if (newDescription.lastIndexOf(" registered") != -1)
-            newDescription.remove(newDescription.lastIndexOf(" registered"),newDescription.size()-1);
         if(!d->fixedData || !d->movingData)
+        {
             return;
+        }
     }
 
     foreach(QString metaData, d->fixedData->metaDataList())

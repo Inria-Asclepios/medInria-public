@@ -23,11 +23,10 @@
 class DiffeomorphicDemonsProcessPrivate
 {
 public:
+
     DiffeomorphicDemonsProcess * proc;
-    template <class PixelType>
-            int update();
-    template < typename TFixedImage, typename TMovingImage >
-           bool write(const QString&);
+    template <class PixelType> int update();
+    template < typename TFixedImage, typename TMovingImage > bool write(const QString&);
     void * registrationMethod ;
 
     std::vector<unsigned int> iterations;
@@ -53,9 +52,9 @@ DiffeomorphicDemonsProcess::DiffeomorphicDemonsProcess() : itkProcessRegistratio
     d->updateFieldStandardDeviation = 0.0;
     d->displacementFieldStandardDeviation = 1.5;
     d->useHistogramMatching = false;
-    //set transform type for the exportation of the transformation to a file
-    //this->setProperty("transformType","nonRigid");
-    setOutput(NULL);
+
+    // Gives the exported file type for medRegistrationSelectorToolBox
+    this->setProperty("transformType","notText");
 }
 
 DiffeomorphicDemonsProcess::~DiffeomorphicDemonsProcess()
@@ -219,23 +218,13 @@ int DiffeomorphicDemonsProcessPrivate::update()
 
 int DiffeomorphicDemonsProcess::update(itkProcessRegistration::ImageType imgType)
 {
-    if(fixedImage().IsNull() || movingImages().isEmpty()
-            || movingImages()[0].IsNull())
+    // cast has been done in itkProcessRegistration
+    if (imgType == itkProcessRegistration::FLOAT)
     {
-        qWarning() << "Either the fixed image or the moving image is Null";
-        return 1;
+        return d->update<float>();
     }
 
-    if (imgType != itkProcessRegistration::FLOAT)
-    {
-        qWarning() << "the imageType should be float, and it's :"<<imgType;
-        return 1;
-    }
-
-    int res = d->update<float>();
-    setOutput(d->proc->output());
-
-    return res;
+    return DTK_FAILURE;
 }
 
 itk::Transform<double,3,3>::Pointer DiffeomorphicDemonsProcess::getTransform(){

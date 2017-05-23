@@ -38,13 +38,13 @@ public:
 protected slots:
     void updateView();    
     void synchroniseMovingFuseView();
-    void save();
 
 public slots:
     void startManualRegistration();
     void stopManualRegistration();
     void computeRegistration();
     void reset();
+    void getOutputFromProcess();
 
 protected:
     virtual void clear();
@@ -52,7 +52,6 @@ protected:
 private:
     void displayButtons(bool);
     void constructContainers(medTabbedViewContainers *);
-    void setDisableSaveButtons(bool);
     void setDisableComputeResetButtons(bool);
     void setDisableResetButton(bool);
 

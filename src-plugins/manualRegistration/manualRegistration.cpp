@@ -33,7 +33,7 @@ class manualRegistrationPrivate
 {
 public:
     manualRegistration * proc;
-    int applyChosenRegistration();
+    template <class PixelType> int update();
     template <typename PixelType, typename TransformType> int applyRegistration();
 
     QList<manualRegistrationLandmark*> * FixedLandmarks;
@@ -80,19 +80,19 @@ QString manualRegistration::identifier() const
 
 // /////////////////////////////////////////////////////////////////
 
-int manualRegistrationPrivate::applyChosenRegistration()
+template <class PixelType> int manualRegistrationPrivate::update()
 {
     int res = DTK_FAILURE;
 
     if (transformTypeInt == TransformName::RIGID)
     {
-        res = applyRegistration<float, TransformType_Rigid3D>();
+        res = applyRegistration<PixelType, TransformType_Rigid3D>();
     }
     else if (transformTypeInt == TransformName::AFFINE)
     {
         if ((FixedLandmarks->count() >= 4) && (MovingLandmarks->count() >= 4))
         {
-            res = applyRegistration<float, TransformType_Affine>();
+            res = applyRegistration<PixelType, TransformType_Affine>();
         }
         else
         {
@@ -109,9 +109,6 @@ template <typename PixelType, typename TransformType> int manualRegistrationPriv
 
     typedef itk::Image< PixelType, 3 >  FixedImageType;
     typedef itk::Image< PixelType, 3 >  MovingImageType;
-
-    // Cast
-    //TODO
 
     typedef itk::LandmarkBasedTransformInitializer< TransformType,
             FixedImageType, MovingImageType > RegistrationType;
@@ -201,31 +198,19 @@ template <typename PixelType, typename TransformType> int manualRegistrationPriv
 
 int manualRegistration::update(itkProcessRegistration::ImageType imgType)
 {
-    qDebug()<<"### manualRegistration::update";
-
-    if(fixedImage().IsNull() || movingImages().isEmpty()
-            || movingImages()[0].IsNull())
+    // cast has been done in itkProcessRegistration
+    if (imgType == itkProcessRegistration::FLOAT)
     {
-        displayMessageError("Either the fixed image or the moving image is empty");
-        return DTK_FAILURE;
+        return d->update<float>();
     }
 
-    if (imgType != itkProcessRegistration::FLOAT)
-    {
-        displayMessageError("Images type should be float");
-//        return DTK_FAILURE;
-    }
-
-    return d->applyChosenRegistration();
+    return DTK_FAILURE;
 }
 
 itk::Transform<double,3,3>::Pointer manualRegistration::getTransform()
 {
-    qDebug()<<"### manualRegistration::getTransform";
-
     itk::Transform<double, 3, 3>::Pointer outputTransform;
     outputTransform = d->transform;
-
     return outputTransform;
 }
 
@@ -237,7 +222,16 @@ void manualRegistration::setParameter(int data)
 QString manualRegistration::getTitleAndParameters()
 {
     QString titleAndParameters;
-    titleAndParameters += "ManualRegistration\n";
+    titleAndParameters += "ManualRegistration\n  ";
+
+    if (d->transformTypeInt == TransformName::RIGID)
+    {
+        titleAndParameters += "Rigid method";
+    }
+    else if (d->transformTypeInt == TransformName::AFFINE)
+    {
+        titleAndParameters += "Affine method";
+    }
     return titleAndParameters;
 }
 

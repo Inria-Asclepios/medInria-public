@@ -41,7 +41,6 @@ public:
     QPushButton * b_startManualRegistration;  
     QPushButton * b_computeRegistration;
     QPushButton * b_reset;
-    QPushButton * b_save;
 
     medComboBox* transformType;
 
@@ -92,11 +91,6 @@ manualRegistrationToolBox::manualRegistrationToolBox(QWidget *parent) : medAbstr
     d->b_reset->setObjectName("resetButton");
     connect(d->b_reset,SIGNAL(clicked()),this,SLOT(reset()));
 
-    d->b_save = new QPushButton("Save Image",widget);
-    d->b_save->setToolTip(tr("Save registered image"));
-    d->b_save->setObjectName("saveButton");
-    connect(d->b_save,SIGNAL(clicked()),this,SLOT(save()));
-
     QVBoxLayout *mainLayout = new QVBoxLayout;
     mainLayout->addWidget(d->b_startManualRegistration);
     mainLayout->addWidget(explanation);
@@ -105,7 +99,6 @@ manualRegistrationToolBox::manualRegistrationToolBox(QWidget *parent) : medAbstr
     mainLayout->addLayout(transformationLayout);
     mainLayout->addWidget(d->b_computeRegistration);
     mainLayout->addWidget(d->b_reset);
-    mainLayout->addWidget(d->b_save);
     widget->setLayout(mainLayout);
     this->addWidget(widget);
 
@@ -132,7 +125,6 @@ manualRegistrationToolBox::manualRegistrationToolBox(QWidget *parent) : medAbstr
     d->process         = 0;
     d->output          = 0;
 
-    setDisableSaveButtons(true);
     setDisableComputeResetButtons(true);
     displayButtons(false);
 }
@@ -329,44 +321,62 @@ void manualRegistrationToolBox::synchroniseMovingFuseView()
 void manualRegistrationToolBox::computeRegistration()
 {
     if (d->controller)
-       {
-           if (d->controller->checkLandmarks() != DTK_FAILURE)
-           {
-               int transformChosen = d->transformType->itemData(d->transformType->currentIndex()).toInt();
+    {
+        if (d->controller->checkLandmarks() != DTK_FAILURE)
+        {
+            int transformChosen = d->transformType->itemData(d->transformType->currentIndex()).toInt();
 
-               // Check that Affine process has enough landmarks
-               if (transformChosen == manualRegistration::AFFINE)
-               {
-                   if ((d->controller->getPoints_Fixed()->count() < 4) || (d->controller->getPoints_Moving()->count() < 4))
-                   {
-                       displayMessageError("Affine transformation needs 4 landmarks minimum by dataset");
-                       return;
-                   }
-               }
+            // Check that Affine process has enough landmarks
+            if (transformChosen == manualRegistration::AFFINE)
+            {
+                if ((d->controller->getPoints_Fixed()->count() < 4) || (d->controller->getPoints_Moving()->count() < 4))
+                {
+                    displayMessageError("Affine transformation needs 4 landmarks minimum by dataset");
+                    return;
+                }
+            }
 
-               this->setToolBoxOnWaitStatus();
+            this->setToolBoxOnWaitStatus();
 
-               d->process = dynamic_cast<medAbstractRegistrationProcess*> (dtkAbstractProcessFactory::instance()->create("manualRegistration"));
+            d->process = dynamic_cast<medAbstractRegistrationProcess*> (dtkAbstractProcessFactory::instance()->create("manualRegistration"));
 
-               medRegistrationSelectorToolBox* toolbox = dynamic_cast<medRegistrationSelectorToolBox*>(selectorToolBox());
-               if(toolbox) // toolbox empty in Pipelines and not Registration workspace
-               {
-                   toolbox->setProcess(d->process);
-               }
+            medRegistrationSelectorToolBox* toolbox = dynamic_cast<medRegistrationSelectorToolBox*>(selectorToolBox());
+            if(toolbox) // toolbox empty in Pipelines and not Registration workspace
+            {
+                toolbox->setProcess(d->process);
+            }
 
-               manualRegistration* process_Registration = dynamic_cast<manualRegistration*>(d->process);
-               process_Registration->SetFixedLandmarks(d->controller->getPoints_Fixed());
-               process_Registration->SetMovingLandmarks(d->controller->getPoints_Moving());
-               process_Registration->setFixedInput(qobject_cast<medAbstractLayeredView*>(d->leftContainer->view())->layerData(0));
-               process_Registration->setMovingInput(qobject_cast<medAbstractLayeredView*>(d->rightContainer->view())->layerData(0));
-               process_Registration->setParameter(transformChosen);
+            manualRegistration* process_Registration = dynamic_cast<manualRegistration*>(d->process);
+            process_Registration->SetFixedLandmarks(d->controller->getPoints_Fixed());
+            process_Registration->SetMovingLandmarks(d->controller->getPoints_Moving());
+            process_Registration->setFixedInput(qobject_cast<medAbstractLayeredView*>(d->leftContainer->view())->layerData(0));
+            process_Registration->setMovingInput(qobject_cast<medAbstractLayeredView*>(d->rightContainer->view())->layerData(0));
+            process_Registration->setParameter(transformChosen);
 
-               medRunnableProcess *runProcess = new medRunnableProcess;
-               runProcess->setProcess (d->process);
-               connect (runProcess, SIGNAL (success  (QObject*)),  this, SLOT   (getOutputFromProcess ()));
-               this->addConnectionsAndStartJob(runProcess);
-           }
-       }
+            medRunnableProcess *runProcess = new medRunnableProcess;
+            runProcess->setProcess (d->process);
+            connect (runProcess, SIGNAL (success  (QObject*)),  this, SLOT   (getOutputFromProcess ()));
+            this->addConnectionsAndStartJob(runProcess);
+        }
+    }
+}
+
+void manualRegistrationToolBox::getOutputFromProcess()
+{
+    medAbstractData * newOutput = dynamic_cast<itkProcessRegistration*> (d->process)->output();
+    if(newOutput && newOutput->data())
+    {
+        d->output = newOutput;
+
+        // Pipelines
+        if (d->bottomContainer && d->bottomContainer->view())
+        {
+            qobject_cast<medAbstractImageView*>(d->bottomContainer->view())->removeLayer(1);
+            qobject_cast<medAbstractImageView*>(d->bottomContainer->view())->addLayer(d->output);
+        }
+
+        synchroniseMovingFuseView();
+    }
 }
 
 void manualRegistrationToolBox::reset()
@@ -403,8 +413,7 @@ void manualRegistrationToolBox::reset()
 
     synchroniseMovingFuseView();
 
-    // Disable Save/Transformation/Compute/Reset buttons
-    setDisableSaveButtons(true);
+    // Disable Transformation/Compute/Reset buttons
     setDisableComputeResetButtons(true);
 }
 
@@ -413,14 +422,6 @@ void manualRegistrationToolBox::clear()
     if (d->regOn)
     {
         d->b_startManualRegistration->click();
-    }
-}
-
-void manualRegistrationToolBox::save()
-{
-    if (d->controller && d->output)
-    {
-        medDataManager::instance()->importData(d->output, false);
     }
 }
 
@@ -514,11 +515,6 @@ void manualRegistrationToolBox::constructContainers(medTabbedViewContainers * ta
     }
 }
 
-void manualRegistrationToolBox::setDisableSaveButtons(bool disable)
-{
-    d->b_save->setDisabled(disable);
-}
-
 void manualRegistrationToolBox::setDisableComputeResetButtons(bool disable)
 {
     d->b_computeRegistration->setDisabled(disable);
@@ -536,13 +532,11 @@ void manualRegistrationToolBox::displayButtons(bool show)
     {
         d->b_reset->show();
         d->b_computeRegistration->show();
-        d->b_save->show();
     }
     else
     {
         d->b_reset->hide();
         d->b_computeRegistration->hide();
-        d->b_save->hide();
     }
 }
 
