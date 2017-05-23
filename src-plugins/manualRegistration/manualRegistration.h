@@ -85,6 +85,7 @@ public:
 
     virtual itk::Transform<double,3,3>::Pointer getTransform();
     virtual QString getTitleAndParameters();
+
     void SetFixedLandmarks(QList<manualRegistrationLandmark*>  * fixedLandmarks);
     void SetMovingLandmarks(QList<manualRegistrationLandmark*>  * movingLandmarks);
 

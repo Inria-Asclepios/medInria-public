@@ -39,7 +39,6 @@ protected slots:
     void updateView();    
     void synchroniseMovingFuseView();
     void save();
-    void exportTransformation();
 
 public slots:
     void startManualRegistration();

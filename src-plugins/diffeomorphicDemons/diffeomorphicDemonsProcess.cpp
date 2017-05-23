@@ -54,7 +54,7 @@ DiffeomorphicDemonsProcess::DiffeomorphicDemonsProcess() : itkProcessRegistratio
     d->displacementFieldStandardDeviation = 1.5;
     d->useHistogramMatching = false;
     //set transform type for the exportation of the transformation to a file
-    this->setProperty("transformType","nonRigid");
+    //this->setProperty("transformType","nonRigid");
     setOutput(NULL);
 }
 

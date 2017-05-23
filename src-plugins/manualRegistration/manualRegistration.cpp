@@ -33,7 +33,7 @@ class manualRegistrationPrivate
 {
 public:
     manualRegistration * proc;
-    template <class PixelType> int update();
+    int applyChosenRegistration();
     template <typename PixelType, typename TransformType> int applyRegistration();
 
     QList<manualRegistrationLandmark*> * FixedLandmarks;
@@ -50,9 +50,9 @@ public:
 manualRegistration::manualRegistration() : itkProcessRegistration(), d(new manualRegistrationPrivate)
 {
     d->proc = this;
- 
-    //set transform type for the exportation of the transformation to a file
-    this->setProperty("transformType","Rigid");
+
+    // Gives the exported file type for medRegistrationSelectorToolBox
+    this->setProperty("transformType","text");
 }
 
 manualRegistration::~manualRegistration()
@@ -78,26 +78,21 @@ QString manualRegistration::identifier() const
     return "manualRegistration";
 }
 
-
-// /////////////////////////////////////////////////////////////////
-// Templated Version of update
 // /////////////////////////////////////////////////////////////////
 
-
-template <typename PixelType>
-int manualRegistrationPrivate::update()
+int manualRegistrationPrivate::applyChosenRegistration()
 {
     int res = DTK_FAILURE;
 
     if (transformTypeInt == TransformName::RIGID)
     {
-        res = applyRegistration<PixelType, TransformType_Rigid3D>();
+        res = applyRegistration<float, TransformType_Rigid3D>();
     }
     else if (transformTypeInt == TransformName::AFFINE)
     {
         if ((FixedLandmarks->count() >= 4) && (MovingLandmarks->count() >= 4))
         {
-            res = applyRegistration<PixelType, TransformType_Affine>();
+            res = applyRegistration<float, TransformType_Affine>();
         }
         else
         {
@@ -110,8 +105,13 @@ int manualRegistrationPrivate::update()
 
 template <typename PixelType, typename TransformType> int manualRegistrationPrivate::applyRegistration()
 {
+    qDebug()<<"### manualRegistrationPrivate::applyRegistration";
+
     typedef itk::Image< PixelType, 3 >  FixedImageType;
     typedef itk::Image< PixelType, 3 >  MovingImageType;
+
+    // Cast
+    //TODO
 
     typedef itk::LandmarkBasedTransformInitializer< TransformType,
             FixedImageType, MovingImageType > RegistrationType;
@@ -201,6 +201,8 @@ template <typename PixelType, typename TransformType> int manualRegistrationPriv
 
 int manualRegistration::update(itkProcessRegistration::ImageType imgType)
 {
+    qDebug()<<"### manualRegistration::update";
+
     if(fixedImage().IsNull() || movingImages().isEmpty()
             || movingImages()[0].IsNull())
     {
@@ -211,15 +213,20 @@ int manualRegistration::update(itkProcessRegistration::ImageType imgType)
     if (imgType != itkProcessRegistration::FLOAT)
     {
         displayMessageError("Images type should be float");
-        return DTK_FAILURE;
+//        return DTK_FAILURE;
     }
 
-    return d->update<float>();
+    return d->applyChosenRegistration();
 }
 
 itk::Transform<double,3,3>::Pointer manualRegistration::getTransform()
 {
-    return NULL;
+    qDebug()<<"### manualRegistration::getTransform";
+
+    itk::Transform<double, 3, 3>::Pointer outputTransform;
+    outputTransform = d->transform;
+
+    return outputTransform;
 }
 
 void manualRegistration::setParameter(int data)
@@ -236,9 +243,9 @@ QString manualRegistration::getTitleAndParameters()
 
 bool manualRegistration::writeTransform(const QString& file)
 {
-    typedef float PixelType;
+    qDebug()<<"### manualRegistration::writeTransform";
 
-    typedef itk::Image< PixelType, 3 > RegImageType;
+    typedef itk::Image< TransformScalarType, 3 > RegImageType;
 
     try
     {

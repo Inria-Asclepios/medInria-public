@@ -191,9 +191,11 @@ QString medRegistrationSelectorToolBox::getNameOfCurrentAlgorithm()
 //! Saves the transformation.
 void medRegistrationSelectorToolBox::onSaveTrans()
 {
+    qDebug()<<"## medRegistrationSelectorToolBox::onSaveTrans";
+
     if (!d->movingData)
     {
-        emit showError(tr  ("Please Select a moving image before saving"),3000);
+        emit showError(tr  ("Please select a moving image before saving"),3000);
         return;
     }
     if (!d->process )
@@ -208,19 +210,25 @@ void medRegistrationSelectorToolBox::onSaveTrans()
     QHash<QString,QString> suffix;
     if (d->process->hasProperty("transformType"))
     {
-        if ( d->process->property("transformType") == "rigid")
+        qDebug()<<"## medRegistrationSelectorToolBox::onSaveTrans -> "<<d->process->property("transformType");
+
+//        if ( d->process->property("transformType") == "text")
+//        {
             suffix[ tr("Transformation (*.txt)") ] = ".txt";
-        else
-        {
-            suffix[ tr("MetaFile (*.mha)") ] = ".mha";
-            suffix[ tr("MetaFile (*.mhd)") ] = ".mhd";
-            suffix[ tr("Nifti (*.nii)") ] = ".nii";
-            suffix[ tr("Analyse (*.hdr)") ] = ".hdr";
-            suffix[ tr("Nrrd (*.nrrd)") ] = ".nrrd";
-            suffix[ tr("VTK (*.vtk)") ] = ".vtk";
-            suffix[ tr("All supported files "
-                "(*.mha *.mhd *.nii *.hdr *.nrrd *.vtk)") ] = ".mha";
-        }
+//            qDebug()<<"## medRegistrationSelectorToolBox::onSaveTrans TXT";
+//        }
+//        else
+//        {
+//            suffix[ tr("MetaFile (*.mha)") ] = ".mha";
+//            suffix[ tr("MetaFile (*.mhd)") ] = ".mhd";
+//            suffix[ tr("Nifti (*.nii)") ] = ".nii";
+//            suffix[ tr("Analyse (*.hdr)") ] = ".hdr";
+//            suffix[ tr("Nrrd (*.nrrd)") ] = ".nrrd";
+//            suffix[ tr("VTK (*.vtk)") ] = ".vtk";
+//            suffix[ tr("All supported files "
+//                "(*.mha *.mhd *.nii *.hdr *.nrrd *.vtk)") ] = ".mha";
+//            qDebug()<<"## medRegistrationSelectorToolBox::onSaveTrans notTXT";
+//        }
         QHashIterator<QString, QString> i(suffix);
         while (i.hasNext())
         {
