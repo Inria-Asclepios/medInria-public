@@ -344,19 +344,14 @@ int itkProcessRegistration::update(itkProcessRegistration::ImageType)
 
 int itkProcessRegistration::update()
 {
-    if (!d->mutex.tryLock())
+    int retval = medAbstractProcess::FAILURE;
+
+    if (d->mutex.tryLock())
     {
-        return DTK_FAILURE;
+        retval = update(d->fixedImageType);
+        d->mutex.unlock();
     }
 
-    if(d->fixedImage.IsNull() || d->movingImages.empty())
-    {
-        displayMessageError("Either the fixed image or the moving image is empty");
-        return DTK_FAILURE;
-    }
-
-    int retval =  update(d->fixedImageType);
-    d->mutex.unlock();
     return retval;
 }
 
@@ -405,6 +400,7 @@ bool itkProcessRegistration::write(const QStringList& files)
     {
         return writeTransform(files.at(1));
     }
+
     return false;
 }
 
@@ -454,10 +450,4 @@ bool itkProcessRegistration::write(const QString& file)
         delete dataWriter;
     }
     return writeSuccess;
-}
-
-void itkProcessRegistration::displayMessageError(QString error)
-{
-    qDebug() << this->description() + ": " + error;
-    medMessageController::instance()->showError(error, 3000);
 }

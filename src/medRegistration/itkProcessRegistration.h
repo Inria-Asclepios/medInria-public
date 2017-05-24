@@ -62,7 +62,6 @@ public:
     */
     virtual ~itkProcessRegistration();
 
-public:
     /**
      * @brief Image types.
      *
@@ -78,7 +77,6 @@ public:
         DOUBLE
     };
 
-public:
     /**
      * @brief Runs the process.
      *
@@ -150,8 +148,6 @@ public:
     * @return QString
     */
     virtual QString getTitleAndParameters() = 0;
-
-    void displayMessageError(QString error);
 
 public slots:
     /**

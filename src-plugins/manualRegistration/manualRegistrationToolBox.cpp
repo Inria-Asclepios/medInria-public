@@ -115,7 +115,6 @@ manualRegistrationToolBox::manualRegistrationToolBox(QWidget *parent) : medAbstr
     d->layerGroup2->setLinkAllParameters(true);
     d->layerGroup2->removeParameter("Slicing");
 
-
     d->regOn           = false;
     d->currentView     = 0;
     d->leftContainer   = 0;

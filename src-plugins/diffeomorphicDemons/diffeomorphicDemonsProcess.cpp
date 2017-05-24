@@ -27,8 +27,8 @@ public:
     DiffeomorphicDemonsProcess * proc;
     template <class PixelType> int update();
     template < typename TFixedImage, typename TMovingImage > bool write(const QString&);
-    void * registrationMethod ;
 
+    void * registrationMethod;
     std::vector<unsigned int> iterations;
     unsigned char updateRule;
     unsigned char gradientType;
@@ -173,7 +173,8 @@ int DiffeomorphicDemonsProcessPrivate::update()
 
     // Run the registration
     time_t t1 = clock();
-    try {
+    try
+    {
         registration->StartRegistration();
     }
     catch( std::exception & err )
@@ -218,13 +219,13 @@ int DiffeomorphicDemonsProcessPrivate::update()
 
 int DiffeomorphicDemonsProcess::update(itkProcessRegistration::ImageType imgType)
 {
-    // cast has been done in itkProcessRegistration
+    // Cast has been done in itkProcessRegistration
     if (imgType == itkProcessRegistration::FLOAT)
     {
         return d->update<float>();
     }
 
-    return DTK_FAILURE;
+    return medAbstractProcess::FAILURE;
 }
 
 itk::Transform<double,3,3>::Pointer DiffeomorphicDemonsProcess::getTransform(){
@@ -302,13 +303,15 @@ bool DiffeomorphicDemonsProcess::writeTransform(const QString& file)
     if (rpi::DiffeomorphicDemons<RegImageType,RegImageType,TransformScalarType> * registration =
             static_cast<rpi::DiffeomorphicDemons<RegImageType,RegImageType,TransformScalarType> *>(d->registrationMethod))
     {
-        try{
+        try
+        {
             rpi::writeDisplacementFieldTransformation<TransformScalarType, RegImageType::ImageDimension>(
                         registration->GetTransformation(),
                         file.toStdString());
         }
-        catch (std::exception)
+        catch (std::exception& err)
         {
+            qDebug() << "ExceptionObject caught (writeTransform): " << err.what();
             return false;
         }
         return true;

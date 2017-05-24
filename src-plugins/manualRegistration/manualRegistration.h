@@ -107,8 +107,6 @@ public:
 
     void setParameter(int data);
 
-    void displayMessageError(QString error);
-
 private:
     manualRegistrationPrivate *d;
     friend class manualRegistrationPrivate;
