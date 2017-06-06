@@ -143,12 +143,18 @@ void medVtkViewItkDataImage4DInteractor::setInputData(medAbstractData *data)
               AppendImageSequence<float>(data,d->view,d->sequence, layer)          ||
               AppendImageSequence<double>(data,d->view,d->sequence, layer))
         {
-            d->imageData->setMetaData("SequenceDuration", QString::number(d->sequence->GetMaxTime()));
-            d->imageData->setMetaData("SequenceFrameRate", QString::number((double)d->sequence->GetNumberOfMetaDataSets() /
-                                                                           (double)d->sequence->GetMaxTime()));
+            double maxTime = 1.0;
+            if (data->hasMetaData("SequenceDuration"))
+            {
+                maxTime = data->metadata("SequenceDuration").toDouble();
+            }
 
-            qDebug() << "SequenceDuration" << d->sequence->GetMaxTime();
-            qDebug() << "SequenceFrameRate" <<(double)d->sequence->GetNumberOfMetaDataSets() / (double)d->sequence->GetMaxTime();
+            double frameRate = (double)d->sequence->GetNumberOfMetaDataSets() / maxTime;
+            d->imageData->addMetaData("SequenceDuration", QString::number(maxTime));
+            d->imageData->addMetaData("SequenceFrameRate", QString::number(frameRate));
+
+            qDebug() << "SequenceDuration" << maxTime;
+            qDebug() << "SequenceFrameRate" << frameRate;
 
             d->view2d->GetImageActor(d->view2d->GetCurrentLayer())->GetProperty()->SetInterpolationTypeToCubic();
             initParameters(d->imageData);
