@@ -11,11 +11,14 @@
 
 =========================================================================*/
 
-#include <vtkDataMesh4DReader.h>
-#include <vtkDataManagerReader.h>
 #include <vtkDataManager.h>
+#include <vtkDataManagerReader.h>
+#include <vtkDataMesh4DReader.h>
+#include <vtkDataMesh4DWriter.h>
+#include <vtkFieldData.h>
 #include <vtkMetaDataSetSequence.h>
 #include <vtkSmartPointer.h>
+#include <vtkStringArray.h>
 
 #include <medAbstractData.h>
 #include <medAbstractDataFactory.h>
@@ -87,13 +90,72 @@ bool vtkDataMesh4DReader::read (const QString& path) {
 
         this->reader->SetFileName (path.toAscii().constData());
         this->reader->Update();
+
         vtkMetaDataSetSequence* sequence = vtkMetaDataSetSequence::SafeDownCast (this->reader->GetOutput()->GetMetaDataSet ((unsigned int)0));
         if (sequence)
+        {
+            foreach (vtkMetaDataSet* dataSet, sequence->GetMetaDataSetList())
+            {
+                if (!extractMetaData(dataSet))
+                {
+                    qDebug() << metaObject()->className() << ": no metadata found in " << path;
+                }
+            }
+
+            // Remove field from top container of the sequence
+            vtkSmartPointer<vtkFieldData> newFieldData = vtkSmartPointer<vtkFieldData>::New();
+            sequence->GetDataSet()->SetFieldData(newFieldData);
+
             medData->setData (sequence );
+        }
     }
 
     this->setProgress (100);
     return true;
+}
+
+bool vtkDataMesh4DReader::extractMetaData(vtkMetaDataSet* dataSet)
+{
+    if (extractMetaDataFromFieldData(dataSet))
+    {
+        return true;
+    }
+    else
+    {
+        return false;
+    }
+}
+
+bool vtkDataMesh4DReader::extractMetaDataFromFieldData(vtkMetaDataSet* dataSet)
+{
+    bool foundMetaData = false;
+    vtkFieldData* fieldData = dataSet->GetDataSet()->GetFieldData();
+    vtkSmartPointer<vtkFieldData> newFieldData = vtkSmartPointer<vtkFieldData>::New();
+
+    for (int i = 0; i < fieldData->GetNumberOfArrays(); i++)
+    {
+        QString arrayName = fieldData->GetArrayName(i);
+
+        if (arrayName.startsWith(vtkDataMesh4DWriter::metaDataFieldPrefix))
+        {
+            foundMetaData = true;
+            vtkStringArray* array = static_cast<vtkStringArray*>(fieldData->GetAbstractArray(i));
+            QString metaDataKey = arrayName.remove(0, vtkDataMesh4DWriter::metaDataFieldPrefix.length());
+
+            for (int j = 0; j < array->GetSize(); j++)
+            {
+                data()->addMetaData(metaDataKey, QString(array->GetValue(j)));
+            }
+        }
+        else
+        {
+            newFieldData->AddArray(fieldData->GetAbstractArray(i));
+        }
+    }
+
+    dataSet->GetDataSet()->SetFieldData(newFieldData);
+
+    return foundMetaData;
 }
 
 bool vtkDataMesh4DReader::read (const QStringList& paths) {

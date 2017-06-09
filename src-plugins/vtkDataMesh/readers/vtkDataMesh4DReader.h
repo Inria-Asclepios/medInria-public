@@ -15,6 +15,7 @@
 
 #include <dtkCore/dtkAbstractDataReader.h>
 #include <vtkDataMeshPluginExport.h>
+#include <vtkMetaDataSet.h>
 
 class vtkDataSetReader;
 class vtkDataManagerReader;
@@ -71,6 +72,8 @@ protected:
 private:
 
     static const char ID[];
+    bool extractMetaData(vtkMetaDataSet *dataSet);
+    bool extractMetaDataFromFieldData(vtkMetaDataSet *dataSet);
 };
 
 dtkAbstractDataReader *createVtkDataMesh4DReader();

@@ -16,6 +16,8 @@
 #include <dtkCore/dtkAbstractDataWriter.h>
 
 #include <vtkDataMeshPluginExport.h>
+#include <vtkMetaDataSet.h>
+
 class vtkDataManagerWriter;
 
 
@@ -42,6 +44,8 @@ class VTKDATAMESHPLUGIN_EXPORT vtkDataMesh4DWriter : public dtkAbstractDataWrite
     Q_OBJECT
 
 public:
+    static const QString metaDataFieldPrefix;
+
              vtkDataMesh4DWriter();
     virtual ~vtkDataMesh4DWriter();
 
@@ -64,7 +68,10 @@ public slots:
     vtkDataManagerWriter* writer;
 
 private:
-        static const char ID[];
+    static const char ID[];
+
+    void addMetaDataAsFieldData(vtkMetaDataSet *dataSet);
+    void clearMetaDataFieldData(vtkMetaDataSet *dataSet);
 };
 
 

@@ -823,10 +823,26 @@ double vtkMetaDataSetSequence::GetMinTime() const
 //----------------------------------------------------------------------------
 double vtkMetaDataSetSequence::GetMaxTime() const
 {
-  double ret = 0;
-  for (unsigned int i=0; i<this->MetaDataSetList.size(); i++)
-    if ( ret < this->MetaDataSetList[i]->GetTime())
-      ret = this->MetaDataSetList[i]->GetTime();
+  double ret = 0.0;
+
+  if (this->MetaDataSetList.size() >= 2)
+  {
+      // Get frame duration
+      double frameTime = this->MetaDataSetList[1]->GetTime() - this->MetaDataSetList[0]->GetTime();
+
+      // Get last dynamic time
+      double lastTime = 0.0;
+      for (unsigned int i=0; i<this->MetaDataSetList.size(); i++)
+      {
+          if ( lastTime < this->MetaDataSetList[i]->GetTime())
+          {
+              lastTime = this->MetaDataSetList[i]->GetTime();
+          }
+      }
+
+      ret = lastTime + frameTime;
+  }
+
   return ret;
   
 }

@@ -13,18 +13,16 @@
 
 #include "medVtkViewItkDataImage4DInteractor.h"
 
-#include <vtkMetaDataSetSequence.h>
-#include <vtkActor.h>
-#include <vtkProperty.h>
+#include <medAbstractImageData.h>
+#include <medAbstractImageView.h>
+#include <medMetaDataKeys.h>
+#include <medViewFactory.h>
+#include <medVtkViewBackend.h>
+
 #include <vtkImageActor.h>
 #include <vtkImageProperty.h>
-
-#include <medAbstractImageView.h>
-#include <medVtkViewBackend.h>
-#include <medViewFactory.h>
-#include <medAbstractImageData.h>
-#include <medDoubleParameter.h>
-
+#include <vtkMetaDataSetSequence.h>
+#include <vtkSmartPointer.h>
 
 class medVtkViewItkDataImage4DInteractorPrivate
 {
@@ -144,14 +142,14 @@ void medVtkViewItkDataImage4DInteractor::setInputData(medAbstractData *data)
               AppendImageSequence<double>(data,d->view,d->sequence, layer))
         {
             double maxTime = 1.0;
-            if (data->hasMetaData("SequenceDuration"))
+            if (data->hasMetaData(medMetaDataKeys::SeriesTime.key()))
             {
-                maxTime = data->metadata("SequenceDuration").toDouble();
+                maxTime = data->metadata(medMetaDataKeys::SeriesTime.key()).toDouble();
             }
 
             double frameRate = (double)d->sequence->GetNumberOfMetaDataSets() / maxTime;
-            d->imageData->addMetaData("SequenceDuration", QString::number(maxTime));
-            d->imageData->addMetaData("SequenceFrameRate", QString::number(frameRate));
+            d->imageData->setMetaData("SequenceDuration", QString::number(maxTime));
+            d->imageData->setMetaData("SequenceFrameRate", QString::number(frameRate));
 
             qDebug() << "SequenceDuration" << maxTime;
             qDebug() << "SequenceFrameRate" << frameRate;
