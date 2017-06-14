@@ -552,16 +552,12 @@ void medVtkView::resetKeyboardInteractionModifier()
     d->rubberBandZoomParameter->setValue(false);
 }
 
-void medVtkView::showHistogram(bool checked)
+void medVtkView::showHistogram()
 {
-    if (!checked)
+    if (d->transFun != NULL )
     {
-        if (d->transFun !=NULL )
-        {
-            delete d->transFun ;
-            d->transFun=NULL;
-        }
-        return;
+        delete d->transFun ;
+        d->transFun=NULL;
     }
 
     d->transFun = new medClutEditorToolBox();

@@ -110,7 +110,8 @@ signals:
     void viewChanged();
     void viewContentChanged();
     void viewRemoved();
-    void requestHistogram(bool); //  hack for histogram
+    void requestHistogram();
+    void requestFourSplit();
     void importFinished();
 
 
