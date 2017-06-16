@@ -71,7 +71,6 @@ public:
 public slots:
     void switchToFourViews();
     void setOrientation(medImageView::Orientation orientation);
-    virtual void showHistogram(){};
 
 signals:
     void orientationChanged();
