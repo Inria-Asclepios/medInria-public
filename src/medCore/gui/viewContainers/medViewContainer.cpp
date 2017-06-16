@@ -45,7 +45,6 @@ public:
 
     bool userOpenable;
     bool selected;
-    bool maximized;
     bool userSplittable;
     medViewContainer::ClosingMode closingMode;
     bool multiLayer;
@@ -147,11 +146,11 @@ medViewContainer::medViewContainer(medViewContainerSplitter *parent): QFrame(par
     d->fourSplitAction->setEnabled(false);
 
     // Histogram actions
-    d->histogramAction = new QAction(tr("Histogram"), d->toolBarMenu);
+    d->histogramAction = new QAction(tr("Open Histogram"), d->toolBarMenu);
+    d->histogramAction->setCheckable(true);
     d->histogramAction->setIcon(QIcon(":/icons/Gaussian_Filter.png"));
-    d->histogramAction->setToolTip("Open an histogram");
+    d->histogramAction->setToolTip("Open a histogram");
     d->histogramAction->setIconVisibleInMenu(true);
-    connect(d->histogramAction, SIGNAL(triggered()), this, SIGNAL(requestHistogram()));
     d->histogramAction->setEnabled(false);
 
     // make it a parameter to get synch between state of the container and the maximized button.
@@ -166,9 +165,8 @@ medViewContainer::medViewContainer(medViewContainerSplitter *parent): QFrame(par
 
     d->maximizedAction->setIcon(maximizedIcon);
     d->maximizedAction->setIconVisibleInMenu(true);
-    d->maximized = false;
-    connect(d->maximizedAction, SIGNAL(triggered()), this, SLOT(toggleMaximized()));
-    d->maximizedAction->setEnabled(false);
+    connect(d->maximizedAction, SIGNAL(toggled(bool)), this, SLOT(toggleMaximized(bool)));
+    d->maximizedAction->setEnabled(true);
 
     d->saveSceneAction = new QAction(tr("Save scene"), d->toolBarMenu);
     d->saveSceneAction->setToolTip(tr("Save container content as is."));
@@ -337,11 +335,8 @@ void medViewContainer::setUserSplittable(bool splittable)
         medAbstractImageView *view = dynamic_cast <medAbstractImageView *> (d->view);
         if (view)
         {
-            d->histogramAction->setEnabled(true);
             d->fourSplitAction->setEnabled(true);
         }
-
-        d->maximizedAction->setEnabled(true);
     }
     else
     {
@@ -349,8 +344,6 @@ void medViewContainer::setUserSplittable(bool splittable)
         d->vSplitAction->setEnabled(false);
         d->presetMenu->setEnabled(false);
         d->fourSplitAction->setEnabled(false);
-        d->maximizedAction->setEnabled(false);
-        d->histogramAction->setEnabled(false);
     }
 }
 
@@ -444,15 +437,16 @@ void medViewContainer::setView(medAbstractView *view)
             connect(layeredView, SIGNAL(layerRemoved(uint)), this, SIGNAL(viewContentChanged()));
         }
 
-        if (medAbstractImageView * ImageView = dynamic_cast<medAbstractImageView*>(view))
+        if (medAbstractImageView * imageView = dynamic_cast<medAbstractImageView*>(view))
         {
-            connect(this,SIGNAL(requestHistogram()),ImageView,SLOT(showHistogram()));
+            connect(d->histogramAction, SIGNAL(toggled(bool)), this, SLOT(toggleHistogram(bool)));
+            connect(d->histogramAction, SIGNAL(toggled(bool)), imageView, SLOT(showHistogram(bool)));
 
+            d->histogramAction->setEnabled(true);
             if (d->userSplittable)
             {
-                d->histogramAction->setEnabled(true);
                 d->fourSplitAction->setEnabled(true);
-                connect(this,SIGNAL(requestFourSplit()),ImageView,SLOT(switchToFourViews()));
+                connect(this,SIGNAL(requestFourSplit()),imageView,SLOT(switchToFourViews()));
             }
         }
 
@@ -528,11 +522,9 @@ void medViewContainer::setUnSelected(bool unSelected)
     this->setSelected(!unSelected);
 }
 
-void medViewContainer::toggleMaximized()
+void medViewContainer::toggleMaximized(bool checked)
 {
-    d->maximized = !d->maximized;
-
-    if(d->maximized)
+    if(checked)
     {
         d->vSplitAction->setEnabled(false);
         d->hSplitAction->setEnabled(false);
@@ -541,23 +533,37 @@ void medViewContainer::toggleMaximized()
         d->closeContainerButton->setEnabled(false);
         d->maximizedAction->setText("Unmaximize");
     }
-    else if(d->userSplittable)
+    else
     {
-        d->vSplitAction->setEnabled(true);
-        d->hSplitAction->setEnabled(true);
-        d->fourSplitAction->setEnabled(true);
-        d->presetMenu->setEnabled(true);
+        if(d->userSplittable)
+        {
+            d->vSplitAction->setEnabled(true);
+            d->hSplitAction->setEnabled(true);
+            d->fourSplitAction->setEnabled(true);
+            d->presetMenu->setEnabled(true);
+        }
         d->closeContainerButton->setEnabled(true);
         d->maximizedAction->setText("Maximize");
     }
-    d->maximizedAction->setChecked(d->maximized);
-    emit maximized(d->maximized);
-    emit maximized(d->uuid, d->maximized);
+    emit maximized(checked);
+    emit maximized(d->uuid, checked);
 }
 
 bool medViewContainer::isMaximized() const
 {
-    return d->maximized;
+    return d->maximizedAction->isChecked();
+}
+
+void medViewContainer::toggleHistogram(bool checked)
+{
+    if (checked)
+    {
+        d->histogramAction->setText("Close Histogram");
+    }
+    else
+    {
+        d->histogramAction->setText("Open Histogram");
+    }
 }
 
 void medViewContainer::removeView()

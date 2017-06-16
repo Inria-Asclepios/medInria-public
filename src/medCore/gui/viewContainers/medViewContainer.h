@@ -85,7 +85,8 @@ public slots:
 
     void setSelected(bool selected);
     void setUnSelected(bool unSelected);
-    void toggleMaximized();
+    void toggleMaximized(bool checked);
+    void toggleHistogram(bool checked);
     void setUserSplittable(bool splittable);
     void setClosingMode(enum ClosingMode mode);
     void setMultiLayered(bool multiLayer);
@@ -110,7 +111,6 @@ signals:
     void viewChanged();
     void viewContentChanged();
     void viewRemoved();
-    void requestHistogram();
     void requestFourSplit();
     void importFinished();
 

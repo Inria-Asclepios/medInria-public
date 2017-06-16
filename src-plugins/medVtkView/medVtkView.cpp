@@ -552,24 +552,25 @@ void medVtkView::resetKeyboardInteractionModifier()
     d->rubberBandZoomParameter->setValue(false);
 }
 
-void medVtkView::showHistogram()
+void medVtkView::showHistogram(bool checked)
 {
-    if (d->transFun != NULL )
+    if (!checked)
     {
-        delete d->transFun ;
-        d->transFun=NULL;
+        if (d->transFun != NULL)
+        {
+            delete d->transFun ;
+            d->transFun = NULL;
+        }
     }
+    else
+    {
+        d->transFun = new medClutEditorToolBox();
+        d->viewWidget->parentWidget()->layout()->addWidget(d->transFun);
 
-    d->transFun = new medClutEditorToolBox();
-    d->viewWidget->parentWidget()->layout()->addWidget(d->transFun);
-    
-    d->transFun->setView(this);
-    //d->transFun->setWorkspace(this->currentWorkspace());
-    //d->transFun->setWindowModality( Qt::WindowModal );
-    //d->transFun->setWindowFlags(Qt::Tool|Qt::WindowStaysOnTopHint);
-    d->transFun->setMaximumHeight(350);
-    //d->transFun->clear(); //update()
-    d->transFun->show();
+        d->transFun->setView(this);
+        d->transFun->setMaximumHeight(350);
+        d->transFun->show();
+    }
 }
 
 //void medVtkView::updateTransferFunction()
