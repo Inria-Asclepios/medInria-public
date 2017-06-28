@@ -78,8 +78,8 @@ manualRegistrationToolBox::manualRegistrationToolBox(QWidget *parent) : medAbstr
     transformationLayout->addWidget(new QLabel("Transformation:"));
     d->transformType = new medComboBox(widget);
     d->transformType->setObjectName("transformType");
-    d->transformType->addItem("Rigid",  TransformName::RIGID);
-    d->transformType->addItem("Affine", TransformName::AFFINE);
+    d->transformType->addItem("Rigid",  manualRegistration::RIGID);
+    d->transformType->addItem("Affine", manualRegistration::AFFINE);
     transformationLayout->addWidget(d->transformType);
 
     // Action buttons

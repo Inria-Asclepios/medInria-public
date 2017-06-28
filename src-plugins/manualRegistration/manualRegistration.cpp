@@ -40,7 +40,7 @@ public:
     QList<manualRegistrationLandmark*> * MovingLandmarks;
 
     TransformType_Generic::Pointer  transform;
-    TransformName::TransformNameEnum transformTypeInt;
+    manualRegistration::TransformName transformTypeInt;
 };
 
 // /////////////////////////////////////////////////////////////////
@@ -84,11 +84,11 @@ template <class PixelType> int manualRegistrationPrivate::update()
 {
     int res = medAbstractProcess::FAILURE;
 
-    if (transformTypeInt == TransformName::RIGID)
+    if (transformTypeInt == manualRegistration::RIGID)
     {
         res = applyRegistration<PixelType, TransformType_Rigid3D>();
     }
-    else if (transformTypeInt == TransformName::AFFINE)
+    else if (transformTypeInt == manualRegistration::AFFINE)
     {
         res = applyRegistration<PixelType, TransformType_Affine>();
 
@@ -206,7 +206,7 @@ itk::Transform<double,3,3>::Pointer manualRegistration::getTransform()
 
 void manualRegistration::setParameter(int data)
 {
-    d->transformTypeInt = static_cast<TransformName::TransformNameEnum>(data);
+    d->transformTypeInt = static_cast<TransformName>(data);
 }
 
 QString manualRegistration::getTitleAndParameters()
@@ -214,11 +214,11 @@ QString manualRegistration::getTitleAndParameters()
     QString titleAndParameters;
     titleAndParameters += "ManualRegistration\n  ";
 
-    if (d->transformTypeInt == TransformName::RIGID)
+    if (d->transformTypeInt == RIGID)
     {
         titleAndParameters += "Rigid method";
     }
-    else if (d->transformTypeInt == TransformName::AFFINE)
+    else if (d->transformTypeInt == AFFINE)
     {
         titleAndParameters += "Affine method";
     }

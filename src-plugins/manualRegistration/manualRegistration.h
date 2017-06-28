@@ -19,12 +19,6 @@
 
 class manualRegistrationPrivate;
 
-class TransformName
-{
-public:
-    enum TransformNameEnum {RIGID,AFFINE};
-};
-
 /**
  * @brief Registration process using diffeomorphic demons from itk.
  *
@@ -37,6 +31,9 @@ class MANUALREGISTRATIONPLUGIN_EXPORT manualRegistration : public itkProcessRegi
     Q_OBJECT
 
 public:
+
+    enum TransformName {RIGID,AFFINE};
+
     /**
      * @brief Constructor.
      *
