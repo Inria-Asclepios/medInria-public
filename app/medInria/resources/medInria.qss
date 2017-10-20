@@ -1003,6 +1003,11 @@ QMenu::indicator:exclusive:checked
     image: url(:/pixmaps/radio-checked.png);
 }
 
+QMenu::item:checked /* appearance of a 'checked' icon */
+{
+    background: $HIGHLIGHT_COLOR;
+}
+
 QMenu::separator
 {
     border: $MENU_SEPARATOR_BORDER;

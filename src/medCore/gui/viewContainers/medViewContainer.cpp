@@ -532,6 +532,7 @@ void medViewContainer::toggleMaximized(bool checked)
         d->presetMenu->setEnabled(false);
         d->closeContainerButton->setEnabled(false);
         d->maximizedAction->setText("Unmaximize");
+        d->maximizedAction->setChecked(true);
     }
     else
     {
@@ -544,6 +545,7 @@ void medViewContainer::toggleMaximized(bool checked)
         }
         d->closeContainerButton->setEnabled(true);
         d->maximizedAction->setText("Maximize");
+        d->maximizedAction->setChecked(false);
     }
     emit maximized(checked);
     emit maximized(d->uuid, checked);
