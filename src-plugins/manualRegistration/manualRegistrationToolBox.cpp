@@ -354,7 +354,7 @@ void manualRegistrationToolBox::computeRegistration()
 
             medRunnableProcess *runProcess = new medRunnableProcess;
             runProcess->setProcess (d->process);
-            connect (runProcess, SIGNAL (success  (QObject*)),  this, SLOT   (getOutputFromProcess ()));
+            connect (runProcess, SIGNAL (success(QObject*)), this, SLOT(getOutputFromProcess()));
             this->addConnectionsAndStartJob(runProcess);
         }
     }
