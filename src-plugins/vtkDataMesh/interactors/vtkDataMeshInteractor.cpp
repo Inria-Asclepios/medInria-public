@@ -11,7 +11,7 @@
 
 =========================================================================*/
 
-#include <vtkDataMeshInteractor.h>
+#include "vtkDataMeshInteractor.h"
 
 #include <QVTKWidget.h>
 
@@ -288,8 +288,10 @@ void vtkDataMeshInteractor::setupParameters()
     d->parameters << this->visibilityParameter();
 
     d->minRange = new medDoubleParameter("Min",this);
+    d->minRange->setDecimals(4);
     d->parameters << d->minRange;
     d->maxRange = new medDoubleParameter("Max",this);
+    d->maxRange->setDecimals(4);
     d->parameters << d->maxRange;
 
     connect(d->minRange,SIGNAL(valueChanged(double)),this,SLOT(updateRange()));
@@ -434,7 +436,7 @@ void vtkDataMeshInteractor::setAttribute(const QString & attributeName)
         mapper3d->SelectColorArray(qPrintable(attributeName));
 
         d->range_button->show();
-        double * range = d->metaDataSet->GetCurrentScalarRange();
+        double * range = d->metaDataSet->GetCurrentScalarRange(attributeName);
         d->minRange->setRange(range[0],range[1]);
         d->maxRange->setRange(range[0],range[1]);
         d->minRange->setValue(range[0]);
@@ -538,7 +540,7 @@ void vtkDataMeshInteractor::setLut(vtkLookupTable * lut)
             values[3] = 1.0;
             lut->SetTableValue(i, values);
         }
-        double * range = d->metaDataSet->GetCurrentScalarRange();
+        double * range = d->metaDataSet->GetCurrentScalarRange(d->attributesParam->value());
         lut->SetRange(range);
     }
 

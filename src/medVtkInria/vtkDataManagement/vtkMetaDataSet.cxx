@@ -575,7 +575,7 @@ void vtkMetaDataSet::ReadCSVData(const char* filename)
             array->SetNumberOfComponents(1);
 
             float* tuple = new float[1];
-            for (unsigned int t=0; t<numberOfLines; t++)
+            for (int t=0; t<numberOfLines; t++)
             {
                 tuple[0]=(csvReader->GetOutput()->GetValue(t,i)).ToFloat();
                 array->InsertNextTupleValue (tuple);
@@ -596,7 +596,7 @@ void vtkMetaDataSet::ReadCSVData(const char* filename)
             array->SetNumberOfComponents(1);
 
             float* tuple = new float[1];
-            for (unsigned int t=0; t<numberOfLines; t++)
+            for (int t=0; t<numberOfLines; t++)
             {
                 tuple[0]=(csvReader->GetOutput()->GetValue(t,i)).ToFloat();
                 array->InsertNextTupleValue (tuple);
@@ -730,6 +730,33 @@ double* vtkMetaDataSet::GetCurrentScalarRange()
   return val;
 }
 
+double* vtkMetaDataSet::GetCurrentScalarRange(const QString & attributeName)
+{
+  double* val = new double[2];
+  val[0] = VTK_DOUBLE_MAX;
+  val[1] = VTK_DOUBLE_MIN;
+
+  if (this->GetDataSet())
+  {
+      if (this->GetDataSet()->GetPointData()->HasArray(qPrintable(attributeName)))
+      {
+          this->GetDataSet()->GetPointData()->GetArray(qPrintable(attributeName))->GetRange(val);
+      }
+      else if (this->GetDataSet()->GetCellData()->HasArray(qPrintable(attributeName)))
+      {
+          this->GetDataSet()->GetCellData()->GetArray(qPrintable(attributeName))->GetRange(val);
+      }
+  }
+
+  // if all values are null values, or if we don't have a current scalar array
+  if ( val[0] == VTK_DOUBLE_MAX || val[1] == VTK_DOUBLE_MIN )
+  {
+      val[0] = 0;
+      val[1] = 1;
+  }
+
+  return val;
+}
 
 //----------------------------------------------------------------------------
 void vtkMetaDataSet::ColorByArray(vtkDataArray* array)

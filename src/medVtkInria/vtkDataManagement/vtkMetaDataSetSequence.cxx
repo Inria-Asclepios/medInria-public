@@ -1027,6 +1027,24 @@ double* vtkMetaDataSetSequence::GetCurrentScalarRange()
   return val;
 }
 
+double* vtkMetaDataSetSequence::GetCurrentScalarRange(const QString & attributeName)
+{
+  static double * val = new double[2];
+  val[0] = VTK_DOUBLE_MAX;
+  val[1] = VTK_DOUBLE_MIN;
+
+  for (unsigned int i=0; i<this->MetaDataSetList.size(); i++)
+  {
+    double* range = this->MetaDataSetList[i]->GetCurrentScalarRange(attributeName);
+
+    if (val[0] > range[0])
+      val[0] = range[0];
+    if (val[1] < range[1])
+      val[1] = range[1];
+  }
+
+  return val;
+}
 
 //----------------------------------------------------------------------------
 void vtkMetaDataSetSequence::ColorByArray(vtkDataArray* array)

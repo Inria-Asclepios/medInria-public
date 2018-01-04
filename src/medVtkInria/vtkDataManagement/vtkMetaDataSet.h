@@ -18,6 +18,8 @@
 #include <string>
 #include <vector>
 
+#include <QString>
+
 #if defined __APPLE__
 #include <unordered_map>
 #else
@@ -365,6 +367,7 @@ class MEDVTKINRIA_EXPORT vtkMetaDataSet: public vtkDataObject
   virtual void SetScalarNullValue(const char * arrayName, double nullValue);
 
   virtual double* GetCurrentScalarRange();
+  virtual double* GetCurrentScalarRange(const QString & attributeName);
   
   
   /**
