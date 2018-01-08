@@ -464,6 +464,7 @@ void vtkMetaSurfaceMesh::ReadMeshFile (const char* filename)
   vtkPoints* points = vtkPoints::New();
   vtkUnsignedShortArray* pointarray = vtkUnsignedShortArray::New();
   vtkUnsignedShortArray* cellarray  = vtkUnsignedShortArray::New();
+  cellarray->SetName ("Zones");
   vtkPolyData* outputmesh = vtkPolyData::New();
   
   unsigned short ref = 0;
@@ -516,8 +517,45 @@ void vtkMetaSurfaceMesh::ReadMeshFile (const char* filename)
   {
     outputmesh->GetPointData()->AddArray (pointarray);
   }
-  
+
+  vtkIdList* idlist = vtkIdList::New();
+  unsigned int ids[3];
+
+  // N.B. in vtkPolyData, the order of cells is capital:
+  // vertices then lines then triangles.
+ 
   file >> str;
+  // For now ignore vertices, find edges first
+  while( (strcmp (str, "Edges") != 0) && (file.good()) )
+  {
+    file >> str;
+  }
+
+  unsigned int NEdges = 0;
+  if(file.good())
+  {
+    // read edges
+    file >> NEdges;
+
+    outputmesh->Allocate (NEdges);
+    cellarray->Allocate(NEdges);
+
+    for (unsigned int i = 0; i < NEdges; ++i)
+    {
+      file >> ids[0] >> ids[1] >> ref;
+      idlist->Initialize();
+      idlist->InsertNextId (ids[0]-1);
+      idlist->InsertNextId (ids[1]-1);
+   
+      outputmesh->InsertNextCell(VTK_LINE, idlist);
+      cellarray->InsertNextValue(ref);
+    }
+  }
+
+  file.close();
+  file.open(filename);
+
+  // There must be triangles in the mesh
   while( (strcmp (str, "Triangles") != 0) && (strcmp (str, "End") != 0) && (strcmp (str, "END") != 0) )
   {
     if (file.fail())
@@ -543,41 +581,43 @@ void vtkMetaSurfaceMesh::ReadMeshFile (const char* filename)
 
     throw vtkErrorCode::PrematureEndOfFileError;
   }
-  
-    
-  unsigned int NTriangles;
-  
+
+  unsigned int NTriangles;  
   file >>  NTriangles;
-  outputmesh->Allocate (NTriangles);
-  cellarray->SetName ("Zones");
-  cellarray->Allocate(NTriangles);
+
+  if (NEdges == 0)
+  {
+    // mesh and array were not initialized
+    outputmesh->Allocate (NTriangles);
+    cellarray->Allocate(NTriangles);
+  }
+
   for(unsigned int i=0; i<NTriangles; i++)
   {
-    unsigned int ids[3];
     file >> ids[0] >> ids[1] >> ids[2] >> ref;
-    vtkIdList* idlist = vtkIdList::New();
+    idlist->Initialize();
     idlist->InsertNextId (ids[0]-1);
     idlist->InsertNextId (ids[1]-1);
     idlist->InsertNextId (ids[2]-1);
     
     outputmesh->InsertNextCell (VTK_TRIANGLE, idlist);
-    idlist->Delete();
     cellarray->InsertNextValue(ref);
   }
+
+  // finished reading cells
+  idlist->Delete();
 
   if (outputmesh->GetCellData())
   {
     outputmesh->GetCellData()->AddArray (cellarray);
   }
-  
+
   this->SetDataSet (outputmesh);
 
   points->Delete();
   pointarray->Delete();
   cellarray->Delete();
   outputmesh->Delete();
-  
-    
 }
 
 // void vtkMetaSurfaceMesh::CreateWirePolyDataOld()

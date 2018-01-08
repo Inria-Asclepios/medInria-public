@@ -354,9 +354,9 @@ void vtkMetaVolumeMesh::ReadMeshFile (const char* filename)
   {
     outputmesh->GetPointData()->AddArray (pointarray);
   }
-  
+
   file >> str;
-  
+
   while( (strcmp (str, "Tetrahedra") != 0) && (strcmp (str, "End") != 0) && (strcmp (str, "END") != 0) )
   {
     if (file.fail())
@@ -390,20 +390,80 @@ void vtkMetaVolumeMesh::ReadMeshFile (const char* filename)
   outputmesh->Allocate (NTetrahedra);
   cellarray->SetName ("Zones");
   cellarray->Allocate(NTetrahedra);
+  unsigned int ids[4];
+  vtkIdList* idlist = vtkIdList::New();
+
   for(unsigned int i=0; i<NTetrahedra; i++)
   {
-    unsigned int ids[4];
     file >> ids[0] >> ids[1] >> ids[2] >> ids[3] >> ref;
-    vtkIdList* idlist = vtkIdList::New();
+    idlist->Initialize();
     idlist->InsertNextId (ids[0]-1);
     idlist->InsertNextId (ids[1]-1);
     idlist->InsertNextId (ids[2]-1);
     idlist->InsertNextId (ids[3]-1);
     
     outputmesh->InsertNextCell (VTK_TETRA, idlist);
-    idlist->Delete();
     cellarray->InsertNextValue(ref);
   }
+
+  // reset the stream: the order of
+  // elements in the mesh file can be 'disordered':
+  // for example triangles before tetrahedra.
+  file.close();
+  file.open(filename);
+
+  // find triangles
+  while( (strcmp (str, "Triangles") != 0) && (file.good()) )
+  {
+    file >> str;
+  }
+
+  if(file.good())
+  {
+    // read triangles
+    unsigned int NTriangles;
+    file >> NTriangles;
+    for (unsigned int i = 0; i < NTriangles; ++i)
+    {
+      file >> ids[0] >> ids[1] >> ids[2] >> ref;
+      idlist->Initialize();
+      idlist->InsertNextId (ids[0]-1);
+      idlist->InsertNextId (ids[1]-1);
+      idlist->InsertNextId (ids[2]-1);
+   
+      outputmesh->InsertNextCell(VTK_TRIANGLE, idlist);
+      cellarray->InsertNextValue(ref);
+    }
+  }
+
+  file.close();
+  file.open(filename);
+
+  // find edges
+  while( (strcmp (str, "Edges") != 0) && (file.good()) )
+  {
+    file >> str;
+  }
+
+  if(file.good())
+  {
+    // read edges
+    unsigned int NEdges;
+    file >> NEdges;
+    for (unsigned int i = 0; i < NEdges; ++i)
+    {
+      file >> ids[0] >> ids[1] >> ref;
+      idlist->Initialize();
+      idlist->InsertNextId (ids[0]-1);
+      idlist->InsertNextId (ids[1]-1);
+   
+      outputmesh->InsertNextCell(VTK_LINE, idlist);
+      cellarray->InsertNextValue(ref);
+    }
+  }
+
+  // finished reading cells
+  idlist->Delete();
 
   if (outputmesh->GetCellData())
   {
@@ -416,11 +476,7 @@ void vtkMetaVolumeMesh::ReadMeshFile (const char* filename)
   pointarray->Delete();
   cellarray->Delete();
   outputmesh->Delete();
-
-  
-    
 }
-
 
 
 void vtkMetaVolumeMesh::ReadGMeshFile (const char* filename)
