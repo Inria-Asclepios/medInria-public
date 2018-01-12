@@ -439,8 +439,12 @@ void vtkDataMeshInteractor::setAttribute(const QString & attributeName)
         double * range = d->metaDataSet->GetCurrentScalarRange(attributeName);
         d->minRange->setRange(range[0],range[1]);
         d->maxRange->setRange(range[0],range[1]);
+        d->minRange->getSpinBox()->setRange(range[0],range[1]);
+        d->maxRange->getSpinBox()->setRange(range[0],range[1]);
         d->minRange->setValue(range[0]);
         d->maxRange->setValue(range[1]);
+        d->minRange->getSpinBox()->setValue(range[0]);
+        d->maxRange->getSpinBox()->setValue(range[1]);
         d->view2d->SetColorRange(range);
         d->view3d->SetColorRange(range);
         
