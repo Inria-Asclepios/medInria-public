@@ -108,15 +108,10 @@ int DiffeomorphicDemonsProcessPrivate::update()
     typedef itk::Image< float, 3 > RegImageType;
     typedef double TransformScalarType;
 
-    // Check that the inputs are the same size/origin/spacing
-    if ( (proc->fixedImage()->GetLargestPossibleRegion().GetSize()
-          != proc->movingImages()[0]->GetLargestPossibleRegion().GetSize())
-         || (proc->fixedImage()->GetOrigin()
-             != proc->movingImages()[0]->GetOrigin())
-         || (proc->fixedImage()->GetSpacing()
-             != proc->movingImages()[0]->GetSpacing()) )
+    int testResult = proc->testInputs();
+    if (testResult != medAbstractProcess::SUCCESS)
     {
-        return medAbstractProcess::MISMATCHED_DATA_SIZES_ORIGIN_SPACING;
+        return testResult;
     }
 
     typedef rpi::DiffeomorphicDemons< RegImageType, RegImageType,
@@ -213,6 +208,29 @@ int DiffeomorphicDemonsProcessPrivate::update()
 
     if (proc->output())
         proc->output()->setData (result);
+
+    return medAbstractProcess::SUCCESS;
+}
+
+medAbstractProcess::DataError DiffeomorphicDemonsProcess::testInputs()
+{
+    if (d->proc->fixedImage()->GetLargestPossibleRegion().GetSize()
+            != d->proc->movingImages()[0]->GetLargestPossibleRegion().GetSize())
+    {
+        return medAbstractProcess::MISMATCHED_DATA_SIZE;
+    }
+
+    if (d->proc->fixedImage()->GetOrigin()
+            != d->proc->movingImages()[0]->GetOrigin())
+    {
+        return medAbstractProcess::MISMATCHED_DATA_ORIGIN;
+    }
+
+    if (d->proc->fixedImage()->GetSpacing()
+            != d->proc->movingImages()[0]->GetSpacing())
+    {
+        return medAbstractProcess::MISMATCHED_DATA_SPACING;
+    }
 
     return medAbstractProcess::SUCCESS;
 }
