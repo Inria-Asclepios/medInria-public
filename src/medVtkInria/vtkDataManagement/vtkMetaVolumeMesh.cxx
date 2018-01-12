@@ -32,6 +32,7 @@
 #include <vtkIdList.h>
 #include <vtkUnsignedShortArray.h>
 
+#include <vtkSmartPointer.h>
 #include <vtkErrorCode.h>
 
 
@@ -284,14 +285,9 @@ unsigned int vtkMetaVolumeMesh::CanReadFile (const char* filename)
   return 0;
 }
 
-
-
-
 void vtkMetaVolumeMesh::ReadMeshFile (const char* filename)
 {
-
   std::ifstream file (filename );
-  char str[256];
 
   if(file.fail())
   {
@@ -299,172 +295,108 @@ void vtkMetaVolumeMesh::ReadMeshFile (const char* filename)
     throw vtkErrorCode::FileNotFoundError;
   }
 
-
   vtkPoints* points = vtkPoints::New();
   vtkUnsignedShortArray* pointarray = vtkUnsignedShortArray::New();
   vtkUnsignedShortArray* cellarray  = vtkUnsignedShortArray::New();
+  pointarray->SetName("Point array");
+  cellarray->SetName ("Zones");
+
   vtkUnstructuredGrid* outputmesh = vtkUnstructuredGrid::New();
   
   unsigned short ref = 0;
-  
-  file >> str;
-  while((strcmp (str, "Vertices") != 0) && (strcmp (str, "End") != 0) && (strcmp (str, "END") != 0) )
-  {
-    if (file.fail())
-    {
-      points->Delete();
-      pointarray->Delete();
-      cellarray->Delete();
-      outputmesh->Delete();
-      vtkErrorMacro("No point in file\n");
-      throw vtkErrorCode::CannotOpenFileError;
-    }
-    file >> str;
-  }
 
-  if((strcmp (str, "End") == 0) || (strcmp (str, "END") == 0))
+  // Find vertices in file
+  if (this->PlaceStreamCursor(file, "Vertices"))
   {
-    vtkErrorMacro(<<"Unexpected end of file"<<endl);
+    // read all vertices
+    unsigned int NVertices = 0;
+    file >>  NVertices;
+
+    points->SetNumberOfPoints (NVertices);
+    pointarray->Allocate(NVertices);
+
+    // read vertex position 
+    for(unsigned int i = 0; i < NVertices; i++)
+    {
+      double pos[3];
+      file >> pos[0] >> pos[1] >> pos[2] >> ref;
+      points->SetPoint(i, pos[0], pos[1], pos[2]);
+      pointarray->InsertNextValue(ref);
+    }
+    this->ClearInputStream(file);
+  }
+  else
+  {
+    // no vertices found, abort
     points->Delete();
     pointarray->Delete();
     cellarray->Delete();
     outputmesh->Delete();
-    throw vtkErrorCode::PrematureEndOfFileError;
-  }
-  
-  unsigned int NVertices = 0;
-  file >>  NVertices;
-  points->SetNumberOfPoints (NVertices);
 
-  pointarray->SetName ("Point array");
-  pointarray->Allocate(NVertices);
-  
-  // read vertex position 
-  for(unsigned int i=0; i<NVertices; i++)
-  {
-    double pos[3];
-    file >> pos[0] >> pos[1] >> pos[2] >> ref;
-    points->SetPoint (i, pos[0], pos[1], pos[2]);
-    pointarray->InsertNextValue(ref);
+    vtkErrorMacro("No point in file\n");
+    throw vtkErrorCode::CannotOpenFileError;
   }
 
   outputmesh->SetPoints (points);
+  points->Delete();
 
   if (outputmesh->GetPointData())
   {
     outputmesh->GetPointData()->AddArray (pointarray);
   }
+  pointarray->Delete();
 
-  file >> str;
+  // vtk automatically reallocates memory
+  outputmesh->Allocate(1000);
+  cellarray->Allocate(1000);
 
-  while( (strcmp (str, "Tetrahedra") != 0) && (strcmp (str, "End") != 0) && (strcmp (str, "END") != 0) )
+  // in medit format, "Corners" and "Required vertices" are
+  // the vertices
+  if (this->PlaceStreamCursor(file, "Corners"))
   {
-    if (file.fail())
-    {
-      points->Delete();
-      pointarray->Delete();
-      cellarray->Delete();
-      outputmesh->Delete();
-      vtkErrorMacro("No tetrahedron in file\n");
-      throw vtkErrorCode::CannotOpenFileError;
-    }
-
-    file >> str;
+    // read vertices
+    this->ReadMeditCells(file, outputmesh, 1, cellarray);
   }
+  this->ClearInputStream(file);
 
-  if((strcmp (str, "End") == 0) || (strcmp (str, "END") == 0) )
+  if (this->PlaceStreamCursor(file, "RequiredVertices"))
   {
-    vtkErrorMacro(<<"Unexpected end of file"<<endl);
-    points->Delete();
-    pointarray->Delete();
+    // read another kind of vertices
+    this->ReadMeditCells(file, outputmesh, 1, cellarray);
+  }
+  this->ClearInputStream(file);
+
+  // find all edges
+  if (this->PlaceStreamCursor(file, "Edges"))
+  {
+    // read all edges
+    this->ReadMeditCells(file, outputmesh, 2, cellarray);
+  }
+  this->ClearInputStream(file);
+
+  // read all triangles
+  if (this->PlaceStreamCursor(file, "Triangles"))
+  {
+    this->ReadMeditCells(file, outputmesh, 3, cellarray);
+  }
+  this->ClearInputStream(file);
+
+  // find all tetra
+  if (this->PlaceStreamCursor(file, "Tetrahedra"))
+  {
+    this->ReadMeditCells(file, outputmesh, 4, cellarray);
+  }
+  else
+  {
+    // no tetra found, the mesh file is incomplete
     cellarray->Delete();
     outputmesh->Delete();
-    
-    throw vtkErrorCode::PrematureEndOfFileError;
-  }
-  
-    
-  unsigned int NTetrahedra;
-  
-  file >>  NTetrahedra;
-  outputmesh->Allocate (NTetrahedra);
-  cellarray->SetName ("Zones");
-  cellarray->Allocate(NTetrahedra);
-  unsigned int ids[4];
-  vtkIdList* idlist = vtkIdList::New();
 
-  for(unsigned int i=0; i<NTetrahedra; i++)
-  {
-    file >> ids[0] >> ids[1] >> ids[2] >> ids[3] >> ref;
-    idlist->Initialize();
-    idlist->InsertNextId (ids[0]-1);
-    idlist->InsertNextId (ids[1]-1);
-    idlist->InsertNextId (ids[2]-1);
-    idlist->InsertNextId (ids[3]-1);
-    
-    outputmesh->InsertNextCell (VTK_TETRA, idlist);
-    cellarray->InsertNextValue(ref);
-  }
-
-  // reset the stream: the order of
-  // elements in the mesh file can be 'disordered':
-  // for example triangles before tetrahedra.
-  file.close();
-  file.open(filename);
-
-  // find triangles
-  while( (strcmp (str, "Triangles") != 0) && (file.good()) )
-  {
-    file >> str;
-  }
-
-  if(file.good())
-  {
-    // read triangles
-    unsigned int NTriangles;
-    file >> NTriangles;
-    for (unsigned int i = 0; i < NTriangles; ++i)
-    {
-      file >> ids[0] >> ids[1] >> ids[2] >> ref;
-      idlist->Initialize();
-      idlist->InsertNextId (ids[0]-1);
-      idlist->InsertNextId (ids[1]-1);
-      idlist->InsertNextId (ids[2]-1);
-   
-      outputmesh->InsertNextCell(VTK_TRIANGLE, idlist);
-      cellarray->InsertNextValue(ref);
-    }
-  }
-
-  file.close();
-  file.open(filename);
-
-  // find edges
-  while( (strcmp (str, "Edges") != 0) && (file.good()) )
-  {
-    file >> str;
-  }
-
-  if(file.good())
-  {
-    // read edges
-    unsigned int NEdges;
-    file >> NEdges;
-    for (unsigned int i = 0; i < NEdges; ++i)
-    {
-      file >> ids[0] >> ids[1] >> ref;
-      idlist->Initialize();
-      idlist->InsertNextId (ids[0]-1);
-      idlist->InsertNextId (ids[1]-1);
-   
-      outputmesh->InsertNextCell(VTK_LINE, idlist);
-      cellarray->InsertNextValue(ref);
-    }
+    vtkErrorMacro("No triangle in file\n");
+    throw vtkErrorCode::CannotOpenFileError;
   }
 
   // finished reading cells
-  idlist->Delete();
-
   if (outputmesh->GetCellData())
   {
     outputmesh->GetCellData()->AddArray (cellarray);
@@ -472,8 +404,6 @@ void vtkMetaVolumeMesh::ReadMeshFile (const char* filename)
   
   this->SetDataSet (outputmesh);
 
-  points->Delete();
-  pointarray->Delete();
   cellarray->Delete();
   outputmesh->Delete();
 }
@@ -585,5 +515,57 @@ void vtkMetaVolumeMesh::ReadGMeshFile (const char* filename)
   pointarray->Delete();
   cellarray->Delete();
   outputmesh->Delete();
+}
+
+void vtkMetaVolumeMesh::ReadMeditCells(std::ifstream& file, vtkUnstructuredGrid* mesh, int nbCellPoints, vtkDataArray* attrArray)
+{
+  int cellType = -1;
+  switch (nbCellPoints)
+  {
+    case 4:
+      cellType = VTK_TETRA;
+      break;
+    case 3:
+      cellType = VTK_TRIANGLE;
+      break;
+    case 2:
+      cellType = VTK_LINE;
+      break;
+    case 1:
+      cellType = VTK_VERTEX;
+      break;
+    default:
+        vtkErrorMacro("Invalid cell type for medit format");
+        return;
+  }
+
+  // read stream
+  int i, nbCells;
+  int ref;
+  vtkSmartPointer<vtkIdList> idlist = vtkSmartPointer<vtkIdList>::New();
+  vtkIdType id;
+  
+  file >> nbCells;
+  for (i = 0;
+       i < nbCells && file.good();
+       ++i)
+  {
+    idlist->Initialize();
+    for (int j = 0; j < nbCellPoints; ++j)
+    {
+      file >> id;
+      idlist->InsertNextId(id-1);
+    }
+    file >> ref;
+    
+    mesh->InsertNextCell(cellType, idlist);
+    attrArray->InsertNextTuple1(ref);
+  }
+    
+  if (i != nbCells)
+  {
+    vtkErrorMacro("Unexpected end of file.");
+    throw vtkErrorCode::PrematureEndOfFileError;
+  }
 }
 

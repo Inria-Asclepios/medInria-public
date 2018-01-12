@@ -406,7 +406,17 @@ class MEDVTKINRIA_EXPORT vtkMetaDataSet: public vtkDataObject
   */
   virtual void ReadDataInternal(const char* filename);
 
-  
+  /**
+     Internal use : resets parameter input file stream.
+     Used by reading methods.
+  */
+  virtual void ClearInputStream(std::ifstream& file);
+
+  /**
+     Internal use : find token in input stream
+  */
+  virtual bool PlaceStreamCursor(std::ifstream& file, const char* token);
+
   unsigned int Type;
 
   int PickedPointId;

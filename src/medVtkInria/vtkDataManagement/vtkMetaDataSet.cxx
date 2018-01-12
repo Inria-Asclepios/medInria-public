@@ -912,6 +912,28 @@ vtkDataArray* vtkMetaDataSet::GetArray (const char* name)
   return ret;
 }
 
+void vtkMetaDataSet::ClearInputStream(std::ifstream& file)
+{
+  file.clear();
+  file.seekg(0, file.beg);
+}
+
+bool vtkMetaDataSet::PlaceStreamCursor(std::ifstream& file, const char* token)
+{
+  char buf[256];
+  file >> buf;
+
+  while ((strcmp(buf, token) != 0) && file.good())
+  {
+    file >> buf;
+  }
+
+  if (file.good())
+  {
+    return true;
+  }
+  return false;
+}
 
 //----------------------------------------------------------------------------
 void vtkMetaDataSet::PrintSelf(ostream& os, vtkIndent indent)
