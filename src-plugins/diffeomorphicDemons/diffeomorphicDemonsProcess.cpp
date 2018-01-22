@@ -14,6 +14,7 @@
 #include <DiffeomorphicDemons/rpiDiffeomorphicDemons.hxx>
 #include <dtkCore/dtkAbstractProcessFactory.h>
 #include <diffeomorphicDemonsProcess.h>
+#include <itkChangeInformationImageFilter.h>
 #include <rpiCommonTools.hxx>
 
 // /////////////////////////////////////////////////////////////////
@@ -114,15 +115,23 @@ int DiffeomorphicDemonsProcessPrivate::update()
         return testResult;
     }
 
-    typedef rpi::DiffeomorphicDemons< RegImageType, RegImageType,
-                    TransformScalarType > RegistrationType;
+    FixedImageType* inputFixed  = (FixedImageType*)  proc->fixedImage().GetPointer();
+    FixedImageType* inputMoving = (MovingImageType*) proc->movingImages()[0].GetPointer();
+
+    // The output volume is going to located at the origin/direction of the fixed input. Needed for rpi::DiffeomorphicDemons
+    typedef itk::ChangeInformationImageFilter< FixedImageType > FilterType;
+    typename FilterType::Pointer filter = FilterType::New();
+    filter->SetOutputOrigin(inputFixed->GetOrigin());
+    filter->ChangeOriginOn();
+    filter->SetOutputDirection(inputFixed->GetDirection());
+    filter->ChangeDirectionOn();
+    filter->SetInput(inputMoving);
+
+    typedef rpi::DiffeomorphicDemons< RegImageType, RegImageType, TransformScalarType > RegistrationType;
     RegistrationType * registration = new RegistrationType;
-
     registrationMethod = registration;
-
-    registration->SetFixedImage((FixedImageType*)proc->fixedImage().GetPointer());
-    registration->SetMovingImage((MovingImageType*)proc->movingImages()[0].GetPointer());
-
+    registration->SetFixedImage(inputFixed);
+    registration->SetMovingImage(filter->GetOutput());
     registration->SetNumberOfIterations(iterations);
     registration->SetMaximumUpdateStepLength(maximumUpdateStepLength);
     registration->SetUpdateFieldStandardDeviation(updateFieldStandardDeviation);
@@ -186,7 +195,7 @@ int DiffeomorphicDemonsProcessPrivate::update()
     typedef itk::ResampleImageFilter< MovingImageType,MovingImageType,TransformScalarType >    ResampleFilterType;
     typename ResampleFilterType::Pointer resampler = ResampleFilterType::New();
     resampler->SetTransform(registration->GetTransformation());
-    resampler->SetInput((const MovingImageType*)proc->movingImages()[0].GetPointer());
+    resampler->SetInput((const MovingImageType*) inputMoving);
     resampler->SetSize( proc->fixedImage()->GetLargestPossibleRegion().GetSize() );
     resampler->SetOutputOrigin( proc->fixedImage()->GetOrigin() );
     resampler->SetOutputSpacing( proc->fixedImage()->GetSpacing() );
@@ -218,12 +227,6 @@ medAbstractProcess::DataError DiffeomorphicDemonsProcess::testInputs()
             != d->proc->movingImages()[0]->GetLargestPossibleRegion().GetSize())
     {
         return medAbstractProcess::MISMATCHED_DATA_SIZE;
-    }
-
-    if (d->proc->fixedImage()->GetOrigin()
-            != d->proc->movingImages()[0]->GetOrigin())
-    {
-        return medAbstractProcess::MISMATCHED_DATA_ORIGIN;
     }
 
     if (d->proc->fixedImage()->GetSpacing()
