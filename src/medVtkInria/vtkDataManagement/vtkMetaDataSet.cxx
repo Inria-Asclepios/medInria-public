@@ -943,11 +943,7 @@ bool vtkMetaDataSet::IsMeditFormat(const char* filename)
       return false;
     }
     // Find medit header
-    if (vtkMetaDataSet::PlaceStreamCursor(file, "MeshVersionFormatted"))
-    {
-      return true;
-    }
-    return false;
+    return PlaceStreamCursor(file, "MeshVersionFormatted");
 }
 
 //----------------------------------------------------------------------------

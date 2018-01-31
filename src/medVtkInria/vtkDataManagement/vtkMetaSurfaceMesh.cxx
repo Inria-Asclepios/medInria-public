@@ -706,12 +706,8 @@ void vtkMetaSurfaceMesh::ReadMeditCells(std::ifstream& file, vtkPolyData* mesh, 
       cells = mesh->GetPolys();
       break;
     default:
-      cells = NULL;
-  }
-
-  if (!cells)
-  {
-    vtkErrorMacro("Invalid cell type for medit format.");
+      vtkErrorMacro("Invalid cell type for medit format.");
+      return;
   }
 
   // read stream

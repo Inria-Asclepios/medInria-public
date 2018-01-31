@@ -231,10 +231,6 @@ unsigned int vtkMetaVolumeMesh::CanReadFile (const char* filename)
       {
         return vtkMetaVolumeMesh::FILE_IS_MESH;
       }
-      else
-      {
-        return 0;
-      }
     }
     return 0;
   }
@@ -529,8 +525,8 @@ void vtkMetaVolumeMesh::ReadMeditCells(std::ifstream& file, vtkUnstructuredGrid*
       cellType = VTK_VERTEX;
       break;
     default:
-        vtkErrorMacro("Invalid cell type for medit format");
-        return;
+      vtkErrorMacro("Invalid cell type for medit format");
+      return;
   }
 
   // read stream
