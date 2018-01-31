@@ -391,7 +391,15 @@ unsigned int vtkMetaSurfaceMesh::CanReadFile (const char* filename)
 {
 
   if (vtkMetaSurfaceMesh::IsMeshExtension(vtksys::SystemTools::GetFilenameLastExtension(filename).c_str()))
-    return vtkMetaSurfaceMesh::FILE_IS_MESH;
+  {
+    // medit .mesh format must have 'MeshVersionFormatted'
+    // as a header
+    if (vtkMetaDataSet::IsMeditFormat(filename))
+    {
+      return vtkMetaSurfaceMesh::FILE_IS_MESH;
+    }
+    return 0;
+  }
 
   if (vtkMetaSurfaceMesh::IsOBJExtension(vtksys::SystemTools::GetFilenameLastExtension(filename).c_str()))
   {
@@ -470,7 +478,7 @@ void vtkMetaSurfaceMesh::ReadMeshFile (const char* filename)
   unsigned short ref = 0;
 
   // Find vertices in file
-  if (this->PlaceStreamCursor(file, "Vertices"))
+  if (vtkMetaDataSet::PlaceStreamCursor(file, "Vertices"))
   {
     // read all vertices
     unsigned int NVertices = 0;
@@ -487,7 +495,7 @@ void vtkMetaSurfaceMesh::ReadMeshFile (const char* filename)
       points->SetPoint(i, pos[0], pos[1], pos[2]);
       pointarray->InsertNextValue(ref);
     }
-    this->ClearInputStream(file);
+    vtkMetaDataSet::ClearInputStream(file);
   }
   else
   {
@@ -519,30 +527,30 @@ void vtkMetaSurfaceMesh::ReadMeshFile (const char* filename)
 
   // in medit format, "Corners" and "Required vertices" are
   // the vertices
-  if (this->PlaceStreamCursor(file, "Corners"))
+  if (vtkMetaDataSet::PlaceStreamCursor(file, "Corners"))
   {
     // read vertices
     this->ReadMeditCells(file, outputmesh, 1, cellarray);
   }
-  this->ClearInputStream(file);
+  vtkMetaDataSet::ClearInputStream(file);
 
-  if (this->PlaceStreamCursor(file, "RequiredVertices"))
+  if (vtkMetaDataSet::PlaceStreamCursor(file, "RequiredVertices"))
   {
     // read another kind of vertices
     this->ReadMeditCells(file, outputmesh, 1, cellarray);
   }
-  this->ClearInputStream(file);
+  vtkMetaDataSet::ClearInputStream(file);
 
   // find all edges
-  if (this->PlaceStreamCursor(file, "Edges"))
+  if (vtkMetaDataSet::PlaceStreamCursor(file, "Edges"))
   {
     // read all edges
     this->ReadMeditCells(file, outputmesh, 2, cellarray);
   }
-  this->ClearInputStream(file);
+  vtkMetaDataSet::ClearInputStream(file);
 
   // read all triangles
-  if (this->PlaceStreamCursor(file, "Triangles"))
+  if (vtkMetaDataSet::PlaceStreamCursor(file, "Triangles"))
   {
     this->ReadMeditCells(file, outputmesh, 3, cellarray);
   }

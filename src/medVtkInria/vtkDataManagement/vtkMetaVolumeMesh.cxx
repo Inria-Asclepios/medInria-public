@@ -221,29 +221,23 @@ unsigned int vtkMetaVolumeMesh::CanReadFile (const char* filename)
 
   if (vtkMetaVolumeMesh::IsMeshExtension(vtksys::SystemTools::GetFilenameLastExtension(filename).c_str()))
   {
-    // check if there is any tetrahedron...
-    
-    std::ifstream file (filename );
-    char str[256];
-    file >> str;
-    
-    if(file.fail())
+    // medit .mesh format must have 'MeshVersionFormatted'
+    // as a header
+    if (vtkMetaDataSet::IsMeditFormat(filename))
     {
-      return 0;
+      // Additionally, check if there are any tetrahedra
+      std::ifstream file(filename);
+      if (vtkMetaDataSet::PlaceStreamCursor(file, "Tetrahedra"))
+      {
+        return vtkMetaVolumeMesh::FILE_IS_MESH;
+      }
+      else
+      {
+        return 0;
+      }
     }
-    
-  
-    while( (!file.fail()) && (strcmp (str, "Tetrahedra") != 0) && (strcmp (str, "End") != 0) && (strcmp (str, "END") != 0) )
-    {
-      file >> str;
-    }
-    
-    if (strcmp (str, "Tetrahedra") == 0)
-      return vtkMetaVolumeMesh::FILE_IS_MESH;
-    else
-      return 0;
+    return 0;
   }
-
 
   if (vtkMetaVolumeMesh::IsGMeshExtension(vtksys::SystemTools::GetFilenameLastExtension(filename).c_str()))
   {
@@ -306,7 +300,7 @@ void vtkMetaVolumeMesh::ReadMeshFile (const char* filename)
   unsigned short ref = 0;
 
   // Find vertices in file
-  if (this->PlaceStreamCursor(file, "Vertices"))
+  if (vtkMetaDataSet::PlaceStreamCursor(file, "Vertices"))
   {
     // read all vertices
     unsigned int NVertices = 0;
@@ -323,7 +317,7 @@ void vtkMetaVolumeMesh::ReadMeshFile (const char* filename)
       points->SetPoint(i, pos[0], pos[1], pos[2]);
       pointarray->InsertNextValue(ref);
     }
-    this->ClearInputStream(file);
+    vtkMetaDataSet::ClearInputStream(file);
   }
   else
   {
@@ -352,37 +346,37 @@ void vtkMetaVolumeMesh::ReadMeshFile (const char* filename)
 
   // in medit format, "Corners" and "Required vertices" are
   // the vertices
-  if (this->PlaceStreamCursor(file, "Corners"))
+  if (vtkMetaDataSet::PlaceStreamCursor(file, "Corners"))
   {
     // read vertices
     this->ReadMeditCells(file, outputmesh, 1, cellarray);
   }
-  this->ClearInputStream(file);
+  vtkMetaDataSet::ClearInputStream(file);
 
-  if (this->PlaceStreamCursor(file, "RequiredVertices"))
+  if (vtkMetaDataSet::PlaceStreamCursor(file, "RequiredVertices"))
   {
     // read another kind of vertices
     this->ReadMeditCells(file, outputmesh, 1, cellarray);
   }
-  this->ClearInputStream(file);
+  vtkMetaDataSet::ClearInputStream(file);
 
   // find all edges
-  if (this->PlaceStreamCursor(file, "Edges"))
+  if (vtkMetaDataSet::PlaceStreamCursor(file, "Edges"))
   {
     // read all edges
     this->ReadMeditCells(file, outputmesh, 2, cellarray);
   }
-  this->ClearInputStream(file);
+  vtkMetaDataSet::ClearInputStream(file);
 
   // read all triangles
-  if (this->PlaceStreamCursor(file, "Triangles"))
+  if (vtkMetaDataSet::PlaceStreamCursor(file, "Triangles"))
   {
     this->ReadMeditCells(file, outputmesh, 3, cellarray);
   }
-  this->ClearInputStream(file);
+  vtkMetaDataSet::ClearInputStream(file);
 
   // find all tetra
-  if (this->PlaceStreamCursor(file, "Tetrahedra"))
+  if (vtkMetaDataSet::PlaceStreamCursor(file, "Tetrahedra"))
   {
     this->ReadMeditCells(file, outputmesh, 4, cellarray);
   }

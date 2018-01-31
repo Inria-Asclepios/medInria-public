@@ -935,6 +935,21 @@ bool vtkMetaDataSet::PlaceStreamCursor(std::ifstream& file, const char* token)
   return false;
 }
 
+bool vtkMetaDataSet::IsMeditFormat(const char* filename)
+{
+    std::ifstream file(filename);
+    if(file.fail())
+    {
+      return false;
+    }
+    // Find medit header
+    if (vtkMetaDataSet::PlaceStreamCursor(file, "MeshVersionFormatted"))
+    {
+      return true;
+    }
+    return false;
+}
+
 //----------------------------------------------------------------------------
 void vtkMetaDataSet::PrintSelf(ostream& os, vtkIndent indent)
 {
