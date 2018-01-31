@@ -546,12 +546,19 @@ void vtkMetaVolumeMesh::ReadMeditCells(std::ifstream& file, vtkUnstructuredGrid*
       file >> id;
       idlist->InsertNextId(id-1);
     }
-    file >> ref;
+    if (cellType == VTK_VERTEX)
+    {
+      ref = 0;
+    }
+    else
+    {
+      file >> ref;
+    }
     
     mesh->InsertNextCell(cellType, idlist);
     attrArray->InsertNextTuple1(ref);
   }
-    
+
   if (i != nbCells)
   {
     vtkErrorMacro("Unexpected end of file.");

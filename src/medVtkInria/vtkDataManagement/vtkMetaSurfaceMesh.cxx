@@ -727,7 +727,14 @@ void vtkMetaSurfaceMesh::ReadMeditCells(std::ifstream& file, vtkPolyData* mesh, 
       file >> id;
       idlist->InsertNextId(id-1);
     }
-    file >> ref;
+    if (nbCellPoints == 1)
+    {
+      ref = 0;
+    }
+    else
+    {
+      file >> ref;
+    }
 
     cells->InsertNextCell(idlist);
     attrArray->InsertNextTuple1(ref);
