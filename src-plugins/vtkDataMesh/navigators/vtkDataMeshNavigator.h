@@ -39,6 +39,8 @@ public slots:
     void updateWidgets();
 
     void enableDepthPeeling(bool);
+    void setBackgroundColor(const QString &color);
+    void setBackgroundColor(QColor color);
 
 protected:
     virtual QWidget * buildToolBoxWidget();
