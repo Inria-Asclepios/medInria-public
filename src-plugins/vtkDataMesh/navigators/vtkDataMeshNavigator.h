@@ -40,6 +40,8 @@ public slots:
 
     void enableDepthPeeling(bool);
     void setBackgroundColor(const QString &color);
+
+protected slots:
     void setBackgroundColor(QColor color);
 
 protected:
