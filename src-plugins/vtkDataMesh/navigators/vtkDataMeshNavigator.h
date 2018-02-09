@@ -48,6 +48,8 @@ protected:
     virtual QWidget * buildToolBoxWidget();
     virtual QWidget * buildToolBarWidget();
 
+    QStringList createColorList();
+
 private:
     vtkDataMeshNavigatorPrivate *d;
 

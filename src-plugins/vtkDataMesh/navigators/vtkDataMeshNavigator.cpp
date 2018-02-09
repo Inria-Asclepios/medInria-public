@@ -70,27 +70,7 @@ vtkDataMeshNavigator::vtkDataMeshNavigator(medAbstractView* parent):
     d->parameters.append(d->depthPeelingParameter);
 
     // Background
-    QStringList colors;
-    colors << "#FFFFFF";
-    colors << "#808080";
-    colors << "#800000";
-    colors << "#804040";
-    colors << "#FF8080";
-    colors << "#FF0000";
-    colors << "#FFFF80";
-    colors << "#FFFF00";
-    colors << "#FF8040";
-    colors << "#FF8000";
-    colors << "#80FF80";
-    colors << "#80FF00";
-    colors << "#00FF00";
-    colors << "#80FFFF";
-    colors << "#00FFFF";
-    colors << "#004080";
-    colors << "#0000FF";
-    colors << "#0080FF";
-    colors << "#0080C0";
-    colors << "#000000";
+    QStringList colors = createColorList();
 
     d->colorBackgroundParam = new medStringListParameter("Background Color", this);
 
@@ -180,6 +160,32 @@ void vtkDataMeshNavigator::enableDepthPeeling(bool enabled)
     d->imageView->render();
 }
 
+QStringList vtkDataMeshNavigator::createColorList()
+{
+    QStringList colors;
+    colors << "#FFFFFF";
+    colors << "#808080";
+    colors << "#800000";
+    colors << "#804040";
+    colors << "#FF8080";
+    colors << "#FF0000";
+    colors << "#FFFF80";
+    colors << "#FFFF00";
+    colors << "#FF8040";
+    colors << "#FF8000";
+    colors << "#80FF80";
+    colors << "#80FF00";
+    colors << "#00FF00";
+    colors << "#80FFFF";
+    colors << "#00FFFF";
+    colors << "#004080";
+    colors << "#0000FF";
+    colors << "#0080FF";
+    colors << "#0080C0";
+    colors << "#000000";
+    return colors;
+}
+
 void vtkDataMeshNavigator::setBackgroundColor(QColor color)
 {
     if( !color.isValid() )
@@ -220,7 +226,7 @@ QWidget *  vtkDataMeshNavigator::buildToolBoxWidget()
     QWidget *toolBoxWidget = new QWidget;
     QFormLayout *layout = new QFormLayout(toolBoxWidget);
     layout->setContentsMargins(0, 0, 0, 0);
-    layout->setSpacing(0);
+    layout->setLabelAlignment(Qt::AlignLeft);
 
     foreach(medAbstractParameter *parameter, d->parameters)
     {
