@@ -187,7 +187,6 @@ medVtkViewNavigator::medVtkViewNavigator(medAbstractView *parent) :
                     << this->positionBeingViewedParameter()
                     << this->timeLineParameter();
 
-
     //TODO GPR-RDE: better solution?
     connect(this, SIGNAL(orientationChanged()),
             dynamic_cast<medAbstractImageView*>(parent), SIGNAL(orientationChanged()));

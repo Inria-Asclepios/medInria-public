@@ -52,6 +52,7 @@ public:
     ~medWorkspaceArea();
 
     QPixmap grabScreenshot();
+    void grabVideo();
 
     void setupWorkspace(const QString& id);
 

@@ -56,6 +56,9 @@ public slots:
     void setLoop(bool loop);
     void reset();
 
+    void unlockTimeLine();
+    void lockTimeLine();
+
     void previousFrame();
     void nextFrame();
 
@@ -67,9 +70,6 @@ signals:
     void timeChanged(double time);
 
 private slots:
-    void unlockTimeLine();
-    void lockTimeLine();
-
     void updateTime(double time);
     void updateFrameLabel();
     void updateNumberOfFrameLabel();

@@ -89,6 +89,7 @@ public:
     
     QToolButton*              adjustSizeButton;
     QToolButton*              screenshotButton;
+    QToolButton*              movieButton;
     QToolButton*              fullscreenButton;
     QToolButton*              quitButton;
 
@@ -218,6 +219,16 @@ medMainWindow::medMainWindow ( QWidget *parent ) : QMainWindow ( parent ), d ( n
     d->screenshotButton->setToolTip(tr("Capture screenshot"));
     QObject::connect(d->screenshotButton, SIGNAL(clicked()), this, SLOT(captureScreenshot()));
 
+    QIcon movieIcon;
+    movieIcon.addPixmap(QPixmap(":icons/saveScene.png"),QIcon::Normal);
+    movieIcon.addPixmap(QPixmap(":icons/saveScene_grey.png"),QIcon::Disabled);
+    d->movieButton = new QToolButton(this);
+    d->movieButton->setIcon(movieIcon);
+    d->movieButton->setObjectName("movieButton");
+    d->movieButton->setShortcut(Qt::AltModifier + Qt::Key_S);
+    d->movieButton->setToolTip(tr("Capture movie"));
+    QObject::connect(d->movieButton, SIGNAL(clicked()), this, SLOT(captureVideo()));
+
     QIcon adjustIcon;
     adjustIcon.addPixmap(QPixmap(":icons/adjust_size.png"),QIcon::Normal);
     d->adjustSizeButton = new QToolButton(this);
@@ -239,6 +250,7 @@ medMainWindow::medMainWindow ( QWidget *parent ) : QMainWindow ( parent ), d ( n
     rightEndButtonsLayout->addWidget(prototypeLabel);
     rightEndButtonsLayout->addWidget( d->adjustSizeButton );
     rightEndButtonsLayout->addWidget( d->screenshotButton );
+    rightEndButtonsLayout->addWidget( d->movieButton );
     rightEndButtonsLayout->addWidget( d->fullscreenButton );
     rightEndButtonsLayout->addWidget( d->quitButton );
 
@@ -437,6 +449,11 @@ void medMainWindow::captureScreenshot()
     image.save(fileName, format.constData());
 }
 
+void medMainWindow::captureVideo()
+{
+    d->workspaceArea->grabVideo();
+}
+
 void medMainWindow::showFullScreen()
 {
     d->fullscreenButton->blockSignals(true);
@@ -488,6 +505,7 @@ void medMainWindow::switchToHomepageArea()
     d->homepageArea->onShowInfo();
 
     d->screenshotButton->setEnabled(false);
+    d->movieButton->setEnabled(false);
     d->adjustSizeButton->setEnabled(false);
 }
 
@@ -510,6 +528,7 @@ void medMainWindow::switchToBrowserArea()
         this->hideShortcutAccess();
 
     d->screenshotButton->setEnabled(false);
+    d->movieButton->setEnabled(false);
     d->adjustSizeButton->setEnabled(false);
     d->stack->setCurrentWidget(d->browserArea);
 }
@@ -526,6 +545,7 @@ void medMainWindow::switchToWorkspaceArea()
     this->hideShortcutAccess();
 
     d->screenshotButton->setEnabled(true);
+    d->movieButton->setEnabled(true);
     d->adjustSizeButton->setEnabled(true);
     d->stack->setCurrentWidget(d->workspaceArea);
 

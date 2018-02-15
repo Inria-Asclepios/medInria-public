@@ -14,41 +14,20 @@
 #include "medWorkspaceArea.h"
 #include "medWorkspaceArea_p.h"
 
+#include "medDatabaseDataSource.h"
+#include "medDataSourceManager.h"
 
-#include <medAbstractDataFactory.h>
-#include <medAbstractData.h>
-#include <dtkCore/dtkGlobal.h>
+#include <dtkCore/dtkAbstractProcessFactory.h>
 
-#include <dtkVr/dtkVrHeadRecognizer.h>
-#include <dtkVr/dtkVrGestureRecognizer.h>
-
-#include <medAbstractDbController.h>
-#include <medSettingsManager.h>
-#include <medDataIndex.h>
-#include <medDataManager.h>
-#include <medAbstractView.h>
-#include <medMetaDataKeys.h>
-#include <medViewFactory.h>
-#include <medAbstractView.h>
 #include <medAbstractImageView.h>
-#include <medViewContainerSplitter.h>
-#include <medViewContainer.h>
-
-#include <medDatabaseNonPersistentController.h>
-#include <medDatabaseController.h>
-
+#include <medAbstractProcess.h>
+#include <medParameterGroupManager.h>
+#include <medSettingsManager.h>
+#include <medTabbedViewContainers.h>
+#include <medTimeLineParameter.h>
 #include <medToolBox.h>
 #include <medToolBoxContainer.h>
 #include <medWorkspaceFactory.h>
-#include <medTabbedViewContainers.h>
-
-#include "medDatabaseDataSource.h"
-#include "medDataSourceManager.h"
-#include <medParameterGroupManager.h>
-
-#include <QtGui>
-#include <QGLWidget>
-
 
 medWorkspaceArea::medWorkspaceArea(QWidget *parent) : QWidget(parent), d(new medWorkspaceAreaPrivate)
 {
@@ -123,6 +102,54 @@ medWorkspaceArea::~medWorkspaceArea(void)
 QPixmap medWorkspaceArea::grabScreenshot()
 {
     return QPixmap::grabWindow(this->currentWorkspace()->stackedViewContainers()->currentWidget()->winId());
+}
+
+void medWorkspaceArea::grabVideo()
+{
+    medAbstractView* view = this->currentWorkspace()->stackedViewContainers()->getFirstSelectedContainerView();
+    if (view)
+    {
+        medAbstractProcess* process = qobject_cast<medAbstractProcess*>(dtkAbstractProcessFactory::instance()->create("ExportVideo"));
+        if (process)
+        {
+            medAbstractImageView*   iview = dynamic_cast<medAbstractImageView*>(view);
+            medTimeLineParameter * timeLine = iview->timeLineParameter();
+            timeLine->unlockTimeLine();
+
+            for (int f=0; f<timeLine->numberOfFrame(); ++f)
+            {
+                // Play the 4D data
+                timeLine->setFrame(f);
+
+                // Get the current state of the view
+                QPixmap currentPixmap = grabScreenshot();
+                QImage currentQImage = currentPixmap.toImage();
+
+                for (int i=0; i<currentQImage.size().width(); ++i)
+                {
+                    for (int j=0; j<currentQImage.size().height(); ++j)
+                    {
+                        QRgb px = currentQImage.pixel(i, j);
+                        QColor color(px);
+
+                        // Send for each pixel the RGB value to the process
+                        process->setParameter(color.red(),   0);
+                        process->setParameter(color.green(), 1);
+                        process->setParameter(color.blue(),  2);
+                    }
+                }
+                // After sending the height parameter to channel 4,
+                // the current image is reconstructed in the process
+                process->setParameter(currentQImage.size().width(),   3);
+                process->setParameter(currentQImage.size().height(),  4);
+            }
+
+            // Compute the video and export it
+            process->update();
+
+            timeLine->lockTimeLine();
+        }
+    }
 }
 
 void medWorkspaceArea::addToolBox(medToolBox *toolbox)
