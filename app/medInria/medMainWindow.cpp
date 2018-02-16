@@ -231,6 +231,7 @@ medMainWindow::medMainWindow ( QWidget *parent ) : QMainWindow ( parent ), d ( n
 
     QIcon adjustIcon;
     adjustIcon.addPixmap(QPixmap(":icons/adjust_size.png"),QIcon::Normal);
+    adjustIcon.addPixmap(QPixmap(":icons/adjust_size_grey.png"),QIcon::Disabled);
     d->adjustSizeButton = new QToolButton(this);
     d->adjustSizeButton->setIcon(adjustIcon);
     d->adjustSizeButton->setObjectName("adjustSizeButton");
