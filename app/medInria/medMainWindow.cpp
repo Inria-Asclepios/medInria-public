@@ -220,12 +220,12 @@ medMainWindow::medMainWindow ( QWidget *parent ) : QMainWindow ( parent ), d ( n
     QObject::connect(d->screenshotButton, SIGNAL(clicked()), this, SLOT(captureScreenshot()));
 
     QIcon movieIcon;
-    movieIcon.addPixmap(QPixmap(":icons/movie.png"),QIcon::Normal);
-    movieIcon.addPixmap(QPixmap(":icons/movie_grey.png"),QIcon::Disabled);
+    movieIcon.addPixmap(QPixmap(":icons/movie.png"), QIcon::Normal);
+    movieIcon.addPixmap(QPixmap(":icons/movie_grey.png"), QIcon::Disabled);
     d->movieButton = new QToolButton(this);
     d->movieButton->setIcon(movieIcon);
     d->movieButton->setObjectName("movieButton");
-    d->movieButton->setShortcut(Qt::AltModifier + Qt::Key_S);
+    d->movieButton->setShortcut(Qt::AltModifier + Qt::Key_V);
     d->movieButton->setToolTip(tr("Capture movie"));
     QObject::connect(d->movieButton, SIGNAL(clicked()), this, SLOT(captureVideo()));
 

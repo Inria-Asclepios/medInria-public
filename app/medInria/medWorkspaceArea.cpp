@@ -112,8 +112,8 @@ void medWorkspaceArea::grabVideo()
         medAbstractProcess* process = qobject_cast<medAbstractProcess*>(dtkAbstractProcessFactory::instance()->create("ExportVideo"));
         if (process)
         {
-            medAbstractImageView*   iview = dynamic_cast<medAbstractImageView*>(view);
-            medTimeLineParameter * timeLine = iview->timeLineParameter();
+            medAbstractImageView* iview = dynamic_cast<medAbstractImageView*>(view);
+            medTimeLineParameter* timeLine = iview->timeLineParameter();
             timeLine->unlockTimeLine();
 
             for (int f=0; f<timeLine->numberOfFrame(); ++f)
