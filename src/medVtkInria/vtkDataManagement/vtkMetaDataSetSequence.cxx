@@ -823,28 +823,11 @@ double vtkMetaDataSetSequence::GetMinTime() const
 //----------------------------------------------------------------------------
 double vtkMetaDataSetSequence::GetMaxTime() const
 {
-  double ret = 0.0;
-
-  if (this->MetaDataSetList.size() >= 2)
-  {
-      // Get frame duration
-      double frameTime = this->MetaDataSetList[1]->GetTime() - this->MetaDataSetList[0]->GetTime();
-
-      // Get last dynamic time
-      double lastTime = 0.0;
-      for (unsigned int i=0; i<this->MetaDataSetList.size(); i++)
-      {
-          if ( lastTime < this->MetaDataSetList[i]->GetTime())
-          {
-              lastTime = this->MetaDataSetList[i]->GetTime();
-          }
-      }
-
-      ret = lastTime + frameTime;
-  }
-
-  return ret;
-  
+    double ret = 0;
+    for (unsigned int i=0; i<this->MetaDataSetList.size(); i++)
+        if ( ret < this->MetaDataSetList[i]->GetTime())
+            ret = this->MetaDataSetList[i]->GetTime();
+    return ret;
 }
 
 
@@ -865,20 +848,21 @@ double vtkMetaDataSetSequence::GetTimeResolution()
 //----------------------------------------------------------------------------
 void vtkMetaDataSetSequence::ComputeSequenceDuration()
 {
-  if (this->MetaDataSetList.size() < 2)
-  {
-    this->SequenceDuration = this->GetMaxTime();
-    return;
-  }
-  
-  double step = (this->GetMaxTime() - this->GetMinTime())/(double)(this->GetNumberOfMetaDataSets()-1);
-  
-  this->SequenceDuration = this->GetMaxTime() - this->GetMinTime() + step;
-  
+    if (this->MetaDataSetList.size() < 2)
+    {
+        this->SequenceDuration = this->GetMaxTime();
+        return;
+    }
+
+    double step = (this->GetMaxTime() - this->GetMinTime())/(double)(this->GetNumberOfMetaDataSets()-1);
+
+    this->SequenceDuration = this->GetMaxTime() - this->GetMinTime() + step;
 }
 
-
-
+double vtkMetaDataSetSequence::GetSequenceDuration() const
+{
+    return this->SequenceDuration;
+}
 
 //----------------------------------------------------------------------------
 void vtkMetaDataSetSequence::UpdateToTime (double time)
