@@ -44,7 +44,7 @@ public slots:
     void stopManualRegistration();
     void computeRegistration();
     void reset();
-    void getOutputFromProcess();
+    void retrieveProcessOutputAndUpdateViews();
 
 protected:
     virtual void clear();

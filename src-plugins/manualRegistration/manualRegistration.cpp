@@ -199,9 +199,7 @@ int manualRegistration::update(itkProcessRegistration::ImageType imgType)
 
 itk::Transform<double,3,3>::Pointer manualRegistration::getTransform()
 {
-    itk::Transform<double, 3, 3>::Pointer outputTransform;
-    outputTransform = d->transform;
-    return outputTransform;
+    return d->transform.GetPointer();
 }
 
 void manualRegistration::setParameter(int data)

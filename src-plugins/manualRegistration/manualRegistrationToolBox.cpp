@@ -56,7 +56,7 @@ public:
     medViewParameterGroup* viewGroup;
     medLayerParameterGroup* layerGroup1,*layerGroup2;
 
-    medAbstractRegistrationProcess* process;
+    dtkSmartPointer<medAbstractRegistrationProcess> process;
     dtkSmartPointer<medAbstractData> output;
 };
 
@@ -321,7 +321,7 @@ void manualRegistrationToolBox::computeRegistration()
 {
     if (d->controller)
     {
-        if (d->controller->checkLandmarks() != DTK_FAILURE)
+        if (d->controller->checkLandmarks() == DTK_SUCCEED)
         {
             int transformChosen = d->transformType->itemData(d->transformType->currentIndex()).toInt();
 
@@ -345,7 +345,7 @@ void manualRegistrationToolBox::computeRegistration()
                 toolbox->setProcess(d->process);
             }
 
-            manualRegistration* process_Registration = dynamic_cast<manualRegistration*>(d->process);
+            dtkSmartPointer<manualRegistration> process_Registration = dynamic_cast<manualRegistration* >(d->process.data());
             process_Registration->SetFixedLandmarks(d->controller->getPoints_Fixed());
             process_Registration->SetMovingLandmarks(d->controller->getPoints_Moving());
             process_Registration->setFixedInput(qobject_cast<medAbstractLayeredView*>(d->leftContainer->view())->layerData(0));
@@ -354,15 +354,16 @@ void manualRegistrationToolBox::computeRegistration()
 
             medRunnableProcess *runProcess = new medRunnableProcess;
             runProcess->setProcess (d->process);
-            connect (runProcess, SIGNAL (success(QObject*)), this, SLOT(getOutputFromProcess()));
+            connect (runProcess, SIGNAL (success(QObject*)), this, SLOT(retrieveProcessOutputAndUpdateViews()));
             this->addConnectionsAndStartJob(runProcess);
         }
     }
 }
 
-void manualRegistrationToolBox::getOutputFromProcess()
+void manualRegistrationToolBox::retrieveProcessOutputAndUpdateViews()
 {
-    medAbstractData * newOutput = dynamic_cast<itkProcessRegistration*> (d->process)->output();
+    medAbstractData * newOutput = d->process->output();
+
     if(newOutput && newOutput->data())
     {
         d->output = newOutput;
@@ -375,6 +376,8 @@ void manualRegistrationToolBox::getOutputFromProcess()
         }
 
         synchroniseMovingFuseView();
+
+        d->process.releasePointer();
     }
 }
 
