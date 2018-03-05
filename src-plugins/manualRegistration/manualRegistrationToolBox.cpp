@@ -377,7 +377,7 @@ void manualRegistrationToolBox::retrieveProcessOutputAndUpdateViews()
 
         synchroniseMovingFuseView();
 
-        d->process.releasePointer();
+        d->process = 0;
     }
 }
 

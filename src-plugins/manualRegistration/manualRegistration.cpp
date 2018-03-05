@@ -52,7 +52,7 @@ manualRegistration::manualRegistration() : itkProcessRegistration(), d(new manua
     d->proc = this;
 
     // Gives the exported file type for medRegistrationSelectorToolBox
-    this->setProperty("transformType","text");
+    this->setProperty("outputFileType","text");
 }
 
 manualRegistration::~manualRegistration()

@@ -189,9 +189,9 @@ void medRegistrationSelectorToolBox::onSaveTrans()
     QString fileTypeSuggestion;
     QString filterSelected;
     QHash<QString,QString> suffix;
-    if (d->process->hasProperty("transformType"))
+    if (d->process->hasProperty("outputFileType"))
     {
-        if ( d->process->property("transformType") == "text")
+        if ( d->process->property("outputFileType") == "text")
         {
             suffix[ tr("Transformation (*.txt)") ] = ".txt";
         }

@@ -53,7 +53,7 @@ itkProcessRegistration::itkProcessRegistration() : medAbstractRegistrationProces
     QStringList types;
 
     types << "text" << "notText";
-    this->addProperty("transformType",types);
+    this->addProperty("outputFileType",types);
     this->addMetaData("category","registration");
 }
 

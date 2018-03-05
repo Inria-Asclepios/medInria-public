@@ -35,11 +35,11 @@ class itkProcessRegistrationPrivate;
  * published there: http://gforge.inria.fr/projects/asclepiospublic/
  * to implement the registration algorithms.
  *
- * @note The process has the following dtk property: "transformType".
+ * @note The process has the following dtk property: "outputFileType".
  * Each subclass should set accordingly to the properties described in medRegistrationSelectorToolBox::onSaveTrans
  * and itkProcessRegistration::itkProcessRegistration().
  * Example:
- * @code this->setProperty("transformType","text"); @endcode
+ * @code this->setProperty("outputFileType","text"); @endcode
  *
  *
 */

@@ -54,7 +54,7 @@ DiffeomorphicDemonsProcess::DiffeomorphicDemonsProcess() : itkProcessRegistratio
     d->useHistogramMatching = false;
 
     // Gives the exported file type for medRegistrationSelectorToolBox
-    this->setProperty("transformType","notText");
+    this->setProperty("outputFileType","notText");
 }
 
 DiffeomorphicDemonsProcess::~DiffeomorphicDemonsProcess()
