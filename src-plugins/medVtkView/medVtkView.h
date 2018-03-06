@@ -52,7 +52,7 @@ public:
 public slots:
     virtual void reset();
     virtual void render();
-    virtual void showHistogram(bool checked);
+    virtual void showHistogram(bool);
 
 private slots:
     void displayDataInfo(uint layer);

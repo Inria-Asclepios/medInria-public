@@ -45,6 +45,7 @@ public:
 
     bool userOpenable;
     bool selected;
+    bool maximized;
     bool userSplittable;
     medViewContainer::ClosingMode closingMode;
     bool multiLayer;
@@ -63,9 +64,9 @@ public:
     QAction *openAction;
     QAction* vSplitAction;
     QAction* hSplitAction;
-    QAction* fourSplitAction;
     QPushButton* closeContainerButton;
-    QAction* histogramAction;
+    QPushButton* histogramButton;
+
     QAction* maximizedAction;
     QAction* saveSceneAction;
 
@@ -125,36 +126,30 @@ medViewContainer::medViewContainer(medViewContainerSplitter *parent): QFrame(par
     d->closeContainerButton->setToolTip(tr("Close"));
     d->closeContainerButton->setFocusPolicy(Qt::NoFocus);
 
-    // Split actions
     d->vSplitAction = new QAction(tr("V split"), d->toolBarMenu);
     d->vSplitAction->setIcon(QIcon(":/pixmaps/splitbutton_vertical.png"));
     d->vSplitAction->setToolTip(tr("Split vertically"));
     d->vSplitAction->setIconVisibleInMenu(true);
     connect(d->vSplitAction, SIGNAL(triggered()), this, SIGNAL(vSplitRequest()));
-
     d->hSplitAction = new QAction(tr("H split"), d->toolBarMenu);
     d->hSplitAction->setIcon(QIcon(":/pixmaps/splitbutton_horizontal.png"));
     d->hSplitAction->setToolTip(tr("Split horizontally"));
     d->hSplitAction->setIconVisibleInMenu(true);
     connect(d->hSplitAction, SIGNAL(triggered()), this, SIGNAL(hSplitRequest()));
 
-    d->fourSplitAction = new QAction(tr("4 split"), d->toolBarMenu);
-    d->fourSplitAction->setIcon(QIcon(":/icons/fourViews.png"));
-    d->fourSplitAction->setToolTip(tr("Split in 4 views"));
-    d->fourSplitAction->setIconVisibleInMenu(true);
-    connect(d->fourSplitAction, SIGNAL(triggered()), this, SIGNAL(requestFourSplit()));
-    d->fourSplitAction->setEnabled(false);
-
-    // Histogram actions
-    d->histogramAction = new QAction(tr("Open Histogram"), d->toolBarMenu);
-    d->histogramAction->setCheckable(true);
-    d->histogramAction->setIcon(QIcon(":/icons/Gaussian_Filter.png"));
-    d->histogramAction->setToolTip("Open a histogram");
-    d->histogramAction->setIconVisibleInMenu(true);
-    d->histogramAction->setEnabled(false);
+    // hack for histogram
+    d->histogramButton = new QPushButton(this);
+    d->histogramButton->setText("Hist");
+    d->histogramButton->setCheckable(true);
+    d->histogramButton->setChecked(false);
+    //d->histogramButton->setIcon(QIcon(":/medGui/pixmaps/.png"));
+    d->histogramButton->setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Fixed);
+    d->histogramButton->setFocusPolicy(Qt::NoFocus);
+    connect(d->histogramButton, SIGNAL(toggled(bool)), this, SIGNAL(requestHistogram(bool)));
+    //
 
     // make it a parameter to get synch between state of the container and the maximized button.
-    d->maximizedAction = new QAction(tr("Maximize"), d->toolBarMenu);
+    d->maximizedAction = new QAction(tr("Maximized"), d->toolBarMenu);
     d->maximizedAction->setToolTip("Toggle maximized / unmaximized");
     d->maximizedAction->setCheckable(true);
     QIcon maximizedIcon(":/icons/maximize.svg");
@@ -165,8 +160,9 @@ medViewContainer::medViewContainer(medViewContainerSplitter *parent): QFrame(par
 
     d->maximizedAction->setIcon(maximizedIcon);
     d->maximizedAction->setIconVisibleInMenu(true);
-    connect(d->maximizedAction, SIGNAL(toggled(bool)), this, SLOT(toggleMaximized(bool)));
-    d->maximizedAction->setEnabled(true);
+    d->maximized = false;
+    connect(d->maximizedAction, SIGNAL(triggered()), this, SLOT(toggleMaximized()));
+    d->maximizedAction->setEnabled(false);
 
     d->saveSceneAction = new QAction(tr("Save scene"), d->toolBarMenu);
     d->saveSceneAction->setToolTip(tr("Save container content as is."));
@@ -175,10 +171,13 @@ medViewContainer::medViewContainer(medViewContainerSplitter *parent): QFrame(par
     connect(d->saveSceneAction, SIGNAL(triggered()), this, SLOT(saveScene()));
     d->saveSceneAction->setEnabled(false);
 
-    // Presets
+    d->toolBarMenu = new QMenu(this);
+    d->toolBarMenu->addActions(QList<QAction*>() << d->openAction);
+    d->toolBarMenu->addSeparator();
+    d->toolBarMenu->addActions(QList<QAction*>() << d->vSplitAction << d->hSplitAction);
+
     d->presetMenu = new QMenu(tr("Presets"),this);
     d->presetMenu->setToolTip(tr("Split into presets"));
-    d->presetMenu->setIcon(QIcon(":/icons/splitPresets.png"));
 
     d->presetLayoutChooser = new medLayoutChooser(this);
     connect(d->presetLayoutChooser, SIGNAL(selected(unsigned int,unsigned int)), this, SLOT(splitContainer(unsigned int,unsigned int)));
@@ -188,18 +187,15 @@ medViewContainer::medViewContainer(medViewContainerSplitter *parent): QFrame(par
     presetMenuLayout->addWidget(d->presetLayoutChooser);
     d->presetMenu->setLayout(presetMenuLayout);
 
-    // Sort toolbar
-    d->toolBarMenu = new QMenu(this);
-    d->toolBarMenu->addActions(QList<QAction*>() << d->openAction);
-    d->toolBarMenu->addSeparator();
-    d->toolBarMenu->addActions(QList<QAction*>() << d->vSplitAction << d->hSplitAction << d->fourSplitAction);
-    d->toolBarMenu->addMenu(d->presetMenu);
+    QAction* presetAction = d->toolBarMenu->addMenu(d->presetMenu );
+    presetAction->setIcon(QIcon(":/icons/splitPresets.png"));
+    presetAction->setIconVisibleInMenu(true);
+
     d->toolBarMenu->addSeparator();
     d->toolBarMenu->addActions(QList<QAction*>() << d->maximizedAction);
+
     d->toolBarMenu->addSeparator();
     d->toolBarMenu->addActions(QList<QAction*>() << d->saveSceneAction);
-    d->toolBarMenu->addSeparator();
-    d->toolBarMenu->addActions(QList<QAction*>() << d->histogramAction);
 
     d->poolIndicator = new medPoolIndicator;
 
@@ -222,6 +218,7 @@ medViewContainer::medViewContainer(medViewContainerSplitter *parent): QFrame(par
     containerToolbarLayout->setContentsMargins(2, 0, 2, 0);
     containerToolbarLayout->setSpacing(2);
     containerToolbarLayout->addWidget(d->poolIndicator);
+    containerToolbarLayout->addWidget(d->histogramButton, 0, Qt::AlignRight);
     containerToolbarLayout->addWidget(d->menuButton);
     containerToolbarLayout->addWidget(d->closeContainerButton);
 
@@ -326,24 +323,25 @@ void medViewContainer::setUserSplittable(bool splittable)
 {
     d->userSplittable = splittable;
 
+    medAbstractImageView *view = dynamic_cast <medAbstractImageView *> (d->view);
+
     if(d->userSplittable)
     {
-        d->hSplitAction->setEnabled(true);
-        d->vSplitAction->setEnabled(true);
-        d->presetMenu->setEnabled(true);
+          d->hSplitAction->setEnabled(true);
+          d->vSplitAction->setEnabled(true);
+          d->presetMenu->setEnabled(true);
 
-        medAbstractImageView *view = dynamic_cast <medAbstractImageView *> (d->view);
         if (view)
-        {
-            d->fourSplitAction->setEnabled(true);
-        }
+            view->fourViewsParameter()->show();
     }
     else
     {
         d->hSplitAction->setEnabled(false);
         d->vSplitAction->setEnabled(false);
         d->presetMenu->setEnabled(false);
-        d->fourSplitAction->setEnabled(false);
+
+        if (view)
+            view->fourViewsParameter()->hide();
     }
 }
 
@@ -437,19 +435,18 @@ void medViewContainer::setView(medAbstractView *view)
             connect(layeredView, SIGNAL(layerRemoved(uint)), this, SIGNAL(viewContentChanged()));
         }
 
-        if (medAbstractImageView * imageView = dynamic_cast<medAbstractImageView*>(view))
-        {
-            connect(d->histogramAction, SIGNAL(toggled(bool)), this, SLOT(toggleHistogram(bool)));
-            connect(d->histogramAction, SIGNAL(toggled(bool)), imageView, SLOT(showHistogram(bool)));
+        if (medAbstractImageView * ImageView = dynamic_cast<medAbstractImageView*>(view)) // hack for histogram
+            connect(this,SIGNAL(requestHistogram(bool)),ImageView,SLOT(showHistogram(bool)));
+        else
+            d->histogramButton->hide();
 
-            d->histogramAction->setEnabled(true);
-            if (d->userSplittable)
-            {
-                d->fourSplitAction->setEnabled(true);
-                connect(this,SIGNAL(requestFourSplit()),imageView,SLOT(switchToFourViews()));
-            }
+        if (medAbstractImageView* imageView = dynamic_cast <medAbstractImageView*> (view))
+        {
+            if (!d->userSplittable)
+                imageView->fourViewsParameter()->hide();
         }
 
+        d->maximizedAction->setEnabled(true);
         d->saveSceneAction->setEnabled(true);
         d->defaultWidget->hide();
         d->mainLayout->addWidget(d->view->viewWidget(), 2, 0, 1, 1);
@@ -522,50 +519,30 @@ void medViewContainer::setUnSelected(bool unSelected)
     this->setSelected(!unSelected);
 }
 
-void medViewContainer::toggleMaximized(bool checked)
+void medViewContainer::toggleMaximized()
 {
-    if(checked)
+    d->maximized = !d->maximized;
+
+    if(d->maximized)
     {
         d->vSplitAction->setEnabled(false);
         d->hSplitAction->setEnabled(false);
-        d->fourSplitAction->setEnabled(false);
-        d->presetMenu->setEnabled(false);
         d->closeContainerButton->setEnabled(false);
-        d->maximizedAction->setText("Unmaximize");
-        d->maximizedAction->setChecked(true);
     }
-    else
+    else if(d->userSplittable)
     {
-        if(d->userSplittable)
-        {
-            d->vSplitAction->setEnabled(true);
-            d->hSplitAction->setEnabled(true);
-            d->fourSplitAction->setEnabled(true);
-            d->presetMenu->setEnabled(true);
-        }
+        d->vSplitAction->setEnabled(true);
+        d->hSplitAction->setEnabled(true);
         d->closeContainerButton->setEnabled(true);
-        d->maximizedAction->setText("Maximize");
-        d->maximizedAction->setChecked(false);
     }
-    emit maximized(checked);
-    emit maximized(d->uuid, checked);
+    d->maximizedAction->setChecked(d->maximized);
+    emit maximized(d->maximized);
+    emit maximized(d->uuid, d->maximized);
 }
 
 bool medViewContainer::isMaximized() const
 {
-    return d->maximizedAction->isChecked();
-}
-
-void medViewContainer::toggleHistogram(bool checked)
-{
-    if (checked)
-    {
-        d->histogramAction->setText("Close Histogram");
-    }
-    else
-    {
-        d->histogramAction->setText("Open Histogram");
-    }
+    return d->maximized;
 }
 
 void medViewContainer::removeView()
@@ -583,7 +560,6 @@ void medViewContainer::removeInternView()
     d->view = NULL;
     d->maximizedAction->setEnabled(false);
     d->saveSceneAction->setEnabled(false);
-    d->histogramAction->setEnabled(false);
     d->defaultWidget->show();
     this->updateToolBar();
 
