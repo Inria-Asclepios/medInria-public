@@ -48,7 +48,6 @@ set(PLUGIN_LIST
   itkDataTensorImage                        ON
   medSegmentation                           ON
   itkFilters                                ON
-  qtdcmDataSource                           ON
   itkDataSHImage                            ON
   undoRedoRegistration                      ON
   diffeomorphicDemons                       ON

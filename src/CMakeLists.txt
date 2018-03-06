@@ -19,7 +19,6 @@
 add_subdirectory(medCore)
 
 add_subdirectory(medTest)
-add_subdirectory(medPacs)
 
 add_subdirectory(medLog)
 add_subdirectory(medImageIO)
@@ -34,7 +33,6 @@ add_subdirectory(medUtilities)
 set(${PROJECT_NAME}_INCLUDE_DIRS
   ${medCore_INCLUDE_DIRS}
   ${medGui_INCLUDE_DIRS}
-  ${medPacs_INCLUDE_DIRS}
   ${medTest_INCLUDE_DIRS}
   ${medSql_INCLUDE_DIRS}
   ${medLog_INCLUDE_DIRS}

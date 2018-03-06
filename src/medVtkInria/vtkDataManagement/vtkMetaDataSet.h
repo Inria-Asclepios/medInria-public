@@ -18,7 +18,7 @@
 #include <string>
 #include <vector>
 
-#if defined __APPLE__
+#if defined __APPLE__ || WIN32
 #include <unordered_map>
 #else
 #include <hash_map>
