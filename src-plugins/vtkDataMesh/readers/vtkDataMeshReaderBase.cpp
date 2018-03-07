@@ -19,7 +19,6 @@ bool vtkDataMeshReaderBase::canRead(const QStringList& paths)
         return false;
     }
     return canRead(paths.first().toLocal8Bit().constData());
-    //return canRead(paths[0].toAscii().constData());
 }
 
 bool vtkDataMeshReaderBase::readInformation(const QStringList& paths)
