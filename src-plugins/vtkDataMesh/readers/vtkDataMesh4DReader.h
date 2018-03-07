@@ -13,11 +13,11 @@
 
 #pragma once
 
-#include <dtkCore/dtkAbstractDataReader.h>
-#include <vtkDataMeshPluginExport.h>
+#include "vtkDataMeshPluginExport.h"
+#include "vtkDataMeshReaderBase.h"
+
 #include <vtkMetaDataSet.h>
 
-class vtkDataSetReader;
 class vtkDataManagerReader;
 
 /**
@@ -37,7 +37,8 @@ class vtkDataManagerReader;
     \author Nicolas Toussaint
 */
 
-class VTKDATAMESHPLUGIN_EXPORT vtkDataMesh4DReader: public dtkAbstractDataReader {
+class VTKDATAMESHPLUGIN_EXPORT vtkDataMesh4DReader: public vtkDataMeshReaderBase
+{
     Q_OBJECT
 
 public:
@@ -50,15 +51,8 @@ public:
 
 public slots:
     virtual bool canRead(const QString& path);
-    virtual bool canRead(const QStringList& paths);
-
     virtual bool readInformation(const QString& path);
-    virtual bool readInformation(const QStringList& paths);
-
     virtual bool read(const QString& path);
-    virtual bool read(const QStringList& paths);
-
-    virtual void setProgress(int value);
 
     virtual QString identifier()  const;
     virtual QString description() const;
@@ -73,7 +67,6 @@ private:
 
     static const char ID[];
     bool extractMetaData(vtkMetaDataSet *dataSet);
-    bool extractMetaDataFromFieldData(vtkMetaDataSet *dataSet);
 };
 
 dtkAbstractDataReader *createVtkDataMesh4DReader();

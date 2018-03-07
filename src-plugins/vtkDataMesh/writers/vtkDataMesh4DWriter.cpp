@@ -11,23 +11,18 @@
 
 =========================================================================*/
 
-#include <vtkDataMesh4DWriter.h>
+#include "vtkDataMesh4DWriter.h"
 
-#include <medAbstractDataFactory.h>
 #include <medAbstractData.h>
-#include <dtkLog/dtkLog.h>
+#include <medAbstractDataFactory.h>
 
-#include <vtkDataManagerWriter.h>
 #include <vtkDataManager.h>
-#include <vtkFieldData.h>
+#include <vtkDataManagerWriter.h>
 #include <vtkMetaDataSetSequence.h>
-#include <vtkSmartPointer.h>
-#include <vtkStringArray.h>
 
 const char vtkDataMesh4DWriter::ID[] = "vtkDataMesh4DWriter";
-const QString vtkDataMesh4DWriter::metaDataFieldPrefix = "medMetaData::";
 
-vtkDataMesh4DWriter::vtkDataMesh4DWriter()
+vtkDataMesh4DWriter::vtkDataMesh4DWriter() : vtkDataMeshWriterBase()
 {
   this->writer = vtkDataManagerWriter::New();
 }
@@ -45,14 +40,6 @@ QStringList vtkDataMesh4DWriter::handled() const
 QStringList vtkDataMesh4DWriter::s_handled()
 {
     return QStringList() << "vtkDataMesh4D";
-}
-
-bool vtkDataMesh4DWriter::canWrite(const QString& path)
-{
-    if ( ! this->data())
-        return false;
-
-    return dynamic_cast<vtkMetaDataSetSequence*>((vtkObject*)(this->data()->data()));
 }
 
 bool vtkDataMesh4DWriter::write(const QString& path)
@@ -96,41 +83,6 @@ bool vtkDataMesh4DWriter::write(const QString& path)
   return true;
 }
 
-void vtkDataMesh4DWriter::addMetaDataAsFieldData(vtkMetaDataSet* dataSet)
-{
-    foreach (QString key, data()->metaDataList())
-    {
-        vtkSmartPointer<vtkStringArray> metaDataArray = vtkSmartPointer<vtkStringArray>::New();
-        QString arrayName = QString(metaDataFieldPrefix) + key;
-        metaDataArray->SetName(arrayName.toStdString().c_str());
-
-        foreach (QString value, data()->metaDataValues(key))
-        {
-            metaDataArray->InsertNextValue(value.toStdString().c_str());
-        }
-
-        dataSet->GetDataSet()->GetFieldData()->AddArray(metaDataArray);
-    }
-}
-
-void vtkDataMesh4DWriter::clearMetaDataFieldData(vtkMetaDataSet* dataSet)
-{
-    vtkFieldData* fieldData = dataSet->GetDataSet()->GetFieldData();
-    vtkSmartPointer<vtkFieldData> newFieldData = vtkSmartPointer<vtkFieldData>::New();
-
-    for (int i = 0; i < fieldData->GetNumberOfArrays(); i++)
-    {
-        QString arrayName = fieldData->GetArrayName(i);
-
-        if (!arrayName.startsWith(metaDataFieldPrefix))
-        {
-            newFieldData->AddArray(fieldData->GetAbstractArray(i));
-        }
-    }
-
-    dataSet->GetDataSet()->SetFieldData(newFieldData);
-}
-
 QString vtkDataMesh4DWriter::description() const
 {
     return tr( "VTK 4D Mesh Writer" );
@@ -159,5 +111,3 @@ dtkAbstractDataWriter *createVtkDataMesh4DWriter()
 {
   return new vtkDataMesh4DWriter;
 }
-
-
