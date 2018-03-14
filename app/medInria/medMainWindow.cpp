@@ -220,13 +220,13 @@ medMainWindow::medMainWindow ( QWidget *parent ) : QMainWindow ( parent ), d ( n
     QObject::connect(d->screenshotButton, SIGNAL(clicked()), this, SLOT(captureScreenshot()));
 
     QIcon movieIcon;
-    movieIcon.addPixmap(QPixmap(":icons/movie.png"), QIcon::Normal);
+    movieIcon.addPixmap(QPixmap(":icons/movie.png"),      QIcon::Normal);
     movieIcon.addPixmap(QPixmap(":icons/movie_grey.png"), QIcon::Disabled);
     d->movieButton = new QToolButton(this);
     d->movieButton->setIcon(movieIcon);
     d->movieButton->setObjectName("movieButton");
-    d->movieButton->setShortcut(Qt::AltModifier + Qt::Key_V);
-    d->movieButton->setToolTip(tr("Capture movie"));
+    d->movieButton->setShortcut(Qt::AltModifier + Qt::Key_M);
+    d->movieButton->setToolTip(tr("Export 4D view(s) as movie.\nShortcut Alt+M.\nBeware, do not hide view(s) during process."));
     QObject::connect(d->movieButton, SIGNAL(clicked()), this, SLOT(captureVideo()));
 
     QIcon adjustIcon;
