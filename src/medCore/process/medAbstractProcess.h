@@ -47,7 +47,7 @@ public:
         DATA_SIZE,      //! Inputs must be the same size
         MISMATCHED_DATA_TYPES, //! Inputs must be the same type
         MISMATCHED_DATA_SIZES_ORIGIN_SPACING, //! Inputs should have the same size, origin, spacing
-        MISMATCHED_DATA_SIZE,    //! Inputs should have the same dimension
+        MISMATCHED_DATA_SIZE,    //! Inputs should have the same size
         MISMATCHED_DATA_ORIGIN,  //! Inputs should have the same origin
         MISMATCHED_DATA_SPACING, //! Inputs should have the same spacing
         UNDEFINED,      //! Miscellanous
