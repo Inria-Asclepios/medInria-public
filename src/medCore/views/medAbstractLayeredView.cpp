@@ -198,7 +198,6 @@ QList<medAbstractNavigator*> medAbstractLayeredView::extraNavigators()
 
 void medAbstractLayeredView::addLayer(medAbstractData *data)
 {
-std::cout<<" MEDABSTRACT LAYERED VIEW: addLayer called with data = "<<data<<std::endl;
     this->insertLayer(d->layersDataList.count(), data);
 }
 
