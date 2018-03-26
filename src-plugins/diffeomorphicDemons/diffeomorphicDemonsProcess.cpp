@@ -14,6 +14,7 @@
 #include <DiffeomorphicDemons/rpiDiffeomorphicDemons.hxx>
 #include <dtkCore/dtkAbstractProcessFactory.h>
 #include <diffeomorphicDemonsProcess.h>
+#include <itkChangeInformationImageFilter.h>
 #include <rpiCommonTools.hxx>
 
 // /////////////////////////////////////////////////////////////////
@@ -23,13 +24,12 @@
 class DiffeomorphicDemonsProcessPrivate
 {
 public:
-    DiffeomorphicDemonsProcess * proc;
-    template <class PixelType>
-            int update();
-    template < typename TFixedImage, typename TMovingImage >
-           bool write(const QString&);
-    void * registrationMethod ;
 
+    DiffeomorphicDemonsProcess * proc;
+    template <class PixelType> int update();
+    template < typename TFixedImage, typename TMovingImage > bool write(const QString&);
+
+    void * registrationMethod;
     std::vector<unsigned int> iterations;
     unsigned char updateRule;
     unsigned char gradientType;
@@ -53,9 +53,9 @@ DiffeomorphicDemonsProcess::DiffeomorphicDemonsProcess() : itkProcessRegistratio
     d->updateFieldStandardDeviation = 0.0;
     d->displacementFieldStandardDeviation = 1.5;
     d->useHistogramMatching = false;
-    //set transform type for the exportation of the transformation to a file
-    this->setProperty("transformType","nonRigid");
-    setOutput(NULL);
+
+    // Gives the exported file type for medRegistrationSelectorToolBox
+    this->setProperty("outputFileType","notText");
 }
 
 DiffeomorphicDemonsProcess::~DiffeomorphicDemonsProcess()
@@ -108,26 +108,29 @@ int DiffeomorphicDemonsProcessPrivate::update()
     typedef itk::Image< float, 3 > RegImageType;
     typedef double TransformScalarType;
 
-    // Check that the inputs are the same size/origin/spacing
-    if ( (proc->fixedImage()->GetLargestPossibleRegion().GetSize()
-          != proc->movingImages()[0]->GetLargestPossibleRegion().GetSize())
-         || (proc->fixedImage()->GetOrigin()
-             != proc->movingImages()[0]->GetOrigin())
-         || (proc->fixedImage()->GetSpacing()
-             != proc->movingImages()[0]->GetSpacing()) )
+    int testResult = proc->testInputs();
+    if (testResult != medAbstractProcess::SUCCESS)
     {
-        return medAbstractProcess::MISMATCHED_DATA_SIZES_ORIGIN_SPACING;
+        return testResult;
     }
 
-    typedef rpi::DiffeomorphicDemons< RegImageType, RegImageType,
-                    TransformScalarType > RegistrationType;
+    FixedImageType* inputFixed  = (FixedImageType*)  proc->fixedImage().GetPointer();
+    FixedImageType* inputMoving = (MovingImageType*) proc->movingImages()[0].GetPointer();
+
+    // The output volume is going to located at the origin/direction of the fixed input. Needed for rpi::DiffeomorphicDemons
+    typedef itk::ChangeInformationImageFilter< FixedImageType > FilterType;
+    typename FilterType::Pointer filter = FilterType::New();
+    filter->SetOutputOrigin(inputFixed->GetOrigin());
+    filter->ChangeOriginOn();
+    filter->SetOutputDirection(inputFixed->GetDirection());
+    filter->ChangeDirectionOn();
+    filter->SetInput(inputMoving);
+
+    typedef rpi::DiffeomorphicDemons< RegImageType, RegImageType, TransformScalarType > RegistrationType;
     RegistrationType * registration = new RegistrationType;
-
     registrationMethod = registration;
-
-    registration->SetFixedImage((FixedImageType*)proc->fixedImage().GetPointer());
-    registration->SetMovingImage((MovingImageType*)proc->movingImages()[0].GetPointer());
-
+    registration->SetFixedImage(inputFixed);
+    registration->SetMovingImage(filter->GetOutput());
     registration->SetNumberOfIterations(iterations);
     registration->SetMaximumUpdateStepLength(maximumUpdateStepLength);
     registration->SetUpdateFieldStandardDeviation(updateFieldStandardDeviation);
@@ -174,7 +177,8 @@ int DiffeomorphicDemonsProcessPrivate::update()
 
     // Run the registration
     time_t t1 = clock();
-    try {
+    try
+    {
         registration->StartRegistration();
     }
     catch( std::exception & err )
@@ -191,7 +195,7 @@ int DiffeomorphicDemonsProcessPrivate::update()
     typedef itk::ResampleImageFilter< MovingImageType,MovingImageType,TransformScalarType >    ResampleFilterType;
     typename ResampleFilterType::Pointer resampler = ResampleFilterType::New();
     resampler->SetTransform(registration->GetTransformation());
-    resampler->SetInput((const MovingImageType*)proc->movingImages()[0].GetPointer());
+    resampler->SetInput((const MovingImageType*) inputMoving);
     resampler->SetSize( proc->fixedImage()->GetLargestPossibleRegion().GetSize() );
     resampler->SetOutputOrigin( proc->fixedImage()->GetOrigin() );
     resampler->SetOutputSpacing( proc->fixedImage()->GetSpacing() );
@@ -217,25 +221,32 @@ int DiffeomorphicDemonsProcessPrivate::update()
     return medAbstractProcess::SUCCESS;
 }
 
+medAbstractProcess::DataError DiffeomorphicDemonsProcess::testInputs()
+{
+    if (d->proc->fixedImage()->GetLargestPossibleRegion().GetSize()
+            != d->proc->movingImages()[0]->GetLargestPossibleRegion().GetSize())
+    {
+        return medAbstractProcess::MISMATCHED_DATA_SIZE;
+    }
+
+    if (d->proc->fixedImage()->GetSpacing()
+            != d->proc->movingImages()[0]->GetSpacing())
+    {
+        return medAbstractProcess::MISMATCHED_DATA_SPACING;
+    }
+
+    return medAbstractProcess::SUCCESS;
+}
+
 int DiffeomorphicDemonsProcess::update(itkProcessRegistration::ImageType imgType)
 {
-    if(fixedImage().IsNull() || movingImages().isEmpty()
-            || movingImages()[0].IsNull())
+    // Cast has been done in itkProcessRegistration
+    if (imgType == itkProcessRegistration::FLOAT)
     {
-        qWarning() << "Either the fixed image or the moving image is Null";
-        return 1;
+        return d->update<float>();
     }
 
-    if (imgType != itkProcessRegistration::FLOAT)
-    {
-        qWarning() << "the imageType should be float, and it's :"<<imgType;
-        return 1;
-    }
-
-    int res = d->update<float>();
-    setOutput(d->proc->output());
-
-    return res;
+    return medAbstractProcess::FAILURE;
 }
 
 itk::Transform<double,3,3>::Pointer DiffeomorphicDemonsProcess::getTransform(){
@@ -313,13 +324,15 @@ bool DiffeomorphicDemonsProcess::writeTransform(const QString& file)
     if (rpi::DiffeomorphicDemons<RegImageType,RegImageType,TransformScalarType> * registration =
             static_cast<rpi::DiffeomorphicDemons<RegImageType,RegImageType,TransformScalarType> *>(d->registrationMethod))
     {
-        try{
+        try
+        {
             rpi::writeDisplacementFieldTransformation<TransformScalarType, RegImageType::ImageDimension>(
                         registration->GetTransformation(),
                         file.toStdString());
         }
-        catch (std::exception)
+        catch (std::exception& err)
         {
+            qDebug() << "ExceptionObject caught (writeTransform): " << err.what();
             return false;
         }
         return true;

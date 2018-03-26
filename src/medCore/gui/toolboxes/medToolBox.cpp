@@ -324,7 +324,16 @@ void medToolBox::handleDisplayError(int error)
         displayMessageError("Inputs must be the same type");
         break;
     case medAbstractProcess::MISMATCHED_DATA_SIZES_ORIGIN_SPACING:
-        displayMessageError("Inputs must be the same size, origin, spacing");
+        displayMessageError("Inputs must have the same size, origin, spacing");
+        break;
+    case medAbstractProcess::MISMATCHED_DATA_SIZE:
+        displayMessageError("Inputs must have the same size");
+        break;
+    case medAbstractProcess::MISMATCHED_DATA_ORIGIN:
+        displayMessageError("Inputs must have the same origin");
+        break;
+    case medAbstractProcess::MISMATCHED_DATA_SPACING:
+        displayMessageError("Inputs must have the same spacing");
         break;
     default:
         displayMessageError("This action failed (undefined error)");
@@ -380,5 +389,6 @@ void medToolBox::addToolBoxConnections(medJobItem* job)
     connect (job, SIGNAL (cancelled (QObject*)),    this, SLOT   (setToolBoxOnReadyToUse()));
     connect (job, SIGNAL (success   (QObject*)),    this, SLOT   (setToolBoxOnReadyToUse()));
     connect (job, SIGNAL (failure   (QObject*)),    this, SLOT   (setToolBoxOnReadyToUse()));
+    connect (job, SIGNAL (failure   (int)),         this, SLOT   (handleDisplayError(int)));
     connect (job, SIGNAL (activate(QObject*,bool)), getProgressionStack(), SLOT(setActive(QObject*,bool)));
 }
