@@ -8,6 +8,7 @@
 #include <itkInvertIntensityImageFilter.h>
 #include <itkMinimumMaximumImageCalculator.h>
 #include <itkSubtractImageFilter.h>
+#include <itkImageDuplicator.h>
 
 #include <medAbstractDataFactory.h>
 #include <medAbstractImageData.h>
@@ -452,7 +453,7 @@ medAbstractData* AlgorithmPaintToolBox::processOutput()
     // Check if painted data on the volume
     if (!m_undoStacks->empty() && !m_undoStacks->value(currentView)->isEmpty())
     {
-        copyMetaDataToPaintedData();
+        copyMetaData(m_maskData, m_imageData);
         return m_maskData; // return output data
     }
     else
@@ -591,15 +592,32 @@ void AlgorithmPaintToolBox::updateMagicWandComputationSpeed()
     }
 }
 
-void AlgorithmPaintToolBox::copyMetaDataToPaintedData()
+void AlgorithmPaintToolBox::copyMetaData(medAbstractData* output,
+                                         medAbstractData* input)
 {
-    medUtilities::setDerivedMetaData(m_maskData, m_imageData, "painted");
+    medUtilities::setDerivedMetaData(output, input, "painted");
+}
+
+dtkSmartPointer<medAbstractData> AlgorithmPaintToolBox::deepCopy(medAbstractData* input)
+{
+    typedef itk::ImageDuplicator<MaskType> DuplicatorType;
+    DuplicatorType::Pointer duplicator = DuplicatorType::New();
+    duplicator->SetInputImage(dynamic_cast<MaskType*>((itk::Object*)(input->data())));
+    duplicator->Update();
+
+    dtkSmartPointer<medAbstractData> copy = medAbstractDataFactory::instance()->createSmartPointer("itkDataImageUChar3");
+    copy->setData(duplicator->GetOutput());
+    return copy;
 }
 
 void AlgorithmPaintToolBox::import()
 {
-    copyMetaDataToPaintedData();
-    medDataManager::instance()->importData(m_maskData, false);
+    // import a copy of the mask
+    dtkSmartPointer<medAbstractImageData> output = deepCopy(m_maskData);
+    copyMetaData(output, m_imageData);
+
+    medDataManager::instance()->importData(output, false);
+
     maskHasBeenSaved = true;
 }
 
@@ -1064,8 +1082,23 @@ AlgorithmPaintToolBox::GenerateMinMaxValuesFromImage ()
 
     m_wandLowerThresholdSlider->setRange(m_MinValueImage, m_MaxValueImage);
     m_wandUpperThresholdSlider->setRange(m_MinValueImage, m_MaxValueImage);
-    m_wandLowerThresholdSlider->setValue(m_MinValueImage);
-    m_wandUpperThresholdSlider->setValue(m_MinValueImage);
+    // Try to keep the previously selected range: current min
+    // and max values are kept if they both lie in the new min
+    // and max.
+    double currentMinValue = m_wandLowerThresholdSlider->value();
+    double currentMaxValue = m_wandUpperThresholdSlider->value();
+    if ((currentMinValue >= m_MinValueImage && currentMinValue < m_MaxValueImage) &&
+        (currentMaxValue >= m_MinValueImage && currentMaxValue < m_MaxValueImage))
+    {
+        m_wandLowerThresholdSlider->setValue(currentMinValue);
+        m_wandUpperThresholdSlider->setValue(currentMaxValue);
+    }
+    else
+    {
+        // reset to minimum image value
+        m_wandLowerThresholdSlider->setValue(m_MinValueImage);
+        m_wandUpperThresholdSlider->setValue(m_MinValueImage);
+    }
 
     // Set step when click on slider
     m_wandLowerThresholdSlider->getSlider()->setPageStep((m_MaxValueImage-m_MinValueImage)/10);

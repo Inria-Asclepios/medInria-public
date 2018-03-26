@@ -95,7 +95,9 @@ public slots:
     void activateMagicWand();
     void updateMagicWandComputationSpeed();
 
-    void copyMetaDataToPaintedData();
+    void copyMetaData(medAbstractData* output,
+                      medAbstractData* input);
+    dtkSmartPointer<medAbstractData> deepCopy(medAbstractData* input);
     void import();
 
     void setLabel(int newVal);
