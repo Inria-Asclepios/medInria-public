@@ -1087,13 +1087,8 @@ AlgorithmPaintToolBox::GenerateMinMaxValuesFromImage ()
     // and max.
     double currentMinValue = m_wandLowerThresholdSlider->value();
     double currentMaxValue = m_wandUpperThresholdSlider->value();
-    if ((currentMinValue >= m_MinValueImage && currentMinValue < m_MaxValueImage) &&
-        (currentMaxValue >= m_MinValueImage && currentMaxValue < m_MaxValueImage))
-    {
-        m_wandLowerThresholdSlider->setValue(currentMinValue);
-        m_wandUpperThresholdSlider->setValue(currentMaxValue);
-    }
-    else
+    if ((currentMinValue < m_MinValueImage || currentMinValue > m_MaxValueImage) ||
+        (currentMaxValue < m_MinValueImage || currentMaxValue > m_MaxValueImage))
     {
         // reset to minimum image value
         m_wandLowerThresholdSlider->setValue(m_MinValueImage);
