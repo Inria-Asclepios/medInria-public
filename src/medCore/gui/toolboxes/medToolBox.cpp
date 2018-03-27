@@ -404,7 +404,7 @@ void medToolBox::enableOnProcessSuccessImportOutput(medJobItem* job, bool enable
 {
     if (enable)
     {
-        connect(job, SIGNAL(success(QObject*)), this->getWorkspace(), SLOT(importProcessOutput()));
+        connect(job, SIGNAL(success(QObject*)), this->getWorkspace(), SLOT(importProcessOutput()), Qt::UniqueConnection);
     }
     else
     {
