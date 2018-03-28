@@ -522,8 +522,7 @@ class MEDVTKINRIA_EXPORT vtkMetaDataSetSequence: public vtkMetaDataSet
   */
   virtual void CopyInformation (vtkMetaDataSet* metadataset);
 
-  virtual double* GetCurrentScalarRange();
-  virtual double* GetCurrentScalarRange(const QString & attributeName);
+  virtual double* GetScalarRange(QString attributeName = QString());
 
   vtkGetMacro (CurrentId, int);
   
