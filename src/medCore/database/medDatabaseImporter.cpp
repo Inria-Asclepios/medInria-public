@@ -515,15 +515,18 @@ QString medDatabaseImporter::ensureUniqueSeriesName ( const QString seriesName )
         seriesNames << sname;
     }
 
-    QString originalSeriesName = seriesName;
     QString newSeriesName = seriesName;
     int suffix = 0;
 
-    while (seriesNames.contains(newSeriesName))
+    if (seriesName == "")
     {
-       // it exist
-        suffix++;
-        newSeriesName = originalSeriesName + "_" + QString::number(suffix);
+        newSeriesName = "UnnamedSeries";
+    }
+
+    suffix = seriesNames.filter(newSeriesName).count();
+    if (suffix > 0)
+    {
+        newSeriesName = newSeriesName + " (copy " + QString::number(suffix) + ")";
     }
 
     return newSeriesName;
