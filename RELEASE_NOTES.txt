@@ -1,3 +1,18 @@
+MUSIC v2.2.0:
+- [music-private code added]
+- Adapt MUSIC for Jenkins Windows server
+- Adapt MUSIC to Visual Studio 2015 compilation
+- Switch to C++11 code
+- Switch to ITK 4.11
+- Change the view background color
+- Diffeormorphic toolbox can be used with different origins
+- Ergonomic changes on view buttons
+- Ctrl Space to switch between workspaces, add new icons
+- Manual Registration uses the undo/redo tool
+- OBJ writer/reader
+- STL writer/reader
+- Merge data, add fuse method for meshes and volumes
+
 MUSIC v2.1.0:
 - Fix pipeline export to other computer
 - Morphological kernel maximum value updated
