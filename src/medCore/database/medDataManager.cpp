@@ -488,6 +488,13 @@ void medDataManager::setWriterPriorities()
         startIndex = writers.removeOne("itkMetaDataImageWriter") ? 1 : 0;
     }
 
+    // set vtkDataMeshWriter as the top priority writers
+    if(writers.contains("vtkDataMeshWriter"))
+    {
+        writerPriorites.insert(0, "vtkDataMeshWriter");
+        startIndex = writers.removeOne("vtkDataMeshWriter") ? 1 : 0;
+    }
+
     for ( int i=0; i<writers.size(); i++ )
     {
         writerPriorites.insert(startIndex+i, writers[i]);
