@@ -226,7 +226,7 @@ medMainWindow::medMainWindow ( QWidget *parent ) : QMainWindow ( parent ), d ( n
     d->movieButton->setIcon(movieIcon);
     d->movieButton->setObjectName("movieButton");
     d->movieButton->setShortcut(Qt::AltModifier + Qt::Key_M);
-    d->movieButton->setToolTip(tr("Export 4D view(s) as movie.\nShortcut Alt+M.\nBeware, do not hide view(s) during process."));
+    d->movieButton->setToolTip(tr("Export 4D view(s) or mesh(s) as movie.\nShortcut Alt+M.\nBeware, do not hide view(s) during process."));
     QObject::connect(d->movieButton, SIGNAL(clicked()), this, SLOT(captureVideo()));
 
     QIcon adjustIcon;
@@ -438,16 +438,20 @@ void medMainWindow::setFullScreen (const bool full)
 void medMainWindow::captureScreenshot()
 {
     QPixmap screenshot = d->workspaceArea->grabScreenshot();
-    QString fileName = QFileDialog::getSaveFileName(this, tr("Save screenshot as"),
-                                                    QDir::home().absolutePath(),
-                                                    QString(), 0, QFileDialog::HideNameFilterDetails);
 
-    QByteArray format = fileName.right(fileName.lastIndexOf('.')).toUpper().toAscii();
-    if ( ! QImageWriter::supportedImageFormats().contains(format) )
-        format = "PNG";
+    if (!screenshot.isNull())
+    {
+        QString fileName = QFileDialog::getSaveFileName(this, tr("Save screenshot as"),
+                                                        QDir::home().absolutePath(),
+                                                        QString(), 0, QFileDialog::HideNameFilterDetails);
 
-    QImage image = screenshot.toImage();
-    image.save(fileName, format.constData());
+        QByteArray format = fileName.right(fileName.lastIndexOf('.')).toUpper().toAscii();
+        if ( ! QImageWriter::supportedImageFormats().contains(format) )
+            format = "PNG";
+
+        QImage image = screenshot.toImage();
+        image.save(fileName, format.constData());
+    }
 }
 
 void medMainWindow::captureVideo()

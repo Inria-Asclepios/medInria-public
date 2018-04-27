@@ -15,6 +15,7 @@
 
 #include <QtGui>
 
+#include <medAbstractProcess.h>
 #include <medAbstractWorkspace.h>
 
 class medAbstractView;
@@ -68,6 +69,17 @@ public:
 protected:
     void addDatabaseView(medDatabaseDataSource* dataSource);
     void switchToStackedViewContainers(medTabbedViewContainers* stack);
+
+    /**
+     * @brief getExportVideoDialogParameters open a window displaying video export parameters and send results
+     */
+    QVector<int> getExportVideoDialogParameters(int numberOfFrames);
+
+    /**
+     * @brief runExportVideoProcess send each frame of the video to process
+     * @param process for video export
+     */
+    void runExportVideoProcess(medAbstractProcess *process);
 
 signals:
     void open(const medDataIndex&);

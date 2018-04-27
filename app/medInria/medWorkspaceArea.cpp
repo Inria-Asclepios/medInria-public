@@ -16,6 +16,7 @@
 
 #include "medDatabaseDataSource.h"
 #include "medDataSourceManager.h"
+#include "mscExportVideoDialog.h"
 
 #include <dtkCore/dtkAbstractProcessFactory.h>
 
@@ -101,7 +102,12 @@ medWorkspaceArea::~medWorkspaceArea(void)
 
 QPixmap medWorkspaceArea::grabScreenshot()
 {
-    return QPixmap::grabWindow(this->currentWorkspace()->stackedViewContainers()->currentWidget()->winId());
+    medAbstractView* currentView = currentWorkspace()->stackedViewContainers()->getFirstSelectedContainerView();
+    if (currentView != nullptr)
+    {
+        return QPixmap::grabWindow(currentView->viewWidget()->winId());
+    }
+    return QPixmap();
 }
 
 void medWorkspaceArea::grabVideo()
@@ -110,46 +116,94 @@ void medWorkspaceArea::grabVideo()
     if (view)
     {
         medAbstractProcess* process = qobject_cast<medAbstractProcess*>(dtkAbstractProcessFactory::instance()->create("ExportVideo"));
-        if (process)
+        medAbstractImageView* iview = dynamic_cast<medAbstractImageView*>(view);
+        medTimeLineParameter* timeLine = iview->timeLineParameter();
+
+        // Get number of frames for dialog window
+        int numberOfFrames = 1;
+        if (timeLine)
         {
-            medAbstractImageView* iview = dynamic_cast<medAbstractImageView*>(view);
-            medTimeLineParameter* timeLine = iview->timeLineParameter();
-            timeLine->unlockTimeLine();
+            numberOfFrames = timeLine->numberOfFrame();
+        }
 
-            for (int f=0; f<timeLine->numberOfFrame(); ++f)
+        QVector<int> userParameters = getExportVideoDialogParameters(numberOfFrames);
+
+        if (userParameters.at(0) == 1) // User is ok to run the video export
+        {
+            // Needed to remove the shadow of the dialog window
+            iview->render();
+
+            if (userParameters.at(1) == 0) // Time video (for 4D datasets)
             {
-                // Play the 4D data
-                timeLine->setFrame(f);
+                timeLine->unlockTimeLine();
 
-                // Get the current state of the view
-                QPixmap currentPixmap = grabScreenshot();
-                QImage currentQImage = currentPixmap.toImage();
-
-                for (int i=0; i<currentQImage.size().width(); ++i)
+                for (int f=0; f<timeLine->numberOfFrame(); f+=userParameters.at(2))
                 {
-                    for (int j=0; j<currentQImage.size().height(); ++j)
-                    {
-                        QRgb px = currentQImage.pixel(i, j);
-                        QColor color(px);
-
-                        // Send for each pixel the RGB value to the process
-                        process->setParameter(color.red(),   0);
-                        process->setParameter(color.green(), 1);
-                        process->setParameter(color.blue(),  2);
-                    }
+                    timeLine->setFrame(f);
+                    runExportVideoProcess(process);
                 }
-                // After sending the height parameter to channel 4,
-                // the current image is reconstructed in the process
-                process->setParameter(currentQImage.size().width(),   3);
-                process->setParameter(currentQImage.size().height(),  4);
+
+                timeLine->lockTimeLine();
+            }
+            else // Rotation video
+            {
+                for (double rotation=0.0; rotation<360.0; rotation+=userParameters.at(2))
+                {
+                    iview->setRotation(rotation);
+                    runExportVideoProcess(process);
+                }
             }
 
             // Compute the video and export it
             process->update();
-
-            timeLine->lockTimeLine();
         }
     }
+}
+
+QVector<int> medWorkspaceArea::getExportVideoDialogParameters(int numberOfFrames)
+{
+    mscExportVideoDialog *exportDialog = new mscExportVideoDialog(this, numberOfFrames);
+
+    QVector<int> results;
+
+    if(exportDialog->exec() == QDialog::Accepted)
+    {
+        results.append(1); // Accepted
+
+        QVector<int> resultsFromDialog = exportDialog->value();
+        results.append(resultsFromDialog.at(0));
+        results.append(resultsFromDialog.at(1));
+    }
+    else
+    {
+        results.append(0); // Cancelled
+    }
+    return results;
+}
+
+void medWorkspaceArea::runExportVideoProcess(medAbstractProcess* process)
+{
+    // Get the current state of the view
+    QPixmap currentPixmap = grabScreenshot();
+    QImage currentQImage = currentPixmap.toImage();
+
+    for (int i=0; i<currentQImage.size().width(); ++i)
+    {
+        for (int j=0; j<currentQImage.size().height(); ++j)
+        {
+            QRgb px = currentQImage.pixel(i, j);
+            QColor color(px);
+
+            // Send for each pixel the RGB value to the process
+            process->setParameter(color.red(),   0);
+            process->setParameter(color.green(), 1);
+            process->setParameter(color.blue(),  2);
+        }
+    }
+    // After sending the height parameter to channel 4,
+    // the current image is reconstructed in the process
+    process->setParameter(currentQImage.size().width(),   3);
+    process->setParameter(currentQImage.size().height(),  4);
 }
 
 void medWorkspaceArea::addToolBox(medToolBox *toolbox)
