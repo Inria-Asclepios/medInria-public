@@ -5,9 +5,6 @@
 
 class mscExportVideoDialogPrivate;
 
-/**
- * @brief
- */
 class mscExportVideoDialog: public QDialog
 {
     Q_OBJECT
