@@ -425,16 +425,19 @@ void medMainWindow::setFullScreen (const bool full)
 void medMainWindow::captureScreenshot()
 {
     QPixmap screenshot = d->workspaceArea->grabScreenshot();
-    QString fileName = QFileDialog::getSaveFileName(this, tr("Save screenshot as"),
-                                                    QDir::home().absolutePath(),
-                                                    QString(), 0, QFileDialog::HideNameFilterDetails);
+    if (!screenshot.isNull())
+    {
+        QString fileName = QFileDialog::getSaveFileName(this, tr("Save screenshot as"),
+                                                        QDir::home().absolutePath(),
+                                                        QString(), 0, QFileDialog::HideNameFilterDetails);
 
-    QByteArray format = fileName.right(fileName.lastIndexOf('.')).toUpper().toAscii();
-    if ( ! QImageWriter::supportedImageFormats().contains(format) )
-        format = "PNG";
+        QByteArray format = fileName.right(fileName.lastIndexOf('.')).toUpper().toAscii();
+        if ( ! QImageWriter::supportedImageFormats().contains(format) )
+            format = "PNG";
 
-    QImage image = screenshot.toImage();
-    image.save(fileName, format.constData());
+        QImage image = screenshot.toImage();
+        image.save(fileName, format.constData());
+    }
 }
 
 void medMainWindow::showFullScreen()
