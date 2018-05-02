@@ -17,6 +17,7 @@
 #include <itkImage.h>
 #include <itkRGBPixel.h>
 #include <itkRGBAPixel.h>
+#include <itkImageDuplicator.h>
 
 #include <medAbstractDataFactory.h>
 #include <medAbstractTypedImageData.h>
@@ -62,8 +63,18 @@ public:
         return medAbstractDataFactory::instance()->registerDataType<itkDataImage<DIM,T,ID> >();
     }
 
-    // Inherited slots (through virtual member functions).
+    virtual itkDataImage* clone() {
+        auto clone = new itkDataImage(*this);
+        // create the filter that duplicates an image
+        typedef typename PrivateMember::ImageType ImageType;
+        auto duplicator = itk::ImageDuplicator<ImageType>::New();
+        duplicator->SetInputImage(d->image);
+        duplicator->Update();
+        clone->setData(duplicator->GetOutput());
+        return clone;
+    }
 
+    // Inherited slots (through virtual member functions).
     void* output() { return d->image.GetPointer(); }
     void* data() { return d->image.GetPointer(); }
 

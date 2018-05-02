@@ -598,22 +598,10 @@ void AlgorithmPaintToolBox::copyMetaData(medAbstractData* output,
     medUtilities::setDerivedMetaData(output, input, "painted");
 }
 
-dtkSmartPointer<medAbstractData> AlgorithmPaintToolBox::deepCopy(medAbstractData* input)
-{
-    typedef itk::ImageDuplicator<MaskType> DuplicatorType;
-    DuplicatorType::Pointer duplicator = DuplicatorType::New();
-    duplicator->SetInputImage(dynamic_cast<MaskType*>((itk::Object*)(input->data())));
-    duplicator->Update();
-
-    dtkSmartPointer<medAbstractData> copy = medAbstractDataFactory::instance()->createSmartPointer("itkDataImageUChar3");
-    copy->setData(duplicator->GetOutput());
-    return copy;
-}
-
 void AlgorithmPaintToolBox::import()
 {
     // import a copy of the mask
-    dtkSmartPointer<medAbstractImageData> output = deepCopy(m_maskData);
+    medAbstractData* output = dynamic_cast<medAbstractData*>(m_maskData->clone());
     copyMetaData(output, m_imageData);
 
     medDataManager::instance()->importData(output, false);
