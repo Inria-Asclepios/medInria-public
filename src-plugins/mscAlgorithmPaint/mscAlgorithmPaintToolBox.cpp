@@ -8,7 +8,6 @@
 #include <itkInvertIntensityImageFilter.h>
 #include <itkMinimumMaximumImageCalculator.h>
 #include <itkSubtractImageFilter.h>
-#include <itkImageDuplicator.h>
 
 #include <medAbstractDataFactory.h>
 #include <medAbstractImageData.h>
