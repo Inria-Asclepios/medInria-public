@@ -94,6 +94,7 @@ public slots:
     virtual void open(const medDataIndex& index);
 
 protected slots:
+    void handleLayerSelectionChange();
     void changeCurrentLayer(int row);
     void removeLayer();
 
@@ -118,6 +119,9 @@ private slots:
 
     void changeViewGroupColor(QString group, QColor color);
     void changeLayerGroupColor(QString group, QColor color);
+
+signals:
+    void layerSelectionChanged(QList<int> selectedLayersIndices);
 
 private:
     QWidget* buildViewLinkMenu();
