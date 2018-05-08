@@ -293,17 +293,20 @@ void medAbstractWorkspace::updateMouseInteractionToolBox()
     }
 }
 
-void medAbstractWorkspace::handleLayerSelectionChange()
+QList<int> medAbstractWorkspace::getSelectedLayerIndices()
 {
-    this->updateInteractorsToolBox();
-
-    // retrieve selected layer indices
     QList<int> layerIndices;
     foreach (QListWidgetItem* item, d->selectedLayers)
     {
         layerIndices.append(item->data(Qt::UserRole).toInt());
     }
-    emit layerSelectionChanged(layerIndices);
+    return layerIndices;
+}
+
+void medAbstractWorkspace::handleLayerSelectionChange()
+{
+    this->updateInteractorsToolBox();
+    emit layerSelectionChanged(getSelectedLayerIndices());
 }
 
 void medAbstractWorkspace::updateLayersToolBox()

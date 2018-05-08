@@ -78,6 +78,8 @@ public:
     bool isUserLayerClosable() const;
     virtual void setInitialGroups();
 
+    QList<int> getSelectedLayerIndices();
+
     medProgressionStack *getProgressionStack();
 
 public slots:
