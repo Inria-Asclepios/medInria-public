@@ -43,6 +43,13 @@ medAbstractData::medAbstractData( medAbstractData *parent )
     this->moveToThread(QApplication::instance()->thread());
 }
 
+medAbstractData::medAbstractData(const medAbstractData& other)
+    : dtkAbstractData(other),
+      d(new medAbstractDataPrivate())
+{
+    *d = *other.d;
+    d.index = medDataIndex();
+}
 
 medAbstractData::~medAbstractData( void )
 {

@@ -70,7 +70,8 @@ public:
         auto duplicator = itk::ImageDuplicator<ImageType>::New();
         duplicator->SetInputImage(d->image);
         duplicator->Update();
-        clone->setData(duplicator->GetOutput());
+//        clone->setData(duplicator->GetOutput());
+        clone->d.image = duplicator->GetOutput();
         return clone;
     }
 
