@@ -12,8 +12,8 @@ class mscExportVideoDialog: public QDialog
 public:
     enum ExportVideoName
     {
-             TIME,
-             ROTATION,
+        TIME,
+        ROTATION,
     };
 
     mscExportVideoDialog(QWidget *parent, int numberOfFrames );

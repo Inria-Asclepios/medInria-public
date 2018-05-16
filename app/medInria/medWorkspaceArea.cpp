@@ -115,7 +115,7 @@ void medWorkspaceArea::grabVideo()
     medAbstractView* view = this->currentWorkspace()->stackedViewContainers()->getFirstSelectedContainerView();
     if (view)
     {
-        medAbstractProcess* process = qobject_cast<medAbstractProcess*>(dtkAbstractProcessFactory::instance()->create("ExportVideo"));
+        medAbstractProcess* process = qobject_cast<medAbstractProcess*>(dtkAbstractProcessFactory::instance()->create("msc::ExportVideo"));
         medAbstractImageView* iview = dynamic_cast<medAbstractImageView*>(view);
         medTimeLineParameter* timeLine = iview->timeLineParameter();
 
@@ -187,23 +187,31 @@ void medWorkspaceArea::runExportVideoProcess(medAbstractProcess* process)
     QPixmap currentPixmap = grabScreenshot();
     QImage currentQImage = currentPixmap.toImage();
 
+    int arraySize = 2
+            + (3
+            * currentQImage.size().width()
+            * currentQImage.size().height());
+
+    std::vector<int> pixelListOfCurrentScreenshot (arraySize);
+
+    // Two firsts values are width and height of the image
+    pixelListOfCurrentScreenshot[0] = currentQImage.size().width();
+    pixelListOfCurrentScreenshot[1] = currentQImage.size().height();
+
     for (int i=0; i<currentQImage.size().width(); ++i)
     {
         for (int j=0; j<currentQImage.size().height(); ++j)
         {
-            QRgb px = currentQImage.pixel(i, j);
-            QColor color(px);
-
-            // Send for each pixel the RGB value to the process
-            process->setParameter(color.red(),   0);
-            process->setParameter(color.green(), 1);
-            process->setParameter(color.blue(),  2);
+            QColor color(currentQImage.pixel(i, j));
+            int index1D = 2 + (i * currentQImage.size().height() + j)*3;
+            pixelListOfCurrentScreenshot[index1D    ] = color.red();
+            pixelListOfCurrentScreenshot[index1D + 1] = color.green();
+            pixelListOfCurrentScreenshot[index1D + 2] = color.blue();
         }
     }
-    // After sending the height parameter to channel 4,
-    // the current image is reconstructed in the process
-    process->setParameter(currentQImage.size().width(),   3);
-    process->setParameter(currentQImage.size().height(),  4);
+
+    // Send for each screenshot the R, G, B int array to the process
+    process->setParameter(pixelListOfCurrentScreenshot.data());
 }
 
 void medWorkspaceArea::addToolBox(medToolBox *toolbox)

@@ -29,7 +29,7 @@ public:
 public slots:
 
     //! Parameters are set through here, channel allows to handle multiple parameters
-    void setParameter(int data, int channel);
+    void setParameter(int* data);
 
     //! Method to actually start the filter
     int update();

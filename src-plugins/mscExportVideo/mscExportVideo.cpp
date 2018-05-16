@@ -18,9 +18,6 @@ class ExportVideoPrivate
 {
 public:
     QVector< QImage > imagesArray;
-    QVector< QColor > tmpColorArray;
-    int tmpRed;
-    int tmpGreen;
     int width;
     int height;
 
@@ -40,9 +37,6 @@ public:
 ExportVideo::ExportVideo() : medAbstractProcess(), d(new ExportVideoPrivate)
 {
     d->imagesArray.clear();
-    d->tmpColorArray.clear();
-    d->tmpRed = 0;
-    d->tmpGreen = 0;
     d->width  = 0;
     d->height = 0;
 
@@ -62,7 +56,7 @@ ExportVideo::~ExportVideo()
 
 bool ExportVideo::registered()
 {
-    return dtkAbstractProcessFactory::instance()->registerProcessType("ExportVideo", createExportVideo);
+    return dtkAbstractProcessFactory::instance()->registerProcessType("msc::ExportVideo", createExportVideo);
 }
 
 QString ExportVideo::description() const
@@ -75,61 +69,33 @@ QString ExportVideo::identifier() const
     return description();
 }
 
-void ExportVideo::setParameter(int data, int channel)
+void ExportVideo::setParameter(int* data)
 {
-    switch (channel)
-    {
-    case 0:
-    {
-        d->tmpRed = data;
-        break;
-    }
-    case 1:
-    {
-        d->tmpGreen = data;
-        break;
-    }
-    case 2:
-    {
-        // R, G, B to QColor (A default at 255)
-        QColor color = QColor(d->tmpRed, d->tmpGreen, data);
-        d->tmpColorArray.append(color);
-        break;
-    }
-    case 3:
-    {
-        d->width = data;
-        break;
-    }
-    case 4:
-    {
-        d->height = data;
+    d->width  = data[0];
+    d->height = data[1];
 
-        // Create the current screenshot QImage from the vector of QColor
-        QImage currentImage = QPixmap(d->width, d->height).toImage();
-        int cpt = 0;
+    QImage currentImage = QPixmap(d->width, d->height).toImage();
 
-        for (int i=0; i<d->width; ++i)
+    for (int i=0; i<d->width; ++i)
+    {
+        for (int j=0; j<d->height; ++j)
         {
-            for (int j=0; j<d->height; ++j)
-            {
-                currentImage.setPixel(i, j, d->tmpColorArray.at(cpt).rgb());
-                cpt++;
-            }
-        }
+            // R, G, B to QColor (A default at 255)
+            int index1D = 2 + (i * d->height + j)*3;
+            QColor color = QColor(data[index1D    ],
+                                  data[index1D + 1],
+                                  data[index1D + 2]);
 
-        d->imagesArray.append(currentImage);
-        d->tmpColorArray.clear();
-        break;
+            currentImage.setPixel(i, j, color.rgb());
+        }
     }
-    default:
-        break;
-    }
+
+    d->imagesArray.append(currentImage);
 }
 
 medAbstractData* ExportVideo::output()
 {
-    return NULL;
+    return nullptr;
 }
 
 int ExportVideo::update()
