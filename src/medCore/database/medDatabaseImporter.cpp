@@ -523,7 +523,7 @@ QString medDatabaseImporter::ensureUniqueSeriesName ( const QString seriesName )
         newSeriesName = "UnnamedSeries";
     }
 
-    QString originalSeriesName = seriesName;
+    QString originalSeriesName = newSeriesName;
 
     while (seriesNames.contains(newSeriesName))
     {

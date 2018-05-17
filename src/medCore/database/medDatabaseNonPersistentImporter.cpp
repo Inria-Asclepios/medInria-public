@@ -317,7 +317,7 @@ QString medDatabaseNonPersistentImporter::ensureUniqueSeriesName ( const QString
         newSeriesName = "UnnamedSeries";
     }
 
-    QString originalSeriesName = seriesName;
+    QString originalSeriesName = newSeriesName;
 
     while (seriesNames.contains(newSeriesName))
     {
