@@ -523,10 +523,13 @@ QString medDatabaseImporter::ensureUniqueSeriesName ( const QString seriesName )
         newSeriesName = "UnnamedSeries";
     }
 
-    suffix = seriesNames.filter(newSeriesName).count();
-    if (suffix > 0)
+    QString originalSeriesName = seriesName;
+
+    while (seriesNames.contains(newSeriesName))
     {
-        newSeriesName = newSeriesName + " (copy " + QString::number(suffix) + ")";
+        // it exist
+        suffix++;
+        newSeriesName = originalSeriesName + " (copy " + QString::number(suffix) + ")";
     }
 
     return newSeriesName;
