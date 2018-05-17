@@ -48,7 +48,7 @@ medAbstractData::medAbstractData(const medAbstractData& other)
       d(new medAbstractDataPrivate())
 {
     *d = *other.d;
-    d.index = medDataIndex();
+    d->index = medDataIndex();
 }
 
 medAbstractData::~medAbstractData( void )
