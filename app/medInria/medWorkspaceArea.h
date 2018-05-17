@@ -78,8 +78,9 @@ protected:
     /**
      * @brief runExportVideoProcess send each frame of the video to process
      * @param process for video export
+     * @param current screenshot number
      */
-    void runExportVideoProcess(medAbstractProcess *process);
+    void runExportVideoProcess(medAbstractProcess *process, int screenshotCount);
 
 signals:
     void open(const medDataIndex&);

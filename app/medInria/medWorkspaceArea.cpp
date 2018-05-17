@@ -133,6 +133,8 @@ void medWorkspaceArea::grabVideo()
             // Needed to remove the shadow of the dialog window
             iview->render();
 
+            int screenshotCount = 0;
+
             if (userParameters.at(1) == 0) // Time video (for 4D datasets)
             {
                 timeLine->unlockTimeLine();
@@ -140,7 +142,7 @@ void medWorkspaceArea::grabVideo()
                 for (int f=0; f<timeLine->numberOfFrame(); f+=userParameters.at(2))
                 {
                     timeLine->setFrame(f);
-                    runExportVideoProcess(process);
+                    runExportVideoProcess(process, screenshotCount);
                 }
 
                 timeLine->lockTimeLine();
@@ -150,7 +152,7 @@ void medWorkspaceArea::grabVideo()
                 for (double rotation=0.0; rotation<360.0; rotation+=userParameters.at(2))
                 {
                     iview->setRotation(rotation);
-                    runExportVideoProcess(process);
+                    runExportVideoProcess(process, screenshotCount);
                 }
             }
 
@@ -181,7 +183,7 @@ QVector<int> medWorkspaceArea::getExportVideoDialogParameters(int numberOfFrames
     return results;
 }
 
-void medWorkspaceArea::runExportVideoProcess(medAbstractProcess* process)
+void medWorkspaceArea::runExportVideoProcess(medAbstractProcess* process, int screenshotCount)
 {
     // Get the current state of the view
     QPixmap currentPixmap = grabScreenshot();
@@ -189,8 +191,8 @@ void medWorkspaceArea::runExportVideoProcess(medAbstractProcess* process)
 
     int arraySize = 2
             + (3
-            * currentQImage.size().width()
-            * currentQImage.size().height());
+               * currentQImage.size().width()
+               * currentQImage.size().height());
 
     std::vector<int> pixelListOfCurrentScreenshot (arraySize);
 
@@ -211,7 +213,9 @@ void medWorkspaceArea::runExportVideoProcess(medAbstractProcess* process)
     }
 
     // Send for each screenshot the R, G, B int array to the process
-    process->setParameter(pixelListOfCurrentScreenshot.data());
+    process->setParameter(pixelListOfCurrentScreenshot.data(), screenshotCount);
+
+    screenshotCount++;
 }
 
 void medWorkspaceArea::addToolBox(medToolBox *toolbox)

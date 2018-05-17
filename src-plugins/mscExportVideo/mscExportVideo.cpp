@@ -20,6 +20,7 @@ public:
     QVector< QImage > imagesArray;
     int width;
     int height;
+    int maximumFrame;
 
     // User parameters
     QString filename;
@@ -69,7 +70,7 @@ QString ExportVideo::identifier() const
     return description();
 }
 
-void ExportVideo::setParameter(int* data)
+void ExportVideo::setParameter(int* data, int frame)
 {
     d->width  = data[0];
     d->height = data[1];
@@ -90,7 +91,15 @@ void ExportVideo::setParameter(int* data)
         }
     }
 
-    d->imagesArray.append(currentImage);
+    int arraySize = d->imagesArray.size();
+
+    while (arraySize <= frame)
+    {
+       d->imagesArray.resize(1 + 2 * arraySize); // it's common to double here to avoid N resizes when giving N frames in order
+    }
+
+    d->imagesArray[frame] = currentImage;
+    d->maximumFrame = std::max(d->maximumFrame, frame);
 }
 
 medAbstractData* ExportVideo::output()
@@ -102,6 +111,19 @@ int ExportVideo::update()
 {
     if (!d->imagesArray.empty())
     {
+        // Handle error of missing frame: ignore the frame by removing it
+        d->imagesArray.resize(d->maximumFrame);
+        int cpt = 0;
+        foreach (QImage image, d->imagesArray)
+        {
+            if (image.isNull())
+            {
+                d->imagesArray.remove(cpt);
+            }
+            cpt++;
+        }
+
+        // Run export video/jpeg
         if (displayFileDialog() == medAbstractProcess::SUCCESS)
         {
             qDebug()<<"### ExportVideo::update ENCODING... w h "<<d->width<<"/"<<d->height;
