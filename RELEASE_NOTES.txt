@@ -1,6 +1,13 @@
 MUSIC v2.2.0:
-- [music-private code added]
-- Adapt MUSIC for Jenkins Windows server
+- Add Translation volume toolbox
+- Export Video from view: by rotation or time. Export in OGG VORBIS or batch of JPEG.
+- MFS Simulation: add Inverse Problem Methods utility with methods that can be used in inverse problems in general and not only in MFS.
+- MFS Simulation: add automatic determination of the optimal regularization parameter using Creso, Zero Crossing, GCV, RGCV, ADPC and U-Curve methods.
+- MFS Simulation: can now save singular values, relative errors, correlation coefficients.
+- Import (CARTO) EPMap
+- Pipelines: export to RYTHMIA
+- Add Jenkins Ubuntu 12.04 server (in addition to 16.04)
+- Add Jenkins Windows 10 server
 - Adapt MUSIC to Visual Studio 2015 compilation
 - Switch to C++11 code
 - Switch to ITK 4.11
