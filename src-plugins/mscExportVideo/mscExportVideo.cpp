@@ -40,6 +40,7 @@ ExportVideo::ExportVideo() : medAbstractProcess(), d(new ExportVideoPrivate)
     d->imagesArray.clear();
     d->width  = 0;
     d->height = 0;
+    d->maximumFrame = 0;
 
     // User parameters
     d->format = OGGVORBIS;
@@ -96,6 +97,7 @@ void ExportVideo::setParameter(int* data, int frame)
     while (arraySize <= frame)
     {
        d->imagesArray.resize(1 + 2 * arraySize); // it's common to double here to avoid N resizes when giving N frames in order
+       arraySize = d->imagesArray.size();
     }
 
     d->imagesArray[frame] = currentImage;

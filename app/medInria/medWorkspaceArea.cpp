@@ -143,6 +143,7 @@ void medWorkspaceArea::grabVideo()
                 {
                     timeLine->setFrame(f);
                     runExportVideoProcess(process, screenshotCount);
+                    screenshotCount++;
                 }
 
                 timeLine->lockTimeLine();
@@ -153,6 +154,7 @@ void medWorkspaceArea::grabVideo()
                 {
                     iview->setRotation(rotation);
                     runExportVideoProcess(process, screenshotCount);
+                    screenshotCount++;
                 }
             }
 
@@ -214,8 +216,6 @@ void medWorkspaceArea::runExportVideoProcess(medAbstractProcess* process, int sc
 
     // Send for each screenshot the R, G, B int array to the process
     process->setParameter(pixelListOfCurrentScreenshot.data(), screenshotCount);
-
-    screenshotCount++;
 }
 
 void medWorkspaceArea::addToolBox(medToolBox *toolbox)
