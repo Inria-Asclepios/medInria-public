@@ -160,6 +160,8 @@ void medWorkspaceArea::grabVideo()
 
             // Compute the video and export it
             process->update();
+
+            delete process;
         }
     }
 }
@@ -182,6 +184,9 @@ QVector<int> medWorkspaceArea::getExportVideoDialogParameters(int numberOfFrames
     {
         results.append(0); // Cancelled
     }
+
+    delete exportDialog;
+
     return results;
 }
 
