@@ -39,7 +39,6 @@ template <unsigned DIM,typename T>
 struct ImagePrivateType<DIM,itk::RGBPixel<T> >: public itkDataVectorImagePrivateType<DIM,itk::RGBPixel<T> > {
     ImagePrivateType(): itkDataVectorImagePrivateType<DIM,itk::RGBPixel<T> >() { }
     ImagePrivateType(const ImagePrivateType& other): itkDataVectorImagePrivateType<DIM,itk::RGBPixel<T> >(other) { }
-
 };
 
 template <unsigned DIM,typename T>
@@ -65,7 +64,6 @@ public:
 
     itkDataImage(): medAbstractTypedImageData<DIM,T>(),d(new PrivateMember) { }
     itkDataImage(const itkDataImage& other): medAbstractTypedImageData<DIM,T>(), d(new PrivateMember(*(other.d))) { }
-   
     ~itkDataImage() {
         delete d;
         d = 0;
