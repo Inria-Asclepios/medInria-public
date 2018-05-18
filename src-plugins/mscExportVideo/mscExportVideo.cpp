@@ -122,7 +122,10 @@ int ExportVideo::update()
             {
                 d->imagesArray.remove(cpt);
             }
-            cpt++;
+            else
+            {
+                cpt++;
+            }
         }
 
         // Run export video/jpeg
