@@ -261,7 +261,7 @@ double medUtilities::volume(dtkSmartPointer<medAbstractData> data)
 }
 
 vtkDataArray* medUtilities::getArray(dtkSmartPointer<medAbstractData> data,
-                                     const QString& arrayName)
+                                     QString arrayName)
 {
     vtkDataArray* result = nullptr;
     if (data->identifier().contains("vtkDataMesh") ||
@@ -270,7 +270,7 @@ vtkDataArray* medUtilities::getArray(dtkSmartPointer<medAbstractData> data,
         vtkMetaDataSet* metaData = static_cast<vtkMetaDataSet*>(data->data());
         vtkDataSet* mesh = metaData->GetDataSet();
         // try point data first
-        vtkDataArray* result = mesh->GetPointData()->GetArray(qPrintable(arrayName));
+        result = mesh->GetPointData()->GetArray(qPrintable(arrayName));
         if (!result)
         {
             // try cell data
@@ -286,30 +286,27 @@ vtkDataArray* medUtilities::getArray(dtkSmartPointer<medAbstractData> data,
 }
 
 QList<double> medUtilities::peekArray(dtkSmartPointer<medAbstractData> data,
-                                      const QString& arrayName,
+                                      QString arrayName,
                                       int index)
 {
     QList<double> result;
     vtkDataArray* array = getArray(data, arrayName);
-    if (array)
+    if (array && (index < array->GetNumberOfTuples()))
     {
-        if (index < array->GetNumberOfTuples())
+        int nbComponents = array->GetNumberOfComponents();
+        double* tuple = new double[nbComponents];
+        array->GetTuple(index, tuple);
+        for (int i = 0; i < nbComponents; ++i)
         {
-            int nbComponents = array->GetNumberOfComponents();
-            double* tuple = new double[nbComponents];
-            array->GetTuple(index, tuple);
-            for (int i = 0; i < nbComponents; ++i)
-            {
-                result.push_back(tuple[i]);
-            }
-            delete[] tuple;
+            result.push_back(tuple[i]);
         }
+        delete[] tuple;
     }
     return result;
 }
 
 QList<double> medUtilities::arrayRange(dtkSmartPointer<medAbstractData> data,
-                                       const QString& arrayName,
+                                       QString arrayName,
                                        int component)
 {
     QList<double> result;
@@ -326,7 +323,7 @@ QList<double> medUtilities::arrayRange(dtkSmartPointer<medAbstractData> data,
 }
 
 QList<double> medUtilities::arrayStats(dtkSmartPointer<medAbstractData> data,
-                                       const QString& arrayName,
+                                       QString arrayName,
                                        int component)
 {
     QList<double> result;

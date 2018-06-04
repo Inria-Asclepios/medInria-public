@@ -64,7 +64,7 @@ public:
      * @return specified array if it exits, nullptr otherwise
      */
     static vtkDataArray* getArray(dtkSmartPointer<medAbstractData> data,
-                                  const QString& arrayName);
+                                  QString arrayName);
 
     /**
      * @brief Retrieve single tuple from a real-valued array.
@@ -75,7 +75,7 @@ public:
      * @return tuple as a list. Returns a empty list on failure
      */
     static QList<double> peekArray(dtkSmartPointer<medAbstractData> data,
-                                   const QString& arrayName,
+                                   QString arrayName,
                                    int index);
     /**
      * @brief Compute real-valued array range (min and max values).
@@ -88,7 +88,7 @@ public:
      *         list on failure
      */
     static QList<double> arrayRange(dtkSmartPointer<medAbstractData> data,
-                                    const QString& arrayName,
+                                    QString arrayName,
                                     int component = 0);
 
     /**
@@ -102,6 +102,6 @@ public:
      *         Returns an empty list on failure.
      */
     static QList<double> arrayStats(dtkSmartPointer<medAbstractData> data,
-                                    const QString& arrayName,
+                                    QString arrayName,
                                     int component = 0);
 };
