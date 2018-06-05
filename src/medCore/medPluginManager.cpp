@@ -123,7 +123,8 @@ QStringList medPluginManager::handlers(const QString& category)
 */
 void medPluginManager::onPluginLoaded(const QString& name)
 {
-    qDebug() << " Loading plugin : " << name;
+    QString fullMessage = QString("Loading plugin: ") + name;
+    qDebug(fullMessage.toUtf8());
 
     dtkPlugin *plug = plugin(name);
 
