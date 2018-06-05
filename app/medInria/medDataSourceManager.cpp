@@ -68,8 +68,7 @@ medDataSourceManager::medDataSourceManager(): d(new medDataSourceManagerPrivate)
 
     foreach(QString dataSourceName, medAbstractDataSourceFactory::instance()->dataSourcePlugins())
     {
-        QString fullMessage = "Factory creates dataSource: " + dataSourceName;
-        qDebug(fullMessage.toUtf8());
+        qDebug()<< "Factory creates dataSource:" << qPrintable(dataSourceName);
 
         medAbstractDataSource *dataSource = medAbstractDataSourceFactory::instance()->create(dataSourceName, 0);
         d->dataSources.push_back(dataSource);
