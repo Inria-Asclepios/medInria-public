@@ -70,7 +70,8 @@ public:
      * @brief Return array index and data type
      * @param[in] data input data, must be a mesh or map
      * @param[in] arrayName array name
-     * @return data index and data type (0 point data, 1 cell data) as list
+     * @return data index and data type (0 point data, 1 cell data, 2
+     *         field data) as list
      */
     static QList<long> getArrayIndex(dtkSmartPointer<medAbstractData> data,
                                      QString arrayName);
