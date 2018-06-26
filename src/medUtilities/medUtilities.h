@@ -59,12 +59,21 @@ public:
      * @brief Retrieves an array from input data. This functions first looks in
      * point data, then cell data and finally in field data.
      *
-     * @param[in] data input data, must be a mesh or map 
+     * @param[in] data input data, must be a mesh or map
      * @param[in] arrayName array to retrieve
      * @return specified array if it exits, nullptr otherwise
      */
     static vtkDataArray* getArray(dtkSmartPointer<medAbstractData> data,
                                   QString arrayName);
+
+    /**
+     * @brief Return array index and data type
+     * @param[in] data input data, must be a mesh or map
+     * @param[in] arrayName array name
+     * @return data index and data type (0 point data, 1 cell data) as list
+     */
+    static QList<long> getArrayIndex(dtkSmartPointer<medAbstractData> data,
+                                     QString arrayName);
 
     /**
      * @brief Retrieve single tuple from a real-valued array.

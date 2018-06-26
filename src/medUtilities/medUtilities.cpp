@@ -285,6 +285,47 @@ vtkDataArray* medUtilities::getArray(dtkSmartPointer<medAbstractData> data,
     return result;
 }
 
+QList<long> medUtilities::getArrayIndex(dtkSmartPointer<medAbstractData> data,
+                                        QString arrayName)
+{
+    QList<long> indices;
+    int dataType, arrayId;
+    if (data->identifier().contains("vtkDataMesh") ||
+        data->identifier().contains("EPMap"))
+    {
+        vtkMetaDataSet* metaData = static_cast<vtkMetaDataSet*>(data->data());
+        vtkDataSet* mesh = metaData->GetDataSet();
+        // try point data first
+        (void)mesh->GetPointData()->GetAbstractArray(qPrintable(arrayName), arrayId);
+        if (arrayId == -1)
+        {
+            (void)mesh->GetCellData()->GetAbstractArray(qPrintable(arrayName), arrayId);
+            if (arrayId == -1)
+            {
+                (void)mesh->GetFieldData()->GetAbstractArray(qPrintable(arrayName), arrayId);
+                if (arrayId != -1)
+                {
+                    indices.push_back((long)arrayId);
+                    indices.push_back((long)2);
+                }
+            }
+            else
+            {
+                indices.push_back((long)arrayId);
+                indices.push_back((long)1);
+            }
+        }
+        else
+        {
+            indices.push_back((long)arrayId);
+            indices.push_back((long)0);
+        }
+    }
+
+    return indices;
+}
+
+
 QList<double> medUtilities::peekArray(dtkSmartPointer<medAbstractData> data,
                                       QString arrayName,
                                       int index)
