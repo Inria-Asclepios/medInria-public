@@ -479,12 +479,12 @@ QSpinBox::up-button:hover, QDoubleSpinBox::up-button:hover
 
 QSpinBox::up-arrow, QDoubleSpinBox::up-arrow
 {
-    image: url(:/pixmaps/arrow-top-disabled.png);
+    image: url(:/pixmaps/arrow-top.png);
 }
 
 QSpinBox::up-arrow:disabled, QDoubleSpinBox::up-arrow:disabled
 {
-    image: url(:/pixmaps/arrow-top.png);
+    image: url(:/pixmaps/arrow-top-disabled.png);
 }
 
 QSpinBox::down-button, QDoubleSpinBox::down-button
@@ -502,12 +502,12 @@ QSpinBox::down-button:hover, QDoubleSpinBox::down-button:hover
 
 QSpinBox::down-arrow, QDoubleSpinBox::down-arrow
 {
-    image: url(:/pixmaps/arrow-bot-disabled.png);
+    image: url(:/pixmaps/arrow-bot.png);
 }
 
 QSpinBox::down-arrow:disabled, QDoubleSpinBox::down-arrow::disabled
 {
-    image: url(:/pixmaps/arrow-bot.png);
+    image: url(:/pixmaps/arrow-bot-disabled.png);
 }
 
 
