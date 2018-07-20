@@ -17,6 +17,7 @@
 #include <medVtkInriaExport.h>
 #include <string>
 #include <vector>
+#include <map>
 
 #include <vtkMetaImageData.h>
 #include <itkExtractImageFilter.h>
@@ -428,7 +429,7 @@ class MEDVTKINRIA_EXPORT vtkMetaDataSetSequence: public vtkMetaDataSet
   /**
      Access to some variables : SequenceDuration
   */
-  vtkGetMacro (SequenceDuration, double);
+  vtkGetMacro(SequenceDuration, double)
 
   virtual const char* GetDataSetType() const
   {
@@ -524,7 +525,7 @@ class MEDVTKINRIA_EXPORT vtkMetaDataSetSequence: public vtkMetaDataSet
 
   virtual double* GetScalarRange(QString attributeName = QString());
 
-  vtkGetMacro (CurrentId, int);
+  vtkGetMacro(CurrentId, int)
   
 protected:
   vtkMetaDataSetSequence();
