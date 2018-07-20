@@ -17,7 +17,6 @@
 #include <medVtkInriaExport.h>
 #include <string>
 #include <vector>
-#include <map>
 
 #include <vtkMetaImageData.h>
 #include <itkExtractImageFilter.h>
