@@ -18,11 +18,15 @@
 
 class iterativeClosestPointToolBoxPrivate;
 
+/*! \brief Toolbox to match two meshes using the ICP (Iterative Closest Point) algorithm.
+ *
+ * This toolbox does not have named widgets which can be accessed in python pipelines.
+ */
 class ITERATIVECLOSESTPOINTPLUGIN_EXPORT iterativeClosestPointToolBox : public medAbstractSelectableToolBox
 {
     Q_OBJECT
     MED_TOOLBOX_INTERFACE("Iterative Closest Point",
-                          "Used to match two meshes using the ICP algorithm",<<"Meshing")
+                          "Used to match two meshes using the ICP algorithm.",<<"Meshing")
     
 public:
     iterativeClosestPointToolBox(QWidget *parent = 0);

@@ -22,10 +22,10 @@ class dtkAbstractView;
 class dtkAbstractData;
 class medClutToolBoxPrivate;
 
-/**
-   \class medClutToolBox
-   \brief 
-*/
+/*! \brief Clut (colour look-up table) Editor toolBox.
+ *
+ * This toolbox does not have named widgets which can be accessed in python pipelines.
+ */
 class MEDCLUTPLUGIN_EXPORT medClutToolBox : public medToolBox
 {
     Q_OBJECT
