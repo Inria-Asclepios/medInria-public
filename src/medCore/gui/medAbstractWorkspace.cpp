@@ -309,6 +309,26 @@ void medAbstractWorkspace::handleLayerSelectionChange()
     emit layerSelectionChanged(getSelectedLayerIndices());
 }
 
+void medAbstractWorkspace::resetCameraOnSelectedLayer(QListWidgetItem* item)
+{
+    std::cout<<"LAYER DOUBLE CLICKED "<<std::endl;
+    QUuid uuid = d->containerForLayerWidgetsItem.value(item);
+    medViewContainer* container = medViewContainerManager::instance()->container(uuid);
+    if (!container)
+    {
+        return;
+    }
+
+    medAbstractLayeredView* layeredView = dynamic_cast<medAbstractLayeredView*>(container->view());
+    if (!layeredView)
+    {
+        return;
+    }
+
+    int currentLayer = item->data(Qt::UserRole).toInt();
+    layeredView->resetCameraOnLayer(currentLayer);
+}
+
 void medAbstractWorkspace::updateLayersToolBox()
 {
     d->layerListToolBox->body()->clear();
@@ -326,6 +346,7 @@ void medAbstractWorkspace::updateLayersToolBox()
 
     connect(d->layerListWidget, SIGNAL(currentRowChanged(int)), this, SLOT(changeCurrentLayer(int)));
     connect(d->layerListWidget, SIGNAL(itemSelectionChanged()), this, SLOT(handleLayerSelectionChange()));
+    connect(d->layerListWidget, SIGNAL(itemDoubleClicked(QListWidgetItem*)), this, SLOT(resetCameraOnSelectedLayer(QListWidgetItem*)));
 
     foreach(QUuid uuid, d->viewContainerStack->containersSelected())
     {

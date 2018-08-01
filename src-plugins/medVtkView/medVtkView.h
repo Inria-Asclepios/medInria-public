@@ -49,6 +49,9 @@ public:
     medBoolParameter* rubberBandZoomParameter() const;
 
     virtual void setOffscreenRendering(bool isOffscreen);
+
+    virtual void resetCameraOnLayer(int layer);
+
 public slots:
     virtual void reset();
     virtual void render();

@@ -24,7 +24,8 @@ public:
     {
         POINT_ARRAY,
         CELL_ARRAY,
-        FIELD_ARRAY
+        FIELD_ARRAY,
+        UNKNOWN
     };
 
     static void setDerivedMetaData(medAbstractData* derived, medAbstractData* original,

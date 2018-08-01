@@ -565,6 +565,9 @@ public:
 
   virtual vtkRenderer * GetRenderer() const;
 
+  using vtkImageView::ResetCamera;
+  virtual void ResetCamera(vtkDataSet* arg);
+
 protected:
   vtkImageView2D();
   ~vtkImageView2D();

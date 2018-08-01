@@ -408,6 +408,8 @@ class MEDVTKINRIA_EXPORT vtkImageView : public vtkObject
   */
   virtual void ResetCamera();
 
+  virtual void ResetCamera(vtkDataSet* arg) = 0;
+
   // Description:
   // Set window and level for mapping pixels to colors.
   /**

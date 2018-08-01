@@ -1938,18 +1938,28 @@ vtkActor* vtkImageView2D::AddDataSet(vtkPointSet* arg, vtkProperty* prop)
   this->DataSetWidgets.push_back( widget );
 
   // If this is the first widget to be added, reset camera
-  if ( (! this->GetInput()) && (this->DataSetWidgets.size() == 1)) {
+  if ( (! this->GetInput()) && (this->DataSetWidgets.size() == 1))
+  {
+    ResetCamera(arg);
+  }
 
-      vtkBoundingBox box;
-      typedef std::list<vtkDataSet2DWidget*> WidgetListType;
+  return widget->GetActor();
+}
 
-      // Find bounds of all input data.
-      for ( WidgetListType::const_iterator it( this->DataSetWidgets.begin() );
+void vtkImageView2D::ResetCamera(vtkDataSet *arg)
+{
+    vtkBoundingBox box;
+/*
+    typedef std::list<vtkDataSet2DWidget*> WidgetListType;
+    // Find bounds of all input data.
+    for ( WidgetListType::const_iterator it( this->DataSetWidgets.begin() );
           it != this->DataSetWidgets.end();
           ++it )
-      {
-          box.AddBounds( widget->GetSource()->GetBounds() );
-      }
+    {
+        box.AddBounds( widget->GetSource()->GetBounds() );
+    }
+*/
+    box.AddBounds(arg->GetBounds());
 
     double center[3];
     box.GetCenter(center);
@@ -1957,10 +1967,6 @@ vtkActor* vtkImageView2D::AddDataSet(vtkPointSet* arg, vtkProperty* prop)
     double bounds[6];
     box.GetBounds(bounds);
     this->GetRenderer()->ResetCamera(bounds);
-
-  }
-
-  return widget->GetActor();
 }
 
 void vtkImageView2D::UpdateBounds (const double bounds[6], int layer, const int imageSize[3], const double imageSpacing[3],
