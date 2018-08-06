@@ -29,8 +29,6 @@ public:
     mscDatabaseMetadataItemDialog(QList<QString> keyList, QList<QVariant> metadataList, QWidget* parent);
 
     virtual ~mscDatabaseMetadataItemDialog();
-
-public slots:
     
 private:
 
