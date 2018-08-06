@@ -33,13 +33,15 @@ mscDatabaseMetadataItemDialog::mscDatabaseMetadataItemDialog(QList<QString> keyL
     setLayout(dialogLayout);
     setModal(true);
 
+    QLabel* explanation = new QLabel(tr("Non-empty metadata from the selected data:"));
+    dialogLayout->addWidget(explanation);
+
     d->tree = new QTreeWidget();
     d->tree->setFrameStyle(QFrame::NoFrame);
     d->tree->setAttribute(Qt::WA_MacShowFocusRect, false);
     d->tree->setUniformRowHeights(true);
     d->tree->setAlternatingRowColors(true);
     d->tree->setAnimated(true);
-    d->tree->setSortingEnabled(true);
     d->tree->setSelectionBehavior(QAbstractItemView::SelectRows);
     d->tree->setSelectionMode(QAbstractItemView::SingleSelection);
     d->tree->header()->setStretchLastSection(true);
@@ -59,12 +61,19 @@ mscDatabaseMetadataItemDialog::mscDatabaseMetadataItemDialog(QList<QString> keyL
     int cpt = 0;
     foreach (QString key, keyList)
     {
-        QTreeWidgetItem * item = new QTreeWidgetItem(d->tree);
-        item->setText(0, key);
-        item->setText(1, metadataList.at(cpt).toString());
-        d->tree->addTopLevelItem(item);
+        // Only keep non empty metadata values
+        if (!metadataList.at(cpt).toString().isEmpty())
+        {
+            QTreeWidgetItem * item = new QTreeWidgetItem(d->tree);
+            item->setText(0, key);
+            item->setText(1, metadataList.at(cpt).toString());
+            d->tree->addTopLevelItem(item);
+        }
         cpt++;
     }
+
+    d->tree->setSortingEnabled(true);
+    d->tree->sortByColumn(0, Qt::AscendingOrder);
 }
 
 mscDatabaseMetadataItemDialog::~mscDatabaseMetadataItemDialog()
