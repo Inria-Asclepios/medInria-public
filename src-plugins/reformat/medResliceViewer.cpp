@@ -4,6 +4,7 @@
 #include <itkVTKImageToImageFilter.h>
 #include <medAbstractDataFactory.h>
 #include <medAbstractLayeredView.h>
+#include <medMetaDataKeys.h>
 #include <medSliderSpinboxPair.h>
 #include <medUtilities.h>
 #include <medVtkViewBackend.h>
@@ -706,7 +707,6 @@ void medResliceViewer::generateOutput(vtkImageReslice* reslicer, QString destTyp
 
     outputData = medAbstractDataFactory::instance()->createSmartPointer(destType);
     outputData->setData(filter->GetOutput());
-    medUtilities::setDerivedMetaData(outputData, inputData, "reformatted");
 
     // Apply resampling in pix
     if (reformaTlbx->findChild<QComboBox*>("bySpacingOrDimension")->currentText() == "Dimension")
@@ -719,7 +719,40 @@ void medResliceViewer::generateOutput(vtkImageReslice* reslicer, QString destTyp
     compensateForRadiologicalView<DATA_TYPE>(outputImage);
     correctOutputTransform<DATA_TYPE>(outputImage, reslicer->GetResliceAxes());
 
+    // Final output image
     outputData->setData(outputImage);
+
+    // Update metadata: Columns, Rows, Size, SliceThickness, Orientation and Origin.
+    // XSpacing, YSpacing and ZSpacing are not filled in itkDCMTKDataImageReader.cpp
+    // However, SliceThickness == ZSpacing, and X and Y spacings can be read by the user on the view.
+    medUtilities::setDerivedMetaData(outputData, inputData, "reformatted");
+
+    outputData->setMetaData(medMetaDataKeys::Columns.key(),
+                            QString::number(outputImage->GetLargestPossibleRegion().GetSize()[0]));
+    outputData->setMetaData(medMetaDataKeys::Rows.key(),
+                            QString::number(outputImage->GetLargestPossibleRegion().GetSize()[1]));
+    outputData->setMetaData(medMetaDataKeys::Size.key(),
+                            QString::number(outputImage->GetLargestPossibleRegion().GetSize()[2]));
+    outputData->setMetaData(medMetaDataKeys::SliceThickness.key(),
+                            QString::number(outputImage->GetSpacing()[2]));
+    outputData->setMetaData(medMetaDataKeys::Orientation.key(),
+            QString::number(outputImage->GetDirection()[0][0]) +
+            QString(" ") +
+            QString::number(outputImage->GetDirection()[0][1]) +
+            QString(" ") +
+            QString::number(outputImage->GetDirection()[0][2]) +
+            QString(" ") +
+            QString::number(outputImage->GetDirection()[1][0]) +
+            QString(" ") +
+            QString::number(outputImage->GetDirection()[1][1]) +
+            QString(" ") +
+            QString::number(outputImage->GetDirection()[1][2]));
+    outputData->setMetaData(medMetaDataKeys::Origin.key(),
+            QString::number(outputImage->GetOrigin()[0]) +
+            QString(" ") +
+            QString::number(outputImage->GetOrigin()[1]) +
+            QString(" ") +
+            QString::number(outputImage->GetOrigin()[2]));
 }
 
 void medResliceViewer::applyResamplingPix()
