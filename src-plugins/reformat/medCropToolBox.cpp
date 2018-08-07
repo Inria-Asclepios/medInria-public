@@ -56,8 +56,10 @@ public:
     void applyOrientationMatrix(double* worldPointIn, double* WorldPointOut);
     void applyInverseOrientationMatrix(double* worldPointIn, double* worldPointOut);
     void generateOutput();
-    template <typename ImageType> int extractCroppedImage(medAbstractData* input, int* minIndices, int* maxIndices, medAbstractData** output);
-    void setOutputMetaData(medAbstractData* output, medAbstractData* input, int columns, int rows);
+    template <typename ImageType>
+	int extractCroppedImage(medAbstractData* input, int* minIndices, int* maxIndices, medAbstractData** output);
+    template <typename ImageType>
+	void setOutputMetaData(medAbstractData* output, medAbstractData* input);
     void replaceViewWithOutputData(medAbstractWorkspace& workspace);
     void importOutput();
 };
@@ -475,16 +477,31 @@ int medCropToolBoxPrivate::extractCroppedImage(medAbstractData* input, int* minI
     *output = medAbstractDataFactory::instance()->create(input->identifier());
     (*output)->setData(filteredImage);
 
-    setOutputMetaData(*output, input, desiredSize[0], desiredSize[1]);
+    setOutputMetaData<ImageType>(output, abstractData);
 
     return DTK_SUCCEED;
 }
 
-void medCropToolBoxPrivate::setOutputMetaData(medAbstractData* output, medAbstractData* input, int columns, int rows)
+template <typename ImageType>
+void medCropToolBoxPrivate::setOutputMetaData(medAbstractData* output, medAbstractData* input)
 {
+    typename ImageType::Pointer outputImage = static_cast<ImageType*>(output->data());
+
     medUtilities::setDerivedMetaData(output, input, "cropped");
-    output->setMetaData(medMetaDataKeys::Columns.key(), QString::number(columns));
-    output->setMetaData(medMetaDataKeys::Rows.key(), QString::number(rows));
+
+    output->setMetaData(medMetaDataKeys::Columns.key(),
+                        QString::number(outputImage->GetLargestPossibleRegion().GetSize()[0]));
+    output->setMetaData(medMetaDataKeys::Rows.key(),
+                        QString::number(outputImage->GetLargestPossibleRegion().GetSize()[1]));
+    output->setMetaData(medMetaDataKeys::Size.key(),
+                        QString::number(outputImage->GetLargestPossibleRegion().GetSize()[2]));
+
+    output->setMetaData(medMetaDataKeys::Origin.key(),
+                        QString::number(outputImage->GetOrigin()[0]) +
+                        QString(" ") +
+                        QString::number(outputImage->GetOrigin()[1]) +
+                        QString(" ") +
+                        QString::number(outputImage->GetOrigin()[2]));
 }
 
 void medCropToolBoxPrivate::replaceViewWithOutputData(medAbstractWorkspace& workspace)
