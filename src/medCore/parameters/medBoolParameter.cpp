@@ -154,7 +154,7 @@ QRadioButton* medBoolParameter::getRadioButton()
 
 QWidget* medBoolParameter::getWidget()
 {
-    return this->getCheckBox();
+    return this->getMainWidget();
 }
 
 void medBoolParameter::removeInternPushButton()

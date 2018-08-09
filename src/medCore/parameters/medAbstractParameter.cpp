@@ -27,6 +27,10 @@ public:
     bool hide;
 
     ~medAbstractParameterPrivate() {delete label;}
+
+    // Main Layout and Widget
+    QWidget* widget;
+    QHBoxLayout* layout;
 };
 
 medAbstractParameter::medAbstractParameter(QString name, QObject *parent):
@@ -37,6 +41,12 @@ medAbstractParameter::medAbstractParameter(QString name, QObject *parent):
     d->toolTip = QString();
     this->setName(name);
     d->hide = false;
+
+    // Main Layout and Widget
+    d->widget = new QWidget;
+    d->layout = new QHBoxLayout;
+    d->layout->setContentsMargins(0,0,0,0);
+    d->widget->setLayout(d->layout);
 }
 
 medAbstractParameter::~medAbstractParameter(void)
@@ -126,6 +136,16 @@ void medAbstractParameter::toXMLNode(QDomDocument* doc,QDomElement* currentNode)
 	QDomElement elmt=doc->createElement("name");
 	elmt.appendChild(doc->createTextNode(name()));
 	currentNode->appendChild(elmt);
+}
+
+QHBoxLayout* medAbstractParameter::getMainLayout()
+{
+    return d->layout;
+}
+
+QWidget* medAbstractParameter::getMainWidget()
+{
+    return d->widget;
 }
 
 //--------------------------------------------------------------------------

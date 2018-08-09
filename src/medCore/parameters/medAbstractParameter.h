@@ -20,6 +20,7 @@
 
 #include <QDomDocument>
 #include <QDomElement>
+#include <QHBoxLayout>
 
 #include <medCoreExport.h>
 
@@ -55,6 +56,18 @@ public:
     virtual void toXMLNode(QDomDocument* doc,QDomElement* currentNode);
 
     void setToolTip(QString tooltip);
+
+    /**
+     * @brief getMainLayout returns the main layout with default and current widgets.
+     * @return QHBoxLayout*
+     */
+    QHBoxLayout* getMainLayout();
+
+    /**
+     * @brief getMainWidget returns the main widget with main layout.
+     * @return QWidget*
+     */
+    QWidget* getMainWidget();
 
 protected:
     void addToInternWidgets(QWidget * widget);

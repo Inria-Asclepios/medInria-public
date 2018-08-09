@@ -123,7 +123,9 @@ QSpinBox* medIntParameter::getSpinBox()
 
 QWidget* medIntParameter::getWidget()
 {
-    return this->getSpinBox();
+    this->getMainLayout()->addWidget(this->getLabel());
+    this->getMainLayout()->addWidget(this->getSpinBox());
+    return this->getMainWidget();
 }
 
 void medIntParameter::removeInternSlider()

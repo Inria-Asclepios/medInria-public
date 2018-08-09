@@ -208,7 +208,9 @@ QLabel* medDoubleParameter::getValueLabel()
 
 QWidget* medDoubleParameter::getWidget()
 {
-    return this->getSpinBox();
+    this->getMainLayout()->addWidget(this->getLabel());
+    this->getMainLayout()->addWidget(this->getSpinBox());
+    return this->getMainWidget();
 }
 
 void medDoubleParameter::removeInternSpinBox()
