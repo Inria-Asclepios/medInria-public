@@ -311,7 +311,6 @@ void medAbstractWorkspace::handleLayerSelectionChange()
 
 void medAbstractWorkspace::resetCameraOnSelectedLayer(QListWidgetItem* item)
 {
-    std::cout<<"LAYER DOUBLE CLICKED "<<std::endl;
     QUuid uuid = d->containerForLayerWidgetsItem.value(item);
     medViewContainer* container = medViewContainerManager::instance()->container(uuid);
     if (!container)
