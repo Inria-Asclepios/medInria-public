@@ -14,6 +14,7 @@
 #include <itkFiltersPlugin.h>
 
 #include <itkFiltersAddProcess.h>
+#include <itkFiltersBinaryFillholeProcess.h>
 #include <itkFiltersSubtractProcess.h>
 #include <itkFiltersMultiplyProcess.h>
 #include <itkFiltersDivideProcess.h>
@@ -60,6 +61,7 @@ bool itkFiltersPlugin::initialize()
     if ( !itkFiltersGrayscaleOpenProcess::registered() ) { dtkWarn() << "Unable to register itkFiltersGrayscaleOpenProcess type";     }
     if ( !itkFiltersBinaryCloseProcess::registered() )   { dtkWarn() << "Unable to register itkFiltersBinaryCloseProcess type";}
     if ( !itkFiltersBinaryOpenProcess::registered() )    { dtkWarn() << "Unable to register itkFiltersBinaryOpenProcess type";}
+    if ( !itkFiltersBinaryFillholeProcess::registered() )    { dtkWarn() << "Unable to register itkFiltersBinaryFillholeProcess type";}
 
     return true;
 }
@@ -74,7 +76,7 @@ QString itkFiltersPlugin::description() const
           Processes: <i>add constant, subtract constant, multiply by constant, \
           divide by constant, gaussian filter, normalize filter, \
           median filter, invert filter, shrink filter, intensity filter, \
-          threshold and isolated pixels removal</i>.  \
+          threshold and isolated pixels removal, binary fill hole</i>.  \
           <br><br>This plugin uses the <a href=\"https://itk.org/\" style=\"color: #cc0000\" >ITK library</a>.";
   return description;
 }
@@ -122,7 +124,8 @@ QStringList itkFiltersPlugin::types() const
                          << "itkBinaryCloseProcess"
                          << "itkBinaryOpenProcess"
                          << "itkGrayscaleCloseProcess"
-                         << "itkGrayscaleOpenProcess";
+                         << "itkGrayscaleOpenProcess"
+                         << "itkBinaryFillholeProcess";
 }
 
 Q_EXPORT_PLUGIN2 ( itkFiltersPlugin, itkFiltersPlugin )

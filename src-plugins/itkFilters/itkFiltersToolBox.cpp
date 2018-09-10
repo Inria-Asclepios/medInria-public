@@ -24,6 +24,7 @@
 
 #include <itkFiltersProcessBase.h>
 #include <itkFiltersAddProcess.h>
+#include <itkFiltersBinaryFillholeProcess.h>
 #include <itkFiltersComponentSizeThresholdProcess.h>
 #include <itkFiltersDivideProcess.h>
 #include <itkFiltersGaussianProcess.h>
@@ -62,6 +63,7 @@ public:
     QWidget * intensityFilterWidget;
     QWidget * thresholdFilterWidget;
     QWidget * componentSizeThresholdFilterWidget;
+    QWidget * binaryFillholeFilterWidget;
 
     QDoubleSpinBox * addFilterValue;
     QDoubleSpinBox * subtractFilterValue;
@@ -75,6 +77,7 @@ public:
     QSpinBox * shrink1Value;
     QSpinBox * shrink2Value;
     QSpinBox * componentSizeThresholdFilterValue;
+    QSpinBox * binaryFillholeFilterValue;
 
     QDoubleSpinBox * intensityMinimumValue;
     QDoubleSpinBox * intensityMaximumValue;
@@ -102,7 +105,8 @@ itkFiltersToolBox::itkFiltersToolBox ( QWidget *parent ) : medAbstractSelectable
                 << "Shrink image"
                 << "Intensity windowing"
                 << "Threshold an image"
-                << "Remove isolated voxels/pixels";
+                << "Remove isolated voxels/pixels"
+                << "Binary Fill Hole";
     
     d->filters->addItems ( filtersList );
 
@@ -294,6 +298,19 @@ itkFiltersToolBox::itkFiltersToolBox ( QWidget *parent ) : medAbstractSelectable
     componentSizeThresholdFilterLayout->addStretch ( 1 );
     d->componentSizeThresholdFilterWidget->setLayout ( componentSizeThresholdFilterLayout );
 
+    //Binary Fill Hole Widget
+    d->binaryFillholeFilterWidget = new QWidget(this);
+    d->binaryFillholeFilterValue = new QSpinBox;
+    d->binaryFillholeFilterValue->setObjectName("Foreground value: ");
+    d->binaryFillholeFilterValue->setMaximum ( 100000 );
+    d->binaryFillholeFilterValue->setValue ( itkFiltersBinaryFillholeProcess::defaultBinaryFillholeValue );
+    QLabel * binaryFillholeFilterLabel = new QLabel ( tr ( "Foreground value:" ) );
+    QHBoxLayout * binaryFillholeFilterLayout = new QHBoxLayout;
+    binaryFillholeFilterLayout->addWidget ( binaryFillholeFilterLabel );
+    binaryFillholeFilterLayout->addWidget ( d->binaryFillholeFilterValue );
+    binaryFillholeFilterLayout->addStretch ( 1 );
+    d->binaryFillholeFilterWidget->setLayout ( binaryFillholeFilterLayout );
+
     // Run button:
     QPushButton *runButton = new QPushButton ( tr ( "Run" ) );
     runButton->setObjectName("Run");
@@ -317,6 +334,7 @@ itkFiltersToolBox::itkFiltersToolBox ( QWidget *parent ) : medAbstractSelectable
     layout->addWidget ( d->intensityFilterWidget );
     layout->addWidget ( d->thresholdFilterWidget );
     layout->addWidget ( d->componentSizeThresholdFilterWidget );
+    layout->addWidget ( d->binaryFillholeFilterWidget );
     layout->addWidget ( runButton );
     layout->addStretch ( 1 );
 
@@ -429,6 +447,8 @@ int itkFiltersToolBox::setupSpinBoxValues(medAbstractData*)
     d->intensityOutputMinimumValue->setMaximum(std::numeric_limits<PixelType>::max());
     d->intensityOutputMaximumValue->setMinimum(std::numeric_limits<PixelType>::min());
     d->intensityOutputMaximumValue->setMaximum(std::numeric_limits<PixelType>::max());
+    d->binaryFillholeFilterValue->setMinimum( std::numeric_limits<PixelType>::min());
+    d->binaryFillholeFilterValue->setMaximum( std::numeric_limits<PixelType>::max());
 
     return DTK_SUCCEED;
 }
@@ -568,6 +588,18 @@ void itkFiltersToolBox::setupItkComponentSizeThresholdProcess()
     d->process->setParameter ( d->componentSizeThresholdFilterValue->value(), 0 );
 }
 
+void itkFiltersToolBox::setupItkBinaryFillholeProcess()
+{
+    d->process = dtkAbstractProcessFactory::instance()->createSmartPointer ( "itkBinaryFillholeProcess" );
+
+    if (!d->process)
+        return;
+
+    d->process->setInput ( this->selectorToolBox()->data() );
+    d->process->setParameter ( d->binaryFillholeFilterValue->value(), 0 );
+
+}
+
 void itkFiltersToolBox::run ( void )
 {
     if ( !this->selectorToolBox() )
@@ -621,6 +653,8 @@ void itkFiltersToolBox::run ( void )
     case 11: // size thresholding filter
         this->setupItkComponentSizeThresholdProcess();
         break;    
+    case 12: // binary fill hole filter
+        this->setupItkBinaryFillholeProcess();
     }
 
     if (! d->process)
@@ -647,6 +681,7 @@ void itkFiltersToolBox::onFiltersActivated ( int index )
     d->intensityFilterWidget->hide();
     d->thresholdFilterWidget->hide();
     d->componentSizeThresholdFilterWidget->hide();
+    d->binaryFillholeFilterWidget->hide();
 
     switch ( index )
     {
@@ -685,6 +720,9 @@ void itkFiltersToolBox::onFiltersActivated ( int index )
         break;
     case 11:
         d->componentSizeThresholdFilterWidget->show();
+        break;
+    case 12:
+        d->binaryFillholeFilterWidget->show();
         break;
     default:
         d->addFilterWidget->show();

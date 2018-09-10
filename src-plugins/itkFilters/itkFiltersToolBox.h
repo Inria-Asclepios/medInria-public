@@ -56,7 +56,8 @@ private:
     void setupItkWindowingProcess();
     void setupItkThresholdingProcess();
     void setupItkComponentSizeThresholdProcess();
-    
+    void setupItkBinaryFillholeProcess();
+
     itkFiltersToolBoxPrivate *d;
 };
 
