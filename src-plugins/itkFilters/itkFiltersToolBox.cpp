@@ -302,7 +302,6 @@ itkFiltersToolBox::itkFiltersToolBox ( QWidget *parent ) : medAbstractSelectable
     d->binaryFillholeFilterWidget = new QWidget(this);
     d->binaryFillholeFilterValue = new QSpinBox;
     d->binaryFillholeFilterValue->setObjectName("Foreground value: ");
-    d->binaryFillholeFilterValue->setMaximum ( 100000 );
     d->binaryFillholeFilterValue->setValue ( itkFiltersBinaryFillholeProcess::defaultBinaryFillholeValue );
     QLabel * binaryFillholeFilterLabel = new QLabel ( tr ( "Foreground value:" ) );
     QHBoxLayout * binaryFillholeFilterLayout = new QHBoxLayout;
@@ -449,6 +448,7 @@ int itkFiltersToolBox::setupSpinBoxValues(medAbstractData*)
     d->intensityOutputMaximumValue->setMaximum(std::numeric_limits<PixelType>::max());
     d->binaryFillholeFilterValue->setMinimum( std::numeric_limits<PixelType>::min());
     d->binaryFillholeFilterValue->setMaximum( std::numeric_limits<PixelType>::max());
+    d->binaryFillholeFilterValue->setValue(std::numeric_limits<PixelType>::max());
 
     return DTK_SUCCEED;
 }
@@ -594,10 +594,28 @@ void itkFiltersToolBox::setupItkBinaryFillholeProcess()
 
     if (!d->process)
         return;
-
     d->process->setInput ( this->selectorToolBox()->data() );
-    d->process->setParameter ( d->binaryFillholeFilterValue->value(), 0 );
 
+    QString identifier = this->selectorToolBox()->data()->identifier();
+
+    if ( identifier == "itkDataImageChar3" || identifier == "itkDataImageUChar3" ||
+         identifier == "itkDataImageShort3" || identifier == "itkDataImageUShort3" ||
+         identifier == "itkDataImageInt3" || identifier == "itkDataImageUInt3" ||
+         identifier == "itkDataImageLong3" || identifier== "itkDataImageULong3" )
+    {
+        d->process->setParameter((int)d->binaryFillholeFilterValue->value(), 0);
+    }
+    else if ( identifier == "itkDataImageFloat3" || identifier == "itkDataImageDouble3" )
+    {
+        d->process->setParameter((double)d->binaryFillholeFilterValue->value(), 0);
+    }
+    else
+    {
+        qWarning() << "itkFiltersToolBox Error: pixel type not yet implemented ("
+        << identifier
+        << ")";
+        return;
+    }
 }
 
 void itkFiltersToolBox::run ( void )

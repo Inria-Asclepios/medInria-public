@@ -23,17 +23,16 @@
 class itkFiltersBinaryFillholeProcessPrivate
 {
 public:
-    double binaryFillholeValue;
+    QVariant binaryFillholeValue;
 };
 
-const double itkFiltersBinaryFillholeProcess::defaultBinaryFillholeValue = 10000.0;
+const int itkFiltersBinaryFillholeProcess::defaultBinaryFillholeValue;
 
 //-------------------------------------------------------------------------------------------
-
 itkFiltersBinaryFillholeProcess::itkFiltersBinaryFillholeProcess(itkFiltersBinaryFillholeProcess *parent)
     : itkFiltersProcessBase(parent), d(new itkFiltersBinaryFillholeProcessPrivate)
 {  
-    d->binaryFillholeValue = defaultBinaryFillholeValue;
+    d->binaryFillholeValue = QVariant::fromValue<int>(defaultBinaryFillholeValue);
 }
 
 itkFiltersBinaryFillholeProcess::itkFiltersBinaryFillholeProcess(const itkFiltersBinaryFillholeProcess& other)
@@ -64,12 +63,14 @@ QString itkFiltersBinaryFillholeProcess::description() const
 
 //-------------------------------------------------------------------------------------------
 
-void itkFiltersBinaryFillholeProcess::setParameter(double data, int channel)
+void itkFiltersBinaryFillholeProcess::setParameter(double data)
 {
-    if (channel != 0)
-        return;
-    
-    d->binaryFillholeValue = data;
+    d->binaryFillholeValue = QVariant::fromValue<double>(data);
+}
+
+void itkFiltersBinaryFillholeProcess::setParameter(int data)
+{
+    d->binaryFillholeValue = QVariant::fromValue<int>(data);
 }
 
 //-------------------------------------------------------------------------------------------
@@ -133,24 +134,24 @@ int itkFiltersBinaryFillholeProcess::tryUpdate()
 
 template <class PixelType> int itkFiltersBinaryFillholeProcess::updateProcess()
 {
-//    typedef itk::Image< PixelType, 3 > ImageType;
-//    typedef itk::BinaryFillholeImageFilter<ImageType> FilterType;
-//    typename FilterType::Pointer filter = FilterType::New();
+    typedef itk::Image< PixelType, 3 > ImageType;
+    typedef itk::BinaryFillholeImageFilter<ImageType> BinaryFillholeFilter;
+    typename BinaryFillholeFilter::Pointer binaryFillholeFilter = BinaryFillholeFilter::New();
 
-//    binaryFillholeFilter->SetInput ( dynamic_cast<ImageType *> ( ( itk::Object* ) ( getInputData()->data() ) ) );
-//    binaryFillholeFilter->SetForegroundValue ( d->binaryFillholeValue );
+    binaryFillholeFilter->SetInput ( dynamic_cast<ImageType *> ( ( itk::Object* ) ( getInputData()->data() ) ) );
+    binaryFillholeFilter->SetForegroundValue(d->binaryFillholeValue.value<PixelType>());
 
-//    itk::CStyleCommand::Pointer callback = itk::CStyleCommand::New();
-//    callback->SetClientData ( ( void * ) this );
-//    callback->SetCallback ( itkFiltersProcessBase::eventCallback );
-//    binaryFillholeFilter->AddObserver ( itk::ProgressEvent(), callback );
+    itk::CStyleCommand::Pointer callback = itk::CStyleCommand::New();
+    callback->SetClientData ( ( void * ) this );
+    callback->SetCallback ( itkFiltersProcessBase::eventCallback );
+    binaryFillholeFilter->AddObserver ( itk::ProgressEvent(), callback );
 
-//    binaryFillholeFilter->Update();
+    binaryFillholeFilter->Update();
 
-//    getOutputData()->setData ( binaryFillholeFilter->GetOutput() );
+    getOutputData()->setData ( binaryFillholeFilter->GetOutput() );
 
-//    QString newSeriesDescription = "binary fill hole filter " + QString::number(d->binaryFillholeValue);
-//    medUtilities::setDerivedMetaData(getOutputData(), getInputData(), newSeriesDescription);
+    QString newSeriesDescription = "binary fill hole filter " + d->binaryFillholeValue.toString();
+    medUtilities::setDerivedMetaData(getOutputData(), getInputData(), newSeriesDescription);
 
     return DTK_SUCCEED;
 }

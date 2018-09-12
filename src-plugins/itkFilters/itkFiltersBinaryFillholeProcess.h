@@ -23,7 +23,7 @@ class ITKFILTERSPLUGIN_EXPORT itkFiltersBinaryFillholeProcess : public itkFilter
     Q_OBJECT
     
 public:
-    static const double defaultBinaryFillholeValue;
+    static const int defaultBinaryFillholeValue = 1000;
 
     itkFiltersBinaryFillholeProcess(itkFiltersBinaryFillholeProcess * parent = 0);
     itkFiltersBinaryFillholeProcess(const itkFiltersBinaryFillholeProcess& other);
@@ -34,7 +34,8 @@ public:
     
 public slots:
 
-    void setParameter ( double  data, int channel );
+    void setParameter ( double  data);
+    void setParameter ( int data);
     int tryUpdate();
 
 protected:
