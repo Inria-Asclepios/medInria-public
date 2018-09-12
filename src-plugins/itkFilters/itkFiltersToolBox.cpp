@@ -448,7 +448,7 @@ int itkFiltersToolBox::setupSpinBoxValues(medAbstractData*)
     d->intensityOutputMaximumValue->setMaximum(std::numeric_limits<PixelType>::max());
     d->binaryFillholeFilterValue->setMinimum( std::numeric_limits<PixelType>::min());
     d->binaryFillholeFilterValue->setMaximum( std::numeric_limits<PixelType>::max());
-    d->binaryFillholeFilterValue->setValue(std::numeric_limits<PixelType>::max());
+    d->binaryFillholeFilterValue->setValue( std::numeric_limits<PixelType>::max());
 
     return DTK_SUCCEED;
 }
@@ -603,11 +603,11 @@ void itkFiltersToolBox::setupItkBinaryFillholeProcess()
          identifier == "itkDataImageInt3" || identifier == "itkDataImageUInt3" ||
          identifier == "itkDataImageLong3" || identifier== "itkDataImageULong3" )
     {
-        d->process->setParameter((int)d->binaryFillholeFilterValue->value(), 0);
+        d->process->setParameter((int)d->binaryFillholeFilterValue->value());
     }
     else if ( identifier == "itkDataImageFloat3" || identifier == "itkDataImageDouble3" )
     {
-        d->process->setParameter((double)d->binaryFillholeFilterValue->value(), 0);
+        d->process->setParameter((double)d->binaryFillholeFilterValue->value());
     }
     else
     {
