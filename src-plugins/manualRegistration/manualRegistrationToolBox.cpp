@@ -362,7 +362,7 @@ void manualRegistrationToolBox::computeRegistration()
 
 void manualRegistrationToolBox::retrieveProcessOutputAndUpdateViews()
 {
-    medAbstractData * newOutput = d->process->output();
+    medAbstractData* newOutput = d->process->getOutputData();
 
     if(newOutput && newOutput->data())
     {

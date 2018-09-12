@@ -232,11 +232,12 @@ private:
 };
 
 
-bool itkProcessRegistration::setInputData(medAbstractData *data, int channel)
+void itkProcessRegistration::setInputData(medAbstractData* data, int channel, int frame)
 {
-    bool res = true; // default behaviour is to always pass, except in exceptional cases
+    Q_UNUSED(frame);
+
     if (!data)
-        return res;
+        return;
 
     QString id = QString (data->identifier());
     QString::iterator last_charac = id.end() - 1;
@@ -319,20 +320,17 @@ bool itkProcessRegistration::setInputData(medAbstractData *data, int channel)
     catch(itk::ExceptionObject& e)
     {
         qDebug() << e.what();
-        res = false; // In this case, we've failed
     }
-
-    return res;
 }
 
-bool itkProcessRegistration::setFixedInput(medAbstractData *data)
+void itkProcessRegistration::setFixedInput(medAbstractData *data)
 {
-    return this->setInputData(data, 0);
+    this->setInputData(data, 0);
 }
 
-bool itkProcessRegistration::setMovingInput(medAbstractData *data)
+void itkProcessRegistration::setMovingInput(medAbstractData *data)
 {
-    return this->setInputData(data, 1);
+    this->setInputData(data, 1);
 }
 
 int itkProcessRegistration::update(itkProcessRegistration::ImageType)
@@ -355,13 +353,12 @@ int itkProcessRegistration::update()
     return retval;
 }
 
-medAbstractData *itkProcessRegistration::output()
+medAbstractData* itkProcessRegistration::getOutputData(int channel, int frame) const
 {
+    Q_UNUSED(channel);
+    Q_UNUSED(frame);
+
     return d->output;
-}
-void itkProcessRegistration::setOutput(medAbstractData * output)
-{
-    d->output = output;
 }
 
 itk::ImageBase<3>::Pointer itkProcessRegistration::fixedImage()
@@ -421,7 +418,7 @@ bool itkProcessRegistration::write(const QString& file)
     }
 
     bool writeSuccess = false;
-    medAbstractData * out = output();
+    medAbstractData* out = getOutputData();
     QList<QString> writers = medAbstractDataFactory::instance()->writers();
     for (int i=0; i<writers.size(); i++)
     {

@@ -33,8 +33,10 @@ QString itkNotOperator::description() const
     return "NOT";
 }
 
-void itkNotOperator::setInput (medAbstractData *data, int channel)
+void itkNotOperator::setInputData(medAbstractData* data, int channel, int frame)
 {
+    Q_UNUSED(frame);
+
     if (channel == 0)
     {
         m_inputA = data;

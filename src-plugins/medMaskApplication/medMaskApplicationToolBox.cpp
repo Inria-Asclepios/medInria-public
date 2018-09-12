@@ -106,7 +106,7 @@ medAbstractData* medMaskApplicationToolBox::processOutput()
     {
         return NULL;
     }
-    return d->process->output();
+    return d->process->getOutputData();
 }
 
 void medMaskApplicationToolBox::run()

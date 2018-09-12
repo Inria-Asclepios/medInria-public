@@ -120,8 +120,10 @@ QString medMaskApplication::description() const
     return "medMaskApplication";
 }
 
-void medMaskApplication::setInput ( medAbstractData *data, int channel)
+void medMaskApplication::setInputData(medAbstractData* data, int channel, int frame)
 {
+    Q_UNUSED(frame);
+
     if ( channel == 0)
     {
         d->mask = data;
@@ -133,8 +135,10 @@ void medMaskApplication::setInput ( medAbstractData *data, int channel)
     }
 }
 
-void medMaskApplication::setParameter ( double data, int channel)
+void medMaskApplication::setDoubleParameter(double data, int channel, int frame)
 {
+    Q_UNUSED(frame);
+
     if(!channel)
     {
         d->maskBackgroundValue = data;
@@ -269,8 +273,11 @@ int medMaskApplication::updateMaskType()
 }
 
 
-medAbstractData * medMaskApplication::output()
+medAbstractData* medMaskApplication::getOutputData(int channel, int frame) const
 {
+    Q_UNUSED(channel);
+    Q_UNUSED(frame);
+
     return d->output;
 }
 

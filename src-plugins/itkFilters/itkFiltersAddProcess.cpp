@@ -64,8 +64,10 @@ QString itkFiltersAddProcess::description() const
 
 //-------------------------------------------------------------------------------------------
 
-void itkFiltersAddProcess::setParameter(double data, int channel)
+void itkFiltersAddProcess::setDoubleParameter(double data, int channel, int frame)
 {
+    Q_UNUSED(frame);
+
     if (channel != 0)
         return;
     

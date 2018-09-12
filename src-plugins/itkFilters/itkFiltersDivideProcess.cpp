@@ -64,8 +64,10 @@ QString itkFiltersDivideProcess::description() const
 
 //-------------------------------------------------------------------------------------------
 
-void itkFiltersDivideProcess::setParameter(double data, int channel)
+void itkFiltersDivideProcess::setDoubleParameter(double data, int channel, int frame)
 {
+    Q_UNUSED(frame);
+
     if (channel != 0)
         return;
     

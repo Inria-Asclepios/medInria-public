@@ -52,20 +52,21 @@ QString resampleProcess::description(void) const
 {
     return "resampleProcess";
 }
-void resampleProcess::setInput ( medAbstractData *data)
+void resampleProcess::setInputData(medAbstractData* data, int channel, int frame)
 {
+    Q_UNUSED(channel);
+    Q_UNUSED(frame);
+
     if ( !data )
         return;
+
     d->input = data;
 }
 
-void resampleProcess::setInput ( medAbstractData *data , int channel)
+void resampleProcess::setDoubleParameter(double data, int channel, int frame)
 {
-    setInput(data);
-}
+    Q_UNUSED(frame);
 
-void resampleProcess::setParameter ( double data, int channel)
-{
     switch (channel)
     {
     case 0:
@@ -228,9 +229,12 @@ template <class ImageType> void resampleProcess::resample(const char *str)
     medUtilities::setDerivedMetaData(d->output, d->input, "resampled");
 }
 
-medAbstractData * resampleProcess::output ( void )
+medAbstractData* resampleProcess::getOutputData(int channel, int frame) const
 {
-    return ( d->output );
+    Q_UNUSED(channel);
+    Q_UNUSED(frame);
+
+    return d->output;
 }
 
 // /////////////////////////////////////////////////////////////////

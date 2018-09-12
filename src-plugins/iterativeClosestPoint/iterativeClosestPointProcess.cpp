@@ -81,8 +81,10 @@ QString iterativeClosestPointProcess::description() const
     return "iterativeClosestPointProcess";
 }
 
-void iterativeClosestPointProcess::setInput(medAbstractData *data, int channel)
+void iterativeClosestPointProcess::setInputData(medAbstractData* data, int channel, int frame)
 {
+    Q_UNUSED(frame);
+
     if ( !data  || data->identifier()!="vtkDataMesh")
         return;
     
@@ -97,8 +99,10 @@ void iterativeClosestPointProcess::setInput(medAbstractData *data, int channel)
     }
 }    
 
-void iterativeClosestPointProcess::setParameter(double data, int channel)
+void iterativeClosestPointProcess::setDoubleParameter(double data, int channel, int frame)
 {
+    Q_UNUSED(frame);
+
     switch (channel)
     {
     case 3:
@@ -110,8 +114,10 @@ void iterativeClosestPointProcess::setParameter(double data, int channel)
     }
 }
 
-void iterativeClosestPointProcess::setParameter(int data, int channel)
+void iterativeClosestPointProcess::setIntParameter(int data, int channel, int frame)
 {
+    Q_UNUSED(frame);
+
     switch (channel)
     {
     case 0:
@@ -167,8 +173,11 @@ int iterativeClosestPointProcess::update()
     return DTK_SUCCEED;
 }
 
-medAbstractData * iterativeClosestPointProcess::output()
+medAbstractData* iterativeClosestPointProcess::getOutputData(int channel, int frame) const
 {
+    Q_UNUSED(channel);
+    Q_UNUSED(frame);
+
     return d->output;
 }
 

@@ -13,16 +13,17 @@ public:
     virtual QString description(void) const;
     static bool registered(void);
 
-    public slots:
-        //! Input data to the plugin is set through here
-        void setInput(medAbstractData *data);
-        void setInput(medAbstractData *,int);
-        //! Parameters are set through here, channel allows to handle multiple parameters
-        void setParameter(double data, int channel);
-        //! Method to actually start the filter
-        int update(void);
-        //! The output will be available through here
-        medAbstractData *output(void);
+    medAbstractData* getOutputData(int channel = 0, int frame = 0) const override;
+
+public slots:
+    //! Method to actually start the filter
+    int update(void);
+
+protected:
+    void setDoubleParameter(double data, int channel = 0, int frame = 0) override;
+
+    void setInputData(medAbstractData* data, int channel = 0, int frame = 0) override;
+
 private:
     template <class ImageType> void resample(const char * str);
     resampleProcessPrivate *d;

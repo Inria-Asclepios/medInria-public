@@ -31,13 +31,14 @@ public:
 
     itkMorphologicalFiltersProcessBase(itkMorphologicalFiltersProcessBase * parent = 0);
     itkMorphologicalFiltersProcessBase(const itkMorphologicalFiltersProcessBase& other);
-    void setParameter(double data, int channel);
-    void setParameter(int data);
 
 public slots:
     int tryUpdate();
 
 protected:
+    void setDoubleParameter(double data, int channel = 0, int frame = 0) override;
+    void setIntParameter(int data, int channel = 0, int frame = 0) override;
+
     template <class ImageType> void convertMmInPixels();
     template <class PixelType> int updateProcess();
 

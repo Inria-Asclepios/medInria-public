@@ -32,7 +32,6 @@ public:
     medAbstractProcess( medAbstractProcess * parent = NULL );
     medAbstractProcess(const medAbstractProcess& other);
     virtual ~medAbstractProcess();
-    virtual void setInput ( medAbstractData *data, int channel = 0 ){}
 
     enum DataError
     {
@@ -55,18 +54,63 @@ public:
         UNDEFINED,      //! Miscellanous
     };
 
+    virtual medAbstractData* getOutputData(int channel = 0, int frame = 0) const = 0;
+
 public slots:
-    virtual medAbstractData *output() = 0;
     virtual int update () = 0;
+
+    void setParameter(int data) override;
+    void setParameter(int data, int channel) override;
+    void setParameter(int data, int channel, int frame) override;
+
+    void setParameter(int* data) override;
+    void setParameter(int* data, int channel) override;
+    void setParameter(int* data, int channel, int frame) override;
+
+    void setParameter(qlonglong data) override;
+    void setParameter(qlonglong data, int channel) override;
+    void setParameter(qlonglong data, int channel, int frame) override;
+
+    void setParameter(qlonglong* data) override;
+    void setParameter(qlonglong* data, int channel) override;
+    void setParameter(qlonglong* data, int channel, int frame) override;
+
+    void setParameter(double data) override;
+    void setParameter(double data, int channel) override;
+    void setParameter(double data, int channel, int frame) override;
+
+    void setParameter(double* data, int count) override;
+    void setParameter(double* data, int count, int channel) override;
+    void setParameter(double* data, int count, int channel, int frame) override;
+
+    void setParameter(dtkAbstractObject* data) override;
+    void setParameter(dtkAbstractObject* data, int channel) override;
+    void setParameter(dtkAbstractObject* data, int channel, int frame) override;
+
+    void setInput(dtkAbstractData* data) override;
+    void setInput(dtkAbstractData* data, int channel) override;
+    void setInput(dtkAbstractData* data, int channel, int frame) override;
+
+    dtkAbstractData* output() override;
+    dtkAbstractData* output(int channel) override;
+    dtkAbstractData* output(int channel, int frame) override;
+
+protected:
+    virtual void setIntParameter(int data, int channel = 0, int frame = 0);
+    virtual void setIntPointerParameter(int* data, int channel = 0, int frame = 0);
+    virtual void setQLongLongParameter(qlonglong data, int channel = 0, int frame = 0);
+    virtual void setQLongLongPointerParameter(qlonglong* data, int channel = 0, int frame = 0);
+    virtual void setDoubleParameter(double data, int channel = 0, int frame = 0);
+    virtual void setDoublePointerParameter(double* data, int count = -1, int channel = 0, int frame = 0);
+    virtual void setDataParameter(medAbstractData* data, int channel = 0, int frame = 0);
+
+    virtual void setInputData(medAbstractData* data, int channel = 0, int frame = 0) = 0;
 
 private:
     using dtkAbstractProcess::onCanceled;
     using dtkAbstractProcess::read;
     using dtkAbstractProcess::write;
-    using dtkAbstractProcess::setInput;
     using dtkAbstractProcess::setData;
-    //TODO rename our output methode
-    //using dtkAbstractProcess::output;
     using dtkAbstractProcess::data;
     using dtkAbstractProcess::channelCount;
 

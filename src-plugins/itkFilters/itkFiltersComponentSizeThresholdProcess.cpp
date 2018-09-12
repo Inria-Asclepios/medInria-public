@@ -66,8 +66,10 @@ QString itkFiltersComponentSizeThresholdProcess::description() const
 
 //-------------------------------------------------------------------------------------------
 
-void itkFiltersComponentSizeThresholdProcess::setParameter(int data, int channel)
+void itkFiltersComponentSizeThresholdProcess::setIntParameter(int data, int channel, int frame)
 {
+    Q_UNUSED(frame);
+
     if (channel != 0)
         return;
      
@@ -151,7 +153,7 @@ template <class PixelType> int itkFiltersComponentSizeThresholdProcess::castToUI
     caster->SetInput(im);
     caster->Update();
 
-    setInputData(medAbstractDataFactory::instance()->createSmartPointer ( "itkDataImageUInt3" ));
+    setInputData(medAbstractDataFactory::instance()->create("itkDataImageUInt3" ));
     getInputData()->setData(caster->GetOutput());
 
     return DTK_SUCCEED;
@@ -190,7 +192,7 @@ template <class PixelType> int itkFiltersComponentSizeThresholdProcess::updatePr
     callback->SetCallback ( itkFiltersProcessBase::eventCallback );
     connectedComponentFilter->AddObserver ( itk::ProgressEvent(), callback );
 
-    setOutputData(medAbstractDataFactory::instance()->createSmartPointer ( "itkDataImageUShort3" ));
+    setOutputData(medAbstractDataFactory::instance()->create("itkDataImageUShort3"));
     getOutputData()->setData ( thresholdFilter->GetOutput() );
 
     QString newSeriesDescription = "connectedComponent " + QString::number(d->minimumSize);

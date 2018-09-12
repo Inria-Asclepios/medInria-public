@@ -72,8 +72,10 @@ QString itkFiltersWindowingProcess::description() const
 
 //-------------------------------------------------------------------------------------------
 
-void itkFiltersWindowingProcess::setParameter(double data, int channel)
+void itkFiltersWindowingProcess::setDoubleParameter(double data, int channel, int frame)
 {
+    Q_UNUSED(frame);
+
     if (channel > 3)
         return;
     

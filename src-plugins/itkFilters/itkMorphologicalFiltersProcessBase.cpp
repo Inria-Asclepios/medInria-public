@@ -54,8 +54,10 @@ itkMorphologicalFiltersProcessBase::itkMorphologicalFiltersProcessBase(const itk
 {
 }
 
-void itkMorphologicalFiltersProcessBase::setParameter(double data, int channel)
+void itkMorphologicalFiltersProcessBase::setDoubleParameter(double data, int channel, int frame)
 {
+    Q_UNUSED(frame)
+
     if (channel <= 1)
     {
         d->radius[0] = data;
@@ -73,8 +75,11 @@ void itkMorphologicalFiltersProcessBase::setParameter(double data, int channel)
     }
 }
 
-void itkMorphologicalFiltersProcessBase::setParameter(int data)
+void itkMorphologicalFiltersProcessBase::setIntParameter(int data, int channel, int frame)
 {
+    Q_UNUSED(channel);
+    Q_UNUSED(frame);
+
     d->kernelShape = static_cast<KernelShape>(data);
 }
 

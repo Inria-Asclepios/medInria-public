@@ -202,8 +202,11 @@ itk::Transform<double,3,3>::Pointer manualRegistration::getTransform()
     return d->transform.GetPointer();
 }
 
-void manualRegistration::setParameter(int data)
+void manualRegistration::setIntParameter(int data, int channel, int frame)
 {
+    Q_UNUSED(channel);
+    Q_UNUSED(frame);
+
     d->transformTypeInt = static_cast<TransformName>(data);
 }
 

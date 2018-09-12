@@ -68,8 +68,10 @@ QString itkFiltersThresholdingProcess::description() const
 
 //-------------------------------------------------------------------------------------------
 
-void itkFiltersThresholdingProcess::setParameter(double data, int channel)
+void itkFiltersThresholdingProcess::setDoubleParameter(double data, int channel, int frame)
 {
+    Q_UNUSED(frame);
+
     if (channel > 2)
         return;
 

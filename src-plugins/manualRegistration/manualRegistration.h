@@ -102,7 +102,8 @@ public:
     */
     virtual bool writeTransform(const QString& file);
 
-    void setParameter(int data);
+protected:
+    void setIntParameter(int data, int channel = 0, int frame = 0) override;
 
 private:
     manualRegistrationPrivate *d;

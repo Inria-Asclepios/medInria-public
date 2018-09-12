@@ -228,7 +228,7 @@ medAbstractData* medUtilities::changeMaxNumberOfMeshTriangles(medAbstractData *m
         process->setParameter(decimateValue,0);
         process->update();
 
-        return process->output();
+        return process->getOutputData();
     }
     return mesh;
 }

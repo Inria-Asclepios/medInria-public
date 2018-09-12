@@ -186,7 +186,7 @@ void iterativeClosestPointToolBox::run()
 void iterativeClosestPointToolBox::displayOutput()
 {
     medAbstractData *sourceData = d->currentView->layerData(d->layerSource->currentIndex()-1);
-    d->currentView->insertLayer(d->layerSource->currentIndex() - 1, d->process->output());
+    d->currentView->insertLayer(d->layerSource->currentIndex() - 1, d->process->getOutputData());
     d->currentView->removeData(sourceData);
 }
 
@@ -242,7 +242,7 @@ medAbstractData* iterativeClosestPointToolBox::processOutput()
     {
         return NULL;
     }
-    return d->process->output();
+    return d->process->getOutputData();
 }
 
 dtkPlugin* iterativeClosestPointToolBox::plugin()

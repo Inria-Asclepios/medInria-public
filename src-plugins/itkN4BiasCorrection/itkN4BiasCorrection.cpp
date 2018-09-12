@@ -48,20 +48,24 @@ QString itkN4BiasCorrection::description() const
     return "itkN4BiasCorrection";
 }
 
-void itkN4BiasCorrection::setInput ( medAbstractData *data, int channel )
+void itkN4BiasCorrection::setInputData(medAbstractData* data, int channel, int frame)
 {
+    Q_UNUSED(frame);
+
     if (!channel)
     {
         d->input = data;
     }
-    else 
+    else
     {
         d->mask = data;
     }
-}    
+}
 
-void itkN4BiasCorrection::setParameter ( double  data, int channel )
+void itkN4BiasCorrection::setDoubleParameter(double data, int channel, int frame)
 {
+    Q_UNUSED(frame);
+
     if (channel == 0)
         d->splineDistance = data;
     if (channel == 1)
@@ -139,8 +143,11 @@ int itkN4BiasCorrection::update()
     return res;
 }        
 
-medAbstractData * itkN4BiasCorrection::output()
+medAbstractData * itkN4BiasCorrection::getOutputData(int channel, int frame) const
 {
+    Q_UNUSED(channel);
+    Q_UNUSED(frame);
+
     return d->output;
 }
 

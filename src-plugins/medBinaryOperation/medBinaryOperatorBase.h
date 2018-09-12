@@ -30,21 +30,18 @@ public:
     template <class ImageType> int run();
     template <class ImageType, class ImageType2> int runProcess();
 
-public slots:
-    
-    //! Input data to the plugin is set through here
-    void setInput(medAbstractData *data, int channel);
+    medAbstractData* getOutputData(int channel = 0, int frame = 0) const override;
 
+public slots:
     //! Method to actually start the filter
     virtual int update();
-    
-    //! The output will be available through here
-    medAbstractData *output();
 
 protected:
     dtkSmartPointer <medAbstractData> m_inputA;
     dtkSmartPointer <medAbstractData> m_inputB;
     dtkSmartPointer <medAbstractData> m_output;
+
+    void setInputData(medAbstractData* data, int channel = 0, int frame = 0) override;
 };
 
 

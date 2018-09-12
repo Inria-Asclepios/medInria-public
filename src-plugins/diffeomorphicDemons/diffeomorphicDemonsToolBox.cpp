@@ -218,7 +218,7 @@ medAbstractData* DiffeomorphicDemonsToolBox::processOutput()
 
     if(d->process)
     {
-        return d->process->output();
+        return d->process->getOutputData();
     }
     else
     {

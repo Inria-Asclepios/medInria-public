@@ -37,8 +37,10 @@ medBinaryOperatorBase::~medBinaryOperatorBase()
     m_output = NULL;
 }
 
-void medBinaryOperatorBase::setInput ( medAbstractData *data, int channel)
+void medBinaryOperatorBase::setInputData(medAbstractData* data, int channel, int frame)
 {
+    Q_UNUSED(frame);
+
     if ( channel == 0)
     {
         m_inputA = data;
@@ -243,7 +245,10 @@ template <class ImageType, class ImageType2> int medBinaryOperatorBase::runProce
     return DTK_SUCCEED;
 }
 
-medAbstractData * medBinaryOperatorBase::output()
+medAbstractData* medBinaryOperatorBase::getOutputData(int channel, int frame) const
 {
+    Q_UNUSED(channel);
+    Q_UNUSED(frame);
+
     return m_output;
 }

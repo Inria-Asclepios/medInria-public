@@ -33,11 +33,11 @@ public:
     virtual QString description(void) const;
     
 public slots:
-
-    void setParameter (int data, int channel );
     int tryUpdate();
 
 protected:
+    void setIntParameter(int data, int channel = 0, int frame = 0) override;
+
     template <class PixelType> int updateProcess();
 
 private:

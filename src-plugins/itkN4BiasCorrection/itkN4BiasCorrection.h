@@ -31,22 +31,18 @@ public:
     virtual QString description() const;
     
     static bool registered();
+
+    medAbstractData* getOutputData(int channel = 0, int frame = 0) const override;
     
 public slots:
-    
-    //! Input data to the plugin is set through here
-    void setInput(medAbstractData *data, int channel=0);
-    
-    //! Parameters are set through here, channel allows to handle multiple parameters
-    void setParameter(double  data, int channel);
-    
     //! Method to actually start the filter
     int update();
-    
-    //! The output will be available through here
-    medAbstractData *output();
-    
-    
+
+protected:
+    void setDoubleParameter(double data, int channel = 0, int frame = 0) override;
+
+    void setInputData(medAbstractData* data, int channel = 0, int frame = 0) override;
+
 private:
     itkN4BiasCorrectionPrivate *d;
 };

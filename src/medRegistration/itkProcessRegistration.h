@@ -93,8 +93,8 @@ public:
      * @param data: Pointer to an itkDataImageXXY.
      * @param channel: 0 for the fixed image, 1 for the moving one.
     */
-    virtual bool setFixedInput(medAbstractData *data);
-    virtual bool setMovingInput(medAbstractData *data);
+    virtual void setFixedInput(medAbstractData *data);
+    virtual void setMovingInput(medAbstractData *data);
 
     /**
      * @brief Gets the registered image.
@@ -102,9 +102,7 @@ public:
      * @param void
      * @return medAbstractData *: itkDataImageXXY, same type as the moving input image.
     */
-    medAbstractData *output();
-
-    void setOutput(medAbstractData * output);
+    medAbstractData* getOutputData(int channel = 0, int frame = 0) const override;
 
     /**
      * @brief Gets an itk smart pointer to the fixed image.
@@ -199,7 +197,7 @@ protected :
     */
     virtual int update(ImageType);
 
-    virtual bool setInputData(medAbstractData *data, int channel);
+    void setInputData(medAbstractData* data, int channel = 0, int frame = 0) override;
 
 private:
     itkProcessRegistrationPrivate *d;

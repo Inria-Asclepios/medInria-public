@@ -731,7 +731,7 @@ void medResliceViewer::applyResamplingPix()
     resamplePr->setParameter(outputSpacing[2],2);
     resamplePr->update();
 
-    outputData = resamplePr->output();
+    outputData = resamplePr->getOutputData();
     delete resamplePr;
 }
 

@@ -62,8 +62,10 @@ QString itkFiltersGaussianProcess::description() const
 
 //-------------------------------------------------------------------------------------------
 
-void itkFiltersGaussianProcess::setParameter(double data, int channel)
+void itkFiltersGaussianProcess::setDoubleParameter(double data, int channel, int frame)
 {
+    Q_UNUSED(frame);
+
     if (channel != 0)
         return;
     

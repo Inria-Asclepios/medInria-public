@@ -353,7 +353,7 @@ medAbstractData* itkFiltersToolBox::processOutput()
     if ( !d->process )
         return NULL;
 
-    return d->process->output();
+    return d->process->getOutputData();
 }
 
 void itkFiltersToolBox::clear()

@@ -32,10 +32,8 @@ public:
     int update();
     template <class ImageType> int run();
 
-public slots:
-    
-    //! Input data to the plugin is set through here
-    void setInput(medAbstractData *data, int channel=0);
+protected:
+    void setInputData(medAbstractData* data, int channel = 0, int frame = 0) override;
 };
 
 dtkAbstractProcess *createitkNotOperator();

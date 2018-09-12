@@ -201,7 +201,7 @@ medAbstractData* itkN4BiasCorrectionToolBox::processOutput()
 
     if (d->process)
     {
-        return d->process->output();
+        return d->process->getOutputData();
     }
     else
     {

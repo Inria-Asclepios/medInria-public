@@ -46,8 +46,11 @@ void itkFiltersProcessBase::emitProgress(int progress)
     emit progressed(progress);
 }
 
-void itkFiltersProcessBase::setInput(medAbstractData *data, int channel)
+void itkFiltersProcessBase::setInputData(medAbstractData* data, int channel, int frame)
 {
+    Q_UNUSED(channel);
+    Q_UNUSED(frame);
+
     if (!data)
         return;
    
@@ -57,8 +60,11 @@ void itkFiltersProcessBase::setInput(medAbstractData *data, int channel)
     d->inputData = dynamic_cast<medAbstractImageData*> (data);
 }
 
-medAbstractData * itkFiltersProcessBase::output ( void )
-{   
+medAbstractData* itkFiltersProcessBase::getOutputData(int channel, int frame) const
+{
+    Q_UNUSED(channel);
+    Q_UNUSED(frame);
+
     return d->outputData;
 }
 
@@ -89,22 +95,12 @@ void itkFiltersProcessBase::eventCallback ( itk::Object *caller, const itk::Even
     source->emitProgress((int) (processObject->GetProgress() * 100));
 }
 
-dtkSmartPointer<medAbstractImageData> itkFiltersProcessBase::getInputData()
+medAbstractImageData* itkFiltersProcessBase::getInputData()
 {
     return d->inputData;
 }
 
-void itkFiltersProcessBase::setInputData(dtkSmartPointer<medAbstractImageData> inputData)
+void itkFiltersProcessBase::setOutputData(medAbstractData* data)
 {
-    d->inputData = inputData;
-}
-
-dtkSmartPointer<medAbstractImageData> itkFiltersProcessBase::getOutputData()
-{
-    return d->outputData;
-}
-
-void itkFiltersProcessBase::setOutputData(dtkSmartPointer<medAbstractImageData> outputData)
-{
-    d->outputData = outputData;
+    d->outputData = dtkSmartPointer<medAbstractData>(data);
 }

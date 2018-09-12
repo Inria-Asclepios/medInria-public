@@ -81,7 +81,7 @@ protected :
      */
     virtual bool writeTransform(const QString& file);
 
-    virtual bool setInputData(medAbstractData *data, int channel);
+    virtual void setInputData(medAbstractData* data, int channel = 0, int frame = 0);
 
 private:
     undoRedoRegistrationPrivate *d;
