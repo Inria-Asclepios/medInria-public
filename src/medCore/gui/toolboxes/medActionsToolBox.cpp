@@ -61,7 +61,7 @@ medActionsToolBox::medActionsToolBox( QWidget *parent /*= 0*/, bool FILE_SYSTEM 
     d->viewBt = new QPushButton(d->buttonsWidget);
     d->viewBt->setAccessibleName("View");
     d->viewBt->setText(tr("View"));
-    d->viewBt->setToolTip(tr("Temporary import (if the data is not already in the database)\nand visualize the currently selected item."));
+    d->viewBt->setToolTip(tr("Temporarily import (if the data is not already in the database)\nand visualize the currently selected item."));
     d->viewBt->setIcon(QIcon(":/icons/eye.png"));
     connect(d->viewBt, SIGNAL(clicked()), this, SIGNAL(viewClicked()));
 
@@ -70,7 +70,7 @@ medActionsToolBox::medActionsToolBox( QWidget *parent /*= 0*/, bool FILE_SYSTEM 
         d->loadBt = new QPushButton(d->buttonsWidget);
         d->loadBt->setAccessibleName("Temporary Import");
         d->loadBt->setText(tr("Temporary Import"));
-        d->loadBt->setToolTip(tr("Temporary import the item(s) so as they can be used inside the application,\nbut do not include them in the database."));
+        d->loadBt->setToolTip(tr("Temporarily import the item(s) so as they can be used inside the application,\nbut do not include them in the database."));
         d->loadBt->setIcon(QIcon(":/icons/document-open.png"));
 
         d->importBt = new QPushButton(d->buttonsWidget);
