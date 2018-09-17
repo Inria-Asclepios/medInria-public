@@ -250,7 +250,7 @@ void vtkMetaDataSetSequence::Read(const char* dirname)
   
   for (unsigned int i = 0; i < list.size(); i++)
   {
-    double time = (double)(i)*duration/(double)(list.size());
+    double time = (double)(i)*duration/(double)(list.size()-1);
     
     try
     {
@@ -509,7 +509,7 @@ void vtkMetaDataSetSequence::BuildSequenceFromGeometry(const char* filename, uns
     
     vtkMetaDataSet* metadataset = NULL;
     vtkPointSet* pointset = NULL;
-    double time = (double)(i)*duration/(double)(Niter);
+    double time = (double)(i)*duration/(double)(Niter-1);
     
     switch(type)
     {
