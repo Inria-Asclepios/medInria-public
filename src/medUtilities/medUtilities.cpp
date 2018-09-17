@@ -290,7 +290,8 @@ int medUtilities::getArrayIndex(medAbstractData* data,
                                 DataArrayType* arrayType)
 {
     int arrayId = -1;
-    DataArrayType type;
+    DataArrayType type = DataArrayType::POINT_ARRAY; // Init
+
     if (data->identifier().contains("vtkDataMesh") ||
         data->identifier().contains("EPMap"))
     {
@@ -318,11 +319,11 @@ int medUtilities::getArrayIndex(medAbstractData* data,
         {
             type = DataArrayType::POINT_ARRAY;
         }
-    }
 
-    if (arrayType)
-    {
-        *arrayType = type;
+        if (arrayType)
+        {
+            *arrayType = type;
+        }
     }
 
     return arrayId;
