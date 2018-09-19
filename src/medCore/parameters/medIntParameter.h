@@ -35,6 +35,10 @@ public:
     QSpinBox* getSpinBox();
     medSlider* getSlider();
 
+    /**
+    * @brief getWidget returns initial tools: label + slider + spinbox
+    * @return
+    */
     virtual QWidget* getWidget();
 
 public slots:

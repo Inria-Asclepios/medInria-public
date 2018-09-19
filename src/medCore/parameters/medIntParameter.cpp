@@ -124,6 +124,7 @@ QSpinBox* medIntParameter::getSpinBox()
 QWidget* medIntParameter::getWidget()
 {
     this->getMainLayout()->addWidget(this->getLabel());
+    this->getMainLayout()->addWidget(this->getSlider());
     this->getMainLayout()->addWidget(this->getSpinBox());
     return this->getMainWidget();
 }

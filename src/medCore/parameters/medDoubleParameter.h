@@ -39,6 +39,10 @@ public:
     QSlider* getSlider();
     QLabel* getValueLabel();
 
+    /**
+    * @brief getWidget returns initial tools: label + slider + spinbox
+    * @return
+    */
     virtual QWidget* getWidget();
 
 public slots:
