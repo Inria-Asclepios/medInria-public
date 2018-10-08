@@ -23,9 +23,8 @@
 
 class medMaskApplicationToolBoxPrivate;
 
-/*! \brief Toolbox to apply a mask to an image.
- *
- * This toolbox does not have named widgets which can be accessed in python pipelines.
+/*!
+ * \brief Toolbox to apply a mask to an image.
  */
 class MEDMASKAPPLICATIONPLUGIN_EXPORT medMaskApplicationToolBox : public medAbstractSelectableToolBox
 {
