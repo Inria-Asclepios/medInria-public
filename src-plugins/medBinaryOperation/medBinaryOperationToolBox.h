@@ -18,9 +18,8 @@
 
 class medBinaryOperationToolBoxPrivate;
 
-/*! \brief Toolbox to compute binary operations between masks (OR, AND, XOR, etc.).
- *
- * This toolbox does not have named widgets which can be accessed in python pipelines.
+/*!
+ * \brief Toolbox to compute binary operations between masks (OR, AND, XOR, etc.).
  */
 class MEDBINARYOPERATIONPLUGIN_EXPORT medBinaryOperationToolBox : public medAbstractSelectableToolBox
 {

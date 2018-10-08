@@ -17,9 +17,8 @@
 
 class DiffeomorphicDemonsToolBoxPrivate;
 
-/*! \brief Toolbox to apply automatic registration using the ITK Diffeomorphic demons implementation.
- *
- * This toolbox does not have named widgets which can be accessed in python pipelines.
+/*!
+ * \brief Toolbox to apply automatic registration using the ITK Diffeomorphic demons implementation.
  */
 class DiffeomorphicDemonsToolBox : public medAbstractSelectableToolBox
 {
