@@ -408,7 +408,12 @@ class MEDVTKINRIA_EXPORT vtkImageView : public vtkObject
   */
   virtual void ResetCamera();
 
-  virtual void ResetCamera(vtkDataSet* arg) = 0;
+  /**
+   * @brief ResetCamera resets the camera onto
+   * the parameter dataset
+   * @param arg
+   */
+  virtual void ResetCamera(vtkDataSet* arg);
 
   // Description:
   // Set window and level for mapping pixels to colors.

@@ -313,19 +313,15 @@ void medAbstractWorkspace::resetCameraOnSelectedLayer(QListWidgetItem* item)
 {
     QUuid uuid = d->containerForLayerWidgetsItem.value(item);
     medViewContainer* container = medViewContainerManager::instance()->container(uuid);
-    if (!container)
+    if (container)
     {
-        return;
+        medAbstractLayeredView* layeredView = dynamic_cast<medAbstractLayeredView*>(container->view());
+        if (layeredView)
+        {
+            int currentLayer = item->data(Qt::UserRole).toInt();
+            layeredView->resetCameraOnLayer(currentLayer);
+        }
     }
-
-    medAbstractLayeredView* layeredView = dynamic_cast<medAbstractLayeredView*>(container->view());
-    if (!layeredView)
-    {
-        return;
-    }
-
-    int currentLayer = item->data(Qt::UserRole).toInt();
-    layeredView->resetCameraOnLayer(currentLayer);
 }
 
 void medAbstractWorkspace::updateLayersToolBox()
