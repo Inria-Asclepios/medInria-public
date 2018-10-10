@@ -136,10 +136,10 @@ medHomepageArea::medHomepageArea ( QWidget * parent ) : QWidget ( parent ), d ( 
     {
     case 0:
     default:
-        qssLogoName = ":music_logo_light.png";
+        qssLogoName = ":music_logo_dark.png";
         break;
     case 1:
-        qssLogoName = ":music_logo_dark.png";
+        qssLogoName = ":music_logo_light.png";
         break;
     }
     QPixmap medLogo(qssLogoName);
