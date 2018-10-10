@@ -477,7 +477,7 @@ int medCropToolBoxPrivate::extractCroppedImage(medAbstractData* input, int* minI
     *output = medAbstractDataFactory::instance()->create(input->identifier());
     (*output)->setData(filteredImage);
 
-    setOutputMetaData<ImageType>(output, abstractData);
+    setOutputMetaData<ImageType>(*output, input);
 
     return DTK_SUCCEED;
 }
