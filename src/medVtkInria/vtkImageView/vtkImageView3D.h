@@ -285,8 +285,6 @@ public:
   virtual void StoreColorLevel(double s,int layer);
   virtual void StoreLookupTable (vtkLookupTable *lookuptable, int layer);
 
-//  using vtkImageView::ResetCamera;
-
 protected:
 
   vtkImageView3D();
