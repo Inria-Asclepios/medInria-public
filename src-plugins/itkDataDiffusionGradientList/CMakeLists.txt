@@ -71,8 +71,8 @@ add_library(${PROJECT_NAME} SHARED ${${PROJECT_NAME}_CFILES})
 
 target_link_libraries(${PROJECT_NAME}
   ${QT_LIBRARIES}
-  dtkLog
-  dtkCore  
+  ${DTK_LIBRARIES}
+  ${ITK_LIBRARIES}
   ITKTensor
   medCore
   medLog

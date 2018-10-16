@@ -439,10 +439,16 @@ void medAbstractDatabaseImporter::importData()
     }
 
     populateMissingMetadata(d->data, "EmptySeries");
-    
+
     if ( !d->data->hasMetaData ( medMetaDataKeys::FilePaths.key() ) )
-        d->data->addMetaData ( medMetaDataKeys::FilePaths.key(), QStringList() << "generated with medInria" );
-        
+         d->data->addMetaData ( medMetaDataKeys::FilePaths.key(), QStringList() << "data created internally" );
+
+    // Information about the app and version of the application
+    QString attachedInfoApp = QString("generated with " +
+                                      QString(PROJECT_NAME) +
+                                      " " +
+                                      QString(MEDINRIA_VERSION));
+    d->data->setMetaData(medMetaDataKeys::Description.key(), attachedInfoApp);
 
     QString size ="";
     if ( medAbstractImageData *imagedata = dynamic_cast<medAbstractImageData*> ( d->data.data()) )
@@ -749,8 +755,10 @@ dtkSmartPointer<dtkAbstractDataWriter> medAbstractDatabaseImporter::getSuitableW
 **/
 QStringList medAbstractDatabaseImporter::getAllFilesToBeProcessed ( QString fileOrDirectory )
 {
-    QString file = fileOrDirectory;
+    //Trick to use QString with accent
+    QTextCodec::setCodecForCStrings(QTextCodec::codecForName("UTF-8"));
 
+    QString file = fileOrDirectory;
     QDir dir ( file );
     dir.setFilter ( QDir::Files | QDir::NoSymLinks | QDir::NoDotAndDotDot );
 
