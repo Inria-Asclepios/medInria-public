@@ -721,6 +721,13 @@ void medResliceViewer::generateOutput(vtkImageReslice* reslicer, QString destTyp
 
     // Final output image
     outputData->setData(outputImage);
+    setOutputMetaData<ImageType>(outputData, inputData);
+}
+
+template <typename ImageType>
+void medResliceViewer::setOutputMetaData(medAbstractData* outputData, medAbstractData* inputData)
+{
+    typename ImageType::Pointer outputImage = static_cast<ImageType*>(outputData->data());
 
     // Update metadata: Columns, Rows, Size, SliceThickness, Orientation and Origin.
     // XSpacing, YSpacing and ZSpacing are not filled in itkDCMTKDataImageReader.cpp
@@ -735,6 +742,7 @@ void medResliceViewer::generateOutput(vtkImageReslice* reslicer, QString destTyp
                             QString::number(outputImage->GetLargestPossibleRegion().GetSize()[2]));
     outputData->setMetaData(medMetaDataKeys::SliceThickness.key(),
                             QString::number(outputImage->GetSpacing()[2]));
+
     outputData->setMetaData(medMetaDataKeys::Orientation.key(),
             QString::number(outputImage->GetDirection()[0][0]) +
             QString(" ") +
@@ -747,6 +755,7 @@ void medResliceViewer::generateOutput(vtkImageReslice* reslicer, QString destTyp
             QString::number(outputImage->GetDirection()[1][1]) +
             QString(" ") +
             QString::number(outputImage->GetDirection()[1][2]));
+
     outputData->setMetaData(medMetaDataKeys::Origin.key(),
             QString::number(outputImage->GetOrigin()[0]) +
             QString(" ") +
