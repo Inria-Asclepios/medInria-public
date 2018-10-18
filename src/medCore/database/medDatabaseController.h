@@ -73,6 +73,8 @@ public:
 
     bool execQuery(QSqlQuery& query, const char* file = NULL, int line = -1) const;
 
+    void addColumnTableIfNeeded(QSqlQuery query, QString columnName);
+
 public slots:
 
     medAbstractData *retrieve(const medDataIndex &index) const;

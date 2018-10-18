@@ -136,6 +136,16 @@ void medDatabaseControllerPrivate::buildMetaDataLookup()
     metaDataLookup.insert(medMetaDataKeys::Report.key(),
         TableEntryList() << TableEntry(T_series, "report") );
 
+    metaDataLookup.insert(medMetaDataKeys::Origin.key(),
+        TableEntryList() << TableEntry(T_series, "origin") );
+    metaDataLookup.insert(medMetaDataKeys::FlipAngle.key(),
+        TableEntryList() << TableEntry(T_series, "flipAngle") );
+    metaDataLookup.insert(medMetaDataKeys::EchoTime.key(),
+        TableEntryList() << TableEntry(T_series, "echoTime") );
+    metaDataLookup.insert(medMetaDataKeys::RepetitionTime.key(),
+        TableEntryList() << TableEntry(T_series, "repetitionTime") );
+    metaDataLookup.insert(medMetaDataKeys::AcquisitionTime.key(),
+        TableEntryList() << TableEntry(T_series, "acquisitionTime") );
 //Image data
 
 
@@ -478,6 +488,20 @@ void medDatabaseController::createStudyTable(void)
 void medDatabaseController::createSeriesTable(void)
 {
     QSqlQuery query(this->database());
+
+    // Get all the information about the table columns
+    query.prepare("PRAGMA table_info(series)");
+    if ( !EXEC_QUERY(query) )
+    {
+        qDebug() << DTK_COLOR_FG_RED << query.lastError() << DTK_NO_COLOR;
+    }
+
+    this->addColumnTableIfNeeded(query, "origin");
+    this->addColumnTableIfNeeded(query, "flipAngle");
+    this->addColumnTableIfNeeded(query, "echoTime");
+    this->addColumnTableIfNeeded(query, "repetitionTime");
+    this->addColumnTableIfNeeded(query, "acquisitionTime");
+
     query.prepare(
             "CREATE TABLE series ("
             " id       INTEGER      PRIMARY KEY,"
@@ -505,11 +529,37 @@ void medDatabaseController::createSeriesTable(void)
             " referee         TEXT,"
             " performer       TEXT,"
             " institution     TEXT,"
-            " report          TEXT"
+            " report          TEXT,"
+            " origin          TEXT,"
+            " flipAngle       TEXT,"
+            " echoTime        TEXT,"
+            " repetitionTime  TEXT,"
+            " acquisitionTime TEXT"
             ");"
             );
 
     EXEC_QUERY(query);
+}
+
+void medDatabaseController::addColumnTableIfNeeded(QSqlQuery query, QString columnName)
+{
+    bool isColumnThere = false;
+    query.first();
+
+    while ( query.next() )
+    {
+        if (query.value(1).toString() == columnName)
+        {
+            isColumnThere = true;
+        }
+    }
+
+    // If columnName is not defined in the db series table, add it.
+    if (!isColumnThere)
+    {
+        query.prepare("ALTER TABLE series ADD COLUMN "+columnName+" TEXT");
+        EXEC_QUERY(query);
+    }
 }
 
 void medDatabaseController::createImageTable(void)
