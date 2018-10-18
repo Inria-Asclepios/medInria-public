@@ -563,6 +563,27 @@ void medDatabaseController::addTextColumnToSeriesTableIfNeeded(QSqlQuery query, 
     }
 }
 
+void medDatabaseController::addColumnTableIfNeeded(QSqlQuery query, QString columnName)
+{
+    bool isColumnThere = false;
+    query.first();
+
+    while ( query.next() )
+    {
+        if (query.value(1).toString() == columnName)
+        {
+            isColumnThere = true;
+        }
+    }
+
+    // If columnName is not defined in the db series table, add it.
+    if (!isColumnThere)
+    {
+        query.prepare("ALTER TABLE series ADD COLUMN "+columnName+" TEXT");
+        EXEC_QUERY(query);
+    }
+}
+
 void medDatabaseController::createImageTable(void)
 {
     // Note to the reader who came here looking for the 'size' column:
