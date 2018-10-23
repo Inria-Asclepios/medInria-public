@@ -496,11 +496,11 @@ void medDatabaseController::createSeriesTable(void)
         qDebug() << DTK_COLOR_FG_RED << query.lastError() << DTK_NO_COLOR;
     }
 
-    this->addColumnTableIfNeeded(query, "origin");
-    this->addColumnTableIfNeeded(query, "flipAngle");
-    this->addColumnTableIfNeeded(query, "echoTime");
-    this->addColumnTableIfNeeded(query, "repetitionTime");
-    this->addColumnTableIfNeeded(query, "acquisitionTime");
+    this->addTextColumnToSeriesTableIfNeeded(query, "origin");
+    this->addTextColumnToSeriesTableIfNeeded(query, "flipAngle");
+    this->addTextColumnToSeriesTableIfNeeded(query, "echoTime");
+    this->addTextColumnToSeriesTableIfNeeded(query, "repetitionTime");
+    this->addTextColumnToSeriesTableIfNeeded(query, "acquisitionTime");
 
     query.prepare(
             "CREATE TABLE series ("
@@ -541,7 +541,7 @@ void medDatabaseController::createSeriesTable(void)
     EXEC_QUERY(query);
 }
 
-void medDatabaseController::addColumnTableIfNeeded(QSqlQuery query, QString columnName)
+void medDatabaseController::addTextColumnToSeriesTableIfNeeded(QSqlQuery query, QString columnName)
 {
     bool isColumnThere = false;
     query.first();
