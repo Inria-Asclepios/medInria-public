@@ -3,9 +3,9 @@
 #include <dtkCore/dtkSmartPointer>
 #include <itkImage.h>
 #include <medAbstractProcess.h>
+#include <medMetaDataKeys.h>
 #include <medUtilities.h>
 #include <medUtilitiesExport.h>
-#include <medMetaDataKeys.h>
 
 class medAbstractData;
 
