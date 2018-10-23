@@ -113,9 +113,6 @@ protected:
     template <typename DATA_TYPE>
     void generateOutput(vtkImageReslice* reslicer, QString destType);
 
-    template <typename ImageType>
-    void setOutputMetaData(medAbstractData* outputData, medAbstractData* inputData);
-
     void applyResamplingPix();
 
     template <typename DATA_TYPE>

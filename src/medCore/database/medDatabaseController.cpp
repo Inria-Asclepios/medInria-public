@@ -489,19 +489,6 @@ void medDatabaseController::createSeriesTable(void)
 {
     QSqlQuery query(this->database());
 
-    // Get all the information about the table columns
-    query.prepare("PRAGMA table_info(series)");
-    if ( !EXEC_QUERY(query) )
-    {
-        qDebug() << DTK_COLOR_FG_RED << query.lastError() << DTK_NO_COLOR;
-    }
-
-    this->addTextColumnToSeriesTableIfNeeded(query, "origin");
-    this->addTextColumnToSeriesTableIfNeeded(query, "flipAngle");
-    this->addTextColumnToSeriesTableIfNeeded(query, "echoTime");
-    this->addTextColumnToSeriesTableIfNeeded(query, "repetitionTime");
-    this->addTextColumnToSeriesTableIfNeeded(query, "acquisitionTime");
-
     query.prepare(
             "CREATE TABLE series ("
             " id       INTEGER      PRIMARY KEY,"
@@ -539,6 +526,20 @@ void medDatabaseController::createSeriesTable(void)
             );
 
     EXEC_QUERY(query);
+
+    // Get all the information about the table columns
+    query.prepare("PRAGMA table_info(series)");
+    if ( !EXEC_QUERY(query) )
+    {
+        qDebug() << DTK_COLOR_FG_RED << query.lastError() << DTK_NO_COLOR;
+    }
+
+    this->addTextColumnToSeriesTableIfNeeded(query, "origin");
+    this->addTextColumnToSeriesTableIfNeeded(query, "flipAngle");
+    this->addTextColumnToSeriesTableIfNeeded(query, "echoTime");
+    this->addTextColumnToSeriesTableIfNeeded(query, "repetitionTime");
+    this->addTextColumnToSeriesTableIfNeeded(query, "acquisitionTime");
+
 }
 
 void medDatabaseController::addTextColumnToSeriesTableIfNeeded(QSqlQuery query, QString columnName)
