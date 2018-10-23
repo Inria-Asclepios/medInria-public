@@ -18,7 +18,6 @@ MUSIC v2.3.0:
 - Add MFS new features: temporal correlation coefficients map, etc
 - Add Transmurality toolbox computing intermediate surfaces between the inner surface and outer surface of 2 masks
 - Add Laplacian filter in mscFilters
-- ... many other enhancements and bug fixes.
 
 MUSIC v2.2.0:
 - Add Translation volume toolbox
