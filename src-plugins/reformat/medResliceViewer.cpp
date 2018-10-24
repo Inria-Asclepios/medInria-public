@@ -4,7 +4,6 @@
 #include <itkVTKImageToImageFilter.h>
 #include <medAbstractDataFactory.h>
 #include <medAbstractLayeredView.h>
-#include <medMetaDataKeys.h>
 #include <medSliderSpinboxPair.h>
 #include <medUtilities.h>
 #include <medUtilitiesITK.h>
