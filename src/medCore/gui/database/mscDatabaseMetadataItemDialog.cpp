@@ -32,7 +32,13 @@ mscDatabaseMetadataItemDialog::mscDatabaseMetadataItemDialog(QList<QString> keyL
     setLayout(dialogLayout);
     setModal(true);
 
-    QLabel* explanation = new QLabel(tr("Non-empty metadata from the selected data:"));
+    this->setWindowTitle("Metadata List");
+
+    QLabel* textTile = new QLabel(tr("\nNon-empty metadata from the selected data\n"));
+    textTile->setStyleSheet("font-weight: bold;");
+    dialogLayout->addWidget(textTile);
+
+    QLabel* explanation = new QLabel(tr("You can copy/paste a selected item with regular shortcuts from your OS.\n"));
     dialogLayout->addWidget(explanation);
 
     d->tree = new QTreeWidget();
