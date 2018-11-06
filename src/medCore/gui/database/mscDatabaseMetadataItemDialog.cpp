@@ -34,9 +34,9 @@ mscDatabaseMetadataItemDialog::mscDatabaseMetadataItemDialog(QList<QString> keyL
 
     this->setWindowTitle("Metadata List");
 
-    QLabel* textTile = new QLabel(tr("\nNon-empty metadata from the selected data\n"));
-    textTile->setStyleSheet("font-weight: bold;");
-    dialogLayout->addWidget(textTile);
+    QLabel* textTitle = new QLabel(tr("\nNon-empty metadata from the selected data\n"));
+    textTitle->setStyleSheet("font-weight: bold;");
+    dialogLayout->addWidget(textTitle);
 
     QLabel* explanation = new QLabel(tr("You can copy/paste a selected item with regular shortcuts from your OS.\n"));
     dialogLayout->addWidget(explanation);
