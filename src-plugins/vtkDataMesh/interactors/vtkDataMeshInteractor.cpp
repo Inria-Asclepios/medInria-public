@@ -89,6 +89,7 @@ public:
     
     QList <medAbstractParameter*> parameters;
 
+    QPointer<QWidget> toolbar;
     medIntParameter *slicingParameter;
 };
 
@@ -121,20 +122,8 @@ vtkDataMeshInteractor::vtkDataMeshInteractor(medAbstractView *parent):
 
     // tmp neb
     d->slicingParameter = new medIntParameter("Slicing", this);
+    d->slicingParameter->getSlider()->setOrientation(Qt::Horizontal);
     connect(d->slicingParameter, SIGNAL(valueChanged(int)), this, SLOT(moveToSlice(int)));
-
-    if(!d->view->is2D())
-    {
-        d->slicingParameter->getSlider()->setEnabled(false);
-        d->slicingParameter->hide();
-    }
-    else
-    {
-        d->slicingParameter->show();
-        d->slicingParameter->getSlider()->setEnabled(true);
-        this->updateSlicingParam();
-    }
-
 }
 
 
@@ -651,8 +640,11 @@ QWidget* vtkDataMeshInteractor::buildToolBoxWidget()
 
 QWidget* vtkDataMeshInteractor::buildToolBarWidget()
 {
+    d->toolbar = new QWidget();
+    QHBoxLayout* toolbarLayout = new QHBoxLayout(d->toolbar);
     d->slicingParameter->getSlider()->setOrientation(Qt::Horizontal);
-    return d->slicingParameter->getSlider();
+    toolbarLayout->addWidget(d->slicingParameter->getSlider());
+    return d->toolbar;
 }
 
 QList<medAbstractParameter*> vtkDataMeshInteractor::linkableParameters()
@@ -685,15 +677,17 @@ void vtkDataMeshInteractor::setUpViewForThumbnail()
 
 void vtkDataMeshInteractor::updateWidgets()
 {
-    if(!d->view->is2D())
+    if (!d->toolbar.isNull())
     {
-        d->slicingParameter->getSlider()->setEnabled(false);
-        d->slicingParameter->hide();
-    }
-    else
-    {
-        d->slicingParameter->show();
-        this->updateSlicingParam();
+        if(!d->view->is2D())
+        {
+            d->slicingParameter->hide();
+        }
+        else
+        {
+            d->slicingParameter->show();
+            this->updateSlicingParam();
+        }
     }
 }
 
