@@ -111,7 +111,6 @@ vtkDataMeshInteractor::vtkDataMeshInteractor(medAbstractView *parent):
     d->edgeVisibleParam = NULL;
     d->colorParam = NULL;
     d->renderingParam = NULL;
-    d->slicingParameter = NULL;
     d->minRange = 0;
     d->maxRange = 0;
 
@@ -119,8 +118,6 @@ vtkDataMeshInteractor::vtkDataMeshInteractor(medAbstractView *parent):
     d->range_button->setCheckable(true);
     connect(d->range_button,SIGNAL(toggled(bool)),this,SLOT(showRangeWidgets(bool)));
 
-
-    // tmp neb
     d->slicingParameter = new medIntParameter("Slicing", this);
     d->slicingParameter->getSlider()->setOrientation(Qt::Horizontal);
     connect(d->slicingParameter, SIGNAL(valueChanged(int)), this, SLOT(moveToSlice(int)));
@@ -664,15 +661,6 @@ void vtkDataMeshInteractor::setUpViewForThumbnail()
     d->view->setOrientation(medImageView::VIEW_ORIENTATION_3D);
     d->view->reset();
     d->view3d->ShowAnnotationsOff();
-
-    //TODO find how to remove the litlle cube at the bottom left corner.
-    //    d->view3d->ShowActorXOff();
-    //    d->view3d->ShowActorYOff();
-    //    d->view3d->ShowActorYOff();
-    //    d->view3d->ShowBoxWidgetOff();
-    //    d->view3d->ShowPlaneWidgetOff();
-    //    d->view3d->ShowScalarBarOff();
-
 }
 
 void vtkDataMeshInteractor::updateWidgets()
