@@ -13,11 +13,12 @@
 
 #pragma once
 
-#include <medCoreExport.h>
+#include <medAbstractLayeredView.h>
 #include <medAbstractWorkspace.h>
 #include <medComboBox.h>
-#include <medProgressionStack.h>
+#include <medCoreExport.h>
 #include <medJobItem.h>
+#include <medProgressionStack.h>
 
 #include <QtGui>
 #include <QDomDocument>
@@ -78,6 +79,9 @@ public:
 
     //! enable or disable the output automatic import after a process success
     void enableOnProcessSuccessImportOutput(medJobItem *job, bool enable);
+
+    template <class Interactor>
+    Interactor* getLayerInteractorOfType(int layerIndex, medAbstractLayeredView* view);
 
 signals:
     /**
@@ -143,6 +147,26 @@ protected slots:
 private:
     medToolBoxPrivate *d;
 };
+
+template <class Interactor>
+Interactor* medToolBox::getLayerInteractorOfType(int layerId, medAbstractLayeredView* view)
+{
+    if (view)
+    {
+        const QList<medAbstractInteractor*> interactors = view->layerInteractors(layerId);
+        // get the correct interactor
+        Interactor* interactor = nullptr;
+        for (int i = 0; i < interactors.count(); ++i)
+        {
+            interactor = dynamic_cast<Interactor*>(interactors[i]);
+            if (interactor)
+            {
+                return interactor;
+            }
+        }
+    }
+    return nullptr;
+}
 
 #define MED_TOOLBOX_INTERFACE(_name,_desc,_categories) \
 public:\
