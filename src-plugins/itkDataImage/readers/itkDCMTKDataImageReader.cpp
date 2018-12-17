@@ -399,7 +399,7 @@ bool itkDCMTKDataImageReader::readInformation (const QStringList& paths)
 
         // Add Origin
         QString origin = "";
-        for (int i=0; i<d->io->GetNumberOfDimensions(); ++i)
+        for (unsigned int i=0; i<d->io->GetNumberOfDimensions(); ++i)
         {
             origin += QString::number(d->io->GetOrigin(i)) + QString(" ");
         }
