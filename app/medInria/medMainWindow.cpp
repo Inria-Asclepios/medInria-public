@@ -706,8 +706,6 @@ int medMainWindow::saveModifiedAndOrValidateClosing()
         saveDialog->exec();
         return saveDialog->result();
     }
-
-    return QDialog::Rejected;
 }
 
 void medMainWindow::availableSpaceOnStatusBar()
