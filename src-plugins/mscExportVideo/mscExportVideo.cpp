@@ -2,13 +2,18 @@
 
 #include <dtkCore/dtkAbstractProcessFactory.h>
 
-#include <vtkFFMPEGWriter.h>
 #include <vtkImageCanvasSource2D.h>
 #include <vtkImageData.h>
 #include <vtkJPEGWriter.h>
 #include <vtkOggTheoraWriter.h>
 #include <vtkQImageToImageSource.h>
 #include <vtkSmartPointer.h>
+
+#ifdef _WIN32
+#include <vtkMPEG2Writer.h>
+#else // Linux and Mac
+#include <vtkFFMPEGWriter.h>
+#endif
 
 // /////////////////////////////////////////////////////////////////
 // ExportVideoPrivate
@@ -217,15 +222,37 @@ int ExportVideo::exportAsVideo()
 
         writerVideo = writerVideoTmp;
     }
-    else if (d->format == FFMPEG)
+    else
     {
-        vtkSmartPointer<vtkFFMPEGWriter> writerVideoTmp = vtkSmartPointer<vtkFFMPEGWriter>::New();
-        writerVideoTmp->SetInputConnection(source->GetOutputPort());
-        writerVideoTmp->SetFileName(d->filename.toStdString().c_str());
-        writerVideoTmp->SetRate(d->frameRate);
+#ifdef _WIN32
+        if (d->format == MPEG2)
+        {
+            vtkSmartPointer<vtkMPEG2Writer> writerVideoTmp = vtkSmartPointer<vtkMPEG2Writer>::New();
+            writerVideoTmp->SetInputConnection(source->GetOutputPort());
+            writerVideoTmp->SetFileName(d->filename.toStdString().c_str());
 
-        writerVideo = writerVideoTmp;
+            writerVideo = writerVideoTmp;
+        }
+        else
+        {
+            return medAbstractProcess::FAILURE;
+        }
+#else
+        if (d->format == FFMPEG)
+        {
+            vtkSmartPointer<vtkFFMPEGWriter> writerVideoTmp = vtkSmartPointer<vtkFFMPEGWriter>::New();
+            writerVideoTmp->SetInputConnection(source->GetOutputPort());
+            writerVideoTmp->SetFileName(d->filename.toStdString().c_str());
+            writerVideoTmp->SetRate(d->frameRate);
+
+            writerVideo = writerVideoTmp;
+        }
+        else
+        {
+            return medAbstractProcess::FAILURE;
+        }
     }
+#endif
 
     writerVideo->Start();
 
@@ -274,7 +301,11 @@ int ExportVideo::displayFileDialog()
     // and .ogx for multiplexed Ogg."
     d->formatComboBox->addItem("Ogg Vorbis (.ogv)", 0);
     d->formatComboBox->addItem("JPEG (.jpg .jpeg)", 1);
+#ifdef _WIN32
+    d->formatComboBox->addItem("MPEG2 (.avi)", 2);
+#else
     d->formatComboBox->addItem("FFMPEG (.avi)", 2);
+#endif
     d->formatComboBox->setCurrentIndex(d->format);
     gridbox->addWidget(new QLabel("Format", d->exportDialog), gridbox->rowCount()-1, 0);
     gridbox->addWidget(d->formatComboBox, gridbox->rowCount()-1, 1);
@@ -338,42 +369,54 @@ void ExportVideo::handleWidgetDisplayAccordingToType(int index)
 {
     switch (index)
     {
-    case OGGVORBIS: default:
-    {
-        // Video
-        d->exportDialog->selectFile("video.ogv");
-        d->frameRateSpinBox->show();
-        d->frameRateLabel->show();
-        d->subsamplingComboBox->show();
-        d->subsamplingLabel->show();
-        d->qualityComboBox->show();
-        d->qualityLabel->show();
-        break;
-    }
-    case JPGBATCH:
-    {
-        // JPEG
-        d->exportDialog->selectFile("image0.jpg");
-        d->frameRateSpinBox->hide();
-        d->frameRateLabel->hide();
-        d->subsamplingComboBox->hide();
-        d->subsamplingLabel->hide();
-        d->qualityComboBox->hide();
-        d->qualityLabel->hide();
-        break;
-    }
-    case FFMPEG:
-    {
-        // Video
-        d->exportDialog->selectFile("video.avi");
-        d->frameRateSpinBox->show();
-        d->frameRateLabel->show();
-        d->subsamplingComboBox->hide();
-        d->subsamplingLabel->hide();
-        d->qualityComboBox->hide();
-        d->qualityLabel->hide();
-        break;
-    }
+        case OGGVORBIS: default:
+        {
+            // Video
+            d->exportDialog->selectFile("video.ogv");
+            d->frameRateSpinBox->show();
+            d->frameRateLabel->show();
+            d->subsamplingComboBox->show();
+            d->subsamplingLabel->show();
+            d->qualityComboBox->show();
+            d->qualityLabel->show();
+            break;
+        }
+        case JPGBATCH:
+        {
+            // JPEG
+            d->exportDialog->selectFile("image0.jpg");
+            d->frameRateSpinBox->hide();
+            d->frameRateLabel->hide();
+            d->subsamplingComboBox->hide();
+            d->subsamplingLabel->hide();
+            d->qualityComboBox->hide();
+            d->qualityLabel->hide();
+            break;
+        }
+        case FFMPEG:
+        {
+            // Video
+            d->exportDialog->selectFile("video.avi");
+            d->frameRateSpinBox->show();
+            d->frameRateLabel->show();
+            d->subsamplingComboBox->hide();
+            d->subsamplingLabel->hide();
+            d->qualityComboBox->hide();
+            d->qualityLabel->hide();
+            break;
+        }
+        case MPEG2:
+        {
+            // Video
+            d->exportDialog->selectFile("video.avi");
+            d->frameRateSpinBox->hide();
+            d->frameRateLabel->hide();
+            d->subsamplingComboBox->hide();
+            d->subsamplingLabel->hide();
+            d->qualityComboBox->hide();
+            d->qualityLabel->hide();
+            break;
+        }
     }
 }
 
