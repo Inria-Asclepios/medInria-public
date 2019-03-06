@@ -158,7 +158,7 @@ int ExportVideo::update()
                 res = this->exportAsVideo();
             }
 
-            qDebug()<<"### ExportVideo::update END OF ENCODING";
+            qDebug()<<"### ExportVideo::update END OF ENCODING -- "<<res;
 
             return res;
         }
@@ -299,12 +299,12 @@ int ExportVideo::displayFileDialog()
     // The Xiph.Org Foundation decided to create a new set of file extensions and media types to describe different
     // types of content such as .oga for audio only files, .ogv for video with or without sound (including Theora),
     // and .ogx for multiplexed Ogg."
-    d->formatComboBox->addItem("Ogg Vorbis (.ogv)", 0);
-    d->formatComboBox->addItem("JPEG (.jpg .jpeg)", 1);
+    d->formatComboBox->addItem("Ogg Vorbis (.ogv)", OGGVORBIS);
+    d->formatComboBox->addItem("JPEG (.jpg .jpeg)", JPGBATCH);
 #ifdef _WIN32
-    d->formatComboBox->addItem("MPEG2 (.avi)", 2);
+    d->formatComboBox->addItem("MPEG2 (.avi)", MPEG2);
 #else
-    d->formatComboBox->addItem("FFMPEG (.avi)", 2);
+    d->formatComboBox->addItem("FFMPEG (.avi)", FFMPEG);
 #endif
     d->formatComboBox->setCurrentIndex(d->format);
     gridbox->addWidget(new QLabel("Format", d->exportDialog), gridbox->rowCount()-1, 0);
@@ -351,7 +351,7 @@ int ExportVideo::displayFileDialog()
         {
             // Get back chosen parameters
             d->filename = filename;
-            d->format = d->formatComboBox->currentIndex();
+            d->format = d->formatComboBox->itemData(d->formatComboBox->currentIndex()).toInt();
             d->frameRate = d->frameRateSpinBox->value();
             d->subsampling = d->subsamplingComboBox->currentIndex()? false:true;
             d->quality = d->qualityComboBox->currentIndex();
