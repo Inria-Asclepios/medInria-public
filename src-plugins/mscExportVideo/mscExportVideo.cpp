@@ -251,9 +251,9 @@ int ExportVideo::exportAsVideo()
         {
             return medAbstractProcess::FAILURE;
         }
-    }
 #endif
-
+    }
+	
     writerVideo->Start();
 
     foreach (QImage qimage, d->imagesArray)
