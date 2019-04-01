@@ -152,10 +152,17 @@ itkFiltersToolBox::itkFiltersToolBox ( QWidget *parent ) : medAbstractSelectable
     d->subtractFilterValue->setRange ( -1000000000.0, 1000000000.0 );
     d->subtractFilterValue->setValue ( itkFiltersSubtractProcess::defaultSubtractValue );
     d->subtractFilterValue->setObjectName("subtractFilterValue");
+    QLabel* subtractExplanation = new QLabel("Subtract an image by a constant in the limits of its image type.\nFor instance, "
+                                             "some pixel type are not compatible with negative values: the lower value would be 0.");
+    subtractExplanation->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Preferred);
+    subtractExplanation->setWordWrap(true);
+    QVBoxLayout * subtractGlobalFilterLayout = new QVBoxLayout;
+    subtractGlobalFilterLayout->addWidget(subtractExplanation);
     QHBoxLayout * subtractFilterLayout = new QHBoxLayout;
     subtractFilterLayout->addWidget(d->subtractFilterValue->getLabel());
     subtractFilterLayout->addWidget(d->subtractFilterValue->getSpinBox());
-    d->subtractFilterWidget->setLayout(subtractFilterLayout);
+    subtractGlobalFilterLayout->addLayout(subtractFilterLayout);
+    d->subtractFilterWidget->setLayout(subtractGlobalFilterLayout);
 
     //Multiply filter widgets
     d->multiplyFilterWidget = new QWidget(this);
