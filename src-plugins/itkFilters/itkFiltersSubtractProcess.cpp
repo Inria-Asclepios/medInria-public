@@ -98,12 +98,13 @@ int itkFiltersSubtractProcess::updateProcess(medAbstractData* inputData)
     // Shift in the limit of the image type
     double negValue = -1.0 * d->subtractValue;
     shiftFilter->SetShift( negValue );
-    shiftFilter->Update();
 
     itk::CStyleCommand::Pointer callback = itk::CStyleCommand::New();
     callback->SetClientData ( ( void * ) this );
     callback->SetCallback ( itkFiltersProcessBase::eventCallback );
     shiftFilter->AddObserver ( itk::ProgressEvent(), callback );
+
+    shiftFilter->Update();
 
     getOutputData()->setData ( shiftFilter->GetOutput() );
 
