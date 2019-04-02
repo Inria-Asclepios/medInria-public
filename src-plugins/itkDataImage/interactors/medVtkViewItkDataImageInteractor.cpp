@@ -690,7 +690,7 @@ void medVtkViewItkDataImageInteractor::createSlicingParam()
     }
 
     connect(d->slicingParameter, SIGNAL(valueChanged(int)), this, SLOT(moveToSlice(int)));
-    connect(d->view->positionBeingViewedParameter(), SIGNAL(valueChanged(QVector3D)), this, SLOT(medVtkViewItkDataImageInteractor::updateSlicingParam()));
+    connect(d->view->positionBeingViewedParameter(), SIGNAL(valueChanged(QVector3D)), this, SLOT(updateSlicingParam()));
 }
 
 void medVtkViewItkDataImageInteractor::updateSlicingParam()
