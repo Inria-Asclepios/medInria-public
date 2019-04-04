@@ -172,7 +172,7 @@ void medVtkViewItkDataImage4DInteractor::setInputData(medAbstractData *data)
             d->view2d->SetColorRange(range);
             this->initWindowLevelParameters(range);
 
-            medVtkViewItkDataImageInteractor::createSlicingParam();
+            createSlicingParam();
 
             if(d->view->layer(d->imageData) == 0)
             {
