@@ -83,17 +83,18 @@ QString iterativeClosestPointProcess::description() const
 
 void iterativeClosestPointProcess::setInput(medAbstractData *data, int channel)
 {
-    if ( !data  || data->identifier()!="vtkDataMesh")
-        return;
-    
-    if (channel==0)
+    if (data && (data->identifier().contains("vtkDataMesh") ||
+                 data->identifier().contains("EPMap")))
     {
-        d->inputSource = data;
-    }
-    
-    if (channel==1)
-    {
-        d->inputTarget = data;
+        if (channel==0)
+        {
+            d->inputSource = data;
+        }
+
+        if (channel==1)
+        {
+            d->inputTarget = data;
+        }
     }
 }    
 
@@ -160,7 +161,7 @@ int iterativeClosestPointProcess::update()
     vtkMetaSurfaceMesh * output_mesh = vtkMetaSurfaceMesh::New();
     output_mesh->SetDataSet(output_polyData);
 
-    d->output = medAbstractDataFactory::instance()->createSmartPointer ( "vtkDataMesh" );
+    d->output = medAbstractDataFactory::instance()->createSmartPointer(d->inputSource->identifier());
     d->output->setData(output_mesh);
     medUtilities::setDerivedMetaData(d->output, d->inputSource, "ICP");
 
