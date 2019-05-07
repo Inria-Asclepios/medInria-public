@@ -126,31 +126,13 @@ foreach(lib
     NO_DEFAULT_PATH
     )
 
-  # Find Debug libraries
-#  find_library(DCMTK_${lib}_LIBRARY_DEBUG
-#    ${lib}
-#    PATHS
-#    ${DCMTK_DIR}/${lib}/libsrc
-#    ${DCMTK_DIR}/${lib}/libsrc/Debug
-#    ${DCMTK_DIR}/${lib}/Debug
-#    ${DCMTK_DIR}/Debug/lib
-#    ${DCMTK_DIR}/lib
-#    ${DCMTK_DIR}/dcmjpeg/lib${lib}/Debug
-#    NO_DEFAULT_PATH
-#    )
 
-#  mark_as_advanced(DCMTK_${lib}_LIBRARY_RELEASE)
-#  mark_as_advanced(DCMTK_${lib}_LIBRARY_DEBUG)
   mark_as_advanced(DCMTK_${lib}_LIBRARY)
 
   # Add libraries to variable according to build type
   if(DCMTK_${lib}_LIBRARY)
     list(APPEND DCMTK_LIBRARIES ${DCMTK_${lib}_LIBRARY})
   endif()
-
-#  if(DCMTK_${lib}_LIBRARY_DEBUG)
-#    list(APPEND DCMTK_LIBRARIES debug ${DCMTK_${lib}_LIBRARY_DEBUG})
-#  endif()
 
 endforeach()
 
