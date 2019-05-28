@@ -38,12 +38,6 @@ if (ITK_USE_SYSTEM_GDCM)
   add_definitions(-DITK_USE_SYSTEM_GDCM)
 endif()
 
-find_package(DCMTK REQUIRED)
-if (APPLE)
-  include(FixDCMTKMacInstall)
-  FixDCMTKMacInstall()
-endif()
-
 find_package(VTK REQUIRED)
 include(${VTK_USE_FILE})
 
@@ -86,6 +80,7 @@ add_library(${PROJECT_NAME} SHARED ${${PROJECT_NAME}_CFILES})
 ## #############################################################################
 
 target_link_libraries(${PROJECT_NAME}
+  ${DCMTK_LIBRARIES}
   ${QT_LIBRARIES}
   ${DTK_LIBRARIES}
   ${VTK_LIBRARIES}
@@ -99,8 +94,9 @@ target_link_libraries(${PROJECT_NAME}
 
 # needed because of link  with medImageIO
 if(APPLE)
-  FixDCMTKMacLink(${PROJECT_NAME} ${DCMTK_LIBRARIES})  
+  FixDCMTKMacLink(${PROJECT_NAME} ${DCMTK_LIBRARIES})
 endif(APPLE)
+
 
 ## #############################################################################
 ## Install rules
