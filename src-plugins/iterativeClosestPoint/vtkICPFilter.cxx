@@ -21,8 +21,8 @@ vtkCxxRevisionMacro(vtkICPFilter, "$Revision$");
 vtkICPFilter::vtkICPFilter()
 {
     // Mandatory!
-    this->Source=NULL;
-    this->Target=NULL;
+    this->Source=nullptr;
+    this->Target=nullptr;
 
     this->bStartByMatchingCentroids=1;
     this->bTransformation=0;
@@ -32,6 +32,8 @@ vtkICPFilter::vtkICPFilter()
     this->MaxNumIterations=50;
     this->MaxNumLandmarks=200;
     this->MaxMeanDistance=0.01;
+
+    this->TransformFilter2 = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
 }
 
 
@@ -142,44 +144,15 @@ void vtkICPFilter::Update()
     this->ICPTransform->Update();
 
     //bring the source to the target
-    vtkSmartPointer<vtkTransformPolyDataFilter> TransformFilter2 = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
+//    vtkSmartPointer<vtkTransformPolyDataFilter> TransformFilter2 = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
     TransformFilter2->SetInput(TransformFilter1->GetOutput());
     TransformFilter2->SetTransform(this->ICPTransform);
     TransformFilter2->Update();
 
-    vtkDataSet* outputMesh = TransformFilter2->GetOutput();
-    // catheter point coordinates must be transformed manually
-    vtkFieldData* fieldData = outputMesh->GetFieldData();
-    int nbComponents = 0;
-    for (int j = 0; j < fieldData->GetNumberOfArrays(); ++j)
-    {
-        vtkDataArray* array = fieldData->GetArray(j);
-        QString arrayName(array->GetName());
-        if (arrayName.contains("KT_Coordinates") ||
-            arrayName.contains("_catheter_electrode_positions"))
-        {
-            nbComponents = array->GetNumberOfComponents();
-            // this array contains coordinates that must be transformed
-            double* inPt = new double[nbComponents];
-            double* outPt = new double[nbComponents];
-            for (vtkIdType k = 0; k < array->GetNumberOfTuples(); ++k)
-            {
-                array->GetTuple(k, inPt);
-                for (int l = 0; l < nbComponents / 3; ++l)
-                {
-                    this->ICPTransform->InternalTransformPoint(inPt + l * 3, outPt + l * 3);
-                }
-                array->SetTuple(k, outPt);
-            }
-            delete[] inPt;
-            delete[] outPt;
-        }
-    }
-
     this->GetOutput()->DeepCopy(TransformFilter2->GetOutput());
 
-    this->Source=NULL;
-    this->Target=NULL;
+    this->Source=nullptr;
+    this->Target=nullptr;
 }
 
 vtkSmartPointer<vtkIterativeClosestPointTransform> vtkICPFilter::GetICPTransform()
@@ -187,6 +160,10 @@ vtkSmartPointer<vtkIterativeClosestPointTransform> vtkICPFilter::GetICPTransform
     return ICPTransform;
 }
 
+vtkLinearTransform* vtkICPFilter::GetLinearTransform()
+{
+    return vtkLinearTransform::SafeDownCast(this->TransformFilter2->GetTransform());
+}
 
 ////////// External Operators /////////////
 
