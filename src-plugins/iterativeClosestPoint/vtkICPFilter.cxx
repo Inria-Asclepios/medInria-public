@@ -144,7 +144,6 @@ void vtkICPFilter::Update()
     this->ICPTransform->Update();
 
     //bring the source to the target
-//    vtkSmartPointer<vtkTransformPolyDataFilter> TransformFilter2 = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
     TransformFilter2->SetInput(TransformFilter1->GetOutput());
     TransformFilter2->SetTransform(this->ICPTransform);
     TransformFilter2->Update();
