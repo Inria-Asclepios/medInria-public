@@ -69,18 +69,7 @@ vtkMetaDataSet::vtkMetaDataSet(const vtkMetaDataSet& other)
   this->DataSet = nullptr;
   if (other.DataSet)
   {
-    if (other.DataSet->IsA("vtkPolyData"))
-    {
-        this->DataSet = vtkPolyData::New();
-    }
-    else if (other.DataSet->IsA("vtkUnstructuredGrid"))
-    {
-        this->DataSet = vtkUnstructuredGrid::New();
-    }
-    else if (other.DataSet->IsA("vtkImageData"))
-    {
-        this->DataSet = vtkImageData::New();
-    }
+    this->DataSet = other.DataSet->NewInstance();
 
     if (this->DataSet)
     {
@@ -124,7 +113,7 @@ vtkMetaDataSet::~vtkMetaDataSet()
   this->ActorList->Delete();
   this->ArrayCollection->Delete();
   
-  
+
 }
 
 vtkMetaDataSet* vtkMetaDataSet::Clone()
