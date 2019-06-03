@@ -12,32 +12,32 @@
 =========================================================================*/
 
 #include <vtkMetaDataSet.h>
-#include "vtkObjectFactory.h"
 #include <fstream>
 #include <sstream>
 
-#include <vtkDataSet.h>
-#include <vtkFloatArray.h>
-#include <vtkPointData.h>
+#include <vtkActor.h>
+#include <vtkActorCollection.h>
+#include <vtkCell.h>
 #include <vtkCellData.h>
+#include <vtkDataSet.h>
+#include <vtkDataArrayCollection.h>
+#include <vtkDelimitedTextReader.h>
+#include <vtkErrorCode.h>
+#include <vtkFloatArray.h>
+#include <vtkImageData.h>
+#include <vtkLookupTable.h>
+#include <vtkMapper.h>
+#include <vtkMathConfigure.h>
+#include <vtkObjectFactory.h>
+#include <vtkPointData.h>
 #include <vtkPointSet.h>
 #include <vtkPoints.h>
-#include <vtkMapper.h>
-
-#include <vtkActorCollection.h>
-#include <vtkActor.h>
-#include <vtkScalarsToColors.h>
-#include <vtksys/SystemTools.hxx>
-#include <vtkErrorCode.h>
-#include <vtkLookupTable.h>
-#include <vtkDataArrayCollection.h>
-#include <vtkCell.h>
-#include <vtkLookupTable.h>
-#include <vtkTable.h>
-#include <vtkDelimitedTextReader.h>
-#include <vtkMathConfigure.h>
-
 #include <vtkPolyData.h>
+#include <vtkProperty.h>
+#include <vtkScalarsToColors.h>
+#include <vtkTable.h>
+#include <vtkUnstructuredGrid.h>
+#include <vtksys/SystemTools.hxx>
 
 //----------------------------------------------------------------------------
 vtkStandardNewMacro( vtkMetaDataSet );
@@ -47,7 +47,7 @@ vtkCxxRevisionMacro( vtkMetaDataSet, "$Revision: 1298 $");
 vtkMetaDataSet::vtkMetaDataSet()
 {
   this->DataSet          = 0;
-  this->WirePolyData = NULL;
+  this->WirePolyData = nullptr;
 
   this->ActorList = vtkActorCollection::New();
   this->ArrayCollection = vtkDataArrayCollection::New();
@@ -60,9 +60,48 @@ vtkMetaDataSet::vtkMetaDataSet()
   this->PickedCellId     = -1;
   this->Name             = "";
   this->FilePath         = "";
-  this->LookupTable      = NULL;
+  this->LookupTable      = nullptr;
   this->Initialize();
-  
+}
+
+vtkMetaDataSet::vtkMetaDataSet(const vtkMetaDataSet& other)
+{
+  this->DataSet = nullptr;
+  if (other.DataSet)
+  {
+    if (other.DataSet->IsA("vtkPolyData"))
+    {
+        this->DataSet = vtkPolyData::New();
+    }
+    else if (other.DataSet->IsA("vtkUnstructuredGrid"))
+    {
+        this->DataSet = vtkUnstructuredGrid::New();
+    }
+    else if (other.DataSet->IsA("vtkImageData"))
+    {
+        this->DataSet = vtkImageData::New();
+    }
+
+    if (this->DataSet)
+    {
+        this->DataSet->DeepCopy(other.DataSet);
+    }
+  }
+
+  this->WirePolyData = nullptr;
+  this->ActorList = vtkActorCollection::New();
+  this->ArrayCollection = vtkDataArrayCollection::New();
+  this->CurrentScalarArray = nullptr;
+
+  this->Time             = other.Time;
+  this->Type             = other.Type;
+  this->PickedPointId    = other.PickedPointId;
+  this->PickedCellId     = other.PickedCellId;
+  this->Name             = other.Name;
+  this->FilePath         = other.FilePath;
+  this->LookupTable      = vtkLookupTable::New();
+  this->LookupTable->DeepCopy(other.LookupTable);
+  this->Property         = vtkProperty::New();
 }
 
 //----------------------------------------------------------------------------
@@ -88,6 +127,10 @@ vtkMetaDataSet::~vtkMetaDataSet()
   
 }
 
+vtkMetaDataSet* vtkMetaDataSet::Clone()
+{
+    return new vtkMetaDataSet(*this);
+}
 
 //----------------------------------------------------------------------------
 void vtkMetaDataSet::Initialize()
@@ -508,7 +551,7 @@ void vtkMetaDataSet::ReadDataInternal(const char* filename)
   
   file.close();
 
-  vtkDataSetAttributes* attributes = NULL;
+  vtkDataSetAttributes* attributes = nullptr;
   
   if (type == 1) // assign array to points
   {
@@ -884,7 +927,7 @@ vtkDataArray* vtkMetaDataSet::GetArray (const char* name)
   
 
   // then try in the pointdata and celldata array collections
-  vtkDataArray* ret = NULL;
+  vtkDataArray* ret = nullptr;
 
   vtkDataArrayCollection* arrays = vtkDataArrayCollection::New();
   this->GetColorArrayCollection (arrays);
