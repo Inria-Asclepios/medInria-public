@@ -21,8 +21,8 @@ find_package(Qt5 REQUIRED COMPONENTS
              Gui
              Network
              OpenGL
-             Sql                                                                                                                       
-	     Widgets                                                                                                                    
+             Sql
+             Widgets 
 	     Xml
              Test
              Quick
@@ -55,15 +55,15 @@ list(APPEND external_projects
      DCMTK
      QtDCM
      dtk
-     jsoncons
-     asio
-     websocketpp
+#     jsoncons
+#     asio
+#     websocketpp
      eigen
-     gvirtualXRay
+#     gvirtualXRay
      qwt
      mmg
      tetgen
-     #openssl
+#     openssl
      )
 
 if (USE_DTKIMAGING)
@@ -78,7 +78,7 @@ list(APPEND external_projects
 endif()
 
 list(APPEND external_projects
-     music-plugins
+#     music-plugins
      music-plugins-liryc
      )
 
