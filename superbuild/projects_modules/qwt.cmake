@@ -25,7 +25,7 @@ if (NOT USE_SYSTEM_${ep})
 ## #############################################################################
 
 set(git_url ${GITHUB_PREFIX}osakared/qwt.git)
-set(git_tag qwt-6.2)
+set(git_tag trunk)
 
 ## #############################################################################
 ## Add specific cmake arguments for configuration step of the project
@@ -46,7 +46,7 @@ set(cmake_args
   -DQT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}
 )
 
-ep_GeneratePatchCommand(${ep} QWT_PATCH_COMMAND qwt-6.2.patch)
+ep_GeneratePatchCommand(${ep} QWT_PATCH_COMMAND qwt-6.3.patch)
 
 ## #############################################################################
 ## Add external-project
@@ -67,7 +67,7 @@ epComputPath(${ep})
 
 ExternalProject_Add(${ep}
   PREFIX ${EP_PATH_SOURCE}
-  SOURCE_DIR ${EP_PATH_SOURCE}/${ep}
+  SOURCE_DIR ${EP_PATH_SOURCE}/${ep}/${ep}
   BINARY_DIR ${build_path}
   TMP_DIR ${tmp_path}
   STAMP_DIR ${stamp_path}
