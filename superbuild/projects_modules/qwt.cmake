@@ -67,7 +67,7 @@ epComputPath(${ep})
 
 ExternalProject_Add(${ep}
   PREFIX ${EP_PATH_SOURCE}
-  SOURCE_DIR ${EP_PATH_SOURCE}/${ep}/${ep}
+  SOURCE_DIR ${EP_PATH_SOURCE}/${ep}
   BINARY_DIR ${build_path}
   TMP_DIR ${tmp_path}
   STAMP_DIR ${stamp_path}
@@ -81,7 +81,7 @@ ExternalProject_Add(${ep}
   UPDATE_COMMAND ""
   PATCH_COMMAND ${QWT_PATCH_COMMAND}
   # Compile only the lib
-  CONFIGURE_COMMAND ${QT_QMAKE_EXECUTABLE} ${SPEC} <SOURCE_DIR>/qwt.pro
+  CONFIGURE_COMMAND ${QT_QMAKE_EXECUTABLE} ${SPEC} <SOURCE_DIR>/qwt/qwt.pro
   BUILD_COMMAND ${MAKE_PROGRAM} sub-src
   INSTALL_COMMAND ""
 )
@@ -92,7 +92,7 @@ ExternalProject_Add(${ep}
 
 ExternalProject_Get_Property(${ep} binary_dir)
 set(${ep}_DIR ${binary_dir} PARENT_SCOPE)
-set(${ep}_INCLUDE_DIR ${EP_PATH_SOURCE}/${ep} PARENT_SCOPE)
+set(${ep}_INCLUDE_DIR ${EP_PATH_SOURCE}/${ep}/${ep} PARENT_SCOPE)
 
 endif() #NOT USE_SYSTEM_ep
 
