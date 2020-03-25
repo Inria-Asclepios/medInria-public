@@ -52,6 +52,7 @@ set(cmake_args
 ## #############################################################################
 set(source_dir ${EP_PATH_SOURCE}/tetgen)
 set(build_dir ${EP_PATH_SOURCE}/../build/tetgen)
+epComputPath(${ep})
 
 epComputPath(${ep})
 
@@ -61,16 +62,11 @@ ExternalProject_Add(${ep}
   BINARY_DIR ${build_path}
   TMP_DIR ${tmp_path}
   STAMP_DIR ${stamp_path}
-
   GIT_REPOSITORY ${git_url}
   GIT_TAG ${git_tag}
   CMAKE_GENERATOR ${gen}
   CMAKE_ARGS ${cmake_args}
   DEPENDS ${${ep}_dependencies}
-  CONFIGURE_COMMAND mkdir -p ${build_dir} &&
-                          cd ${build_dir} &&
-                          cmake  ${cmake_args} ${source_dir}
-  BUILD_COMMAND cd ${build_dir} && make   ## might have to put 
   INSTALL_COMMAND ""
   UPDATE_COMMAND ""
   )

@@ -70,15 +70,14 @@ ExternalProject_Add(${ep}
   
   GIT_REPOSITORY ${git_url}
   GIT_TAG ${git_tag}
+  BINARY_DIR ${build_path}
+  TMP_DIR ${tmp_path}
+  STAMP_DIR ${stamp_path}
   CMAKE_GENERATOR ${gen}
   CMAKE_GENERATOR ${gen}
   CMAKE_GENERATOR_PLATFORM ${CMAKE_GENERATOR_PLATFORM}
   CMAKE_ARGS ${cmake_args}
   DEPENDS ${${ep}_dependencies}
-  CONFIGURE_COMMAND mkdir -p ${build_dir} &&
-                          cd ${build_dir} &&
-                          cmake  ${cmake_args} ${source_dir}
-  BUILD_COMMAND cd ${build_dir} && make   ## might have to put 
   INSTALL_COMMAND ""
   UPDATE_COMMAND ""
   )
