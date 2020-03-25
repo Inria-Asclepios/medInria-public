@@ -206,6 +206,11 @@ void itkDicomDataImageWriter::fillDictionaryFromMetaDataKey(itk::MetaDataDiction
             // Study Description
             itk::EncapsulateMetaData<std::string>(dictionary, "0008|1030", data()->metadata(metaDataKey).toStdString());
         }
+        if(metaDataKey == QString("StudyTime"))
+        {
+            // Study Description
+            itk::EncapsulateMetaData<std::string>(dictionary, "0008|0030", data()->metadata(metaDataKey).toStdString());
+        }
         if(metaDataKey == QString("Institution"))
         {
             // Institution Name

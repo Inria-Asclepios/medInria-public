@@ -81,41 +81,33 @@ bool itkDataImageWriterBase::write_image(const QString& path,const char* type)
 
 void itkDataImageWriterBase::encapsulateSharedMetaData(itk::MetaDataDictionary& dict)
 {
-    medAbstractData* medData = dynamic_cast<medAbstractData*>(this->data());
+    itk::Object* itkImage = static_cast<itk::Object*>(data()->data());
+    itk::MetaDataDictionary& metaDataDictionary = itkImage->GetMetaDataDictionary();
 
-    // build the list of accepted metaDataKeys
-    QStringList acceptedKeys;
-    acceptedKeys << // Patient
-                    medMetaDataKeys::PatientName.key() << medMetaDataKeys::PatientID.key() <<
-                    medMetaDataKeys::Gender.key() << medMetaDataKeys::Age.key() <<
-                    medMetaDataKeys::BirthDate.key() <<
-                    // General series
-                    medMetaDataKeys::SeriesID.key() << medMetaDataKeys::SeriesDescription.key() <<
-                    medMetaDataKeys::SeriesNumber.key() << medMetaDataKeys::Modality.key() <<
-                    medMetaDataKeys::Performer.key() << medMetaDataKeys::PatientPosition.key() <<
-                    medMetaDataKeys::Protocol.key() <<
-                    // General study
-                    medMetaDataKeys::StudyID.key() << medMetaDataKeys::StudyInstanceUID.key() <<
-                    medMetaDataKeys::StudyDescription.key() << medMetaDataKeys::StudyDate.key() <<
-                    medMetaDataKeys::StudyTime.key() << medMetaDataKeys::Referee.key() <<
-                    // General equipment
-                    medMetaDataKeys::Institution.key() <<
-                    // Unknown
-                    medMetaDataKeys::Description.key() <<
-                    // General image, most is reconstructed on write
-                    medMetaDataKeys::AcquisitionDate.key() << medMetaDataKeys::AcquisitionTime.key() <<
-                    medMetaDataKeys::PatientOrientation.key() << medMetaDataKeys::ImageType.key() <<
-                    // specific MR image
-                    medMetaDataKeys::RepetitionTime.key() << medMetaDataKeys::FlipAngle.key() <<
-                    medMetaDataKeys::EchoTime.key() << medMetaDataKeys::SequenceName.key();
-
-    foreach (QString key, acceptedKeys)
+    foreach (QString metaDataKey, data()->metaDataList())
     {
-        if (medData->metaDataList().contains(key))
+        if (medMetaDataKeys::Key::fromKeyName(metaDataKey.toStdString().c_str()))
         {
-            QString value = medData->metaDataValues(key).join(" ");
-            // write the value in the dictionary
-            itk::EncapsulateMetaData<std::string>(dict, key.toStdString(), value.toStdString());
+            std::string key;
+
+            if (metaDataKey == medAbstractImageData::PixelMeaningMetaData)
+            {
+                key = "intent_name";
+            }
+            else if (metaDataKey == medMetaDataKeys::Modality.key())
+            {
+                key = "MED_MODALITY";
+            }
+            else if (metaDataKey == medMetaDataKeys::Orientation.key())
+            {
+                key = "MED_ORIENTATION";
+            }
+            else
+            {
+                key = metaDataKey.toStdString().c_str();
+            }
+
+            itk::EncapsulateMetaData(metaDataDictionary, key, data()->metadata(metaDataKey).toStdString());
         }
     }
 }

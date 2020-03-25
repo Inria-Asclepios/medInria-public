@@ -86,7 +86,7 @@ void DicomRtImageWriter::fillDictionaryFromMetaDataKey(itk::MetaDataDictionary& 
         {
             // check the value
             QString gender = this->data()->metaDataValues(medMetaDataKeys::Gender.key()).first();
-            if (gender != "M" || gender != "F" || gender != "O")
+            if (gender != "M" && gender != "F" && gender != "O")
             {
                 // Anonymized or invalid gender, use default
                 itk::EncapsulateMetaData<std::string>(dictionary, "0010|0040", "O");
