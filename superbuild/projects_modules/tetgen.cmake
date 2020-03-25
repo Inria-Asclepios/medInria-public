@@ -50,8 +50,6 @@ set(cmake_args
 ## #############################################################################
 ## Add external-project
 ## #############################################################################
-epComputPath(${ep})
-
 ExternalProject_Add(${ep}
   PREFIX ${EP_PATH_SOURCE}
   SOURCE_DIR ${EP_PATH_SOURCE}/${ep}
@@ -64,10 +62,6 @@ ExternalProject_Add(${ep}
   CMAKE_GENERATOR ${gen}
   CMAKE_ARGS ${cmake_args}
   DEPENDS ${${ep}_dependencies}
-#  CONFIGURE_COMMAND mkdir -p ${build_dir} &&
-#                          cd ${build_dir} &&
-#                          cmake  ${cmake_args} ${source_dir}
-#  BUILD_COMMAND cd ${build_dir} && make   ## might have to put 
   INSTALL_COMMAND ""
   UPDATE_COMMAND ""
   )

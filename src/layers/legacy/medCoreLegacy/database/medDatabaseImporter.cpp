@@ -2,7 +2,7 @@
 
  medInria
 
- Copyright (c) INRIA 2013 - 2018. All rights reserved.
+ Copyright (c) INRIA 2013 - 2019. All rights reserved.
  See LICENSE.txt for details.
 
   This software is distributed WITHOUT ANY WARRANTY; without even
@@ -11,21 +11,18 @@
 
 =========================================================================*/
 
-#include <medDatabaseImporter.h>
-
-#include <medAbstractImageData.h>
-
-#include <medAbstractDataFactory.h>
 #include <dtkCoreSupport/dtkAbstractDataReader.h>
 #include <dtkCoreSupport/dtkAbstractDataWriter.h>
-#include <medAbstractData.h>
 #include <dtkCoreSupport/dtkGlobal.h>
 #include <dtkLog/dtkLog.h>
+
+#include <medAbstractData.h>
+#include <medAbstractDataFactory.h>
+#include <medAbstractImageData.h>
+#include <medDatabaseImporter.h>
 #include <medDatabaseController.h>
 #include <medMetaDataKeys.h>
 #include <medStorage.h>
-
-
 
 //-----------------------------------------------------------------------------------------------------------
 
@@ -185,11 +182,11 @@ bool medDatabaseImporter::checkIfExists ( medAbstractData* medData, QString imag
 * @param pathToStoreThumbnails - path where the thumbnails will be stored
 * @return medDataIndex the new medDataIndex associated with this imported series.
 **/
-medDataIndex medDatabaseImporter::populateDatabaseAndGenerateThumbnails ( medAbstractData* medData, QString pathToStoreThumbnails )
+medDataIndex medDatabaseImporter::populateDatabaseAndGenerateThumbnails ( medAbstractData* medData, QString pathToStoreThumbnail )
 {
     QSqlDatabase db = medDatabaseController::instance()->database();
 
-    QStringList thumbPaths = generateThumbnails ( medData, pathToStoreThumbnails );
+    generateThumbnail ( medData, pathToStoreThumbnail );
 
     int patientDbId = getOrCreatePatient ( medData, db );
 
@@ -197,9 +194,7 @@ medDataIndex medDatabaseImporter::populateDatabaseAndGenerateThumbnails ( medAbs
 
     int seriesDbId = getOrCreateSeries ( medData, db, studyDbId );
 
-    createMissingImages ( medData, db, seriesDbId, thumbPaths );
-
-    medDataIndex index = medDataIndex ( medDatabaseController::instance()->dataSourceId(), patientDbId, studyDbId, seriesDbId, -1 );
+    medDataIndex index = medDataIndex ( medDatabaseController::instance()->dataSourceId(), patientDbId, studyDbId, seriesDbId );
     return index;
 }
 
@@ -224,7 +219,7 @@ int medDatabaseImporter::getOrCreatePatient ( const medAbstractData* medData, QS
 
     if ( !query.exec() )
     {
-        dtkDebug() << DTK_COLOR_FG_RED << query.lastError() << DTK_NO_COLOR;
+        qDebug() << DTK_COLOR_FG_RED << query.lastError() << DTK_NO_COLOR;
     }
 
     if ( query.first() )
@@ -267,7 +262,7 @@ int medDatabaseImporter::getOrCreateStudy ( const medAbstractData* medData, QSql
 
     QString serieName   = medMetaDataKeys::SeriesDescription.getFirstValue(medData).simplified();
 
-    if( studyName=="EmptyStudy" && serieName=="EmptySerie" )
+    if( studyName=="EmptyStudy" && seriesName=="EmptySeries" )
         return studyDbId;
 
     query.prepare ( "SELECT id FROM study WHERE patient = :patient AND name = :studyName AND uid = :studyUid" );
@@ -383,10 +378,16 @@ int medDatabaseImporter::getOrCreateSeries ( const medAbstractData* medData, QSq
         QString repetitionTime  = medMetaDataKeys::RepetitionTime.getFirstValue(medData);
         QString acquisitionTime = medMetaDataKeys::AcquisitionTime.getFirstValue(medData);
 
-        query.prepare ( "INSERT INTO series (study, seriesId, size, name, path, uid, orientation, seriesNumber, sequenceName, sliceThickness, rows, columns, thumbnail, age, description, modality, protocol, comments, status, acquisitiondate, importationdate, referee, performer, institution, report, \
-                        origin, flipAngle, echoTime, repetitionTime, acquisitionTime) \
-                VALUES (:study, :seriesId, :size, :seriesName, :seriesPath, :seriesUid, :orientation, :seriesNumber, :sequenceName, :sliceThickness, :rows, :columns, :refThumbPath, :age, :description, :modality, :protocol, :comments, :status, :acquisitiondate, :importationdate, :referee, :performer, :institution, :report, \
-                        :origin, :flipAngle, :echoTime, :repetitionTime, :acquisitionTime)" );
+        query.prepare ( "INSERT INTO series (study, seriesId, size, name, path, uid, "
+                        "orientation, seriesNumber, sequenceName, sliceThickness, rows, columns, "
+                        "thumbnail, age, description, modality, protocol, comments, "
+                        "status, acquisitiondate, importationdate, referee, performer, institution, report, "
+                        "origin, flipAngle, echoTime, repetitionTime, acquisitionTime) "
+                        "VALUES (:study, :seriesId, :size, :seriesName, :seriesPath, :seriesUid, "
+                        ":orientation, :seriesNumber, :sequenceName, :sliceThickness, :rows, :columns, "
+                        ":thumbnail, :age, :description, :modality, :protocol, :comments, "
+                        ":status, :acquisitiondate, :importationdate, :referee, :performer, :institution, :report, "
+                        ":origin, :flipAngle, :echoTime, :repetitionTime, :acquisitionTime)" );
 
         query.bindValue ( ":study",          studyDbId );
         query.bindValue ( ":seriesId",       seriesId );
@@ -428,107 +429,6 @@ int medDatabaseImporter::getOrCreateSeries ( const medAbstractData* medData, QSq
     }
 
     return seriesDbId;
-}
-
-//-----------------------------------------------------------------------------------------------------------
-/**
- * Creates records in the image table for the files we are importing/indexing.
- */
-void medDatabaseImporter::createMissingImages ( medAbstractData* medData, QSqlDatabase db, int seriesDbId, QStringList thumbPaths )
-{
-    QSqlQuery query ( db );
-
-    QStringList filePaths  = medData->metaDataValues ( medMetaDataKeys::FilePaths.key() );
-
-    if ( filePaths.count() == 1 && thumbPaths.count() > 1 ) // special case to 1 image and multiple thumbnails
-    {
-        QString seriesName  = medMetaDataKeys::SeriesDescription.getFirstValue(medData);
-
-        QFileInfo fileInfo ( filePaths[0] );
-        for ( int i = 0; i < thumbPaths.count(); i++ )
-        {
-            query.prepare ( "SELECT id FROM image WHERE series = :series AND name = :name" );
-            query.bindValue ( ":series", seriesDbId );
-            query.bindValue ( ":name", fileInfo.fileName() + QString().setNum ( i ) );
-
-            if ( !query.exec() )
-            {
-                dtkDebug() << DTK_COLOR_FG_RED << query.lastError() << DTK_NO_COLOR;
-            }
-
-            if ( query.first() )
-            {
-                ; // Image already in database
-            }
-            else
-            {
-                QString name_str = seriesName + "." + fileInfo.completeSuffix() + QString().setNum ( i );
-
-                query.prepare ( "INSERT INTO image (series, name, path, instance_path, thumbnail, isIndexed) VALUES (:series, :name, :path, :instance_path, :thumbnail, :isIndexed)" );
-                query.bindValue ( ":series", seriesDbId );
-                query.bindValue ( ":name", name_str);
-                query.bindValue ( ":path", fileInfo.filePath() );
-                query.bindValue ( ":thumbnail", thumbPaths[i] );
-                query.bindValue ( ":isIndexed", indexWithoutImporting() );
-
-                // if we are indexing we want to leave the 'instance_path' column blank
-                // as we will use the full path in 'path' column to load them
-                QString relativeFilePath = medData->metaDataValues ( "FileName" ) [0];
-                query.bindValue ( ":instance_path", indexWithoutImporting() ? "" : relativeFilePath );
-
-                if ( !query.exec() )
-                {
-                    dtkDebug() << DTK_COLOR_FG_RED << query.lastError() << DTK_NO_COLOR;
-                }
-            }
-        }
-    }
-    else
-    {
-        for ( int i = 0; i < filePaths.count(); i++ )
-        {
-            QFileInfo fileInfo ( filePaths[i] );
-
-            query.prepare ( "SELECT id FROM image WHERE series = :series AND name = :name" );
-            query.bindValue ( ":series", seriesDbId );
-            query.bindValue ( ":name", fileInfo.fileName() );
-
-            if ( !query.exec() )
-            {
-                dtkDebug() << DTK_COLOR_FG_RED << query.lastError() << DTK_NO_COLOR;
-            }
-
-            if ( query.first() )
-            {
-                ; // Image already in database
-            }
-            else
-            {
-                query.prepare ( "INSERT INTO image (series, name, path, instance_path, thumbnail, isIndexed) "
-                                "VALUES (:series, :name, :path, :instance_path, :thumbnail, :isIndexed)" );
-                query.bindValue ( ":series", seriesDbId );
-                query.bindValue ( ":name", fileInfo.fileName() );
-                query.bindValue ( ":path", fileInfo.filePath() );
-                query.bindValue ( ":isIndexed", indexWithoutImporting() );
-
-                // if we are indexing we want to leave the 'instance_path' column blank
-                // as we will use the full path in 'path' column to load them
-                QStringList fileNames  = medData->metaDataValues ( "FileName" );
-                QString relativeFilePath = fileNames.count()>0 ? fileNames[0] : "" ;
-                query.bindValue ( ":instance_path", indexWithoutImporting() ? "" : relativeFilePath );
-
-                if ( i < thumbPaths.count() )
-                    query.bindValue ( ":thumbnail", thumbPaths[0] );
-                else
-                    query.bindValue ( ":thumbnail", "" );
-
-                if ( !query.exec() )
-                {
-                    qDebug() << DTK_COLOR_FG_RED << query.lastError() << DTK_NO_COLOR;
-                }
-            }
-        }
-    }
 }
 
 //-----------------------------------------------------------------------------------------------------------
