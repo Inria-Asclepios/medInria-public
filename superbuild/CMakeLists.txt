@@ -63,7 +63,7 @@ list(APPEND external_projects
      qwt
      mmg
      tetgen
-     #openssl
+     openssl
      )
 
 if (USE_DTKIMAGING)

@@ -38,8 +38,6 @@ if (UNIX OR APPLE)
   set(${ep}_cxx_flags "${${ep}_cxx_flags}")
 endif()
 
-message( ExternalProject_Get_Property(${TARGET_NAME} install_dir))
-
 set(cmake_args
   ${ep_common_cache_args}
   -DCMAKE_C_FLAGS=${${ep}_c_flags}
