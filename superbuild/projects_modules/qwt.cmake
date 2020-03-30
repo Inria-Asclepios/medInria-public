@@ -52,7 +52,7 @@ ep_GeneratePatchCommand(${ep} QWT_PATCH_COMMAND qwt-6.3.patch)
 ## Add external-project
 ## #############################################################################
 if(APPLE)
-  set(SPEC -spec macx-g++)
+  set(SPEC -spec macx-clang)
 endif()
 
 set(MAKE_PROGRAM ${CMAKE_MAKE_PROGRAM})
