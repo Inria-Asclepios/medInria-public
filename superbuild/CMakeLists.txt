@@ -55,15 +55,15 @@ list(APPEND external_projects
      DCMTK
      QtDCM
      dtk
-#     jsoncons
-#     asio
-#     websocketpp
      eigen
-#     gvirtualXRay
      qwt
      mmg
      tetgen
 #     openssl
+#     jsoncons
+#     asio
+#     websocketpp
+#     gvirtualXRay
      )
 
 if (USE_DTKIMAGING)
@@ -78,7 +78,7 @@ list(APPEND external_projects
 endif()
 
 list(APPEND external_projects
-#     music-plugins
+     music-plugins
      music-plugins-liryc
      )
 
