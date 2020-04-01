@@ -59,10 +59,10 @@ list(APPEND external_projects
      qwt
      mmg
      tetgen
-#     openssl
-#     jsoncons
-#     asio
-#     websocketpp
+     openssl
+     jsoncons
+     asio
+     websocketpp
 #     gvirtualXRay
      )
 
