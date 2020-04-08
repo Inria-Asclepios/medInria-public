@@ -17,7 +17,7 @@ list(APPEND ${ep}_dependencies
 EP_Initialisation(${ep}
   USE_SYSTEM OFF 
   BUILD_SHARED_LIBS OFF
-  REQUIRED_FOR_PLUGINS ON
+  REQUIRED_FOR_PLUGINS OFF
   )
 
 if (NOT USE_SYSTEM_${ep})
@@ -43,7 +43,6 @@ set(cmake_args
   ${ep_common_cache_args}
   -DCMAKE_C_FLAGS:STRING=${${ep}_c_flags}
   -DCMAKE_CXX_FLAGS:STRING=${${ep}_cxx_flags}
-  -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
   -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE_externals_projects}
   )
 
@@ -61,7 +60,6 @@ ExternalProject_Add(${ep}
 
   GIT_REPOSITORY ${git_url}
   GIT_TAG ${git_tag}
-  CMAKE_GENERATOR ${gen}
   CMAKE_ARGS ${cmake_args}
   DEPENDS ${${ep}_dependencies}
   INSTALL_COMMAND ""
