@@ -76,7 +76,6 @@ QString medDatabaseImporter::getPatientID(QString patientName, QString birthDate
     return patientID;
 }
 
-
 //-----------------------------------------------------------------------------------------------------------
 /**
 * Populates database tables and generates thumbnails.
