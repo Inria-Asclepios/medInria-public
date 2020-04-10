@@ -40,12 +40,13 @@ vtkStandardNewMacro( vtkMetaVolumeMesh );
 
 //----------------------------------------------------------------------------
 vtkMetaVolumeMesh::vtkMetaVolumeMesh()
+    : vtkMetaDataSet()
 {
   this->Type = vtkMetaDataSet::VTK_META_VOLUME_MESH;
 }
 
 vtkMetaVolumeMesh::vtkMetaVolumeMesh(const vtkMetaVolumeMesh& other)
-  : vtkMetaDataSet(other)
+    : vtkMetaDataSet(other)
 {
 }
 
