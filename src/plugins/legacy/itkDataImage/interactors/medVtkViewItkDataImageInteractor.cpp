@@ -336,8 +336,13 @@ void medVtkViewItkDataImageInteractor::initWindowLevelParameters(double *range)
 
     if(d->isFloatImage)
     {
-        d->minIntensityParameter->setDecimals(2);
-        d->maxIntensityParameter->setDecimals(2);
+        int iDecimalCount = 2;
+        if(d->intensityStep<1)
+        {
+            iDecimalCount = 1 + std::ceill(std::fabsl(std::log10l(d->intensityStep)));
+        }
+        d->minIntensityParameter->setDecimals(iDecimalCount);
+        d->maxIntensityParameter->setDecimals(iDecimalCount);
     }
     else
     {
@@ -693,8 +698,8 @@ void medVtkViewItkDataImageInteractor::createSlicingParam()
         d->slicingParameter->setRange (0, d->imageData->xDimension()-1);
     }
 
-    connect(d->slicingParameter, SIGNAL(valueChanged(int)), this, SLOT(moveToSlice(int)));
-    connect(d->view->positionBeingViewedParameter(), SIGNAL(valueChanged(QVector3D)), this, SLOT(updateSlicingParam()));
+    connect(d->slicingParameter, SIGNAL(valueChanged(int)), this, SLOT(moveToSlice(int)), Qt::UniqueConnection);
+    connect(d->view->positionBeingViewedParameter(), SIGNAL(valueChanged(QVector3D)), this, SLOT(updateSlicingParam()), Qt::UniqueConnection);
 }
 
 void medVtkViewItkDataImageInteractor::updateSlicingParam()
