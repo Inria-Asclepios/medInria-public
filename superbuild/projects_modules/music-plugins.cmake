@@ -8,11 +8,11 @@ function(music_plugins_project)
         VTK
         DCMTK
         medInria
-#        jsoncons
-#        asio
-#        websocketpp
-#        openssl
-#        gvirtualXRay
+        jsoncons
+        asio
+        websocketpp
+        openssl
+        gvirtualXRay
         )
 
     EP_Initialisation(${external_project}

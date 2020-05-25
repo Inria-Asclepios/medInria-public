@@ -441,7 +441,6 @@ void vtkDataMeshInteractor::setAttribute(const QString & attributeName)
 
         int dataType = d->attribute->GetDataType();
         initWindowLevelParameters(range, dataType);
-
         
         this->setLut(d->lut.first);
 
@@ -469,18 +468,26 @@ void vtkDataMeshInteractor::setAttribute(const QString & attributeName)
 
 void vtkDataMeshInteractor::initWindowLevelParameters(double * range, int dataType)
 {
+    // default for integer values
+    double intensityStep = 1.0;
+    int nbDecimals = 0;
+    // if the arrays contains decimal values, compute a
+    // proper intensity step
+    if (dataType == VTK_FLOAT || dataType == VTK_DOUBLE)
+    {
+        double window = range[1] - range[0];
+        double halfWidth = 0.5 * window;
+        double levelMin = range[0] - halfWidth;
+        double levelMax = range[1] + halfWidth;
+        intensityStep = qMin(0.1, (levelMax - levelMin) / 1000);
+        nbDecimals = 6;
+    }
+
     d->minIntensityParameter->blockSignals(true);
     d->maxIntensityParameter->blockSignals(true);
 
-    double singleStep = 1.0;
-    int nbDecimals = 0;
-    if (dataType == VTK_FLOAT || dataType == VTK_DOUBLE)
-    {
-        singleStep = 0.1;
-        nbDecimals = 6;
-    }
-    d->minIntensityParameter->setSingleStep(singleStep);
-    d->maxIntensityParameter->setSingleStep(singleStep);
+    d->minIntensityParameter->setSingleStep(intensityStep);
+    d->maxIntensityParameter->setSingleStep(intensityStep);
     d->minIntensityParameter->setDecimals(nbDecimals);
     d->maxIntensityParameter->setDecimals(nbDecimals);
 

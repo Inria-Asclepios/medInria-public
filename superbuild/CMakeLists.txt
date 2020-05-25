@@ -23,7 +23,7 @@ find_package(Qt5 REQUIRED COMPONENTS
              OpenGL
              Sql
              Widgets 
-	     Xml
+	           Xml
              Test
              Quick
              )
@@ -55,15 +55,16 @@ list(APPEND external_projects
      DCMTK
      QtDCM
      dtk
+     LogDemons
+     jsoncons
+     asio
+     websocketpp
+     openssl
      eigen
+     gvirtualXRay
      qwt
      mmg
      tetgen
-#     openssl
-#     jsoncons
-#     asio
-#     websocketpp
-#     gvirtualXRay
      )
 
 if (USE_DTKIMAGING)

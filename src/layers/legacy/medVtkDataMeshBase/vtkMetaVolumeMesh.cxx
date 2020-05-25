@@ -221,11 +221,9 @@ bool vtkMetaVolumeMesh::IsGMeshExtension (const char* ext)
 //----------------------------------------------------------------------------
 unsigned int vtkMetaVolumeMesh::CanReadFile (const char* filename)
 {
-
   if (vtkMetaVolumeMesh::IsMeshExtension(vtksys::SystemTools::GetFilenameLastExtension(filename).c_str()))
   {
-    // medit .mesh format must have 'MeshVersionFormatted'
-    // as a header
+    // medit .mesh format must have 'MeshVersionFormatted' as header
     if (vtkMetaDataSet::IsMeditFormat(filename))
     {
       // Additionally, check if there are any tetrahedra
