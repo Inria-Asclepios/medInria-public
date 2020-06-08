@@ -58,7 +58,7 @@ endif(APPLE)
 ## #############################################################################
 epComputPath(${ep})
 
-#if (WIN32)
+if (WIN32)
 
   ExternalProject_Add(${ep}
     PREFIX ${EP_PATH_SOURCE}
@@ -77,7 +77,7 @@ epComputPath(${ep})
     INSTALL_COMMAND ""
     )
 
-#else (WIN32)
+else (WIN32)
 
   ExternalProject_Add(${ep}
     PREFIX ${EP_PATH_SOURCE}
@@ -95,7 +95,8 @@ epComputPath(${ep})
     BUILD_COMMAND ${CMAKE_MAKE_PROGRAM} install_sw
     INSTALL_COMMAND ""
   )
-#endif (WIN32)
+
+endif (WIN32)
 
 ## #############################################################################
 ## Set variable to provide infos about the project
