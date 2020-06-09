@@ -55,15 +55,15 @@ list(APPEND external_projects
      DCMTK
      QtDCM
      dtk
+     LogDemons
+     jsoncons
+     asio
+     websocketpp
+     openssl
      eigen
      qwt
      mmg
      tetgen
-#     openssl
-#     jsoncons
-#     asio
-#     websocketpp
-#     gvirtualXRay
      )
 
 if (USE_DTKIMAGING)

@@ -159,7 +159,7 @@ int medDatabaseImporter::getOrCreateStudy ( const medAbstractData* medData, QSql
 
     QString studyName   = medMetaDataKeys::StudyDescription.getFirstValue(medData).simplified();
     QString studyUid    = medMetaDataKeys::StudyInstanceUID.getFirstValue(medData);
-    QString studyId    = medMetaDataKeys::StudyID.getFirstValue(medData);
+    QString studyId     = medMetaDataKeys::StudyID.getFirstValue(medData);
 
     QString seriesName   = medMetaDataKeys::SeriesDescription.getFirstValue(medData).simplified();
 

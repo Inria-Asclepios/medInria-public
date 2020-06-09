@@ -339,7 +339,7 @@ void medVtkViewItkDataImageInteractor::initWindowLevelParameters(double *range)
         int iDecimalCount = 2;
         if(d->intensityStep<1)
         {
-            iDecimalCount = 1 + ceill(fabsl(log10l(d->intensityStep)));
+            iDecimalCount = 1 + std::ceil(std::fabs(std::log10(static_cast<long double>(d->intensityStep))));
         }
         d->minIntensityParameter->setDecimals(iDecimalCount);
         d->maxIntensityParameter->setDecimals(iDecimalCount);
@@ -560,6 +560,7 @@ void medVtkViewItkDataImageInteractor::setWindowLevelFromMinMax()
 
         // Call function from vtkImageView shared by view2d and view3d
         d->view2d->SetColorWindowLevel(window, level, imageLayer);
+        d->view3d->SetColorWindowLevel(window, level, imageLayer);
 
         this->windowLevelParameter()->blockSignals(false);
         //--- unblock

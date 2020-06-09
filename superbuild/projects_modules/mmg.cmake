@@ -78,7 +78,6 @@ ExternalProject_Add(${ep}
 ## #############################################################################
 ## Set variable to provide infos about the project
 ## #############################################################################
-
 set(${ep}_INCDIR ${build_path}/include PARENT_SCOPE)
 set(${ep}_LIBDIR ${build_path}/lib PARENT_SCOPE)
 

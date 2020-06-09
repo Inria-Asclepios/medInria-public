@@ -54,13 +54,6 @@ set(cmake_args
   -DUSE_ITK:BOOL=OFF
   -DUSE_assimp:BOOL=OFF
 )
-
-#if(UNIX) 
-#set(cmake_args ${cmake_args} 
-#  -G "Unix Makefiles"
-#  -DGLEW_LIBRARY_DIR="${EP_PATH_SOURCE}/../build/glew/build/lib/"
-#)
-#endif()
  
 ## #############################################################################
 ## Add external-project

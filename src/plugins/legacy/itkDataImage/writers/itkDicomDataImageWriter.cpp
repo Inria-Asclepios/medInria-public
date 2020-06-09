@@ -243,6 +243,21 @@ void itkDicomDataImageWriter::fillDictionaryFromMetaDataKey(itk::MetaDataDiction
         {
             itk::EncapsulateMetaData<std::string>(dictionary, "0008|0070", data()->metadata(metaDataKey).toStdString());
         }
+        if (metaDataKey == medMetaDataKeys::PatientPosition.key())
+        {
+            // Patient Position
+            itk::EncapsulateMetaData<std::string>(dictionary, "0018|5100", data()->metadata(metaDataKey).toStdString());
+        }
+        if (metaDataKey == medMetaDataKeys::PatientOrientation.key())
+        {
+            // Patient Orientation
+            itk::EncapsulateMetaData<std::string>(dictionary, "0020|0020", data()->metadata(metaDataKey).toStdString());
+        }
+        if (metaDataKey == medMetaDataKeys::ImageType.key())
+        {
+            // Image type
+            itk::EncapsulateMetaData<std::string>(dictionary, "0008|0008", data()->metadata(metaDataKey).toStdString());
+        }
     }
 }
 

@@ -59,26 +59,26 @@ endif(APPLE)
 ## #############################################################################
 epComputPath(${ep})
 
-#if (WIN32)
+if (WIN32)
 
-#  ExternalProject_Add(${ep}
-#    PREFIX ${EP_PATH_SOURCE}
-#    SOURCE_DIR ${EP_PATH_SOURCE}/${ep}
-#    BINARY_DIR ${build_path}/realBuild
-#    TMP_DIR ${tmp_path}
-#    STAMP_DIR ${stamp_path}
-#
-#    GIT_REPOSITORY ${git_url}
-#    GIT_TAG ${git_tag}
-#    UPDATE_COMMAND ""
-#    PATCH_COMMAND ""
-#    DEPENDS ${${ep}_dependencies}
-#    CONFIGURE_COMMAND perl ${EP_PATH_SOURCE}/${ep}/Configure VC_WIN64A  no-zlib shared --prefix=${build_path}  --openssldir=${build_path} 
-#    BUILD_COMMAND nmake install-sw
-#    INSTALL_COMMAND ""
-#    )
+  ExternalProject_Add(${ep}
+    PREFIX ${EP_PATH_SOURCE}
+    SOURCE_DIR ${EP_PATH_SOURCE}/${ep}
+    BINARY_DIR ${build_path}/realBuild
+    TMP_DIR ${tmp_path}
+    STAMP_DIR ${stamp_path}
 
-#else (WIN32)
+    GIT_REPOSITORY ${git_url}
+    GIT_TAG ${git_tag}
+    UPDATE_COMMAND ""
+    PATCH_COMMAND ""
+    DEPENDS ${${ep}_dependencies}
+    CONFIGURE_COMMAND perl ${EP_PATH_SOURCE}/${ep}/Configure VC_WIN64A  no-zlib shared --prefix=${build_path}  --openssldir=${build_path} 
+    BUILD_COMMAND nmake install-sw
+    INSTALL_COMMAND ""
+    )
+
+else (WIN32)
 
   ExternalProject_Add(${ep}
     PREFIX ${EP_PATH_SOURCE}
@@ -97,6 +97,8 @@ epComputPath(${ep})
     INSTALL_COMMAND ""
   )
 #endif (WIN32)
+
+endif (WIN32)
 
 ## #############################################################################
 ## Set variable to provide infos about the project
