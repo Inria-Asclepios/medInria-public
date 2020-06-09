@@ -45,8 +45,6 @@ protected:
     void encapsulateSharedMetaData(itk::MetaDataDictionary& dict);
     std::string convertMedKeyToItkKey(QString medKey);
 
-    void encapsulateSharedMetaData(itk::MetaDataDictionary& dict);
-
 private:
 
     template <unsigned DIM,typename T>
