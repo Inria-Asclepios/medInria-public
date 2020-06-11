@@ -96,7 +96,6 @@ else (WIN32)
     BUILD_COMMAND ${CMAKE_MAKE_PROGRAM} install_sw
     INSTALL_COMMAND ""
   )
-#endif (WIN32)
 
 endif (WIN32)
 
