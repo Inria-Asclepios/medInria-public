@@ -23,7 +23,7 @@ find_package(Qt5 REQUIRED COMPONENTS
              OpenGL
              Sql
              Widgets 
-	     Xml
+             Xml
              Test
              Quick
              )
