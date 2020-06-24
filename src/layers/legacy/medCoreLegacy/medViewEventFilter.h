@@ -67,7 +67,7 @@ protected:
     virtual bool mousePressEvent( medAbstractView *view, QGraphicsSceneMouseEvent *mouseEvent );
     virtual bool mouseReleaseEvent( medAbstractView *view, QGraphicsSceneMouseEvent *mouseEvent );
     virtual bool mouseMoveEvent( medAbstractView *view, QGraphicsSceneMouseEvent *mouseEvent );
-    virtual bool mouseWheelEvent( medAbstractView *view, QGraphicsSceneWheelEvent *mouseEvent );
+    virtual bool mouseWheelEvent( medAbstractView *view, QGraphicsSceneWheelEvent *wheelEvent );
 
     static QObject * objectToFilter( medAbstractView * view );
 
