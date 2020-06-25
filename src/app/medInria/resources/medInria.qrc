@@ -34,7 +34,7 @@
         <file>icons/error_go.png</file>
         <file>icons/exclamation.png</file>
         <file>icons/eye.png</file>
-	    <file>icons/Gaussian_Filter.png</file>
+        <file>icons/Gaussian_Filter.png</file>
         <file>icons/help.png</file>
         <file>icons/help.svg</file>
         <file>icons/information.png</file>
@@ -161,7 +161,8 @@
         <file>pixmaps/arrow-bot.png</file>
         <file>icons/adjust_size.png</file>
         <file>icons/adjust_size_grey.png</file>
-        
+
+        <file>../../../../LICENSE_MUSIC.txt</file>
         <file>music_logo_light.png</file>
         <file>music_logo_small_light.png</file>
         <file>music_logo_dark.png</file>

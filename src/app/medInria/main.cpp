@@ -100,7 +100,7 @@ int main(int argc,char* argv[])
     if (dtkApplicationArgumentsContain(&application, "-h") || dtkApplicationArgumentsContain(&application, "--help"))
     {
         qDebug() << "Usage: "
-                 <<QFileInfo(argv[0]).baseName().toStdString().c_str()
+                 << QFileInfo(argv[0]).baseName().toStdString().c_str()
                  << "[--fullscreen|--no-fullscreen] "
                  << "[--stereo] "
                     "[--debug] "
