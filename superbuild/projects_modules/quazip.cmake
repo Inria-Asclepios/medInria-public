@@ -73,11 +73,6 @@ endif (UNIX)
 
 epComputPath(${ep})
 
-message (STATUS "QMAKE = ${QT_QMAKE_EXECUTABLE}")
-message (STATUS "LIB = ${ZLIB_LIBRARIES}")
-message (STATUS "INC = ${ZLIB_INCLUDE_DIRS}")
-
-
 ExternalProject_Add(${ep}
   PREFIX ${EP_PATH_SOURCE}
   SOURCE_DIR ${EP_PATH_SOURCE}/${ep}
@@ -102,9 +97,7 @@ ExternalProject_Add(${ep}
 ## #############################################################################
 
 ExternalProject_Get_Property(${ep} binary_dir)
-set(${ep}_DIR ${binary_dir} PARENT_SCOPE)
-set(${ep}_INCLUDE_DIR ${binary_dir}/include PARENT_SCOPE)
-
+set(${ep}_DIR ${build_path} PARENT_SCOPE)
 
 endif() #NOT USE_SYSTEM_ep
 
