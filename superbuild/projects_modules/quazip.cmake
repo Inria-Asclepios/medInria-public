@@ -63,7 +63,8 @@ get_target_property (QT_QMAKE_EXECUTABLE Qt5::qmake IMPORTED_LOCATION)
 
 find_package(ZLIB REQUIRED)
 
-## quazip fails to compile if t
+## quazip fails to compile if zlib is found in an already
+## included default path.
 if (UNIX)
   string(COMPARE EQUAL ${ZLIB_INCLUDE_DIRS} "/usr/include" _cmp)
   if (_cmp)

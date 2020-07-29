@@ -32,8 +32,6 @@ function(music_plugins_project)
 
         set(${external_project}_BUILD_TYPE RelWithDebInfo CACHE STRING "Build type for MUSIC plugins: None Debug Release RelWithDebInfo MinSizeRel")
 
-message(STATUS "quazip dir = ${quazip_DIR}")
-
         set(cmake_args
             ${ep_common_cache_args}
             -DCMAKE_BUILD_TYPE=${${external_project}_BUILD_TYPE}
