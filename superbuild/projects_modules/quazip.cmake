@@ -14,7 +14,7 @@ list(APPEND ${ep}_dependencies "")
 
 EP_Initialisation(${ep}
   USE_SYSTEM OFF 
-  BUILD_SHARED_LIBS ON
+  BUILD_SHARED_LIBS OFF
   REQUIRED_FOR_PLUGINS ON
 )
 
@@ -88,7 +88,7 @@ ExternalProject_Add(${ep}
   CMAKE_ARGS ${cmake_args}
   DEPENDS ${${ep}_dependencies}
   UPDATE_COMMAND ""
-  CONFIGURE_COMMAND ${QT_QMAKE_EXECUTABLE} ${SPEC} PREFIX=${build_path} LIBS+=${ZLIB_LIBRARIES} INCLUDEPATH+=${ZLI_INCLUDE_DIRS} <SOURCE_DIR>/quazip.pro
+  CONFIGURE_COMMAND ${QT_QMAKE_EXECUTABLE} ${SPEC} PREFIX=${build_path} CONFIG+=staticlib LIBS+=${ZLIB_LIBRARIES} INCLUDEPATH+=${ZLI_INCLUDE_DIRS} <SOURCE_DIR>/quazip.pro
   BUILD_COMMAND ${MAKE_PROGRAM} sub-quazip-install_subtargets
   INSTALL_COMMAND ""
 )
