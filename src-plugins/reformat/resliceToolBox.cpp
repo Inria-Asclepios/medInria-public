@@ -176,12 +176,12 @@ void resliceToolBox::startReformat()
         }
         else
         {
-            medMessageController::instance()->showError(tr("Drop a 3D volume in the view"), 3000);
+            medMessageController::instance()->showError(tr("Drop a 3D volume in the view"));
         }
     }
     else
     {
-        medMessageController::instance()->showError(tr("Drop a 3D volume in the view"), 3000);
+        medMessageController::instance()->showError(tr("Drop a 3D volume in the view"));
     }
 }
 

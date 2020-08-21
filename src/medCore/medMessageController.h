@@ -113,15 +113,19 @@ public:
     static medMessageController *instance();
 
 public slots:
-    void     showInfo(const QString& text,unsigned int timeout=0);
-    void     showError(const QString& text,unsigned int timeout=0);
-    medMessageProgress * showProgress(const QString& text);
+    void showInfo(const QString& text,unsigned int timeout=0);
+    void showError(const QString& brief, const QString& detailed = QString());
+    medMessageProgress* showProgress(const QString& text);
 
     void remove(medMessage *message);
 
 signals:
   void addMessage(medMessage * message);
   void removeMessage(medMessage * message);
+  void error(const QString& brief, const QString& detailed);
+
+protected slots:
+  void displayPopup(const QString& brief, const QString& detailed);
 
 protected:
      medMessageController();

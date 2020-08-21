@@ -191,18 +191,9 @@ void medMessageController::showInfo(const QString& text,unsigned int timeout)
     }
 }
 
-void medMessageController::showError(const QString& text,unsigned int timeout)
+void medMessageController::showError(const QString& brief, const QString& detailed)
 {
-    if ( dynamic_cast<QApplication *>(QCoreApplication::instance()) ) 
-    {
-        // GUI
-        medMessageError *message = new medMessageError(
-                text,0,timeout);
-        emit addMessage(message);
-
-    } else {
-        dtkError() << text;
-    }
+    emit error(brief, detailed);
 }
 
 medMessageProgress* medMessageController::showProgress(const QString& text)
@@ -226,8 +217,27 @@ void medMessageController::remove(medMessage *message)
     }
 }
 
+void medMessageController::displayPopup(const QString& brief, const QString& detailed)
+{
+    QMessageBox messsageBox;
+
+    // To facilitate the reading of multiline error descriptions, we make sure the
+    // box is wide enough to avoid breaking up the lines.
+    QFontMetrics fontMetrics(messsageBox.font());
+    int textWidth = fontMetrics.boundingRect(detailed).width();
+    QSpacerItem* horizontalSpacer = new QSpacerItem(textWidth, 0, QSizePolicy::Minimum, QSizePolicy::Expanding);
+    QGridLayout* layout = static_cast<QGridLayout*>(messsageBox.layout());
+    layout->addItem(horizontalSpacer, layout->rowCount(), 0, 1, layout->columnCount());
+
+    messsageBox.setText(brief);
+    messsageBox.setInformativeText(detailed);
+    messsageBox.setStandardButtons(QMessageBox::Ok);
+    messsageBox.exec();
+}
+
 medMessageController::medMessageController(void) : QObject()
 {
+    connect(this, SIGNAL(error(QString, QString)), this, SLOT(displayPopup(QString, QString)));
 }
 
 medMessageController::~medMessageController(void)

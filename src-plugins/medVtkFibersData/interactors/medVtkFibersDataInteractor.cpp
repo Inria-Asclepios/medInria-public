@@ -525,8 +525,7 @@ void medVtkFibersDataInteractor::setBoxVisibility(bool visible)
 {
     if (d->view && d->view->orientation() != medImageView::VIEW_ORIENTATION_3D)
     {
-        medMessageController::instance()->showError("View must be in 3D mode to activate the bundling box",
-                                                    3000);
+        medMessageController::instance()->showError("View must be in 3D mode to activate the bundling box");
         d->manager->SetBoxWidget(false);
         return;
     }
@@ -1149,7 +1148,7 @@ void medVtkFibersDataInteractor::importROI(const medDataIndex& index)
              data->identifier() != "itkDataImageFloat3" &&
              data->identifier() != "itkDataImageDouble3"))
     {
-        medMessageController::instance()->showError(tr("Unable to load ROI, format not supported yet"), 3000);
+        medMessageController::instance()->showError(tr("Unable to load ROI, format not supported yet"));
         return;
     }
 

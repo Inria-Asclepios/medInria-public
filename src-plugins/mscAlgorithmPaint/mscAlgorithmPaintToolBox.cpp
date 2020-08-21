@@ -993,7 +993,7 @@ void AlgorithmPaintToolBox::updateWandRegion(medAbstractImageView * view, QVecto
             (m_imageData->identifier().contains("Vector"))||
             (m_imageData->identifier().contains("2")))
     {
-        medMessageController::instance()->showError(tr("Magic wand option is only available for 3D images"),3000);
+        medMessageController::instance()->showError(tr("Magic wand option is only available for 3D images"));
         return;
     }
 

@@ -397,7 +397,7 @@ void medDiffusionSelectorToolBox::setInputGradientFile()
         QString gradCount, imDims;
         gradCount.setNum(gradientList.count()/3);
         imDims.setNum(input->tDimension());
-        medMessageController::instance()->showError("Mismatch between gradient length (" +gradCount + ") and image dimension (" + imDims + ").",3000);
+        medMessageController::instance()->showError("Mismatch between gradient length (" +gradCount + ") and image dimension (" + imDims + ").");
     }
 }
 
@@ -411,7 +411,7 @@ void medDiffusionSelectorToolBox::createProcess()
 
     if ((d->selectorType == Estimation) && (!input->hasMetaData("DiffusionGradientList")))
     {
-        medMessageController::instance()->showError("No diffusion gradient data provided for estimation",3000);
+        medMessageController::instance()->showError("No diffusion gradient data provided for estimation");
         return;
     }
 

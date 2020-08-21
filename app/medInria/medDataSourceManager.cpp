@@ -147,7 +147,7 @@ void medDataSourceManager::indexFile(QString path)
 
 void medDataSourceManager::emitDataReceivingFailed(QString fileName)
 {
-  medMessageController::instance()->showError(tr("Unable to get from source the data named ") + fileName, 3000);
+  medMessageController::instance()->showError(tr("Unable to get from source the data named ") + fileName);
 }
 
 medDataSourceManager * medDataSourceManager::instance( void )

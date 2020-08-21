@@ -446,7 +446,7 @@ void medDatabaseController::importData( medAbstractData *data, const QUuid & imp
 
 void medDatabaseController::showOpeningError(QObject *sender)
 {
-    medMessageController::instance()->showError("Opening item failed.", 3000);
+    medMessageController::instance()->showError("Opening item failed.");
 }
 
 void medDatabaseController::createPatientTable(void)

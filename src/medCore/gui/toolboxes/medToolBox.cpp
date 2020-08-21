@@ -353,7 +353,7 @@ void medToolBox::handleDisplayError(int error)
 void medToolBox::displayMessageError(QString error)
 {
     qDebug() << qPrintable(name() + ": " + error);
-    medMessageController::instance()->showError(error,3000);
+    medMessageController::instance()->showError(error);
 }
 
 void medToolBox::setToolBoxOnWaitStatus()
