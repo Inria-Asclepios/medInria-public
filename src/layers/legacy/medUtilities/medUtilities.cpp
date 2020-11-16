@@ -23,6 +23,8 @@
 #include <QInputDialog>
 #include <QGuiApplication>
 #include <QScreen>
+#include <QApplication>
+#include <QDesktopWidget>
 
 #include <vtkImageView3D.h>
 #include <vtkMatrix4x4.h>
