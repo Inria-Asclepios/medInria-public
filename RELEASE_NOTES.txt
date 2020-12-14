@@ -1,6 +1,29 @@
-MUSICardio v3.0.0:
-- New name: MUSICardio
-- MUSICardio core is now on medInria 3.x.x
+MUSICardio v3.0:
+- The application has a new name: MUSICardio
+- MUSICardio core is now on medInria 3.2
+- Concerning the Non Local Means plugins, users are asked to use the plugin directly from the medInria binary: https://med.inria.fr/ for now
+- Add Navigation workspace
+- Solve a crash in Convert Mesh To Mask with empty landmarks
+- Solve a crash closing layers in CatheterManagerToolBox
+- Fem inverse problem: add Finite Element Method to solve inverse problem
+- Fem inverse problem: possibility to choose different conductivity depending on the zone
+- Fem inverse problem: add open MP loop
+- Add Boolean operation toolbox: compute the difference, the union or the intersection between 2 meshes
+- Add MinThickness toolbox: impose a minimum distance between 2 meshes. The second mesh is modified to impose this distance moreover this minimum distance is apply only on specified (label) part of the mesh
+- Solve a bug in DataInterpolation switching from a map to a mesh
+- Plot tool: add interpolation button
+- MeshInteractor: automatic change of selection mode when attribute changes
+- EP maps: Carto Reader now reads zipped archives, and read the header to determine if it's a CARTO file or not
+- Add DICOM export plugin
+- Add DICOM Rt Export plugin: write DICOMS that are compatible with Varian Eclipse RT planning suite
+- Add MaskToRtStruct toolbox, a toolbox that exports masks to DICOM RT structures
+- EP map: fix Rhythmia study import (out-of-bound reading and writing in some cases)
+- Mesh Utility: bug fix + improvements, uses robust algorithm provided by tetgen for triangle-triangle intersection, mesh consistency check, etc
+- Catheter: support new ablation message, improve undo calibration Point, calibration's Tag management is simpler to use
+- Add Radiotherapy planning workspace
+- Add Transmural Paint: experimental toolbox that creates transmural masks from painted (or selected in any way) cells on the epi mesh
+- ApplyTransform toolbox: catheter electrode and sensor positions are now transformed
+- Coronary Segmentation becomes Vessel Segmentation
 
 medInria 3.2:
 - Add some tooltips in view navigator
