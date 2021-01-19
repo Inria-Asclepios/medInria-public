@@ -17,6 +17,7 @@ function(music_plugins_project)
         eigen
         qwt
         quazip
+        zlib
         )
 
     EP_Initialisation(${external_project}
@@ -53,16 +54,15 @@ function(music_plugins_project)
             -DQWT_DIR:FILEPATH=${qwt_DIR}
             -DMMG_INCDIR:FILEPATH=${mmg_INCDIR}
             -DMMG_LIBDIR:FILEPATH=${mmg_LIBDIR}
-            -DMMG_SRC_DIR:FILEPATH=${mmg_SRC_DIR}
             -DTETGEN_INCLUDE_DIR:FILEPATH=${tetgen_INCLUDE_DIR}
             -DTETGEN_DIR:FILEPATH=${tetgen_DIR}
             -DQUAZIP_DIR:FILEPATH=${quazip_DIR}
             -DQUAZIP_INCLUDE_DIR:FILEPATH=${quazip_INCLUDE_DIR}
-            -DOPENSSL_ROOT_DIR:FILEPATH=${OPENSSL_ROOT_DIR} 
+            -DOPENSSL_ROOT_DIR:FILEPATH=${OPENSSL_ROOT_DIR}
+            -DZLIB_DIR:FILEPATH=${zlib_DIR}
             )
 
         epComputPath(${external_project})
-
         ExternalProject_Add(${external_project}
             PREFIX ${EP_PATH_SOURCE}
             SOURCE_DIR ${EP_PATH_SOURCE}/${external_project}
@@ -72,6 +72,7 @@ function(music_plugins_project)
             GIT_REPOSITORY ${git_url}
             GIT_TAG ${git_tag}
             CMAKE_GENERATOR ${gen}
+            CMAKE_GENERATOR_PLATFORM ${CMAKE_GENERATOR_PLATFORM}
             CMAKE_ARGS ${cmake_args}
             DEPENDS ${${external_project}_dependencies}
             INSTALL_COMMAND ""
@@ -88,5 +89,19 @@ function(music_plugins_project)
         set(${external_project}_SOURCE_DIR ${source_dir} PARENT_SCOPE)
 
     endif()
+
+
+if (WIN32)
+  file(TO_NATIVE_PATH ${zlib_DIR}                 ZLIB_BIN_BASE)
+  
+  set(CONFIG_MODE $<$<CONFIG:debug>:Debug>$<$<CONFIG:release>:Release>$<$<CONFIG:MinSizeRel>:MinSizeRel>$<$<CONFIG:RelWithDebInfo>:RelWithDebInfo>)
+  
+  set(MED_BIN_BASE ${MED_BIN_BASE}\\${CONFIG_MODE}\\bin)  
+  
+  add_custom_command(TARGET ${external_project}
+        POST_BUILD
+        COMMAND for %%I in ( ${ZLIB_BIN_BASE}\\bin\\${CONFIG_MODE}\\*.dll ) do (if EXIST ${MED_BIN_BASE}\\%%~nxI (del /S ${MED_BIN_BASE}\\%%~nxI & mklink /H ${MED_BIN_BASE}\\%%~nxI %%~fI) else mklink /H ${MED_BIN_BASE}\\%%~nxI %%~fI) 
+    )
+endif()
 
 endfunction()

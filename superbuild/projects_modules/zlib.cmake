@@ -38,6 +38,7 @@ function(zlib_project)
             GIT_REPOSITORY ${git_url}
             GIT_TAG ${git_tag}
             CMAKE_GENERATOR ${gen}
+            CMAKE_GENERATOR_PLATFORM ${CMAKE_GENERATOR_PLATFORM}
             CMAKE_ARGS ${cmake_args}
             DEPENDS ${${external_project}_dependencies}
             UPDATE_COMMAND ""

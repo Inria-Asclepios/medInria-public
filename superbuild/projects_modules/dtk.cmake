@@ -40,10 +40,9 @@ if (NOT USE_SYSTEM_${ep})
 ## Set up versioning control
 ## #############################################################################
 
-if (NOT DEFINED ${ep}_SOURCE_DIR)
-    set(git_url ${GITLAB_INRIA_PREFIX}dtk/dtk.git)
-    set(git_tag 1.7.1)
-endif()
+set(git_url ${GITLAB_INRIA_PREFIX}dtk/dtk.git)
+set(git_tag 1.7.1)
+
 
 ## #############################################################################
 ## Add specific cmake arguments for configuration step of the project
@@ -105,7 +104,7 @@ ExternalProject_Add(${ep}
   DEPENDS ${${ep}_dependencies}
   PATCH_COMMAND ${DTK_PATCH_COMMAND}
   INSTALL_COMMAND ""
-  BUILD_ALWAYS 0
+  BUILD_ALWAYS 1
   )
 
 ## #############################################################################

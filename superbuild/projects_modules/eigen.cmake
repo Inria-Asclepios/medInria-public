@@ -55,6 +55,7 @@ ExternalProject_Add(${ep}
   # Nothing to build, as Eigen is fully templated
   BUILD_COMMAND ""
   INSTALL_COMMAND ""
+  BUILD_ALWAYS 1
 )
 
 ## #############################################################################

@@ -38,10 +38,8 @@ if (NOT USE_SYSTEM_${ep})
 ## Set up versioning control
 ## #############################################################################
 
-if (NOT DEFINED ${ep}_SOURCE_DIR)
-    set(git_url ${GITHUB_PREFIX}Kitware/VTK.git)
-    set(git_tag v8.1.2)
-endif()
+set(git_url ${GITHUB_PREFIX}Kitware/VTK.git)
+set(git_tag v8.1.2)
 
 
 ## #############################################################################
@@ -140,7 +138,7 @@ ExternalProject_Add(${ep}
   CMAKE_ARGS ${cmake_args}
   DEPENDS ${${ep}_dependencies}
   INSTALL_COMMAND ""
-  BUILD_ALWAYS 0
+  BUILD_ALWAYS 1
   )
   
 ## #############################################################################

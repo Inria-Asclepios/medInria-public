@@ -80,6 +80,7 @@ ExternalProject_Add(${ep}
   PATCH_COMMAND ${${ep}_PATCH_COMMAND}
   UPDATE_COMMAND ""
   INSTALL_COMMAND ""
+  BUILD_ALWAYS 1
 )
 
 ## #############################################################################
