@@ -17,6 +17,9 @@
 #include <medAbstractData.h>
 #include <medAbstractProcessLegacy.h>
 
+#include <vtkSmartPointer.h>
+#include <vtkMatrix4x4.h>
+
 class iterativeClosestPointProcessPrivate;
 
 class ITERATIVECLOSESTPOINTPLUGIN_EXPORT iterativeClosestPointProcess : public medAbstractProcessLegacy
@@ -39,10 +42,14 @@ public slots:
     //! Parameters are set through here, channel allows to handle multiple parameters
     void setParameter(double data, int channel);
     void setParameter(int data, int channel);
+    void setParameter(QString data, int channel);
 
     //! Method to actually start the filter
     int update();
-    
+
+    //! Method to get the transformation matrix
+    void exportTransformMatrix();
+
     //! The output will be available through here
     medAbstractData *output();    
     
