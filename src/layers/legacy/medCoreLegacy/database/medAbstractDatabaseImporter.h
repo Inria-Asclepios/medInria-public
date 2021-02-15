@@ -62,10 +62,12 @@ signals:
     void dataImported ( const medDataIndex& index, const QUuid& uuid );
 
 public slots:
-    void onCancel ( QObject* );
+    void onCancel ( QObject* ) override;
+
+    void reportProgress(int dataIndex);
 
 protected:
-    virtual void internalRun ( void ) ;
+    void internalRun ( void ) override;
 
     QString file ( void );
     bool isCancelled ( void );
@@ -82,7 +84,7 @@ protected:
 
     QStringList getAllFilesToBeProcessed ( QString fileOrDirectory );
 
-    medAbstractData *tryReadImages ( const QStringList& filesPath,const bool readOnlyImageInformation );
+    QVector<medAbstractData*> tryReadImages(const QStringList& filesPath,  bool readOnlyImageInformation);
     bool tryWriteImage ( QString filePath, medAbstractData* medData );
 
     QString determineFutureImageFileName ( const medAbstractData* medData, int volumeNumber );
