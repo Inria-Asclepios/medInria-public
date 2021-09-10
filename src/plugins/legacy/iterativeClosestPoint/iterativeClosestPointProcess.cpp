@@ -23,14 +23,15 @@
 
 #include <vtkDoubleArray.h>
 #include <vtkFieldData.h>
-#include <vtkICPFilter.h>
 #include <vtkIterativeClosestPointTransform.h>
 #include <vtkLandmarkTransform.h>
 #include <vtkLinearTransform.h>
+#include <vtkMatrix4x4.h>
 #include <vtkMetaDataSet.h>
 #include <vtkMetaSurfaceMesh.h>
 #include <vtkSmartPointer.h>
-#include <vtkMatrix4x4.h>
+#include <vtkTransformPolyDataFilter.h>
+
 
 // /////////////////////////////////////////////////////////////////
 // iterativeClosestPointProcessPrivate
