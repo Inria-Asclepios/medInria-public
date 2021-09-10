@@ -41,11 +41,15 @@ public slots:
     void run();
     virtual void updateView();
     void resetComboBoxes();
+    void displayRFE();
     
 protected slots:
     void displayOutput();
     void onExportTransferMatrixCheckBoxToggled(bool toggle);
+    void onbCheckMeanDistanceCheckBoxToggled(bool toggle);
     void editTransferMatrixPath(QString newPath);
+    void hideRFE();
+    void showRFE(double &mean, double &stdDev, double &median);
 
 private:
     iterativeClosestPointToolBoxPrivate *d;
