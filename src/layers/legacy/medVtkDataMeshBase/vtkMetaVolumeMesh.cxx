@@ -296,17 +296,16 @@ void vtkMetaVolumeMesh::ReadMeshFile (const char* filename)
         return result;
     };
 
-
     ifstream fileInput(filename );
     if(fileInput.fail())
     {
-        vtkErrorMacro("File not found\n");
+        vtkErrorMacro("File not found\n")
         throw vtkErrorCode::FileNotFoundError;
     }
 
     QHash<QString, QPair<int,int>> elementsNameHash;
     QStringList elementsNames;
-    elementsNames << "Vertices" << "Edges" << "Triangles" << "Tetrahedra";
+    elementsNames << "Vertices" << "Edges" << "Triangles" << "Tetrahedra" << "Ridges";
     for (int i = 0; i< elementsNames.size(); i++)
     {
         elementsNameHash[elementsNames[i]] = qMakePair(0, 0);
@@ -323,7 +322,6 @@ void vtkMetaVolumeMesh::ReadMeshFile (const char* filename)
             if (elementsNameHash[elementsNames[i]].first == curLine - 1
                     && elementsNameHash[elementsNames[i]].first != 0)
             {
-
                 std::istringstream  lineStream(line);
                 lineStream >> elementsNameHash[elementsNames[i]].second;
             }
@@ -336,7 +334,7 @@ void vtkMetaVolumeMesh::ReadMeshFile (const char* filename)
     }
 
     int nbOfCells = 0;
-    for (int i = 1; i< elementsNames.size(); i++)
+    for (int i = 1; i< elementsNames.size()-1; i++)
     {
         nbOfCells += elementsNameHash[elementsNames[i]].second;
     }
@@ -344,113 +342,139 @@ void vtkMetaVolumeMesh::ReadMeshFile (const char* filename)
     int nbOfPoints = elementsNameHash[elementsNames[0]].second;
 
     vtkPoints* points = vtkPoints::New();
-    points->SetNumberOfPoints (nbOfPoints);
+    points->SetNumberOfPoints(nbOfPoints);
 
     vtkUnsignedShortArray* pointarray = vtkUnsignedShortArray::New();
-    pointarray->SetName ("Point array");
+    pointarray->SetName("Point array");
     pointarray->Allocate(nbOfPoints);
 
     vtkUnsignedShortArray* cellarray  = vtkUnsignedShortArray::New();
-    cellarray->SetName ("Zones");
+    cellarray->SetName("Zones");
     cellarray->Allocate(nbOfCells);
+
+    vtkUnsignedShortArray* ridgesarray  = vtkUnsignedShortArray::New();
+    ridgesarray->SetName("Ridges");
+    ridgesarray->SetNumberOfComponents(1);
+    ridgesarray->SetNumberOfTuples(nbOfCells);
+    ridgesarray->FillValue(0);
 
     vtkUnstructuredGrid* outputmesh = vtkUnstructuredGrid::New();
     outputmesh->Allocate(nbOfCells);
 
-    int count = 0;
     //Get Vertices and their values
     if(positionStream(fileInput, elementsNameHash[elementsNames[0]].first+1, line))
     {
-        while (getline(fileInput, line) && count < elementsNameHash[elementsNames[0]].second)
+        curLine = 0;
+        while (getline(fileInput, line) && curLine < elementsNameHash[elementsNames[0]].second)
         {
             std::istringstream  lineStream(line);
             double pos[3];
             unsigned short ref;
             lineStream >> pos[0] >> pos[1] >> pos[2] >> ref;
-            points->SetPoint (count, pos[0], pos[1], pos[2]);
+            points->SetPoint(curLine, pos[0], pos[1], pos[2]);
             pointarray->InsertNextValue(ref);
-            count++;
+            curLine++;
         }
     }
     //Get Edges and their values
     if(positionStream(fileInput, elementsNameHash[elementsNames[1]].first+1, line))
     {
-        count = 0;
-        while (getline(fileInput, line) && count < elementsNameHash[elementsNames[1]].second)
+        curLine = 0;
+        while (getline(fileInput, line) && curLine < elementsNameHash[elementsNames[1]].second)
         {
             std::istringstream  lineStream(line);
             unsigned int pos[2];
             unsigned short ref;
             lineStream >> pos[0] >> pos[1] >> ref;
             vtkIdList* idlist = vtkIdList::New();
-            idlist->InsertNextId (pos[0]-1);
-            idlist->InsertNextId (pos[1]-1);
+            idlist->InsertNextId(pos[0]-1);
+            idlist->InsertNextId(pos[1]-1);
 
-            outputmesh->InsertNextCell (VTK_LINE, idlist);
+            outputmesh->InsertNextCell(VTK_LINE, idlist);
             idlist->Delete();
             cellarray->InsertNextValue(ref);
-            count++;
+            curLine++;
         }
     }
     //Get Triangles and their values
     if(positionStream(fileInput, elementsNameHash[elementsNames[2]].first+1, line))
     {
-        count = 0;
-        while (getline(fileInput, line) && count < elementsNameHash[elementsNames[2]].second)
+        curLine = 0;
+        while (getline(fileInput, line) && curLine < elementsNameHash[elementsNames[2]].second)
         {
             std::istringstream  lineStream(line);
             unsigned int pos[3];
             unsigned short ref;
             lineStream >> pos[0] >> pos[1] >> pos[2] >> ref;
             vtkIdList* idlist = vtkIdList::New();
-            idlist->InsertNextId (pos[0]-1);
-            idlist->InsertNextId (pos[1]-1);
-            idlist->InsertNextId (pos[2]-1);
+            idlist->InsertNextId(pos[0]-1);
+            idlist->InsertNextId(pos[1]-1);
+            idlist->InsertNextId(pos[2]-1);
 
-            outputmesh->InsertNextCell (VTK_TRIANGLE, idlist);
+            outputmesh->InsertNextCell(VTK_TRIANGLE, idlist);
             idlist->Delete();
             cellarray->InsertNextValue(ref);
-            count++;
+            curLine++;
         }
     }
     //Get Tetras and their values
     if(positionStream(fileInput, elementsNameHash[elementsNames[3]].first+1, line))
     {
-        count = 0;
-        while (getline(fileInput, line) && count < elementsNameHash[elementsNames[3]].second)
+        curLine = 0;
+        while (getline(fileInput, line) && curLine < elementsNameHash[elementsNames[3]].second)
         {
             std::istringstream  lineStream(line);
             unsigned int pos[4];
             unsigned short ref;
             lineStream >> pos[0] >> pos[1] >> pos[2] >> pos[3] >> ref;
             vtkIdList* idlist = vtkIdList::New();
-            idlist->InsertNextId (pos[0]-1);
-            idlist->InsertNextId (pos[1]-1);
-            idlist->InsertNextId (pos[2]-1);
-            idlist->InsertNextId (pos[3]-1);
+            idlist->InsertNextId(pos[0]-1);
+            idlist->InsertNextId(pos[1]-1);
+            idlist->InsertNextId(pos[2]-1);
+            idlist->InsertNextId(pos[3]-1);
 
-            outputmesh->InsertNextCell (VTK_TETRA, idlist);
+            outputmesh->InsertNextCell(VTK_TETRA, idlist);
             idlist->Delete();
             cellarray->InsertNextValue(ref);
-            count++;
+            curLine++;
+        }
+    }
+    //Get Ridges if present will be add as array on cell
+    if(positionStream(fileInput, elementsNameHash[elementsNames[4]].first+1, line) &&
+            elementsNameHash[elementsNames[1]].second > 0)
+    {
+        curLine = 0;
+        while (getline(fileInput, line) && curLine < elementsNameHash[elementsNames[4]].second)
+        {
+            std::istringstream  lineStream(line);
+            unsigned int pos;
+            lineStream >> pos;
+            //This work because the edges were the first cells added
+            ridgesarray->SetValue(pos-1, 1);
+            curLine++;
         }
     }
 
-    outputmesh->SetPoints (points);
+    outputmesh->SetPoints(points);
     if (outputmesh->GetPointData())
     {
-        outputmesh->GetPointData()->AddArray (pointarray);
+        outputmesh->GetPointData()->AddArray(pointarray);
     }
     if (outputmesh->GetCellData())
     {
-        outputmesh->GetCellData()->AddArray (cellarray);
+        outputmesh->GetCellData()->AddArray(cellarray);
+        if(elementsNameHash[elementsNames[4]].second > 0 && elementsNameHash[elementsNames[1]].second > 0)
+        {
+            outputmesh->GetCellData()->AddArray(ridgesarray);
+        }
     }
 
-    this->SetDataSet (outputmesh);
+    this->SetDataSet(outputmesh);
 
     points->Delete();
     pointarray->Delete();
     cellarray->Delete();
+    ridgesarray->Delete();
     outputmesh->Delete();
 }
 
