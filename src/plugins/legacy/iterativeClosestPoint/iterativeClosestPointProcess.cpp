@@ -220,8 +220,6 @@ int iterativeClosestPointProcess::update()
 
     ICPFilter->Update();
 
-    std::vector<vtkIdType> sourceLandmarks  = ICPFilter->GetSourceLandmarkIds();
-
     //bring the source to the target
     vtkSmartPointer<vtkTransformPolyDataFilter> TransformFilter2 = vtkSmartPointer<vtkTransformPolyDataFilter>::New();
     TransformFilter2->SetInputData(ICPFilter->GetSource());
@@ -250,15 +248,15 @@ int iterativeClosestPointProcess::update()
     vtkPolyData *output_polyData = TransformFilter2->GetOutput();
     output_polyData->GetFieldData()->AddArray(icpTransformArray);
 
-    // create array to hold RFE stats
-    vtkDoubleArray* rfeArray = vtkDoubleArray::New();
-    rfeArray->SetNumberOfComponents(3);
-    rfeArray->SetNumberOfTuples(1);
-    rfeArray->SetName("RFE Stats");
-    rfeArray->SetTuple3(0, d->mean, d->variance, d->median);
+    // create array to hold FRE stats
+    vtkDoubleArray* FREArray = vtkDoubleArray::New();
+    FREArray->SetNumberOfComponents(3);
+    FREArray->SetNumberOfTuples(1);
+    FREArray->SetName("FRE Stats");
+    FREArray->SetTuple3(0, d->mean, d->variance, d->median);
     // add to outputs
-    output_polyData->GetFieldData()->AddArray(rfeArray);
-    rfeArray->Delete();
+    output_polyData->GetFieldData()->AddArray(FREArray);
+    FREArray->Delete();
 
     vtkMetaSurfaceMesh *output_mesh = vtkMetaSurfaceMesh::New();
     output_mesh->SetDataSet(output_polyData);

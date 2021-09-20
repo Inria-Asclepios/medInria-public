@@ -16,7 +16,6 @@ class VTKCOMMONDATAMODEL_EXPORT medICPFilter : public vtkLinearTransform
 {
 public:
   static medICPFilter *New();
-  //vtkTypeMacro(vtkIterativeClosestPointTransform,vtkLinearTransform);
   void PrintSelf(ostream& os, vtkIndent indent) override;
 
   //@{

@@ -178,7 +178,7 @@ iterativeClosestPointToolBox::iterativeClosestPointToolBox(QWidget *parent)
 
     widget->setLayout(parameters_layout);
     this->addWidget(widget);
-    hideRFE();
+    hideFRE();
 
     d->currentView = nullptr;
 }
@@ -228,8 +228,7 @@ void iterativeClosestPointToolBox::run()
             medRunnableProcess *runProcess = new medRunnableProcess;
             runProcess->setProcess (d->process);
             connect (runProcess, SIGNAL(success(QObject*)), this, SLOT(displayOutput()));
-            connect (runProcess, SIGNAL(success(QObject *)), this, SLOT(displayRFE()));
-            //displayRFE();
+            connect (runProcess, SIGNAL(success(QObject *)), this, SLOT(displayFRE()));
             this->addConnectionsAndStartJob(runProcess);
 
         }
@@ -327,15 +326,14 @@ void iterativeClosestPointToolBox::onbCheckMeanDistanceCheckBoxToggled(bool togg
     d->MaxMeanDistance->setEnabled(toggle);
 }
 
-
-void iterativeClosestPointToolBox::hideRFE()
+void iterativeClosestPointToolBox::hideFRE()
 {
     d->meanText->hide();
     d->stdDevText->hide();
     d->medianText->hide();
 }
 
-void iterativeClosestPointToolBox::showRFE(double &mean, double &stdDev, double &median)
+void iterativeClosestPointToolBox::showFRE(double &mean, double &stdDev, double &median)
 {
     d->meanText->setText("Mean distance: " + QString::number(mean));
     d->stdDevText->setText("Standard deviation: " + QString::number(stdDev));
@@ -345,7 +343,7 @@ void iterativeClosestPointToolBox::showRFE(double &mean, double &stdDev, double 
     d->medianText->show();
 }
 
-void iterativeClosestPointToolBox::displayRFE()
+void iterativeClosestPointToolBox::displayFRE()
 {
     if (!d->process)
     {
@@ -359,17 +357,13 @@ void iterativeClosestPointToolBox::displayRFE()
     {
         vtkMetaDataSet *metaDataSet = static_cast<vtkMetaDataSet *>(data->data());
         vtkDataSet *mesh = metaDataSet->GetDataSet();
-        vtkDataArray *array = mesh->GetFieldData()->GetArray("RFE Stats");
-        for (int i = 0; i < mesh->GetFieldData()->GetNumberOfArrays(); i++)
-        {
-            std::cout << mesh->GetFieldData()->GetArrayName(i) << std::endl;
-        }
+        vtkDataArray *array = mesh->GetFieldData()->GetArray("FRE Stats");
         if (array)
         {
             double stats[3] = { 0.0, 0.0, 0.0 };
             array->GetTuple(0, stats);
             // udpate text
-            showRFE(stats[0], stats[1], stats[2]);
+            showFRE(stats[0], stats[1], stats[2]);
         }
     }
 }
