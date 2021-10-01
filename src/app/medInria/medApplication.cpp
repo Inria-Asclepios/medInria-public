@@ -64,7 +64,10 @@ medApplication::medApplication(int & argc, char**argv) :
     QApplication::setStyle(QStyleFactory::create("fusion"));
 
     // Expiration Date
-    QDate expiryDate = QDate::fromString(QString(MEDINRIA_BUILD_DATE), "dd_MM_yyyy").addYears(1);
+    QDate expiryDate = QDate::fromString(QString(MEDINRIA_BUILD_DATE), "dd_MM_yyyy")
+                                        .addMonths(EXPIRATION_TIME);
+    qInfo() << "Expiration Date: " << qPrintable(expiryDate.toString());
+
     if ( ! expiryDate.isValid() || QDate::currentDate() > expiryDate)
     {
         QString expiredInfo = "This copy of ";

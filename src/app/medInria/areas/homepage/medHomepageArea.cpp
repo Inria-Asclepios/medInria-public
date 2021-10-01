@@ -152,7 +152,8 @@ medHomepageArea::medHomepageArea ( QWidget * parent ) : QWidget ( parent ), d ( 
     medLogo = medLogo.scaled(576, 121, Qt::KeepAspectRatio, Qt::SmoothTransformation);
     medInriaLabel->setPixmap(medLogo);
 
-    QDate expiryDate = QDate::fromString(QString(MEDINRIA_BUILD_DATE), "dd_MM_yyyy").addYears(1);
+    QDate expiryDate = QDate::fromString(QString(MEDINRIA_BUILD_DATE), "dd_MM_yyyy")
+                                        .addMonths(EXPIRATION_TIME);
     QTextEdit * textEdit = new QTextEdit(this);
     textEdit->setHtml ( QString::fromUtf8("<br/><br/><b>%1</b> (%2) is a software developed in collaboration with "
                                           "the IHU LIRYC in order to propose functionalities "

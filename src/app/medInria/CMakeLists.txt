@@ -76,6 +76,8 @@ endif()
 string(TIMESTAMP BUILD_DATE "\"%d_%m_%Y\"")
 add_definitions(-DMEDINRIA_BUILD_DATE=${BUILD_DATE})
 
+add_definitions(-DEXPIRATION_TIME=${EXPIRATION_TIME})
+
 ## #############################################################################
 ## OS specificites
 ## #############################################################################

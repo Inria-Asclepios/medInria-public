@@ -53,7 +53,7 @@ if (NOT WIN32)
       list(APPEND external_projects ffmpeg)
   endif()
 endif()
-  
+
 list(APPEND external_projects
      VTK
      ITK
