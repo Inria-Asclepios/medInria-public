@@ -54,7 +54,7 @@ if (NOT WIN32)
   endif()
 endif()
 
-set(EXPIRATION_TIME "12" CACHE STRING "After X months the copy will expire" FORCE)
+set(EXPIRATION_TIME "12" CACHE STRING "After X months the copy will expire")
 
 list(APPEND external_projects
      VTK
