@@ -68,8 +68,6 @@ endif()
 
 set(${ep}_BUILD_TYPE Debug CACHE STRING "Build type configuration specific to medInria.")
 
-set(EXPIRATION_TIME "12" CACHE STRING "After X months the copy will expire" FORCE)
-
 set(cmake_args
    ${ep_common_cache_args}
   -DCMAKE_BUILD_TYPE=${${ep}_BUILD_TYPE}
