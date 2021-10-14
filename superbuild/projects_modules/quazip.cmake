@@ -45,7 +45,7 @@ set(cmake_args
   -DCMAKE_CXX_FLAGS:STRING=${${ep}_cxx_flags}
   -DCMAKE_SHARED_LINKER_FLAGS:STRING=${${ep}_shared_linker_flags}
   -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
-  # to find zlib 
+  # to find zlib 
   -DCMAKE_PREFIX_PATH:FILEPATH=${zlib_DIR}
   # to find Qt5
   -DQt5_DIR=${Qt5_DIR}
@@ -62,8 +62,6 @@ endif()
 
 find_package(Qt5 REQUIRED Core)
 
-ep_GeneratePatchCommand(${ep} ${ep}_PATCH_COMMAND quazip.patch)
-
 epComputPath(${ep})
 
 ExternalProject_Add(${ep}
@@ -79,7 +77,6 @@ ExternalProject_Add(${ep}
   CMAKE_GENERATOR_PLATFORM ${CMAKE_GENERATOR_PLATFORM}
   CMAKE_ARGS ${cmake_args}
   DEPENDS ${${ep}_dependencies}
-  PATCH_COMMAND ${${ep}_PATCH_COMMAND}
   UPDATE_COMMAND ""
   INSTALL_COMMAND ""
   BUILD_ALWAYS 1
