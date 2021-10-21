@@ -78,7 +78,10 @@ set(cmake_args
   -DDTK_BUILD_SUPPORT_PLOT=OFF                                                                                                                                                                                                                                                                                       
   -DDTK_BUILD_SUPPORT_VR=ON                                                                                                                                                                                                                                                                                        
   -DDTK_BUILD_WRAPPERS=OFF
-  -DQt5_DIR=${Qt5_DIR}
+  )
+  
+set(cmake_cache_args
+  -DQt5_DIR:FILEPATH=${Qt5_DIR}
   )
 
 ## #############################################################################
@@ -101,6 +104,7 @@ ExternalProject_Add(${ep}
   CMAKE_GENERATOR ${gen}
   CMAKE_GENERATOR_PLATFORM ${CMAKE_GENERATOR_PLATFORM}
   CMAKE_ARGS ${cmake_args}
+  CMAKE_CACHE_ARGS ${cmake_cache_args}
   DEPENDS ${${ep}_dependencies}
   PATCH_COMMAND ${DTK_PATCH_COMMAND}
   INSTALL_COMMAND ""
