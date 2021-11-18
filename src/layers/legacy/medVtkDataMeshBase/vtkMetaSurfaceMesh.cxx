@@ -306,14 +306,18 @@ void vtkMetaSurfaceMesh::Write (const char* filename)
 bool vtkMetaSurfaceMesh::IsVtpExtension (const char* ext)
 {
     if (strcmp (ext, ".vtp") == 0)
+    {
         return true;
+    }
     return false;
 }
 
 bool vtkMetaSurfaceMesh::IsVtuExtension (const char* ext)
 {
     if (strcmp (ext, ".vtu") == 0)
+    {
         return true;
+    }
     return false;
 }
 
@@ -322,7 +326,9 @@ bool vtkMetaSurfaceMesh::IsVtkExtension (const char* ext)
 {
   if (strcmp (ext, ".fib") == 0 ||
       strcmp (ext, ".vtk") == 0)
-    return true;
+  {
+      return true;
+  }
   return false;
 }
 
@@ -330,7 +336,9 @@ bool vtkMetaSurfaceMesh::IsVtkExtension (const char* ext)
 bool vtkMetaSurfaceMesh::IsMeshExtension (const char* ext)
 {
   if (strcmp (ext, ".mesh") == 0)
-    return true;
+  {
+      return true;
+  }
   return false;
 }
 
@@ -338,7 +346,9 @@ bool vtkMetaSurfaceMesh::IsMeshExtension (const char* ext)
 bool vtkMetaSurfaceMesh::IsOBJExtension (const char* ext)
 {
   if (strcmp (ext, ".obj") == 0)
-    return true;
+  {
+      return true;
+  }
   return false;
 }
 

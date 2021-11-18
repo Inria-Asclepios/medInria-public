@@ -261,7 +261,9 @@ bool vtkMetaVolumeMesh::IsVtpExtension (const char* ext)
 bool vtkMetaVolumeMesh::IsVtuExtension (const char* ext)
 {
     if (strcmp (ext, ".vtu") == 0)
+    {
         return true;
+    }
     return false;
 }
 
@@ -269,21 +271,27 @@ bool vtkMetaVolumeMesh::IsVtuExtension (const char* ext)
 bool vtkMetaVolumeMesh::IsVtkExtension (const char* ext)
 {
     if (strcmp (ext, ".vtk") == 0)
+    {
         return true;
+    }
     return false;
 }
 //----------------------------------------------------------------------------
 bool vtkMetaVolumeMesh::IsMeshExtension (const char* ext)
 {
     if (strcmp (ext, ".mesh") == 0)
+    {
         return true;
+    }
     return false;
 }
 //----------------------------------------------------------------------------
 bool vtkMetaVolumeMesh::IsGMeshExtension (const char* ext)
 {
     if (strcmp (ext, ".msh") == 0)
+    {
         return true;
+    }
     return false;
 }
 
