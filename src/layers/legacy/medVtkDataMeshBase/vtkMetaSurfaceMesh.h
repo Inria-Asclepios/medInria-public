@@ -17,6 +17,7 @@
 #include <vtkMetaDataSet.h>
 
 class vtkPolyData;
+class vtkReaderErrorObserver;
 
 
 /**
@@ -88,7 +89,7 @@ class MEDVTKDATAMESHBASE_EXPORT vtkMetaSurfaceMesh: public vtkMetaDataSet
     return "SurfaceMesh";
   }
 
-  virtual void CreateWirePolyData() override;
+  virtual void CreateWirePolyData();
 
 protected:
   vtkMetaSurfaceMesh();

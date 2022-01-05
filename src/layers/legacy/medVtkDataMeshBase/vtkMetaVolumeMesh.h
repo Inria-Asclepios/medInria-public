@@ -82,7 +82,7 @@ protected:
   virtual void ReadMeshFile(const char* filename);
   virtual void ReadGMeshFile(const char* filename);
   virtual void WriteVtkFile (const char* filename);
-   virtual void WriteVtuFile (const char* filename);
+  virtual void WriteVtuFile (const char* filename);
 
 private:
   void operator=(const vtkMetaVolumeMesh&);        // Not implemented.
