@@ -29,6 +29,11 @@
 #include <medSettingsManager.h>
 #include <medStorage.h>
 
+#if (USE_PYTHON)
+  #include <medPython.h>
+  #include <medPythonTools.h>
+#endif
+
 void forceShow(medMainWindow& mainwindow )
 {
     //Idea and code taken from the OpenCOR project, Thanks Allan for the code!
@@ -125,6 +130,10 @@ int main(int argc,char* argv[])
                  << "[--fullscreen|--no-fullscreen] "
                  << "[--stereo] "
                  << "[--debug] "
+            #ifdef USE_PYTHON
+                 << "[--test-python] "
+                 << "[--test-python-crash] "
+            #endif
             #ifdef ACTIVATE_WALL_OPTION
                  << "[[--wall] [--tracker=URL]] "
             #endif
@@ -159,6 +168,10 @@ int main(int argc,char* argv[])
                      << "--tracker"
                      << "--stereo"
                      << "--view"
+                #ifdef USE_PYTHON
+                     << "--test-python"
+                     << "--test-python-with-crash"
+                #endif
                      << "--debug");
             for (QStringList::const_iterator opt=options.constBegin();opt!=options.constEnd();++opt)
             {
@@ -229,6 +242,21 @@ int main(int argc,char* argv[])
     }
     // END OF DATABASE INITIALISATION
 
+#ifdef USE_PYTHON
+    med::python::initialize();
+
+    bool testPython = application.arguments().contains("--test-python");
+    bool testPythonWithCrash = application.arguments().contains("--test-python-with-crash");
+
+    if (testPython || testPythonWithCrash)
+    {
+        return med::python::test::testEmbeddedPython(testPythonWithCrash);
+    }
+
+    med::python::initializeTools();
+    med::python::loadPythonPlugins();
+#endif
+
     medPluginManager::instance()->setVerboseLoading(true);
     medPluginManager::instance()->initialize();
 
@@ -290,6 +318,10 @@ int main(int argc,char* argv[])
                      mainwindow,SLOT(processNewInstanceMessage(const QString&)));
 
     application.setMainWindow(mainwindow);
+
+#ifdef USE_PYTHON
+    med::python::startConsole();
+#endif
 
     forceShow(*mainwindow);
 
