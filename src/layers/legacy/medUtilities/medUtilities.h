@@ -60,4 +60,6 @@ public:
 
     static int getDevicePixelRatio(QMouseEvent* mouseEvent);
 
+    static int getDevicePixelRatio(medAbstractView *view);
+
 };

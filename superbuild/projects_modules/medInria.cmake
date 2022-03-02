@@ -98,6 +98,19 @@ set(cmake_cache_args
   -DBoost_INCLUDE_DIR:PATH=${Boost_INCLUDE_DIR}
   )
 
+set(cmake_cache_args
+  -DDCMTK_DIR:PATH=${DCMTK_DIR}
+  -Ddtk_DIR:PATH=${dtk_DIR}
+  -DITK_DIR:PATH=${ITK_DIR}
+  -DQtDCM_DIR:PATH=${QtDCM_DIR}
+  -DRPI_DIR:PATH=${RPI_DIR}
+  -DTTK_DIR:PATH=${TTK_DIR}
+  -DVTK_DIR:PATH=${VTK_DIR}
+  -DQt5_DIR:PATH=${Qt5_DIR}
+  -DLogDemons_DIR:PATH=${LogDemons_DIR}
+  -DBoost_INCLUDE_DIR:PATH=${Boost_INCLUDE_DIR}
+  )
+
 if (${USE_FFmpeg})
   list(APPEND cmake_args
   -DUSE_FFmpeg=${USE_FFmpeg})
