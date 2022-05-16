@@ -504,7 +504,7 @@ void medHomepageArea::onShowInfo()
 
 void medHomepageArea::onShowHelp()
 {
-    QDesktopServices::openUrl(QUrl("https://music.gitlabpages.inria.fr/MUSICsoftware/"));
+    QDesktopServices::openUrl(QUrl("https://music-test.inria.fr/musicardio/"));
 }
 
 void medHomepageArea::onShowSettings()
