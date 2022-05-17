@@ -2,7 +2,6 @@ MUSICardio v3.0:
 - The application has a new name: MUSICardio
 - MUSICardio core is now on medInria 3.2
 - Concerning the Non Local Means plugins, users are asked to use the plugin directly from the medInria binary: https://med.inria.fr/ for now
-- Add Navigation workspace
 - Solve a crash in Convert Mesh To Mask with empty landmarks
 - Solve a crash closing layers in CatheterManagerToolBox
 - Fem inverse problem: add Finite Element Method to solve inverse problem
@@ -24,6 +23,7 @@ MUSICardio v3.0:
 - Add Transmural Paint: experimental toolbox that creates transmural masks from painted (or selected in any way) cells on the epi mesh
 - ApplyTransform toolbox: catheter electrode and sensor positions are now transformed
 - Coronary Segmentation becomes Vessel Segmentation
+- Solve crashes in Channelness and Laplacian toolboxes with wrong input data 
 
 medInria 3.3:
 - Fix mirrored DICOM images problem
