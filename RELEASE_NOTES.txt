@@ -1,14 +1,21 @@
-MUSICardio v3.0:
+MUSICardio-LITE v3.0:
+
+Information:
 - The application has a new name: MUSICardio
-- MUSICardio core is now on medInria 3.2
+- MUSICardio core is now on medInria 3.2 and includes all its new features and fixes
+- MUSICardio 3.0 is a LITE version which do not include the pipeline system. We will release a future version with the pipelines system and a wide use of Python
+- MUSICardio 3.0 is compatible with Ubuntu 20.04, Fedora 33, macOS and Windows 10
 - Concerning the Non Local Means plugins, users are asked to use the plugin directly from the medInria binary: https://med.inria.fr/ for now
+
+Fixes and enhancements: 
 - Solve a crash in Convert Mesh To Mask with empty landmarks
 - Solve a crash closing layers in CatheterManagerToolBox
 - Fem inverse problem: add Finite Element Method to solve inverse problem
 - Fem inverse problem: possibility to choose different conductivity depending on the zone
 - Fem inverse problem: add open MP loop
 - Add Boolean operation toolbox: compute the difference, the union or the intersection between 2 meshes
-- Add MinThickness toolbox: impose a minimum distance between 2 meshes. The second mesh is modified to impose this distance moreover this minimum distance is apply only on specified (label) part of the mesh
+- Add MinThickness toolbox: impose a minimum distance between 2 meshes. The second mesh is modified to impose this distance moreover 
+this minimum distance is apply only on specified (label) part of the mesh
 - Solve a bug in DataInterpolation switching from a map to a mesh
 - Plot tool: add interpolation button
 - MeshInteractor: automatic change of selection mode when attribute changes
