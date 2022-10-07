@@ -4,7 +4,7 @@ Information:
 - The application has a new name: MUSICardio
 - MUSICardio core is now on medInria 3.2 and includes all its new features and fixes
 - MUSICardio 3.0 is a LITE version which do not include the pipeline system. We will release a future version with the pipelines system and a wide use of Python
-- MUSICardio 3.0 is compatible with Ubuntu 20.04, Fedora 33, macOS and Windows 10
+- MUSICardio 3.0 is compatible with Ubuntu 20.04, Fedora 33, macOS 10.15 and Windows 10
 - Concerning the Non Local Means plugins, users are asked to use the plugin directly from the medInria binary: https://med.inria.fr/ for now
 
 Fixes and enhancements: 
