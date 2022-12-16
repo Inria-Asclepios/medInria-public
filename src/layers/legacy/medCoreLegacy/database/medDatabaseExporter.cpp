@@ -11,10 +11,8 @@
 
 =========================================================================*/
 
-
 #include <medAbstractData.h>
 #include <medAbstractDataFactory.h>
-#include <medAbstractDataWriter.h>
 #include <medDatabaseExporter.h>
 
 class medDatabaseExporterPrivate
