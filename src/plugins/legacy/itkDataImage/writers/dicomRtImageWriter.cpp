@@ -1,4 +1,4 @@
-#include "mscDicomRtImageWriter.h"
+#include "dicomRtImageWriter.h"
 
 #include <medAbstractData.h>
 #include <medAbstractDataFactory.h>
