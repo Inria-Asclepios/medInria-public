@@ -166,7 +166,7 @@ bool itkDataImagePlugin::initialize()
     if (!itkGISDataImageWriter::registered())        { qWarning() << "Unable to register itkGISDataImageWriter type"; }
     if (!itkDicomDataImageWriter::registered())      { qWarning() << "Unable to register itkDicomDataImageWriter type"; }
 
-    if (!DicomRtImageWriter::registered())           { dtkWarn() << "Unable to register DicomRtImageWriter type"; }
+    if (!DicomRtImageWriter::registered())           { qWarning() << "Unable to register DicomRtImageWriter type"; }
 
     return true;
 }
