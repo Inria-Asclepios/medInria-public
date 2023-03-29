@@ -26,7 +26,7 @@ if (NOT USE_SYSTEM_${ep})
 ## Define repository where get the sources
 ## #############################################################################
 
-set(git_url https://github.com/ufz/tetgen.git)
+set(git_url ${GITHUB_PREFIX}ufz/tetgen.git)
 set(git_tag master)
 
 ## #############################################################################
