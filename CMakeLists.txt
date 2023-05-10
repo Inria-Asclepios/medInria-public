@@ -11,14 +11,14 @@
 #
 ################################################################################
 
-cmake_minimum_required(VERSION 3.15)
+cmake_minimum_required(VERSION 3.19)
 
 if(POLICY CMP0020)
   cmake_policy(SET CMP0020 NEW)
 endif()
 
 if(NOT DEFINED ${MEDINRIA_SUPERBUILD_VERSION})
-    set(MEDINRIA_SUPERBUILD_VERSION 3.3.2)
+    set(MEDINRIA_SUPERBUILD_VERSION 3.4.0)
 endif()
 
 SET(CMAKE_CXX_STANDARD 17)

@@ -30,6 +30,16 @@ find_package(Qt5 REQUIRED COMPONENTS
 
 find_package(Boost REQUIRED)
 
+if(USE_Python AND UNIX)
+    if(APPLE)
+        set(default_root_dir "/usr/local/opt/openssl@1.1")
+    else()
+        set(default_root_dir)
+    endif()
+    set(OPENSSL_ROOT_DIR ${default_root_dir} CACHE PATH "Root directory of OpenSSL.")
+    find_package(OpenSSL COMPONENTS SSL)
+endif()
+
 ## #############################################################################
 ## Add exteral projects
 ## #############################################################################
@@ -46,6 +56,8 @@ find_package(Boost REQUIRED)
 option(USE_DTKIMAGING "Use DTK imaging layer" OFF )
 
 option(USE_OSPRay "Use OSPRay for CPU VR" OFF )
+
+option(USE_Python "Build with Python support" ON)
 
 if (NOT WIN32)
   option(USE_FFmpeg "Build with FFmpeg video export support" OFF)
@@ -87,6 +99,12 @@ endif()
 if (USE_DTKIMAGING)
     list(APPEND external_projects
         dtkImaging
+        )
+endif()
+
+if (USE_Python)
+    list(APPEND external_projects
+        pyncpp
         )
 endif()
 

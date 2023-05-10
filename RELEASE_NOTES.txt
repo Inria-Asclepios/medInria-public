@@ -1,9 +1,9 @@
-MUSICardio-LITE v3.3:
+medInria 3.4:
+- Fix an incorrect zoom for some data displayed in a view. The zoom is now calculated with x and y dims, and not z
+- N4 Bias Correction process can stop now if the user wants to quit the application, it will stop at some algorithm checkpoints
+- Reslice toolbox: changing the dimension of spacing parameters does not zoom one of the views
+- Paint toolbox: the first click on the view quickly displays the drawing, instead of waiting for the mask to be created
 
-Information:
-- The application has a new name: MUSICardio
-- MUSICardio core is now on medInria 3.3 and includes all its new features and fixes
-- MUSICardio 3.3 is a LITE version which do not include the pipeline system. We will release a future version with the pipelines system and a wide use of Python
 - MUSICardio 3.3 is compatible with Ubuntu 20.04, Fedora 33, macOS 10.15 and Windows 10
 - Concerning the Non Local Means plugins, users are asked to use the plugin directly from the medInria binary: https://med.inria.fr/ for now
 

@@ -695,7 +695,6 @@ double DCMTKImageIO::GetPositionFromPrincipalAxisIndex(int index, int principalA
     return positionVector[principalAxisIndex];
 }
 
-
 double DCMTKImageIO::GetSliceLocation(std::string imagePosition)
 {
     // <> We should not trust DICOM tag for sliceLocation (type3 so not mandatory and may be wrong )

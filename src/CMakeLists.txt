@@ -13,10 +13,10 @@
 #
 ################################################################################
 
-cmake_minimum_required(VERSION 3.3)
+cmake_minimum_required(VERSION 3.19)
 
 if(NOT DEFINED ${medInria_VERSION})
-    set(medInria_VERSION 3.3.2)
+    set(medInria_VERSION 3.4.0)
 endif()
 
 project(medInria VERSION ${medInria_VERSION})
@@ -66,6 +66,11 @@ option(USE_FFmpeg
   )
 endif()
 
+option(USE_Python
+  "Build with Python support"
+  ON
+  )
+
 ## #############################################################################
 ## Find package
 ## #############################################################################
@@ -86,6 +91,10 @@ find_package(Qt5 REQUIRED COMPONENTS
 
 find_package(dtk REQUIRED)
 include_directories(${dtk_INCLUDE_DIRS})
+
+if(USE_Python)
+    find_package(pyncpp REQUIRED COMPONENTS CPP_API Qt5)
+endif()
 
 ## #############################################################################
 ## enable c++ 17
@@ -163,6 +172,8 @@ if(NOT ${CMAKE_BUILD_TYPE} STREQUAL "Debug")
   message(STATUS "Add -DQT_NO_DEBUG")
   add_definitions(-DQT_NO_DEBUG)
 endif()
+
+add_compile_definitions(USE_PYTHON)
 
 ## #############################################################################
 ## Windows specificity
