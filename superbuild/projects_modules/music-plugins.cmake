@@ -23,7 +23,13 @@ function(music_plugins_project)
             websocketpp
             openssl
         )
-    endif() 
+    endif()
+
+    if (USE_Python)
+        list(APPEND ${external_project}_dependencies
+            pyncpp
+            )
+    endif()
 
     EP_Initialisation(${external_project}
         USE_SYSTEM OFF
@@ -66,6 +72,12 @@ function(music_plugins_project)
             -DZLIB_DIR:FILEPATH=${zlib_DIR}
             -DUSE_RealTimeWorkspace=${USE_RealTimeWorkspace}
             )
+
+        if (USE_Python)
+          list(APPEND cmake_args
+              -Dpyncpp_DIR:PATH=${pyncpp_DIR}
+              )
+        endif()
 
         epComputPath(${external_project})
         ExternalProject_Add(${external_project}
