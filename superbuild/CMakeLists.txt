@@ -68,6 +68,12 @@ endif()
 
 set(EXPIRATION_TIME "12" CACHE STRING "After X months the copy will expire")
 
+if (USE_Python)
+    list(APPEND external_projects
+        pyncpp
+        )
+endif()
+
 list(APPEND external_projects
      VTK
      ITK
@@ -99,12 +105,6 @@ endif()
 if (USE_DTKIMAGING)
     list(APPEND external_projects
         dtkImaging
-        )
-endif()
-
-if (USE_Python)
-    list(APPEND external_projects
-        pyncpp
         )
 endif()
 
