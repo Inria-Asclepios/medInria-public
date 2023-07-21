@@ -12,13 +12,13 @@
 
 # The bundle medInria.app will contain all plugins and will be standalone, packaged into MedINRIA.dmg in the install dir
 
-cd @medInria_BINARY_DIR@/bin
+cd @PROJECT_BINARY_DIR@
 
 \rm -fr TmpInstall
 mkdir -p TmpInstall/MUSICardio.app/Contents/Resources
-cp -r MUSICardio.app/Contents/MacOS TmpInstall/MUSICardio.app/Contents
-cp MUSICardio.app/Contents/Info.plist TmpInstall/MUSICardio.app/Contents
-cp MUSICardio.app/Contents/Resources/MUSICardio.icns TmpInstall/MUSICardio.app/Contents/Resources
+cp -r @medInria_DIR@/bin/MUSICardio.app/Contents/MacOS TmpInstall/MUSICardio.app/Contents
+cp @medInria_DIR@/bin/MUSICardio.app/Contents/Info.plist TmpInstall/MUSICardio.app/Contents
+cp @medInria_DIR@/bin/MUSICardio.app/Contents/Resources/MUSICardio.icns TmpInstall/MUSICardio.app/Contents/Resources
 
 cd TmpInstall
 
@@ -43,9 +43,10 @@ gunzip -f MedinriaPackage.sparseimage.gz
 
 devName=`hdiutil attach -readwrite -noverify -noautoopen MedinriaPackage.sparseimage | egrep '^/dev/' | sed 1q | awk '{print $1}'`
 diskutil rename "medInria base" "MUSICardio @MEDINRIA_SUPERBUILD_VERSION@"
-\cp -rf @medInria_BINARY_DIR@/bin/TmpInstall/MUSICardio.app /Volumes/"MUSICardio @MEDINRIA_SUPERBUILD_VERSION@"/
+\cp -rf @PROJECT_BINARY_DIR@/TmpInstall/MUSICardio.app /Volumes/"MUSICardio @MEDINRIA_SUPERBUILD_VERSION@"/
 
 sync
 hdiutil detach $devName
 hdiutil convert MedinriaPackage.sparseimage -format UDZO -imagekey zlib-level=9 -o "MUSICardio-@MEDINRIA_SUPERBUILD_VERSION@.dmg" 1>/dev/null 2>/dev/null
-\rm -fr MedinriaPackage.sparseimage @medInria_BINARY_DIR@/bin/TmpInstall
+\rm -fr MedinriaPackage.sparseimage @PROJECT_BINARY_DIR@/TmpInstall
+\mv MUSICardio-@MEDINRIA_SUPERBUILD_VERSION@.dmg @CMAKE_BINARY_DIR@

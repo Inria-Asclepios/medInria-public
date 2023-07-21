@@ -34,7 +34,7 @@ endif()
 
 set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-${MSVC_ARCH}")
 
-set(ICON_PATH "${PROJECT_SOURCE_DIR}/src/app/medInria/resources/MUSICardio_logo_small.ico")
+set(ICON_PATH "${CMAKE_SOURCE_DIR}/src/app/medInria/resources/MUSICardio.ico")
 
 # Used on pinned on taskbar
 set(CPACK_PACKAGE_ICON ${ICON_PATH})
