@@ -173,7 +173,8 @@ QList<dtkSmartPointer<medAbstractData> > polygonRoiToolBox::processOutputs()
     QList<dtkSmartPointer<medAbstractData> > outputMasks;
     for (baseViewEvent *event1 : viewEventHash.values())
     {
-        outputMasks.append(event1->saveMasks());
+        auto masks = event1->saveMasks();
+        outputMasks.append(masks);
     }
     return outputMasks;
 }

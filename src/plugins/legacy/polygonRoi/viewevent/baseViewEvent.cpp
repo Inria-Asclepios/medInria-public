@@ -961,7 +961,9 @@ bool baseViewEvent::isActiveContourInSlice()
 {
     int label = labelList.indexOf(manager);
     QString desc = createMaskDescription(manager);
-    return manager->createMask(label, desc);
+    auto outputMask = manager->createMask(label, desc);
+    outputMask->setMetaData("LabelName", manager->getName());
+    return outputMask;
 }
 
 QString baseViewEvent::createMaskDescription(polygonLabel *label)
