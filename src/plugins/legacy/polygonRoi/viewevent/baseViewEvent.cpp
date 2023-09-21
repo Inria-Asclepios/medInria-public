@@ -460,7 +460,7 @@ bool baseViewEvent::rightButtonBehaviour(medAbstractView *view, QMouseEvent *mou
 
         auto saveMaskAction = new QAction("Mask", saveMenu);
         connect(saveMaskAction, &QAction::triggered, [=](){
-            saveMask(closestManager);
+            medDataManager::instance()->importData(saveMask(closestManager), false);
         });
         saveMenu->addAction(saveMaskAction);
 
@@ -713,15 +713,17 @@ void baseViewEvent::activateRepulsor(bool state)
     }
 }
 
-void baseViewEvent::saveMask()
+QList<dtkSmartPointer<medAbstractData>> baseViewEvent::saveMasks()
 {
+    QList<dtkSmartPointer<medAbstractData>> outputMasks;
     for (polygonLabel *label : labelList)
     {
         if (!label->getRois().empty())
         {
-            saveMask(label);
+            outputMasks.append(saveMask(label));
         }
     }
+    return outputMasks;
 }
 
 void baseViewEvent::saveAllContours()
@@ -955,11 +957,11 @@ bool baseViewEvent::isActiveContourInSlice()
     return retVal;
 }
 
-void baseViewEvent::saveMask(polygonLabel *manager)
+ dtkSmartPointer<medAbstractData> baseViewEvent::saveMask(polygonLabel *manager)
 {
     int label = labelList.indexOf(manager);
     QString desc = createMaskDescription(manager);
-    manager->createMask(label, desc);
+    return manager->createMask(label, desc);
 }
 
 QString baseViewEvent::createMaskDescription(polygonLabel *label)

@@ -27,6 +27,7 @@
 #include <medSettingsManager.h>
 #include <medMetaDataKeys.h>
 #include <medContours.h>
+#include <medDataManager.h>
 
 const char *polygonRoiToolBox::generateBinaryImageButtonName = "generateBinaryImageButton";
 
@@ -95,6 +96,7 @@ polygonRoiToolBox::polygonRoiToolBox(QWidget *parent ) :
     contoursActionLayout->addLayout(repulsorLayout);
 
     saveLabel = new QLabel("Save segmentations as:");
+    saveLabel->setObjectName("saveLabel");
     auto saveButtonsLayout = new QHBoxLayout();
     saveBinaryMaskButton = new QPushButton(tr("Mask(s)"));
     saveBinaryMaskButton->setToolTip("Import the current mask to the non persistent database");
@@ -164,6 +166,16 @@ dtkPlugin* polygonRoiToolBox::plugin()
 medAbstractData *polygonRoiToolBox::processOutput()
 {
     return nullptr;
+}
+
+QList<dtkSmartPointer<medAbstractData> > polygonRoiToolBox::processOutputs()
+{
+    QList<dtkSmartPointer<medAbstractData> > outputMasks;
+    for (baseViewEvent *event1 : viewEventHash.values())
+    {
+        outputMasks.append(event1->saveMasks());
+    }
+    return outputMasks;
 }
 
 void polygonRoiToolBox::updateView()
@@ -424,9 +436,10 @@ void polygonRoiToolBox::interpolateCurve(bool state)
 
 void polygonRoiToolBox::saveBinaryImage()
 {
-    for (baseViewEvent *event1 : viewEventHash.values())
+    QList<dtkSmartPointer<medAbstractData>> outputMasks = processOutputs();
+    for (auto output : outputMasks)
     {
-        event1->saveMask();
+       medDataManager::instance()->importData(output, false);
     }
 }
 
