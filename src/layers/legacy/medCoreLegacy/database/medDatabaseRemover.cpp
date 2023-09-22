@@ -25,7 +25,6 @@ class medDatabaseRemoverPrivate
 {
 public:
     medDataIndex index;
-    QSqlDatabase db;
     static const QString T_PATIENT;
     static const QString T_STUDY;
     static const QString T_SERIES;
@@ -40,7 +39,6 @@ const QString medDatabaseRemoverPrivate::T_SERIES = "series";
 medDatabaseRemover::medDatabaseRemover ( const medDataIndex &index_ ) : medJobItemL(), d ( new medDatabaseRemoverPrivate )
 {
     d->index = index_;
-    d->db = medDataManager::instance()->controller()->database();
     d->isCancelled = false;
 }
 
@@ -52,8 +50,8 @@ medDatabaseRemover::~medDatabaseRemover()
 
 void medDatabaseRemover::internalRun()
 {
-    QSqlDatabase db( d->db );
-    QSqlQuery ptQuery ( db );
+    QSqlDatabase dbConnection = medDataManager::instance()->controller()->getThreadSpecificConnection();
+    QSqlQuery ptQuery(dbConnection);
 
     // Is Patient
     const medDataIndex index = d->index;
@@ -74,7 +72,7 @@ void medDatabaseRemover::internalRun()
             break;
 
         int patientDbId = ptQuery.value ( 0 ).toInt();
-        QSqlQuery stQuery ( db );
+        QSqlQuery stQuery(dbConnection);
 
         // Is Study
         if ( index.isValidForStudy() )
@@ -95,7 +93,7 @@ void medDatabaseRemover::internalRun()
                 break;
 
             int studyDbId = stQuery.value ( 0 ).toInt();
-            QSqlQuery seQuery ( db );
+            QSqlQuery seQuery(dbConnection);
 
             // Is Series
             if ( index.isValidForSeries() )
@@ -151,8 +149,9 @@ void medDatabaseRemover::internalRun()
 
 void medDatabaseRemover::removeSeries ( int patientDbId, int studyDbId, int seriesDbId )
 {
-    QSqlDatabase db(d->db);
-    QSqlQuery query ( db );
+    QSqlDatabase dbConnection = medDataManager::instance()->controller()->getThreadSpecificConnection();
+
+    QSqlQuery query(dbConnection);
     query.exec("SELECT COUNT(*) as cpt FROM pragma_table_info('series') WHERE name='json_meta_path'");
     bool jsonColExist = false;
     if (query.next())
@@ -199,8 +198,8 @@ void medDatabaseRemover::removeSeries ( int patientDbId, int studyDbId, int seri
 
 bool medDatabaseRemover::isStudyEmpty ( int studyDbId )
 {
-    QSqlDatabase db(d->db);
-    QSqlQuery query ( db );
+    QSqlDatabase dbConnection = medDataManager::instance()->controller()->getThreadSpecificConnection();
+    QSqlQuery query(dbConnection);
 
     query.prepare ( "SELECT id FROM " + d->T_SERIES + " WHERE study = :study " );
     query.bindValue ( ":study", studyDbId );
@@ -210,8 +209,8 @@ bool medDatabaseRemover::isStudyEmpty ( int studyDbId )
 
 void medDatabaseRemover::removeStudy ( int patientDbId, int studyDbId )
 {
-    QSqlDatabase db(d->db);
-    QSqlQuery query ( db );
+    QSqlDatabase dbConnection = medDataManager::instance()->controller()->getThreadSpecificConnection();
+    QSqlQuery query(dbConnection);
 
     query.prepare ( "SELECT thumbnail, name, uid FROM " + d->T_STUDY + " WHERE id = :id " );
     query.bindValue ( ":id", studyDbId );
@@ -233,8 +232,8 @@ void medDatabaseRemover::removeStudy ( int patientDbId, int studyDbId )
 
 bool medDatabaseRemover::isPatientEmpty ( int patientDbId )
 {
-    QSqlDatabase db(d->db);
-    QSqlQuery query ( db );
+    QSqlDatabase dbConnection = medDataManager::instance()->controller()->getThreadSpecificConnection();
+    QSqlQuery query(dbConnection);
 
     query.prepare ( "SELECT id FROM " + d->T_STUDY + " WHERE patient = :patient " );
     query.bindValue ( ":patient", patientDbId );
@@ -244,8 +243,8 @@ bool medDatabaseRemover::isPatientEmpty ( int patientDbId )
 
 void medDatabaseRemover::removePatient ( int patientDbId )
 {
-    QSqlDatabase db(d->db);
-    QSqlQuery query ( db );
+    QSqlDatabase dbConnection = medDataManager::instance()->controller()->getThreadSpecificConnection();
+    QSqlQuery query(dbConnection);
 
     QString patientId;
 
@@ -263,8 +262,8 @@ void medDatabaseRemover::removePatient ( int patientDbId )
 
 bool medDatabaseRemover::removeTableRow ( const QString &table, int id )
 {
-    QSqlDatabase db(d->db);
-    QSqlQuery query ( db );
+    QSqlDatabase dbConnection = medDataManager::instance()->controller()->getThreadSpecificConnection();
+    QSqlQuery query(dbConnection);
     query.prepare ( "DELETE FROM " + table + " WHERE id = :id" );
     query.bindValue ( ":id", id );
     medDataManager::instance()->controller()->execQuery(query);

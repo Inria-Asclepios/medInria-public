@@ -26,7 +26,6 @@ class medDatabasePersistentControllerPrivate
 {
 public:
     void buildMetaDataLookup();
-    bool isConnected;
     struct TableEntry
     {
         TableEntry(QString t, QString c, bool isPath_ = false)
@@ -218,8 +217,9 @@ bool medDatabasePersistentController::moveDatabase(QString newLocation)
     // close connection if necessary
     if (this->isConnected())
     {
-        this->closeConnection();
+        getMainConnection().close();
     }
+
     // now update the datastorage path and make sure to reconnect
     medStorage::setDataLocation(newLocation);
 
@@ -290,11 +290,6 @@ void medDatabasePersistentController::removeAll()
     qWarning() << "Attempt to remove all item from PERSISTENT dataBase";
 }
 
-const QSqlDatabase &medDatabasePersistentController::database(void) const
-{
-    return m_database;
-}
-
 /** create dataIndices out of partial ids */
 medDataIndex medDatabasePersistentController::indexForPatient(int id)
 {
@@ -307,7 +302,8 @@ medDataIndex medDatabasePersistentController::indexForPatient(int id)
 medDataIndex medDatabasePersistentController::indexForPatient(
     const QString &patientName)
 {
-    QSqlQuery query(m_database);
+    QSqlDatabase dbConnection = getThreadSpecificConnection();
+    QSqlQuery query(dbConnection);
     QVariant patientId = -1;
 
     query.prepare("SELECT id FROM patient WHERE name = :name");
@@ -330,7 +326,8 @@ medDataIndex medDatabasePersistentController::indexForPatient(
 
 medDataIndex medDatabasePersistentController::indexForStudy(int id)
 {
-    QSqlQuery query(m_database);
+    QSqlDatabase dbConnection = getThreadSpecificConnection();
+    QSqlQuery query(dbConnection);
 
     QVariant patientId = -1;
 
@@ -352,11 +349,13 @@ medDataIndex medDatabasePersistentController::indexForStudy(int id)
 medDataIndex medDatabasePersistentController::indexForStudy(const QString &patientName,
                                                             const QString &studyName)
 {
+    QSqlDatabase dbConnection = getThreadSpecificConnection();
+
     medDataIndex index = this->indexForPatient(patientName);
     if (!index.isValid())
         return index;
 
-    QSqlQuery query(m_database);
+    QSqlQuery query(dbConnection);
 
     QVariant patientId = index.patientId();
     QVariant studyId = -1;
@@ -383,11 +382,13 @@ medDataIndex medDatabasePersistentController::indexForStudy(const QString &patie
 medDataIndex medDatabasePersistentController::indexForStudyUID(const QString &patientName,
                                                                const QString &studyInstanceUID)
 {
+    QSqlDatabase dbConnection = getThreadSpecificConnection();
+
     medDataIndex index = this->indexForPatient(patientName);
     if (!index.isValid())
         return index;
 
-    QSqlQuery query(m_database);
+    QSqlQuery query(dbConnection);
 
     QVariant patientId = index.patientId();
     QVariant studyId = -1;
@@ -413,7 +414,8 @@ medDataIndex medDatabasePersistentController::indexForStudyUID(const QString &pa
 
 medDataIndex medDatabasePersistentController::indexForSeries(int id)
 {
-    QSqlQuery query(m_database);
+    QSqlDatabase dbConnection = getThreadSpecificConnection();
+    QSqlQuery query(dbConnection);
 
     QVariant patientId = -1;
     QVariant studyId = -1;
@@ -448,11 +450,13 @@ medDataIndex medDatabasePersistentController::indexForSeries(
     const QString &patientName, const QString &studyName,
     const QString &seriesName)
 {
+    QSqlDatabase dbConnection = getThreadSpecificConnection();
+
     medDataIndex index = this->indexForStudy(patientName, studyName);
     if (!index.isValid())
         return index;
 
-    QSqlQuery query(m_database);
+    QSqlQuery query(dbConnection);
 
     QVariant studyId = index.studyId();
 
@@ -479,11 +483,13 @@ medDataIndex medDatabasePersistentController::indexForSeriesUID(
     const QString &patientName, const QString &studyInstanceUID,
     const QString &seriesInstanceUID)
 {
+    QSqlDatabase dbConnection = getThreadSpecificConnection();
+
     medDataIndex index = this->indexForStudyUID(patientName, studyInstanceUID);
     if (!index.isValid())
         return index;
 
-    QSqlQuery query(m_database);
+    QSqlQuery query(dbConnection);
 
     QVariant studyId = index.studyId();
 
@@ -505,25 +511,11 @@ medDataIndex medDatabasePersistentController::indexForSeriesUID(
 
     return medDataIndex();
 }
-/**
- * Status of connection
- * @return bool true on success
- */
-bool medDatabasePersistentController::isConnected() const
-{
-    return d->isConnected;
-}
-
-void medDatabasePersistentController::setConnected(bool flag)
-{
-    d->isConnected = flag;
-}
 
 medDatabasePersistentController::medDatabasePersistentController()
     : d(new medDatabasePersistentControllerPrivate)
 {
     d->buildMetaDataLookup();
-    d->isConnected = false;
 }
 
 medDatabasePersistentController::~medDatabasePersistentController()
@@ -541,7 +533,8 @@ medDatabasePersistentController::~medDatabasePersistentController()
 QList<medDataIndex> medDatabasePersistentController::moveStudy(
     const medDataIndex &indexStudy, const medDataIndex &toPatient)
 {
-    QSqlQuery query(m_database);
+    QSqlDatabase dbConnection = getThreadSpecificConnection();
+    QSqlQuery query(dbConnection);
 
     bool result = false;
     QList<medDataIndex> newIndexList;
@@ -592,7 +585,8 @@ QList<medDataIndex> medDatabasePersistentController::moveStudy(
 medDataIndex medDatabasePersistentController::moveSeries(
     const medDataIndex &indexSeries, const medDataIndex &toStudy)
 {
-    QSqlQuery query(m_database);
+    QSqlDatabase dbConnection = getThreadSpecificConnection();
+    QSqlQuery query(dbConnection);
 
     bool result = false;
     medDataIndex newIndex;
@@ -627,7 +621,8 @@ QString medDatabasePersistentController::metaData(const medDataIndex &index,
     typedef medDatabasePersistentControllerPrivate::MetaDataMap MetaDataMap;
     typedef medDatabasePersistentControllerPrivate::TableEntryList TableEntryList;
 
-    QSqlQuery query(m_database);
+    QSqlDatabase dbConnection = getThreadSpecificConnection();
+    QSqlQuery query(dbConnection);
 
     // Attempt to translate the desired metadata into a table / column entry.
     MetaDataMap::const_iterator it(d->metaDataLookup.find(key));
@@ -687,7 +682,8 @@ bool medDatabasePersistentController::setMetaData(const medDataIndex &index,
     typedef medDatabasePersistentControllerPrivate::MetaDataMap MetaDataMap;
     typedef medDatabasePersistentControllerPrivate::TableEntryList TableEntryList;
 
-    QSqlQuery query(m_database);
+    QSqlDatabase dbConnection = getThreadSpecificConnection();
+    QSqlQuery query(dbConnection);
 
     // Attempt to translate the desired metadata into a table / column entry.
     MetaDataMap::const_iterator it(d->metaDataLookup.find(key));
@@ -740,6 +736,7 @@ bool medDatabasePersistentController::setMetaData(const medDataIndex &index,
 QList<medDataIndex> medDatabasePersistentController::studies(
     const medDataIndex &index) const
 {
+    QSqlDatabase dbConnection = getThreadSpecificConnection();
     QList<medDataIndex> ret;
 
     if (!index.isValidForPatient())
@@ -748,7 +745,7 @@ QList<medDataIndex> medDatabasePersistentController::studies(
         return ret;
     }
 
-    QSqlQuery query(m_database);
+    QSqlQuery query(dbConnection);
     query.prepare("SELECT id FROM study WHERE patient = :patientId");
     query.bindValue(":patientId", index.patientId());
     execQuery(query, __FILE__, __LINE__);
@@ -767,6 +764,7 @@ QList<medDataIndex> medDatabasePersistentController::studies(
 QList<medDataIndex> medDatabasePersistentController::series(
     const medDataIndex &index) const
 {
+    QSqlDatabase dbConnection = getThreadSpecificConnection();
     QList<medDataIndex> ret;
 
     if (!index.isValidForStudy())
@@ -775,7 +773,7 @@ QList<medDataIndex> medDatabasePersistentController::series(
         return ret;
     }
 
-    QSqlQuery query(m_database);
+    QSqlQuery query(dbConnection);
     query.prepare("SELECT id FROM series WHERE study = :studyId");
     query.bindValue(":studyId", index.studyId());
     execQuery(query, __FILE__, __LINE__);
@@ -793,7 +791,8 @@ QList<medDataIndex> medDatabasePersistentController::series(
 
 QStringList medDatabasePersistentController::series(const QString &seriesName, const QString &studyId) const
 {
-    QSqlQuery query(m_database);
+    QSqlDatabase dbConnection = getThreadSpecificConnection();
+    QSqlQuery query(dbConnection);
     if (studyId.isEmpty())
     {
         query.prepare ( "SELECT name FROM series WHERE name LIKE '" + seriesName + "%'");
@@ -839,6 +838,8 @@ QString medDatabasePersistentController::stringForPath(const QString &name) cons
 
 bool medDatabasePersistentController::contains(const medDataIndex &index) const
 {
+    QSqlDatabase dbConnection = getThreadSpecificConnection();
+
     if (index.isValid() && index.dataSourceId() == dataSourceId())
     {
         // index is valid and comes from this dataSource
@@ -846,7 +847,7 @@ bool medDatabasePersistentController::contains(const medDataIndex &index) const
         QVariant studyId = index.studyId();
         QVariant seriesId = index.seriesId();
 
-        QSqlQuery query(m_database);
+        QSqlQuery query(dbConnection);
         QString fromRequest = "SELECT * FROM patient";
         QString whereRequest = " WHERE patient.id = :id";
 
@@ -881,11 +882,13 @@ bool medDatabasePersistentController::contains(const medDataIndex &index) const
 
 QString medDatabasePersistentController::attachedMetadataFileExists(const medDataIndex &index)
 {
+    QSqlDatabase dbConnection = getThreadSpecificConnection();
+
     QString resPath = "";
     if (contains(index))
     {
         QVariant seriesId = index.seriesId();
-        QSqlQuery query(m_database);
+        QSqlQuery query(dbConnection);
         QString request = "SELECT json_meta_path as json_path FROM series WHERE series.id = :id";
         query.prepare(request);
         query.bindValue(":id", seriesId);

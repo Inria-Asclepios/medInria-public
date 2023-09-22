@@ -14,6 +14,7 @@
 
 #include <QSqlDatabase>
 #include <QSqlQuery>
+#include <QThreadStorage>
 
 #include <medDatabasePersistentController.h>
 #include <medCoreLegacyExport.h>
@@ -29,7 +30,9 @@ public:
     static medLocalDbController *instance();
 
     bool createConnection() override;
-    bool closeConnection() override;
+    bool isConnected() const override;
+    QSqlDatabase getMainConnection() const override;
+    QSqlDatabase getThreadSpecificConnection() const override;
 
     QList<medDataIndex> patients() const override;
     void requestDatabaseForModel(QHash<int, QHash<QString, QVariant> > &patientData,
@@ -43,10 +46,16 @@ protected:
     medLocalDbController();
 
 private:
+    QThreadStorage<QSqlDatabase> databaseConnections;
+
+    QSqlDatabase createMainConnection();
+
     bool createPatientTable();
     bool createStudyTable();
     bool createSeriesTable();
 
     bool updateFromNoVersionToVersion1();
     static medLocalDbController *s_instance;
+
+    static const char* mainConnectionName;
 };
