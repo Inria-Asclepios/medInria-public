@@ -98,7 +98,7 @@ QSqlDatabase medLocalDbController::getThreadSpecificConnection() const
 {
     if (!databaseConnections.hasLocalData())
     {
-        QSqlDatabase database = QSqlDatabase::cloneDatabase(mainConnectionName, QUuid::createUuid().toString());
+        QSqlDatabase database = QSqlDatabase::cloneDatabase(QString(mainConnectionName), QUuid::createUuid().toString());
         database.open();
         const_cast<medLocalDbController*>(this)->databaseConnections.setLocalData(database);
     }
