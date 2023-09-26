@@ -34,11 +34,21 @@ medLocalDbController *medLocalDbController::instance()
 
 medLocalDbController::medLocalDbController() : medDatabasePersistentController()
 {
+    databasePath = medStorage::dataLocation();
+
+    if (medStorage::mkpath(databasePath))
+    {
+        databasePath += "/db";
+    }
+    else
+    {
+        qDebug() << "Cannot create database path: " << databasePath;
+    }
 }
 
 bool medLocalDbController::createConnection(void)
 {
-    QSqlDatabase database = createMainConnection();
+    QSqlDatabase database = createConnection(mainConnectionName);
 
     if (!database.open())
     {
@@ -74,16 +84,19 @@ bool medLocalDbController::isConnected() const
     return getMainConnection().isOpen();
 }
 
-QSqlDatabase medLocalDbController::createMainConnection()
+QSqlDatabase medLocalDbController::createConnection(QString name) const
 {
-    QSqlDatabase database = QSqlDatabase::addDatabase("QSQLITE", mainConnectionName);
-    databaseConnections.setLocalData(database);
+    QSqlDatabase database;
 
-    if (database.isValid())
+    if (!databasePath.isEmpty())
     {
-        medStorage::mkpath(medStorage::dataLocation() + "/");
-        QString databasePath = medStorage::dataLocation() + "/" + "db";
-        database.setDatabaseName(databasePath);
+        database = QSqlDatabase::addDatabase("QSQLITE", name);
+        const_cast<medLocalDbController*>(this)->databaseConnections.setLocalData(database);
+
+        if (database.isValid())
+        {
+            database.setDatabaseName(databasePath);
+        }
     }
 
     return database;
@@ -98,9 +111,8 @@ QSqlDatabase medLocalDbController::getThreadSpecificConnection() const
 {
     if (!databaseConnections.hasLocalData())
     {
-        QSqlDatabase database = QSqlDatabase::cloneDatabase(QString(mainConnectionName), QUuid::createUuid().toString());
+        QSqlDatabase database = createConnection(QUuid::createUuid().toString());
         database.open();
-        const_cast<medLocalDbController*>(this)->databaseConnections.setLocalData(database);
     }
 
     return databaseConnections.localData();

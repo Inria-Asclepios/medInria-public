@@ -47,8 +47,9 @@ protected:
 
 private:
     QThreadStorage<QSqlDatabase> databaseConnections;
+    QString databasePath;
 
-    QSqlDatabase createMainConnection();
+    QSqlDatabase createConnection(QString name) const;
 
     bool createPatientTable();
     bool createStudyTable();
