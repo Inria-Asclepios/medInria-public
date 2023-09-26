@@ -70,7 +70,7 @@ public:
     QString metaData(const medDataIndex &index, const QString &key) const override;
     bool setMetaData(const medDataIndex &index, const QString &key, const QString &value) override;
 
-    bool execQuery(QSqlQuery &query, const char *file = nullptr, int line = -1) const;
+    virtual bool execQuery(QSqlQuery &query, const char *file = nullptr, int line = -1) const;
 
     bool isPersistent() const;
 

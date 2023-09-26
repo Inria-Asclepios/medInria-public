@@ -34,6 +34,8 @@ public:
     QSqlDatabase getMainConnection() const override;
     QSqlDatabase getThreadSpecificConnection() const override;
 
+    bool execQuery(QSqlQuery &query, const char *file = nullptr, int line = -1) const override;
+
     QList<medDataIndex> patients() const override;
     void requestDatabaseForModel(QHash<int, QHash<QString, QVariant> > &patientData,
                                  QHash<int, QHash<QString, QVariant> > &studyData,
@@ -48,6 +50,7 @@ protected:
 private:
     QThreadStorage<QSqlDatabase> databaseConnections;
     QString databasePath;
+    QMutex queryMutex;
 
     QSqlDatabase createConnection(QString name) const;
 

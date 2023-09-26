@@ -32,7 +32,8 @@ medLocalDbController *medLocalDbController::instance()
     return s_instance;
 }
 
-medLocalDbController::medLocalDbController() : medDatabasePersistentController()
+medLocalDbController::medLocalDbController() :
+    medDatabasePersistentController(), queryMutex(QMutex::Recursive)
 {
     databasePath = medStorage::dataLocation();
 
@@ -116,6 +117,12 @@ QSqlDatabase medLocalDbController::getThreadSpecificConnection() const
     }
 
     return databaseConnections.localData();
+}
+
+bool medLocalDbController::execQuery(QSqlQuery& query, const char* file, int line) const
+{
+    QMutexLocker mutexLocker(const_cast<QMutex*>(&queryMutex));
+    return medDatabasePersistentController::execQuery(query, file, line);
 }
 
 bool medLocalDbController::createPatientTable()
