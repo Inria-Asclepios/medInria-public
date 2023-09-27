@@ -36,6 +36,7 @@ public:
     bool createConnection() = 0;
     virtual QSqlDatabase getMainConnection() const = 0;
     virtual QSqlDatabase getThreadSpecificConnection() const = 0;
+    virtual QMutex& getDatabaseMutex() const = 0;
 
     medDataIndex indexForPatient(int id);
     medDataIndex indexForStudy(int id);
@@ -70,7 +71,7 @@ public:
     QString metaData(const medDataIndex &index, const QString &key) const override;
     bool setMetaData(const medDataIndex &index, const QString &key, const QString &value) override;
 
-    virtual bool execQuery(QSqlQuery &query, const char *file = nullptr, int line = -1) const;
+    bool execQuery(QSqlQuery &query, const char *file = nullptr, int line = -1) const;
 
     bool isPersistent() const;
 

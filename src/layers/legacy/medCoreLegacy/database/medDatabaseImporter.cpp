@@ -58,6 +58,8 @@ QString medDatabaseImporter::getPatientID(QString patientName, QString birthDate
     query.bindValue ( ":name", patientName );
     query.bindValue ( ":birthdate", birthDate );
 
+    QMutexLocker mutexLocker(&medDataManager::instance()->controller()->getDatabaseMutex());
+
     if ( !query.exec() )
     {
         qDebug() << DTK_COLOR_FG_RED << query.lastError() << DTK_NO_COLOR;
@@ -119,6 +121,8 @@ int medDatabaseImporter::getOrCreatePatient ( const medAbstractData* medData, QS
     query.bindValue ( ":name", patientName );
     query.bindValue ( ":birthdate", birthDate );
 
+    QMutexLocker mutexLocker(&medDataManager::instance()->controller()->getDatabaseMutex());
+
     if ( !query.exec() )
     {
         qDebug() << DTK_COLOR_FG_RED << query.lastError() << DTK_NO_COLOR;
@@ -174,6 +178,8 @@ int medDatabaseImporter::getOrCreateStudy ( const medAbstractData* medData, QSql
     query.bindValue ( ":patient", patientDbId );
     query.bindValue ( ":studyName", studyName );
     query.bindValue ( ":studyUid", studyUid );
+
+    QMutexLocker mutexLocker(&medDataManager::instance()->controller()->getDatabaseMutex());
 
     if ( !query.exec() )
     {
@@ -243,6 +249,8 @@ int medDatabaseImporter::getOrCreateSeries ( const medAbstractData* medData, QSq
 
     if( seriesName=="EmptySeries" )
         return seriesDbId;
+
+    QMutexLocker(&medDataManager::instance()->controller()->getDatabaseMutex());
 
     if ( !query.exec() )
     {
@@ -376,6 +384,7 @@ void medDatabaseImporter::createDBEntryForMetadataAttachedFile(medAbstractData *
 {
     QSqlDatabase dbConnection = medDataManager::instance()->controller()->getThreadSpecificConnection();
     QSqlQuery query (dbConnection);
+    QMutexLocker mutexLocker(&medDataManager::instance()->controller()->getDatabaseMutex());
 
     query.exec("SELECT COUNT(*) as cpt FROM pragma_table_info('series') WHERE name='json_meta_path'");
     bool jsonColExist = false;

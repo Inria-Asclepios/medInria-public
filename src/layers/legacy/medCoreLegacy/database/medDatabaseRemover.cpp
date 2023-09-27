@@ -65,6 +65,7 @@ void medDatabaseRemover::internalRun()
         ptQuery.prepare ( "SELECT id FROM " + d->T_PATIENT );
     }
 
+    QMutexLocker mutexLocker(&medDataManager::instance()->controller()->getDatabaseMutex());
     medDataManager::instance()->controller()->execQuery(ptQuery);
     while ( ptQuery.next() )
     {
@@ -137,6 +138,10 @@ void medDatabaseRemover::internalRun()
         }
 
     } // ptQuery.next
+
+    ptQuery.finish();
+    mutexLocker.unlock();
+
     emit progress (this, 100 );
 
     if ( d->isCancelled )
@@ -150,7 +155,7 @@ void medDatabaseRemover::internalRun()
 void medDatabaseRemover::removeSeries ( int patientDbId, int studyDbId, int seriesDbId )
 {
     QSqlDatabase dbConnection = medDataManager::instance()->controller()->getThreadSpecificConnection();
-
+    QMutexLocker mutexLocker(&medDataManager::instance()->controller()->getDatabaseMutex());
     QSqlQuery query(dbConnection);
     query.exec("SELECT COUNT(*) as cpt FROM pragma_table_info('series') WHERE name='json_meta_path'");
     bool jsonColExist = false;
@@ -192,6 +197,9 @@ void medDatabaseRemover::removeSeries ( int patientDbId, int studyDbId, int seri
         removeThumbnailIfNeeded(query);
     }
 
+    query.finish();
+    mutexLocker.unlock();
+
     if( removeTableRow ( d->T_SERIES, seriesDbId ) )
         emit removed(medDataIndex(1, patientDbId, studyDbId, seriesDbId));
 }
@@ -203,6 +211,7 @@ bool medDatabaseRemover::isStudyEmpty ( int studyDbId )
 
     query.prepare ( "SELECT id FROM " + d->T_SERIES + " WHERE study = :study " );
     query.bindValue ( ":study", studyDbId );
+    QMutexLocker mutexLocker(&medDataManager::instance()->controller()->getDatabaseMutex());
     medDataManager::instance()->controller()->execQuery(query);
     return !query.next();
 }
@@ -215,6 +224,7 @@ void medDatabaseRemover::removeStudy ( int patientDbId, int studyDbId )
     query.prepare ( "SELECT thumbnail, name, uid FROM " + d->T_STUDY + " WHERE id = :id " );
     query.bindValue ( ":id", studyDbId );
 
+    QMutexLocker mutexLocker(&medDataManager::instance()->controller()->getDatabaseMutex());
     medDataManager::instance()->controller()->execQuery(query);
 
     if ( query.next() )
@@ -225,6 +235,9 @@ void medDatabaseRemover::removeStudy ( int patientDbId, int studyDbId )
             removeThumbnailIfNeeded(query);
         }
     }
+
+    query.finish();
+    mutexLocker.unlock();
 
     if( removeTableRow ( d->T_STUDY, studyDbId ) )
         emit removed(medDataIndex(1, patientDbId, studyDbId, -1));
@@ -237,6 +250,7 @@ bool medDatabaseRemover::isPatientEmpty ( int patientDbId )
 
     query.prepare ( "SELECT id FROM " + d->T_STUDY + " WHERE patient = :patient " );
     query.bindValue ( ":patient", patientDbId );
+    QMutexLocker mutexLocker(&medDataManager::instance()->controller()->getDatabaseMutex());
     medDataManager::instance()->controller()->execQuery(query);    
     return !query.next();
 }
@@ -250,12 +264,17 @@ void medDatabaseRemover::removePatient ( int patientDbId )
 
     query.prepare ( "SELECT thumbnail, patientId  FROM " + d->T_PATIENT + " WHERE id = :patient " );
     query.bindValue ( ":patient", patientDbId );
+    QMutexLocker mutexLocker(&medDataManager::instance()->controller()->getDatabaseMutex());
     medDataManager::instance()->controller()->execQuery(query);
     if ( query.next() )
     {
         removeThumbnailIfNeeded(query);
         patientId = query.value ( 1 ).toString();
     }
+
+    query.finish();
+    mutexLocker.unlock();
+
     if( removeTableRow ( d->T_PATIENT, patientDbId ) )
         emit removed(medDataIndex(1, patientDbId, -1, -1));
 }
@@ -266,6 +285,7 @@ bool medDatabaseRemover::removeTableRow ( const QString &table, int id )
     QSqlQuery query(dbConnection);
     query.prepare ( "DELETE FROM " + table + " WHERE id = :id" );
     query.bindValue ( ":id", id );
+    QMutexLocker mutexLocker(&medDataManager::instance()->controller()->getDatabaseMutex());
     medDataManager::instance()->controller()->execQuery(query);
 
     return (query.numRowsAffected()==1);

@@ -33,7 +33,7 @@ medLocalDbController *medLocalDbController::instance()
 }
 
 medLocalDbController::medLocalDbController() :
-    medDatabasePersistentController(), queryMutex(QMutex::Recursive)
+    medDatabasePersistentController(), databaseMutex(QMutex::Recursive)
 {
     databasePath = medStorage::dataLocation();
 
@@ -68,6 +68,8 @@ bool medLocalDbController::createConnection(void)
 
     // optimize speed of sqlite db
     QSqlQuery query(database);
+    QMutexLocker mutexLocker(&getDatabaseMutex());
+
     if (!(query.prepare(QLatin1String("PRAGMA synchronous = 0")) && execQuery(query, __FILE__, __LINE__)))
     {
         qDebug() << "Could not set sqlite synchronous mode to asynchronous mode.";
@@ -119,10 +121,9 @@ QSqlDatabase medLocalDbController::getThreadSpecificConnection() const
     return databaseConnections.localData();
 }
 
-bool medLocalDbController::execQuery(QSqlQuery& query, const char* file, int line) const
+QMutex& medLocalDbController::getDatabaseMutex() const
 {
-    QMutexLocker mutexLocker(const_cast<QMutex*>(&queryMutex));
-    return medDatabasePersistentController::execQuery(query, file, line);
+    return const_cast<medLocalDbController*>(this)->databaseMutex;
 }
 
 bool medLocalDbController::createPatientTable()
@@ -142,6 +143,8 @@ bool medLocalDbController::createPatientTable()
     {
         qDebug() << query.lastError();
     }
+
+    QMutexLocker mutexLocker(&getDatabaseMutex());
     return execQuery(query, __FILE__, __LINE__);
 }
 
@@ -149,6 +152,7 @@ bool medLocalDbController::createStudyTable()
 {
     QSqlDatabase dbConnection = getThreadSpecificConnection();
     QSqlQuery query(dbConnection);
+    QMutexLocker mutexLocker(&getDatabaseMutex());
 
     query.prepare(
         "CREATE TABLE IF NOT EXISTS study ("
@@ -180,6 +184,7 @@ bool medLocalDbController::createSeriesTable()
 {
     QSqlDatabase dbConnection = getThreadSpecificConnection();
     QSqlQuery query(dbConnection);
+    QMutexLocker mutexLocker(&getDatabaseMutex());
 
     query.prepare(
         "CREATE TABLE IF NOT EXISTS series ("
@@ -295,6 +300,7 @@ bool medLocalDbController::updateFromNoVersionToVersion1()
 
     QSqlDatabase dbConnection = getThreadSpecificConnection();
     QSqlQuery q(dbConnection);
+    QMutexLocker mutexLocker(&getDatabaseMutex());
 
     if (!(q.exec("PRAGMA user_version") && q.first()))
     {
@@ -393,6 +399,7 @@ QList<medDataIndex> medLocalDbController::patients() const
     QSqlDatabase dbConnection = getThreadSpecificConnection();
     QSqlQuery query(dbConnection);
     query.prepare("SELECT id FROM patient");
+    QMutexLocker mutexLocker(&getDatabaseMutex());
     execQuery(query, __FILE__, __LINE__);
 #if QT_VERSION > 0x0406FF
     ret.reserve(query.size());
@@ -421,6 +428,7 @@ void medLocalDbController::requestDatabaseForModel(QHash<int, QHash<QString, QVa
     QSqlQuery query(dbConnection);
     query.prepare(queryStr);
 
+    QMutexLocker mutexLocker(&getDatabaseMutex());
     execQuery(query, __FILE__, __LINE__);
     while (query.next())
     {
@@ -467,4 +475,3 @@ void medLocalDbController::requestDatabaseForModel(QHash<int, QHash<QString, QVa
     }
     return;
 }
-

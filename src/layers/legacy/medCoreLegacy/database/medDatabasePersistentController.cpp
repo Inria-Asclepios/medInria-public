@@ -309,6 +309,8 @@ medDataIndex medDatabasePersistentController::indexForPatient(
     query.prepare("SELECT id FROM patient WHERE name = :name");
     query.bindValue(":name", patientName);
 
+    QMutexLocker mutexLocker(&getDatabaseMutex());
+
     if (!execQuery(query, __FILE__, __LINE__))
     {
         qDebug() << DTK_COLOR_FG_RED << query.lastError() << DTK_NO_COLOR;
@@ -333,6 +335,8 @@ medDataIndex medDatabasePersistentController::indexForStudy(int id)
 
     query.prepare("SELECT patient FROM study WHERE id = :id");
     query.bindValue(":id", id);
+
+    QMutexLocker mutexLocker(&getDatabaseMutex());
 
     if (!execQuery(query, __FILE__, __LINE__))
     {
@@ -363,6 +367,8 @@ medDataIndex medDatabasePersistentController::indexForStudy(const QString &patie
     query.prepare("SELECT id FROM study WHERE patient = :id AND name = :name");
     query.bindValue(":id", patientId);
     query.bindValue(":name", studyName);
+
+    QMutexLocker mutexLocker(&getDatabaseMutex());
 
     if (!execQuery(query, __FILE__, __LINE__))
     {
@@ -397,6 +403,8 @@ medDataIndex medDatabasePersistentController::indexForStudyUID(const QString &pa
     query.bindValue(":id", patientId);
     query.bindValue(":uid", studyInstanceUID);
 
+    QMutexLocker mutexLocker(&getDatabaseMutex());
+
     if (!execQuery(query, __FILE__, __LINE__))
     {
         qDebug() << DTK_COLOR_FG_RED << query.lastError() << DTK_NO_COLOR;
@@ -422,6 +430,8 @@ medDataIndex medDatabasePersistentController::indexForSeries(int id)
 
     query.prepare("SELECT study FROM series WHERE id = :id");
     query.bindValue(":id", id);
+
+    QMutexLocker mutexLocker(&getDatabaseMutex());
 
     if (!execQuery(query, __FILE__, __LINE__))
     {
@@ -464,6 +474,8 @@ medDataIndex medDatabasePersistentController::indexForSeries(
     query.bindValue(":id", studyId);
     query.bindValue(":name", seriesName);
 
+    QMutexLocker mutexLocker(&getDatabaseMutex());
+
     if (!execQuery(query, __FILE__, __LINE__))
     {
         qDebug() << DTK_COLOR_FG_RED << query.lastError() << DTK_NO_COLOR;
@@ -496,6 +508,8 @@ medDataIndex medDatabasePersistentController::indexForSeriesUID(
     query.prepare("SELECT id FROM series WHERE study = :id AND uid = :uid");
     query.bindValue(":id", studyId);
     query.bindValue(":uid", seriesInstanceUID);
+
+    QMutexLocker mutexLocker(&getDatabaseMutex());
 
     if (!execQuery(query, __FILE__, __LINE__))
     {
@@ -533,18 +547,20 @@ medDatabasePersistentController::~medDatabasePersistentController()
 QList<medDataIndex> medDatabasePersistentController::moveStudy(
     const medDataIndex &indexStudy, const medDataIndex &toPatient)
 {
-    QSqlDatabase dbConnection = getThreadSpecificConnection();
-    QSqlQuery query(dbConnection);
-
     bool result = false;
     QList<medDataIndex> newIndexList;
     medDataIndex newIndex;
 
     if (indexStudy.isValidForStudy() && toPatient.isValidForPatient())
     {
+        QSqlDatabase dbConnection = getThreadSpecificConnection();
+        QSqlQuery query(dbConnection);
+
         query.prepare("UPDATE study SET patient=:patientId WHERE id=:studyId");
         query.bindValue(":patientId", toPatient.patientId());
         query.bindValue(":studyId", indexStudy.studyId());
+
+        QMutexLocker mutexLocker(&getDatabaseMutex());
 
         result = execQuery(query, __FILE__, __LINE__);
 
@@ -585,17 +601,19 @@ QList<medDataIndex> medDatabasePersistentController::moveStudy(
 medDataIndex medDatabasePersistentController::moveSeries(
     const medDataIndex &indexSeries, const medDataIndex &toStudy)
 {
-    QSqlDatabase dbConnection = getThreadSpecificConnection();
-    QSqlQuery query(dbConnection);
-
     bool result = false;
     medDataIndex newIndex;
 
     if (indexSeries.isValidForSeries() && toStudy.isValidForStudy())
     {
+        QSqlDatabase dbConnection = getThreadSpecificConnection();
+        QSqlQuery query(dbConnection);
+
         query.prepare("UPDATE series SET study=:studyId  WHERE id=:seriesId");
         query.bindValue(":studyId", toStudy.studyId());
         query.bindValue(":seriesId", indexSeries.seriesId());
+
+        QMutexLocker mutexLocker(&getDatabaseMutex());
 
         result = execQuery(query, __FILE__, __LINE__);
 
@@ -620,9 +638,6 @@ QString medDatabasePersistentController::metaData(const medDataIndex &index,
 {
     typedef medDatabasePersistentControllerPrivate::MetaDataMap MetaDataMap;
     typedef medDatabasePersistentControllerPrivate::TableEntryList TableEntryList;
-
-    QSqlDatabase dbConnection = getThreadSpecificConnection();
-    QSqlQuery query(dbConnection);
 
     // Attempt to translate the desired metadata into a table / column entry.
     MetaDataMap::const_iterator it(d->metaDataLookup.find(key));
@@ -656,9 +671,13 @@ QString medDatabasePersistentController::metaData(const medDataIndex &index,
         }
         if (id != -1)
         {
+            QSqlDatabase dbConnection = getThreadSpecificConnection();
+            QSqlQuery query(dbConnection);
+
             query.prepare("SELECT " + columnName + " FROM " + tableName +
                           " WHERE id = :id");
             query.bindValue(":id", id);
+            QMutexLocker mutexLocker(&getDatabaseMutex());
             execQuery(query, __FILE__, __LINE__);
             if (query.next())
             {
@@ -681,9 +700,6 @@ bool medDatabasePersistentController::setMetaData(const medDataIndex &index,
 {
     typedef medDatabasePersistentControllerPrivate::MetaDataMap MetaDataMap;
     typedef medDatabasePersistentControllerPrivate::TableEntryList TableEntryList;
-
-    QSqlDatabase dbConnection = getThreadSpecificConnection();
-    QSqlQuery query(dbConnection);
 
     // Attempt to translate the desired metadata into a table / column entry.
     MetaDataMap::const_iterator it(d->metaDataLookup.find(key));
@@ -716,11 +732,15 @@ bool medDatabasePersistentController::setMetaData(const medDataIndex &index,
         }
         if (id != -1)
         {
+            QSqlDatabase dbConnection = getThreadSpecificConnection();
+            QSqlQuery query(dbConnection);
+
             query.prepare(QString("UPDATE %1 SET %2 = :value WHERE id = :id")
                               .arg(tableName)
                               .arg(columnName));
             query.bindValue(":value", value);
             query.bindValue(":id", id);
+            QMutexLocker mutexLocker(&getDatabaseMutex());
             success = execQuery(query, __FILE__, __LINE__);
             if (success)
             {
@@ -748,6 +768,7 @@ QList<medDataIndex> medDatabasePersistentController::studies(
     QSqlQuery query(dbConnection);
     query.prepare("SELECT id FROM study WHERE patient = :patientId");
     query.bindValue(":patientId", index.patientId());
+    QMutexLocker mutexLocker(&getDatabaseMutex());
     execQuery(query, __FILE__, __LINE__);
 #if QT_VERSION > 0x0406FF
     ret.reserve(query.size());
@@ -776,6 +797,7 @@ QList<medDataIndex> medDatabasePersistentController::series(
     QSqlQuery query(dbConnection);
     query.prepare("SELECT id FROM series WHERE study = :studyId");
     query.bindValue(":studyId", index.studyId());
+    QMutexLocker mutexLocker(&getDatabaseMutex());
     execQuery(query, __FILE__, __LINE__);
 #if QT_VERSION > 0x0406FF
     ret.reserve(query.size());
@@ -803,6 +825,7 @@ QStringList medDatabasePersistentController::series(const QString &seriesName, c
         query.bindValue ( ":studyId", studyId );
     }
 
+    QMutexLocker mutexLocker(&getDatabaseMutex());
     execQuery(query, __FILE__, __LINE__);
     QStringList seriesNames;
     while (query.next())
@@ -838,7 +861,6 @@ QString medDatabasePersistentController::stringForPath(const QString &name) cons
 
 bool medDatabasePersistentController::contains(const medDataIndex &index) const
 {
-    QSqlDatabase dbConnection = getThreadSpecificConnection();
 
     if (index.isValid() && index.dataSourceId() == dataSourceId())
     {
@@ -847,6 +869,7 @@ bool medDatabasePersistentController::contains(const medDataIndex &index) const
         QVariant studyId = index.studyId();
         QVariant seriesId = index.seriesId();
 
+        QSqlDatabase dbConnection = getThreadSpecificConnection();
         QSqlQuery query(dbConnection);
         QString fromRequest = "SELECT * FROM patient";
         QString whereRequest = " WHERE patient.id = :id";
@@ -870,6 +893,8 @@ bool medDatabasePersistentController::contains(const medDataIndex &index) const
         if (seriesId != -1)
             query.bindValue(":seID", seriesId);
 
+        QMutexLocker mutexLocker(&getDatabaseMutex());
+
         if (!execQuery(query, __FILE__, __LINE__))
         {
             qDebug() << DTK_COLOR_FG_RED << query.lastError() << DTK_NO_COLOR;
@@ -882,16 +907,16 @@ bool medDatabasePersistentController::contains(const medDataIndex &index) const
 
 QString medDatabasePersistentController::attachedMetadataFileExists(const medDataIndex &index)
 {
-    QSqlDatabase dbConnection = getThreadSpecificConnection();
-
     QString resPath = "";
     if (contains(index))
     {
         QVariant seriesId = index.seriesId();
+        QSqlDatabase dbConnection = getThreadSpecificConnection();
         QSqlQuery query(dbConnection);
         QString request = "SELECT json_meta_path as json_path FROM series WHERE series.id = :id";
         query.prepare(request);
         query.bindValue(":id", seriesId);
+        QMutexLocker mutexLocker(&getDatabaseMutex());
         if (!execQuery(query, __FILE__, __LINE__))
         {
             qDebug() << DTK_COLOR_FG_RED << query.lastError() << DTK_NO_COLOR;
