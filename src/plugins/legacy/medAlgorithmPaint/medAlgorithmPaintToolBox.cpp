@@ -1837,9 +1837,13 @@ void AlgorithmPaintToolBox::clearMask()
 
     resetToolbox();
 
-    if (m_addButton->isVisible() && m_eraseButton->isVisible())
+    if (m_addButton->isVisible())
     {
         m_addButton->setEnabled(false);
+    }
+
+    if (m_eraseButton->isVisible())
+    {
         m_eraseButton->setEnabled(false);
     }
 }
