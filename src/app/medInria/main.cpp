@@ -149,8 +149,6 @@ int main(int argc,char* argv[])
     bool show_splash = false;
     #endif
 
-    medSettingsManager* mnger = medSettingsManager::instance();
-
     QStringList posargs;
     for (int i=1;i<application.arguments().size();++i)
     {
@@ -201,12 +199,7 @@ int main(int argc,char* argv[])
 
     if (show_splash)
     {
-        QObject::connect(medPluginManager::instance(),SIGNAL(loaded(QString)),
-                         &application,SLOT(redirectMessageToSplash(QString)) );
-        QObject::connect(&application,SIGNAL(showMessage(const QString&)),
-                         &splash,SLOT(showMessage(const QString&)) );
         splash.show();
-        splash.showMessage("Loading plugins...");
     }
 
     medDataManager::instance()->setDatabaseLocation();
@@ -292,8 +285,7 @@ int main(int argc,char* argv[])
        QGLFormat::setDefaultFormat(format);
     }
 
-    if (show_splash)
-        splash.finish(mainwindow);
+    splash.close();
 
 #if(USE_PYTHON)
     if(!pythonErrorMessage.isEmpty())
