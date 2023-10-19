@@ -566,7 +566,7 @@ medAbstractData *polygonLabel::createMask(int label, QString &desc)
         {
             for(int j=(int)bounds[by]; j<=(int)bounds[by+1]; j++)
             {
-                if (i>0 && i<dimX && j>0 && j<dimY)
+                if (i>=0 && i<dimX && j>=0 && j<dimY)
                 {
                     QRgb val = imagePolygon.pixel(i,j);
 
