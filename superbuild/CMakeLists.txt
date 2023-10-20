@@ -83,6 +83,7 @@ list(APPEND external_projects
      tetgen
      zlib
      quazip
+     onnxruntime
      )
 
 # Realtime
