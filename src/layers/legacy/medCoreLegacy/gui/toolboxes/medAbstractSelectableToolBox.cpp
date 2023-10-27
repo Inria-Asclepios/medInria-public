@@ -43,7 +43,10 @@ dtkPlugin* medAbstractSelectableToolBox::plugin()
 QList<dtkSmartPointer<medAbstractData> > medAbstractSelectableToolBox::processOutputs()
 {
     QList<dtkSmartPointer<medAbstractData>> outputs;
-    outputs.append(processOutput());
+    if (auto toolboxOutput = processOutput())
+    {
+        outputs.append(toolboxOutput);
+    }
     return outputs;
 }
 
