@@ -47,11 +47,6 @@ function(pyncpp_project)
                 -D Qt5_DIR:PATH=${Qt5_DIR}
                 -D OPENSSL_ROOT_DIR:PATH=${OPENSSL_ROOT_DIR}
                 )
-            if(APPLE)
-                list(APPEND cmake_args
-                    -D CMAKE_MACOSX_RPATH:BOOL=OFF
-                    )
-            endif()
         endif()
 
         ## #####################################################################
