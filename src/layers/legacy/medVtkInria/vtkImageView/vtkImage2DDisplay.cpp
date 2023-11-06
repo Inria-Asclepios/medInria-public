@@ -23,8 +23,8 @@ vtkStandardNewMacro(vtkImage2DDisplay)
 vtkImage2DDisplay::vtkImage2DDisplay()
 {
     this->InputProducer     = nullptr;
-    this->ImageActor        = vtkImageActor::New();
-    this->WindowLevel       = vtkImageMapToColors::New();
+    this->ImageActor        = vtkSmartPointer<vtkImageActor>::New();
+    this->WindowLevel       = vtkSmartPointer<vtkImageMapToColors>::New();
     this->WindowLevel->SetOutputFormatToRGBA();
     this->ColorWindow       = 1e-3 * VTK_DOUBLE_MAX;
     this->ColorLevel        = 0;
@@ -58,7 +58,7 @@ void vtkImage2DDisplay::SetInputData(vtkImageData *pi_poVtkImage)
     }
     else
     {
-        memset(&m_sVtkImageInfo, 0, sizeof(m_sVtkImageInfo));
+        memset(reinterpret_cast<void*>(&m_sVtkImageInfo), 0, sizeof(m_sVtkImageInfo));
     }
 }
 

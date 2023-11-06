@@ -52,13 +52,13 @@ QString medDatabaseImporter::getPatientID(QString patientName, QString birthDate
     QString patientID = "";
     //Let's see if the patient is already in the db
 
-    QSqlDatabase dbConnection = medDataManager::instance()->controller()->getThreadSpecificConnection();
+    QSqlDatabase dbConnection = medDataManager::instance().controller()->getThreadSpecificConnection();
     QSqlQuery query(dbConnection);
     query.prepare ( "SELECT patientId FROM patient WHERE name = :name AND birthdate = :birthdate" );
     query.bindValue ( ":name", patientName );
     query.bindValue ( ":birthdate", birthDate );
 
-    QMutexLocker mutexLocker(&medDataManager::instance()->controller()->getDatabaseMutex());
+    QMutexLocker mutexLocker(&medDataManager::instance().controller()->getDatabaseMutex());
 
     if ( !query.exec() )
     {
@@ -83,7 +83,7 @@ QString medDatabaseImporter::getPatientID(QString patientName, QString birthDate
 medDataIndex medDatabaseImporter::populateDatabaseAndGenerateThumbnails ( medAbstractData* medData, QString pathToStoreThumbnail )
 {
 
-    QSqlDatabase dbConnection = medDataManager::instance()->controller()->getThreadSpecificConnection();
+    QSqlDatabase dbConnection = medDataManager::instance().controller()->getThreadSpecificConnection();
 
     generateThumbnail ( medData, pathToStoreThumbnail );
 
@@ -101,7 +101,7 @@ medDataIndex medDatabaseImporter::populateDatabaseAndGenerateThumbnails ( medAbs
 
     int seriesDbId = getOrCreateSeries ( medData, dbConnection, studyDbId );
 
-    medDataIndex index = medDataIndex ( medDataManager::instance()->controller()->dataSourceId() , patientDbId, studyDbId, seriesDbId );
+    medDataIndex index = medDataIndex ( medDataManager::instance().controller()->dataSourceId() , patientDbId, studyDbId, seriesDbId );
     return index;
 }
 
@@ -124,7 +124,7 @@ int medDatabaseImporter::getOrCreatePatient ( const medAbstractData* medData, QS
     query.bindValue ( ":name", patientName );
     query.bindValue ( ":birthdate", birthDate );
 
-    QMutexLocker mutexLocker(&medDataManager::instance()->controller()->getDatabaseMutex());
+    QMutexLocker mutexLocker(&medDataManager::instance().controller()->getDatabaseMutex());
 
     if ( !query.exec() )
     {
@@ -182,7 +182,7 @@ int medDatabaseImporter::getOrCreateStudy ( const medAbstractData* medData, QSql
     query.bindValue ( ":studyName", studyName );
     query.bindValue ( ":studyUid", studyUid );
 
-    QMutexLocker mutexLocker(&medDataManager::instance()->controller()->getDatabaseMutex());
+    QMutexLocker mutexLocker(&medDataManager::instance().controller()->getDatabaseMutex());
 
     if ( !query.exec() )
     {
@@ -253,7 +253,7 @@ int medDatabaseImporter::getOrCreateSeries ( const medAbstractData* medData, QSq
     if( seriesName=="EmptySeries" )
         return seriesDbId;
 
-    QMutexLocker(&medDataManager::instance()->controller()->getDatabaseMutex());
+    QMutexLocker(&medDataManager::instance().controller()->getDatabaseMutex());
 
     if ( !query.exec() )
     {
@@ -367,7 +367,7 @@ int medDatabaseImporter::getOrCreateSeries ( const medAbstractData* medData, QSq
 **/
 QString medDatabaseImporter::ensureUniqueSeriesName(const QString seriesName, const QString studyId)
 {
-    QStringList seriesNames = medDataManager::instance()->controller()->series(seriesName, studyId);
+    QStringList seriesNames = medDataManager::instance().controller()->series(seriesName, studyId);
 
     QString originalSeriesName = seriesName;
     QString newSeriesName = seriesName;
@@ -385,9 +385,9 @@ QString medDatabaseImporter::ensureUniqueSeriesName(const QString seriesName, co
 
 void medDatabaseImporter::createDBEntryForMetadataAttachedFile(medAbstractData *medData, int seriesDbId)
 {
-    QSqlDatabase dbConnection = medDataManager::instance()->controller()->getThreadSpecificConnection();
+    QSqlDatabase dbConnection = medDataManager::instance().controller()->getThreadSpecificConnection();
     QSqlQuery query (dbConnection);
-    QMutexLocker mutexLocker(&medDataManager::instance()->controller()->getDatabaseMutex());
+    QMutexLocker mutexLocker(&medDataManager::instance().controller()->getDatabaseMutex());
 
     query.exec("SELECT COUNT(*) as cpt FROM pragma_table_info('series') WHERE name='json_meta_path'");
     bool jsonColExist = false;

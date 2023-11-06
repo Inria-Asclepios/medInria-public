@@ -460,7 +460,7 @@ bool baseViewEvent::rightButtonBehaviour(medAbstractView *view, QMouseEvent *mou
 
         auto saveMaskAction = new QAction("Mask", saveMenu);
         connect(saveMaskAction, &QAction::triggered, [=](){
-            medDataManager::instance()->importData(saveMask(closestManager), false);
+            medDataManager::instance().importData(saveMask(closestManager), false);
         });
         saveMenu->addAction(saveMaskAction);
 
@@ -789,7 +789,7 @@ void baseViewEvent::saveAllContours()
         contourOutput->setData(&contoursData, 1);
         outputDataSet->Delete();
 
-        medDataManager::instance()->importData(contourOutput, false);
+        medDataManager::instance().importData(contourOutput, false);
     }
 }
 
@@ -1027,7 +1027,7 @@ void baseViewEvent::saveContour(polygonLabel *label)
     contourOutput->setData(&contoursData, 1);
     outputDataSet->Delete();
 
-    medDataManager::instance()->importData(contourOutput, false);
+    medDataManager::instance().importData(contourOutput, false);
 
 }
 

@@ -42,7 +42,7 @@ public :
 medLinkMenu::medLinkMenu(QWidget * parent) : QPushButton(parent), d(new medLinkMenuPrivate)
 {
     // Themes
-    QVariant themeChosen = medSettingsManager::instance()->value("startup","theme");
+    QVariant themeChosen = medSettingsManager::instance().value("startup","theme");
     int themeIndex = themeChosen.toInt();
     if (themeIndex == 3) // Light Grey
     {
@@ -615,7 +615,7 @@ void medLinkMenu::saveAsPreset()
     }
     group = newgroup;
 
-    medSettingsManager::instance()->setValue("GroupPresets", group, params);
+    medSettingsManager::instance().setValue("GroupPresets", group, params);
     d->presets.insert(group, params);
 
     addPresetItem(group);
@@ -630,10 +630,10 @@ void medLinkMenu::saveAsPreset()
 
 void medLinkMenu::loadPreset()
 {
-    QStringList presets = medSettingsManager::instance()->keys("GroupPresets");
+    QStringList presets = medSettingsManager::instance().keys("GroupPresets");
     for(QString preset : presets)
     {
-        QStringList params = medSettingsManager::instance()->value("GroupPresets", preset).toStringList();
+        QStringList params = medSettingsManager::instance().value("GroupPresets", preset).toStringList();
         bool ok = true;
         for(QString param : params)
         {
@@ -693,8 +693,8 @@ void medLinkMenu::applyPreset(QListWidgetItem* item)
                 presetParams = d->presets[key];
                 d->presets.remove(key);
                 d->presets.insert(preset, presetParams);
-                medSettingsManager::instance()->remove("GroupPresets", key);
-                medSettingsManager::instance()->setValue("GroupPresets", preset, presetParams);
+                medSettingsManager::instance().remove("GroupPresets", key);
+                medSettingsManager::instance().setValue("GroupPresets", preset, presetParams);
             }
         }
     }
@@ -789,7 +789,7 @@ void medLinkMenu::deletePreset()
         d->presetList->model()->removeRow(d->presetList->row(itemToRemove));
 
         d->presets.remove(preset);
-        medSettingsManager::instance()->remove("GroupPresets", preset);
+        medSettingsManager::instance().remove("GroupPresets", preset);
     }
 
     d->presetList->blockSignals(false);

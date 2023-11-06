@@ -16,8 +16,10 @@
 #include <QSqlQuery>
 #include <QThreadStorage>
 
-#include <medDatabasePersistentController.h>
 #include <medCoreLegacyExport.h>
+#include <medDatabasePersistentController.h>
+
+#include <memory>
 
 /**
  * Specialization of Concrete dbController implementation which allow to connect to local sqlite database
@@ -27,7 +29,7 @@ class MEDCORELEGACY_EXPORT medLocalDbController : public medDatabasePersistentCo
     Q_OBJECT
 
 public:
-    static medLocalDbController *instance();
+    static medLocalDbController &instance();
 
     bool createConnection() override;
     bool isConnected() const override;
@@ -59,7 +61,7 @@ private:
     bool createSeriesTable();
 
     bool updateFromNoVersionToVersion1();
-    static medLocalDbController *s_instance;
+    static std::unique_ptr<medLocalDbController> s_instance;
 
     static const char* mainConnectionName;
 };

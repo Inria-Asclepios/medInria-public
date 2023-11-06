@@ -81,7 +81,7 @@ medApplication::medApplication(int & argc, char**argv) :
     }
 
     // Themes
-    QVariant themeChosen = medSettingsManager::instance()->value("startup","theme");
+    QVariant themeChosen = medSettingsManager::instance().value("startup","theme");
     int themeIndex = themeChosen.toInt();
 
     QString qssFile;

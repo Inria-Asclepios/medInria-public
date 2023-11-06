@@ -371,7 +371,7 @@ QWidget* medTimeLineParameterL::getWidget()
         connect(d->playParameter->getPushButton(), SIGNAL(clicked()), this, SLOT(unlockTimeLine()));
 
         // Themes
-        QVariant themeChosen = medSettingsManager::instance()->value("startup","theme");
+        QVariant themeChosen = medSettingsManager::instance().value("startup","theme");
         int themeIndex = themeChosen.toInt();
 
         if (themeIndex == 3) // Light Grey

@@ -57,9 +57,6 @@
 class medVtkViewPrivate
 {
 public:
-    // internal state
-    vtkImageView *currentView; //2d or 3d depending on the navigator orientation.
-
     vtkInteractorStyle *interactorStyle2D;
 
     // views
@@ -84,7 +81,6 @@ medVtkView::medVtkView(QObject* parent): medAbstractImageView(parent),
     d(new medVtkViewPrivate)
 {
     // setup initial internal state of the view
-    d->currentView = nullptr;
     d->interactorStyle2D = nullptr;
 
     // construct render window
@@ -194,6 +190,7 @@ medVtkView::~medVtkView()
         d->renWin->SetOffScreenRendering(0);
     d->renWin->Delete();
     delete d->viewWidget;
+    delete d->mainWindow;
 
     delete d;
 }
@@ -461,40 +458,18 @@ void medVtkView::displayDataInfo(uint layer)
 
 QImage medVtkView::buildThumbnail(const QSize &size)
 {
-    // We dont want to send things that would ending up on updating gui things.
-    this->blockSignals(true);
     int w(size.width()), h(size.height());
 
-    // will cause crashes if any calls to renWin->Render() happened before this line
-    d->mainWindow->resize(w,h);
-    d->mainWindow->show();
-    d->renWin->SetSize(w,h);
-    render();
-
-#ifdef Q_OS_LINUX
-    // X11 likes to animate window creation, which means by the time we grab the
-    // widget, it might not be fully ready yet, in which case we get artefacts.
-    // Only necessary if rendering to an actual screen window.
-    if(d->renWin->GetOffScreenRendering() == 0)
-    {
-        Q_UNUSED(QTest::qWaitForWindowExposed(d->viewWidget));
-    }
-#endif
-
     QImage thumbnail = d->viewWidget->grabFramebuffer();
-
-    d->mainWindow->hide();
-    this->blockSignals(false);
-
-    thumbnail = thumbnail.copy(0, thumbnail.height() - h, w, h);
+    thumbnail = thumbnail.scaledToHeight(h, Qt::SmoothTransformation);
+    thumbnail = thumbnail.copy((thumbnail.width()-w)/2, 0, w, h);
 
     return thumbnail;
 }
 
 void medVtkView::buildMouseInteractionParamPool(uint layer)
 {
-    medSettingsManager * mnger = medSettingsManager::instance();
-    QString interaction = mnger->value("interactions","mouse", "Windowing").toString();
+    QString interaction = medSettingsManager::instance().value("interactions","mouse", "Windowing").toString();
 
     QList<medBoolParameterL*> params;
 
@@ -513,7 +488,7 @@ void medVtkView::buildMouseInteractionParamPool(uint layer)
     // add all mouse interaction params of the view in the "Mouse interaction" pool
     for(medBoolParameterL* param : params)
     {
-        medParameterPoolManagerL::instance()->linkParameter(param, "Mouse Interaction");
+        medParameterPoolManagerL::instance().linkParameter(param, "Mouse Interaction");
         connect(param, SIGNAL(valueChanged(bool)), this, SLOT(saveMouseInteractionSettings(bool)));
 
         // and activate the new inserted parameter according to what was activated in other views
@@ -522,7 +497,7 @@ void medVtkView::buildMouseInteractionParamPool(uint layer)
     }
 
     // Deal with rubber Zoom mode.
-    medParameterPoolManagerL::instance()->linkParameter(d->rubberBandZoomParameter, "Mouse Interaction");
+    medParameterPoolManagerL::instance().linkParameter(d->rubberBandZoomParameter, "Mouse Interaction");
 }
 
 void medVtkView::saveMouseInteractionSettings(bool parameterEnabled)
@@ -531,7 +506,9 @@ void medVtkView::saveMouseInteractionSettings(bool parameterEnabled)
     {
         medBoolParameterL *parameter = dynamic_cast<medBoolParameterL *>(this->sender());
         if(parameter)
-            medSettingsManager::instance()->setValue("interactions","mouse", parameter->name());
+        {
+            medSettingsManager::instance().setValue("interactions","mouse", parameter->name());
+        }
     }
 }
 
@@ -542,8 +519,7 @@ void medVtkView::enableRubberBandZoom(bool enable)
 
     if(enable)
     {
-        medSettingsManager * mnger = medSettingsManager::instance();
-        QString interaction = mnger->value("interactions","mouse", "Windowing").toString();
+        QString interaction = medSettingsManager::instance().value("interactions","mouse", "Windowing").toString();
 
         vtkInriaInteractorStyleRubberBandZoom * interactorStyle = vtkInriaInteractorStyleRubberBandZoom::New();
         interactorStyle->AddObserver( vtkImageView2DCommand::CameraZoomEvent,d->observer,0 );

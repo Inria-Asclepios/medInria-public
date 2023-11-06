@@ -70,7 +70,7 @@ void medSliderL::paintEvent(QPaintEvent *event)
 QColor medSliderL::getTickColor()
 {
     // Theme
-    QVariant themeChosen = medSettingsManager::instance()->value("startup","theme");
+    QVariant themeChosen = medSettingsManager::instance().value("startup","theme");
     int themeIndex = themeChosen.toInt();
 
     switch (themeIndex)

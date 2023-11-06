@@ -767,7 +767,7 @@ void AlgorithmPaintToolBox::import()
     medAbstractData *output = dynamic_cast<medAbstractData*>(m_maskData->clone());
 
     copyMetaData(output, m_imageData);
-    medDataManager::instance()->importData(output, false);
+    medDataManager::instance().importData(output, false);
 
     maskHasBeenSaved = true;
 }
@@ -1093,7 +1093,7 @@ void AlgorithmPaintToolBox::updateWandRegion(medAbstractImageView *view, QVector
             (m_imageData->identifier().contains("Vector"))||
             (m_imageData->identifier().contains("2")))
     {
-        medMessageController::instance()->showError(tr("Magic wand option is only available for 3D images"),3000);
+        medMessageController::instance().showError(tr("Magic wand option is only available for 3D images"),3000);
         return;
     }
 
@@ -1531,9 +1531,7 @@ void AlgorithmPaintToolBox::updateMouseInteraction()
 
 dtkPlugin* AlgorithmPaintToolBox::plugin()
 {
-    medPluginManager* pm = medPluginManager::instance();
-    dtkPlugin* plugin = pm->plugin ( "Algorithm Paint" );
-    return plugin;
+    return medPluginManager::instance().plugin("Algorithm Paint");
 }
 
 void AlgorithmPaintToolBox::setParameter(int channel, int value)
@@ -2534,7 +2532,7 @@ void AlgorithmPaintToolBox::addViewEventFilter( medViewEventFilter *filter)
 {
     for(QUuid uuid : this->getWorkspace()->tabbedViewContainers()->containersSelected())
     {
-        medViewContainer *container = medViewContainerManager::instance()->container(uuid);
+        medViewContainer *container = medViewContainerManager::instance().container(uuid);
         if(container)
         {
             filter->installOnView(container->view());

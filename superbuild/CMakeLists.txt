@@ -175,9 +175,9 @@ file(APPEND ${${PROJECT_NAME}_CONFIG_FILE}
      )
 
 set(CMAKE_MODULE_PATH
-    ${CMAKE_CURRENT_SOURCE_DIR}/projects_modules
-    ${CMAKE_MODULE_PATH}
-    )
+  ${CMAKE_CURRENT_SOURCE_DIR}/projects_modules
+  ${CMAKE_MODULE_PATH}
+  )
 
 set(PRIVATE_PLUGINS_DIRS "" CACHE PATH "Folders containing private plugins, separated by ';'")
 set(PRIVATE_PLUGINS_LEGACY_DIRS "" CACHE PATH "Folders containing legacy private plugins, separated by ';'")

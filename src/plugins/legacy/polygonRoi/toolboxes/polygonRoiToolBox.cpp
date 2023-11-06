@@ -34,8 +34,8 @@ const char *polygonRoiToolBox::generateBinaryImageButtonName = "generateBinaryIm
 polygonRoiToolBox::polygonRoiToolBox(QWidget *parent ) :
     medAbstractSelectableToolBox(parent), activeDataIndex()
 {
-    medSettingsManager *manager = medSettingsManager::instance();
-    QString speciality = manager->value("startup", "default_segmentation_speciality", "Default").toString();
+    medSettingsManager &manager = medSettingsManager::instance();
+    QString speciality = manager.value("startup", "default_segmentation_speciality", "Default").toString();
     if (speciality=="Urology")
     {
         specialityPreference = 1;
@@ -159,9 +159,7 @@ bool polygonRoiToolBox::registered()
 
 dtkPlugin* polygonRoiToolBox::plugin()
 {
-    medPluginManager *pm = medPluginManager::instance();
-    dtkPlugin *plugin = pm->plugin ( "Polygon ROI" );
-    return plugin;
+    return medPluginManager::instance().plugin("Polygon ROI");
 }
 
 medAbstractData *polygonRoiToolBox::processOutput()
@@ -441,7 +439,7 @@ void polygonRoiToolBox::saveBinaryImage()
     QList<dtkSmartPointer<medAbstractData>> outputMasks = processOutputs();
     for (auto output : outputMasks)
     {
-       medDataManager::instance()->importData(output, false);
+       medDataManager::instance().importData(output, false);
     }
 }
 

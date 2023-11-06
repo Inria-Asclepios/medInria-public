@@ -99,7 +99,7 @@ int main(int argc,char* argv[])
     medApplication application(argc,argv);
 
     // Themes
-    QVariant themeChosen = medSettingsManager::instance()->value("startup","theme");
+    QVariant themeChosen = medSettingsManager::instance().value("startup","theme");
     int themeIndex = themeChosen.toInt();
     QPixmap splashLogo;
     switch (themeIndex)
@@ -148,8 +148,6 @@ int main(int argc,char* argv[])
     #else
     bool show_splash = false;
     #endif
-
-    medSettingsManager* mnger = medSettingsManager::instance();
 
     QStringList posargs;
     for (int i=1;i<application.arguments().size();++i)
@@ -201,15 +199,10 @@ int main(int argc,char* argv[])
 
     if (show_splash)
     {
-        QObject::connect(medPluginManager::instance(),SIGNAL(loaded(QString)),
-                         &application,SLOT(redirectMessageToSplash(QString)) );
-        QObject::connect(&application,SIGNAL(showMessage(const QString&)),
-                         &splash,SLOT(showMessage(const QString&)) );
         splash.show();
-        splash.showMessage("Loading plugins...");
     }
 
-    medDataManager::instance()->setDatabaseLocation();
+    medDataManager::instance().setDatabaseLocation();
 
 #if(USE_PYTHON)
     pyncpp::Manager pythonManager;
@@ -245,8 +238,8 @@ int main(int argc,char* argv[])
     }
 #endif
 
-    medPluginManager::instance()->setVerboseLoading(true);
-    medPluginManager::instance()->initialize();
+    medPluginManager::instance().setVerboseLoading(true);
+    medPluginManager::instance().initialize();
 
     //Use Qt::WA_DeleteOnClose attribute to be sure to always have only one closeEvent.
     medMainWindow *mainwindow = new medMainWindow;
@@ -255,7 +248,7 @@ int main(int argc,char* argv[])
     if (DirectView)
         mainwindow->setStartup(medMainWindow::WorkSpace,posargs);
 
-    bool fullScreen = medSettingsManager::instance()->value("startup", "fullscreen", false).toBool();
+    bool fullScreen = medSettingsManager::instance().value("startup", "fullscreen", false).toBool();
     
     const bool hasFullScreenArg   = application.arguments().contains("--fullscreen");
     const bool hasNoFullScreenArg = application.arguments().contains("--no-fullscreen");
@@ -292,8 +285,7 @@ int main(int argc,char* argv[])
        QGLFormat::setDefaultFormat(format);
     }
 
-    if (show_splash)
-        splash.finish(mainwindow);
+    splash.close();
 
 #if(USE_PYTHON)
     if(!pythonErrorMessage.isEmpty())
@@ -303,7 +295,15 @@ int main(int argc,char* argv[])
     }
 #endif
 
-    if (medPluginManager::instance()->plugins().isEmpty()) {
+#if(USE_PYTHON)
+    if(!pythonErrorMessage.isEmpty())
+    {
+        QMessageBox::warning(mainwindow, "Python", pythonErrorMessage);
+        qWarning() << pythonErrorMessage;
+    }
+#endif
+
+    if (medPluginManager::instance().plugins().isEmpty()) {
         QMessageBox::warning(mainwindow,
                              QObject::tr("No plugin loaded"),
                              QObject::tr("Warning : no plugin loaded successfully."));
@@ -322,7 +322,7 @@ int main(int argc,char* argv[])
     //  Start main loop.
     const int status = application.exec();
 
-    medPluginManager::instance()->uninitialize();
+    medPluginManager::instance().uninitialize();
 
     return status;
 }
