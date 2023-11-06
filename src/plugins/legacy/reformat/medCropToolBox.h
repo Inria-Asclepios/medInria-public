@@ -49,7 +49,7 @@ public slots:
 protected:
     void showEvent(QShowEvent *event);
     virtual void clear();
-    bool generateOutput();
+    int generateOutput();
     void enableButtons(bool wantToEnable);
 
 private:

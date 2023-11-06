@@ -459,9 +459,9 @@ void medCropToolBoxPrivate::applyInverseOrientationMatrix(double *worldPointIn, 
     std::copy(homogeneousVector, homogeneousVector + 3, worldPointOut);
 }
 
-bool medCropToolBox::generateOutput()
+int medCropToolBox::generateOutput()
 {
-    bool res = medAbstractProcessLegacy::SUCCESS;
+    int res = medAbstractProcessLegacy::FAILURE;
 
     double minBoxCorner[3], maxBoxCorner[3];
     int minIndices[3], maxIndices[3];
@@ -479,16 +479,15 @@ bool medCropToolBox::generateOutput()
         medAbstractData *imageData = d->view->layerData(layer);
         medAbstractData *output = nullptr;
 
-        if (DISPATCH_ON_3D_PIXEL_TYPE(&medCropToolBoxPrivate::extractCroppedImage,
-                                      d, imageData, minIndices, maxIndices, &output)
-                == medAbstractProcessLegacy::SUCCESS)
+        res = DISPATCH_ON_3D_PIXEL_TYPE(&medCropToolBoxPrivate::extractCroppedImage,
+                                        d, imageData, minIndices, maxIndices, &output);
+        if (res == medAbstractProcessLegacy::SUCCESS)
         {
             d->outputData.append(output);
         }
         else
         {
-            handleDisplayError(medAbstractProcessLegacy::DIMENSION_3D);
-            res = medAbstractProcessLegacy::FAILURE;
+            handleDisplayError(res);
             break;
         }
     }
