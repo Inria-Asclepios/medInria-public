@@ -14,6 +14,7 @@ function(music_plugins_project)
         qwt
         quazip
         zlib
+        onnxruntime
         )
 
     if (${USE_RealTimeWorkspace})
@@ -39,8 +40,8 @@ function(music_plugins_project)
 
     if (NOT USE_SYSTEM_${external_project})
 
-        set(git_url ${GITHUB_PREFIX}Inria-Asclepios/music.git)
-        set(git_tag master)
+        set(git_url ${GITHUB_PREFIX}kunhe9/music.git)
+        set(git_tag Spot)
 
         set(cmake_args
             ${ep_common_cache_args}
@@ -70,6 +71,7 @@ function(music_plugins_project)
             -DQUAZIP_DIR:FILEPATH=${quazip_DIR}
             -DQUAZIP_INCLUDE_DIR:FILEPATH=${quazip_INCLUDE_DIR}
             -DZLIB_DIR:FILEPATH=${zlib_DIR}
+            -DONNXRUNTIME_DIR:FILEPATH=${onnxruntime_DIR}
             -DUSE_RealTimeWorkspace=${USE_RealTimeWorkspace}
             )
 
