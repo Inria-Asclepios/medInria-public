@@ -1,3 +1,14 @@
+MUSICardio 3.4:
+- Put back the Pipelines workspace.
+Check the Pipelines documentation to see if your scripts need to be updated: https://music-test.inria.fr/musicardio/ in Development menu, or you can ask the team to help you.
+Main change: in your script line "from medPipeline import *" change "medPipeline" to "mscPipeline".
+- Toolboxes in the application have been updated to fit the new Pipelines system.
+- We worked on the stability of the application concerning database connections and memory leaks.
+- Fix Paint toolbox widgets when the user switches from Paint/Erase to Magic Wand or clear the view.
+- Fix a freeze in PolygonROI toolbox if the user contours outside the image borders.
+- Stop some toolboxes compatible with 3D data if the user is using 4D data.
+- Small enhancement of the GUI of Histogram Analysis.
+
 medInria 3.4:
 - Fix an incorrect zoom for some data displayed in a view. The zoom is now calculated with x and y dims, and not z
 - N4 Bias Correction process can stop now if the user wants to quit the application, it will stop at some algorithm checkpoints
