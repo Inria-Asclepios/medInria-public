@@ -28,7 +28,6 @@ list(APPEND ${ep}_dependencies
   QtDCM
   RPI
   LogDemons
-  pyncpp
   )
 
 if (USE_DTKIMAGING)
@@ -79,7 +78,7 @@ set(cmake_args
   -DBUILD_SHARED_LIBS=${BUILD_SHARED_LIBS_${ep}}
   -DUSE_DTKIMAGING:BOOL=${USE_DTKIMAGING}
   -DUSE_OSPRay:BOOL=${USE_OSPRay}
-  -DUSE_Python:BOOL=${USE_Python}
+  -DUSE_Python:BOOL=FALSE
   -DmedInria_VERSION:STRING=${${PROJECT_NAME}_VERSION}
   -DBUILD_ALL_PLUGINS=OFF
   -DBUILD_COMPOSITEDATASET_PLUGIN=OFF
@@ -112,12 +111,6 @@ if (USE_DTKIMAGING)
     )
 endif()
 
-if (USE_Python)
-  list(APPEND cmake_cache_args
-      -Dpyncpp_DIR:PATH=${pyncpp_DIR}
-      )
-endif()
-  
 ## #############################################################################
 ## Add external-project
 ## #############################################################################
@@ -154,7 +147,6 @@ if (WIN32)
   file(TO_NATIVE_PATH ${QtDCM_DIR}               DCM_BIN_BASE)
   file(TO_NATIVE_PATH ${_qt5Core_install_prefix} QT5_BIN_BASE)
   file(TO_NATIVE_PATH ${medInria_BINARY_DIR}     MED_BIN_BASE)
-  file(TO_NATIVE_PATH ${pyncpp_DIR}              PYNCPP_BIN_BASE)
   
   set(CONFIG_MODE $<$<CONFIG:debug>:Debug>$<$<CONFIG:release>:Release>$<$<CONFIG:MinSizeRel>:MinSizeRel>$<$<CONFIG:RelWithDebInfo>:RelWithDebInfo>)
   
@@ -167,9 +159,7 @@ if (WIN32)
         COMMAND for %%I in ( ${DTK_BIN_BASE}\\bin\\${CONFIG_MODE}\\*.dll ) do (if EXIST ${MED_BIN_BASE}\\%%~nxI (del /S ${MED_BIN_BASE}\\%%~nxI & mklink /H ${MED_BIN_BASE}\\%%~nxI %%~fI) else mklink /H ${MED_BIN_BASE}\\%%~nxI %%~fI)
         COMMAND for %%I in ( ${DCM_BIN_BASE}\\bin\\${CONFIG_MODE}\\*.dll ) do (if EXIST ${MED_BIN_BASE}\\%%~nxI (del /S ${MED_BIN_BASE}\\%%~nxI & mklink /H ${MED_BIN_BASE}\\%%~nxI %%~fI) else mklink /H ${MED_BIN_BASE}\\%%~nxI %%~fI)
         COMMAND for %%I in ( ${QT5_BIN_BASE}\\bin\\*.dll                 ) do (if EXIST ${MED_BIN_BASE}\\%%~nxI (del /S ${MED_BIN_BASE}\\%%~nxI & mklink /H ${MED_BIN_BASE}\\%%~nxI %%~fI) else mklink /H ${MED_BIN_BASE}\\%%~nxI %%~fI) 
-        COMMAND for %%I in ( ${PYTHON_BIN_BASE}\\bin\\*.dll ) do (if EXIST ${MED_BIN_BASE}\\%%~nxI (del /S ${MED_BIN_BASE}\\%%~nxI & mklink /H ${MED_BIN_BASE}\\%%~nxI %%~fI) else mklink /H ${MED_BIN_BASE}\\%%~nxI %%~fI)
-        COMMAND for %%I in ( ${PYTHON_BIN_BASE}\\bin\\DLLs ${PYTHON_BIN_BASE}\\bin\\Lib ) do (if EXIST ${MED_BIN_BASE}\\%%~nxI (del /S ${MED_BIN_BASE}\\%%~nxI & mklink /d /H ${MED_BIN_BASE}\\%%~nxI %%~fI) else mklink /d /H ${MED_BIN_BASE}\\%%~nxI %%~fI)
-     )
+)
 endif()
 
 

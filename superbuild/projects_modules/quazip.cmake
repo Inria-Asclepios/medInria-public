@@ -79,7 +79,6 @@ ExternalProject_Add(${ep}
   DEPENDS ${${ep}_dependencies}
   UPDATE_COMMAND ""
   INSTALL_COMMAND ""
-  BUILD_ALWAYS 1
 )
 
 ## #############################################################################

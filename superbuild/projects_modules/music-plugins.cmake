@@ -25,12 +25,6 @@ function(music_plugins_project)
         )
     endif()
 
-    if (USE_Python)
-        list(APPEND ${external_project}_dependencies
-            pyncpp
-            )
-    endif()
-
     EP_Initialisation(${external_project}
         USE_SYSTEM OFF
         BUILD_SHARED_LIBS ON
@@ -40,7 +34,7 @@ function(music_plugins_project)
     if (NOT USE_SYSTEM_${external_project})
 
         set(git_url ${GITHUB_PREFIX}Inria-Asclepios/music.git)
-        set(git_tag master)
+        set(git_tag win_bruno)
 
         set(cmake_args
             ${ep_common_cache_args}
@@ -73,12 +67,6 @@ function(music_plugins_project)
             -DUSE_RealTimeWorkspace=${USE_RealTimeWorkspace}
             )
 
-        if (USE_Python)
-          list(APPEND cmake_args
-              -Dpyncpp_DIR:PATH=${pyncpp_DIR}
-              )
-        endif()
-
         epComputPath(${external_project})
         ExternalProject_Add(${external_project}
             PREFIX ${EP_PATH_SOURCE}
@@ -94,7 +82,6 @@ function(music_plugins_project)
             DEPENDS ${${external_project}_dependencies}
             INSTALL_COMMAND ""
             UPDATE_COMMAND ""
-            BUILD_ALWAYS 1
             )
 
         set(EXTERNAL_PROJECT_PLUGINS_LEGACY_DIRS ${EXTERNAL_PROJECT_PLUGINS_LEGACY_DIRS} "${build_path}" PARENT_SCOPE)

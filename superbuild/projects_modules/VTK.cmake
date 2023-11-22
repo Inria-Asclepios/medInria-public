@@ -21,10 +21,6 @@ set(ep VTK)
 if(${USE_FFmpeg})
   list(APPEND ${ep}_dependencies ffmpeg)
 endif()
-
-if(USE_Python)
-  list(APPEND ${ep}_dependencies pyncpp)
-endif()
   
 ## #############################################################################
 ## Prepare the project
@@ -118,24 +114,6 @@ if(${USE_FFmpeg})
     )
 endif()
 
-if(USE_Python)
-    set(python_version "${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}")
-    if(UNIX)
-        set(python_executable "${pyncpp_DIR}/lib/python${python_version}/bin/python${python_version}")
-        set(python_include "${pyncpp_DIR}/lib/python${python_version}/include/python${python_version}")
-        set(python_library "${pyncpp_DIR}/lib/python${python_version}/lib/libpython${python_version}${CMAKE_SHARED_LIBRARY_SUFFIX}")
-    else()
-        # TODO
-    endif()
-    list(APPEND cmake_args
-        -DVTK_WRAP_PYTHON:BOOL=ON
-        -DVTK_PYTHON_VERSION:STRING=${python_version}
-        -DPYTHON_EXECUTABLE:PATH=${python_executable}
-        -DPYTHON_INCLUDE_DIR:PATH=${python_include}
-        -DPYTHON_LIBRARY:PATH=${python_library}
-        )
-endif()
-
 ## #############################################################################
 ## Check if patch has to be applied
 ## #############################################################################
@@ -158,13 +136,12 @@ ExternalProject_Add(${ep}
   GIT_REPOSITORY ${git_url}
   GIT_TAG ${git_tag}
   PATCH_COMMAND ${${ep}_PATCH_COMMAND}
-  CMAKE_GENERATOR ${gen}
-  CMAKE_GENERATOR_PLATFORM ${CMAKE_GENERATOR_PLATFORM}
+#  CMAKE_GENERATOR ${gen}
+#  CMAKE_GENERATOR_PLATFORM ${CMAKE_GENERATOR_PLATFORM}
   CMAKE_ARGS ${cmake_args}
   CMAKE_CACHE_ARGS ${cmake_cache_args}
   DEPENDS ${${ep}_dependencies}
   INSTALL_COMMAND ""
-  BUILD_ALWAYS 1
   )
   
 ## #############################################################################

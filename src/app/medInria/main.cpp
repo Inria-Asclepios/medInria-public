@@ -19,10 +19,6 @@
 #include <QtPlatformHeaders/QWindowsWindowFunctions>
 #endif
 
-#if(USE_PYTHON)
-#include <pyncpp.h>
-#endif
-
 #include <medMainWindow.h>
 #include <medApplication.h>
 #include <medSplashScreen.h>
@@ -211,40 +207,6 @@ int main(int argc,char* argv[])
 
     medDataManager::instance()->setDatabaseLocation();
 
-#if(USE_PYTHON)
-    pyncpp::Manager pythonManager;
-    QDir pythonHome = qApp->applicationDirPath();
-    QDir pythonPluginPath = pythonHome;
-    QString pythonErrorMessage;
-
-    if (!pythonHome.cd(PYTHON_HOME))
-    {
-        pythonErrorMessage = "The embedded Python could not be found ";
-    }
-    else
-    {
-        if(!pythonManager.initialize(qUtf8Printable(pythonHome.absolutePath())))
-        {
-            pythonErrorMessage = "Initialization of the embedded Python failed.";
-        }
-        else
-        {
-#ifdef Q_OS_MACOS
-            if(!pythonPluginPath.cd("../Plugins/python"))
-            {
-                pythonPluginPath.cd("../../../plugins/python");
-            }
-#else
-#ifdef Q_OS_LINUX
-            pythonPluginPath.cd("../plugins/python");
-#endif
-#endif
-            pyncpp::Module sysModule = pyncpp::Module::import("sys");
-            sysModule.attribute("path").append(pyncpp::Object(pythonPluginPath.absolutePath()));
-        }
-    }
-#endif
-
     medPluginManager::instance()->setVerboseLoading(true);
     medPluginManager::instance()->initialize();
 
@@ -294,14 +256,6 @@ int main(int argc,char* argv[])
 
     if (show_splash)
         splash.finish(mainwindow);
-
-#if(USE_PYTHON)
-    if(!pythonErrorMessage.isEmpty())
-    {
-        QMessageBox::warning(mainwindow, "Python", pythonErrorMessage);
-        qWarning() << pythonErrorMessage;
-    }
-#endif
 
     if (medPluginManager::instance()->plugins().isEmpty()) {
         QMessageBox::warning(mainwindow,
