@@ -74,9 +74,9 @@ function(music_plugins_project)
             )
 
         if (USE_Python)
-          list(APPEND cmake_args
-              -Dpyncpp_DIR:PATH=${pyncpp_DIR}
-              )
+            list(APPEND cmake_args
+                -Dpyncpp_ROOT:PATH=${pyncpp_DIR}
+                )
         endif()
 
         epComputPath(${external_project})
@@ -94,7 +94,6 @@ function(music_plugins_project)
             DEPENDS ${${external_project}_dependencies}
             INSTALL_COMMAND ""
             UPDATE_COMMAND ""
-            BUILD_ALWAYS 1
             )
 
         set(EXTERNAL_PROJECT_PLUGINS_LEGACY_DIRS ${EXTERNAL_PROJECT_PLUGINS_LEGACY_DIRS} "${build_path}" PARENT_SCOPE)

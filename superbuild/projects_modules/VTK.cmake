@@ -119,13 +119,16 @@ if(${USE_FFmpeg})
 endif()
 
 if(USE_Python)
-    set(python_version "${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}")
     if(UNIX)
+        set(python_version "${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}")
         set(python_executable "${pyncpp_DIR}/lib/python${python_version}/bin/python${python_version}")
         set(python_include "${pyncpp_DIR}/lib/python${python_version}/include/python${python_version}")
         set(python_library "${pyncpp_DIR}/lib/python${python_version}/lib/libpython${python_version}${CMAKE_SHARED_LIBRARY_SUFFIX}")
     else()
-        # TODO
+        set(python_version "${PYTHON_VERSION_MAJOR}${PYTHON_VERSION_MINOR}")
+        set(python_executable "${pyncpp_DIR}/python${python_version}/python$<$<CONFIG:Debug>:-d>.exe")
+        set(python_include "${pyncpp_DIR}/python${python_version}/include")
+        set(python_library "${pyncpp_DIR}/python${python_version}/libs/python${python_version}$<$<CONFIG:Debug>:-d>.lib")
     endif()
     list(APPEND cmake_args
         -DVTK_WRAP_PYTHON:BOOL=ON
@@ -158,13 +161,12 @@ ExternalProject_Add(${ep}
   GIT_REPOSITORY ${git_url}
   GIT_TAG ${git_tag}
   PATCH_COMMAND ${${ep}_PATCH_COMMAND}
-  CMAKE_GENERATOR ${gen}
-  CMAKE_GENERATOR_PLATFORM ${CMAKE_GENERATOR_PLATFORM}
+#  CMAKE_GENERATOR ${gen}
+#  CMAKE_GENERATOR_PLATFORM ${CMAKE_GENERATOR_PLATFORM}
   CMAKE_ARGS ${cmake_args}
   CMAKE_CACHE_ARGS ${cmake_cache_args}
   DEPENDS ${${ep}_dependencies}
   INSTALL_COMMAND ""
-  BUILD_ALWAYS 1
   )
   
 ## #############################################################################

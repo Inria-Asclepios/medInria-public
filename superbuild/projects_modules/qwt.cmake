@@ -80,7 +80,6 @@ ExternalProject_Add(${ep}
   CONFIGURE_COMMAND ${QT_QMAKE_EXECUTABLE} ${SPEC} <SOURCE_DIR>/qwt.pro
   BUILD_COMMAND ${MAKE_PROGRAM} sub-src
   INSTALL_COMMAND ""  
-  BUILD_ALWAYS 1
 )
 
 ## #############################################################################

@@ -108,7 +108,6 @@ ExternalProject_Add(${ep}
   DEPENDS ${${ep}_dependencies}
   PATCH_COMMAND ${DTK_PATCH_COMMAND}
   INSTALL_COMMAND ""
-  BUILD_ALWAYS 1
   )
 
 ## #############################################################################

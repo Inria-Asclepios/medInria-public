@@ -108,6 +108,8 @@ list(APPEND
   ${dtk_DIR}/bin/Release 
   ${RPI_DIR}/bin/Release 
   ${zlib_DIR}/Release
+  ${pyncpp_DIR}/bin
+  ${pyncpp_DIR}/python310
   )
 
 set(CPACK_INSTALL_CMAKE_PROJECTS
@@ -123,6 +125,7 @@ file(GLOB_RECURSE dtk_files LIST_DIRECTORIES true \"${dtk_DIR}/bin/*.dll\")
 file(GLOB_RECURSE dcm_files LIST_DIRECTORIES true \"${QtDCM_DIR}/bin/*.dll\")
 file(GLOB_RECURSE qt5_files LIST_DIRECTORIES true \"${QT_BINARY_DIR}/*.dll\")
 file(GLOB_RECURSE zlib_files LIST_DIRECTORIES true \"${zlib_DIR}/*.dll\")
+file(GLOB_RECURSE pyncpp_files LIST_DIRECTORIES false \"${pyncpp_DIR}/bin/*.dll\")
 list(APPEND files \${itk_files})
 list(APPEND files \${vtk_files})
 list(APPEND files \${dtk_files})

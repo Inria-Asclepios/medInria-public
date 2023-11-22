@@ -113,9 +113,9 @@ if (USE_DTKIMAGING)
 endif()
 
 if (USE_Python)
-  list(APPEND cmake_cache_args
-      -Dpyncpp_DIR:PATH=${pyncpp_DIR}
-      )
+    list(APPEND cmake_args
+        -Dpyncpp_ROOT:PATH=${pyncpp_DIR}
+        )
 endif()
   
 ## #############################################################################
@@ -167,8 +167,9 @@ if (WIN32)
         COMMAND for %%I in ( ${DTK_BIN_BASE}\\bin\\${CONFIG_MODE}\\*.dll ) do (if EXIST ${MED_BIN_BASE}\\%%~nxI (del /S ${MED_BIN_BASE}\\%%~nxI & mklink /H ${MED_BIN_BASE}\\%%~nxI %%~fI) else mklink /H ${MED_BIN_BASE}\\%%~nxI %%~fI)
         COMMAND for %%I in ( ${DCM_BIN_BASE}\\bin\\${CONFIG_MODE}\\*.dll ) do (if EXIST ${MED_BIN_BASE}\\%%~nxI (del /S ${MED_BIN_BASE}\\%%~nxI & mklink /H ${MED_BIN_BASE}\\%%~nxI %%~fI) else mklink /H ${MED_BIN_BASE}\\%%~nxI %%~fI)
         COMMAND for %%I in ( ${QT5_BIN_BASE}\\bin\\*.dll                 ) do (if EXIST ${MED_BIN_BASE}\\%%~nxI (del /S ${MED_BIN_BASE}\\%%~nxI & mklink /H ${MED_BIN_BASE}\\%%~nxI %%~fI) else mklink /H ${MED_BIN_BASE}\\%%~nxI %%~fI) 
-        COMMAND for %%I in ( ${PYTHON_BIN_BASE}\\bin\\*.dll ) do (if EXIST ${MED_BIN_BASE}\\%%~nxI (del /S ${MED_BIN_BASE}\\%%~nxI & mklink /H ${MED_BIN_BASE}\\%%~nxI %%~fI) else mklink /H ${MED_BIN_BASE}\\%%~nxI %%~fI)
-        COMMAND for %%I in ( ${PYTHON_BIN_BASE}\\bin\\DLLs ${PYTHON_BIN_BASE}\\bin\\Lib ) do (if EXIST ${MED_BIN_BASE}\\%%~nxI (del /S ${MED_BIN_BASE}\\%%~nxI & mklink /d /H ${MED_BIN_BASE}\\%%~nxI %%~fI) else mklink /d /H ${MED_BIN_BASE}\\%%~nxI %%~fI)
+        COMMAND for %%I in ( ${PYNCPP_BIN_BASE}\\bin\\*.dll              ) do (if EXIST ${MED_BIN_BASE}\\%%~nxI (del /S ${MED_BIN_BASE}\\%%~nxI & mklink /H ${MED_BIN_BASE}\\%%~nxI %%~fI) else mklink /H ${MED_BIN_BASE}\\%%~nxI %%~fI)
+        COMMAND for %%I in ( ${PYNCPP_BIN_BASE}\\python${PYTHON_VERSION_MAJOR}${PYTHON_VERSION_MINOR}) do (if EXIST ${MED_BIN_BASE}\\%%~nxI (del /S ${MED_BIN_BASE}\\%%~nxI & mklink /H ${MED_BIN_BASE}\\%%~nxI %%~fI) else mklink /H ${MED_BIN_BASE}\\%%~nxI %%~fI)
+        COMMAND for %%I in ( ${PYNCPP_BIN_BASE}\\python${PYTHON_VERSION_MAJOR}${PYTHON_VERSION_MINOR}\\*.dll) do (if EXIST ${MED_BIN_BASE}\\%%~nxI (del /S ${MED_BIN_BASE}\\%%~nxI & mklink /H ${MED_BIN_BASE}\\%%~nxI %%~fI) else mklink /H ${MED_BIN_BASE}\\%%~nxI %%~fI)
      )
 endif()
 
