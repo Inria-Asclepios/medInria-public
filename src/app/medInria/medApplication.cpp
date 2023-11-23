@@ -37,6 +37,7 @@ class medApplicationPrivate
 public:
     medMainWindow *mainWindow;
     QStringList systemOpenInstructions;
+    QSplashScreen *splashScreen;
 };
 
 // /////////////////////////////////////////////////////////////////
@@ -48,6 +49,34 @@ medApplication::medApplication(int & argc, char**argv) :
     d(new medApplicationPrivate)
 {
     d->mainWindow = nullptr;
+
+    // Themes
+    QVariant themeChosen = medSettingsManager::instance().value("startup","theme");
+    int themeIndex = themeChosen.toInt();
+    QPixmap splashLogo;
+    switch (themeIndex)
+    {
+        case 0:
+        case 1:
+        case 2:
+        default:
+        {
+            splashLogo.load(":MUSICardio-2023-lightfont-notext-darkback-margin10.png");
+            break;
+        }
+        case 3:
+        case 4:
+        {
+            splashLogo.load(":MUSICardio-2023-darkfont-notext-whiteback-margin10.png");
+            break;
+        }
+    }
+    splashLogo = splashLogo.scaled(914, 147, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    d->splashScreen = new QSplashScreen(splashLogo,
+                                        Qt::WindowStaysOnTopHint | Qt::X11BypassWindowManagerHint);
+    d->splashScreen->show();
+    this->processEvents();
+    d->splashScreen->repaint();
 
     this->setApplicationName(PROJECT_NAME); /*Beware, change database path*/
     this->setApplicationVersion(MEDINRIA_VERSION);
@@ -79,10 +108,6 @@ medApplication::medApplication(int & argc, char**argv) :
         msg.exec();
         ::exit(1);
     }
-
-    // Themes
-    QVariant themeChosen = medSettingsManager::instance().value("startup","theme");
-    int themeIndex = themeChosen.toInt();
 
     QString qssFile;
     switch (themeIndex)
@@ -146,6 +171,9 @@ void medApplication::setMainWindow(medMainWindow *mw)
     QVariant var = QVariant::fromValue((QObject*)d->mainWindow);
     this->setProperty("MainWindow",var);
     d->systemOpenInstructions.clear();
+
+    // Wait until the app is displayed to close itself
+    d->splashScreen->finish(d->mainWindow); 
 }
 
 void medApplication::redirectMessageToSplash(const QString &message)
