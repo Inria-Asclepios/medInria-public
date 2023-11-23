@@ -76,7 +76,6 @@ medApplication::medApplication(int & argc, char**argv) :
                                         Qt::WindowStaysOnTopHint | Qt::X11BypassWindowManagerHint);
     d->splashScreen->show();
     this->processEvents();
-    d->splashScreen->repaint();
 
     this->setApplicationName(PROJECT_NAME); /*Beware, change database path*/
     this->setApplicationVersion(MEDINRIA_VERSION);
