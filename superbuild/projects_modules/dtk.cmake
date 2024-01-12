@@ -108,7 +108,6 @@ ExternalProject_Add(${ep}
   DEPENDS ${${ep}_dependencies}
   PATCH_COMMAND ${DTK_PATCH_COMMAND}
   INSTALL_COMMAND ""
-  BUILD_ALWAYS 1
   )
 
 ## #############################################################################
@@ -116,7 +115,7 @@ ExternalProject_Add(${ep}
 ## #############################################################################
 
 ExternalProject_Get_Property(${ep} binary_dir)
-set(${ep}_DIR ${binary_dir} PARENT_SCOPE)
+set(${ep}_ROOT ${binary_dir} PARENT_SCOPE)
 
 
 endif() #NOT USE_SYSTEM_ep

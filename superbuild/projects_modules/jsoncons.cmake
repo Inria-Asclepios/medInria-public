@@ -64,7 +64,7 @@ ExternalProject_Add(${ep}
 ## #############################################################################
 ## Set variable to provide infos about the project
 ## #############################################################################
-set(${ep}_DIR ${EP_PATH_SOURCE}/${ep} PARENT_SCOPE)
+set(${ep}_ROOT ${EP_PATH_SOURCE}/${ep} PARENT_SCOPE)
 
 endif() #NOT USE_SYSTEM_ep
 

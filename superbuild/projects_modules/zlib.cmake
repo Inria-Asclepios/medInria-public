@@ -9,6 +9,7 @@ function(zlib_project)
         USE_SYSTEM OFF
         BUILD_SHARED_LIBS ON
         REQUIRED_FOR_PLUGINS OFF
+        NO_FIND_PACKAGE
         )
 
     if (NOT USE_SYSTEM_${external_project})
@@ -42,7 +43,7 @@ function(zlib_project)
             UPDATE_COMMAND ""
             )
 
-        set(${external_project}_DIR ${build_path} PARENT_SCOPE)
+        set(${external_project}_ROOT ${build_path} PARENT_SCOPE)
 
     endif()
 

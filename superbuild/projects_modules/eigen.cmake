@@ -16,6 +16,7 @@ EP_Initialisation(${ep}
   USE_SYSTEM OFF 
   BUILD_SHARED_LIBS OFF
   REQUIRED_FOR_PLUGINS ON
+  PACKAGE_NAME Eigen3
   )
 
 
@@ -39,10 +40,19 @@ ep_GeneratePatchCommand(${ep} ${ep}_PATCH_COMMAND eigen-3.3.8.patch)
 ## #############################################################################
 epComputPath(${ep})
 
+set(cmake_args
+    ${ep_common_cache_args}
+    -DCMAKE_C_FLAGS:STRING=${${ep}_c_flags}
+    -DCMAKE_CXX_FLAGS:STRING=${${ep}_cxx_flags}
+    -DCMAKE_SHARED_LINKER_FLAGS:STRING=${${ep}_shared_linker_flags}
+    -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
+  )
+
 ExternalProject_Add(${ep}
   PREFIX ${EP_PATH_SOURCE}
   SOURCE_DIR ${EP_PATH_SOURCE}/${ep}
   BINARY_DIR ${build_path}
+  INSTALL_DIR ${build_path}
   TMP_DIR ${tmp_path}
   STAMP_DIR ${stamp_path}
   GIT_REPOSITORY ${git_url}
@@ -52,17 +62,19 @@ ExternalProject_Add(${ep}
   CMAKE_GENERATOR ${gen}
   CMAKE_GENERATOR_PLATFORM ${CMAKE_GENERATOR_PLATFORM}
   CMAKE_ARGS ${cmake_args}
-  INSTALL_COMMAND ""
-  BUILD_ALWAYS 1
 )
+
+ExternalProject_Add_Step(${ep} post_install
+    DEPENDEES install
+    COMMAND ${CMAKE_COMMAND} -E rm "<BINARY_DIR>/Eigen3Config.cmake"
+    )
 
 ## #############################################################################
 ## Set variable to provide infos about the project
 ## #############################################################################
-ExternalProject_Get_Property(${ep} binary_dir)
-set(${ep}_DIR ${binary_dir} PARENT_SCOPE)
-set(${ep}_INCLUDE_DIR ${EP_PATH_SOURCE}/${ep} PARENT_SCOPE)
 
-endif() 
+set(${ep}_ROOT ${build_path} PARENT_SCOPE)
+
+endif()
 
 endfunction()

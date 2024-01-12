@@ -173,8 +173,6 @@ if(NOT ${CMAKE_BUILD_TYPE} STREQUAL "Debug")
   add_definitions(-DQT_NO_DEBUG)
 endif()
 
-add_compile_definitions(USE_PYTHON)
-
 ## #############################################################################
 ## Windows specificity
 ## #############################################################################

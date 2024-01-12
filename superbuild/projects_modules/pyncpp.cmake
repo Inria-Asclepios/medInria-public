@@ -37,9 +37,11 @@ function(pyncpp_project)
             )
 
         set(cmake_args
+            ${ep_common_cache_args}
             -D "PYNCPP_PYTHON_VERSION_MAJOR:STRING=${PYTHON_VERSION_MAJOR}"
             -D "PYNCPP_PYTHON_VERSION_MINOR:STRING=${PYTHON_VERSION_MINOR}"
             -D "PYNCPP_PYTHON_VERSION_PATCH:STRING=${PYTHON_VERSION_PATCH}"
+            -D "CMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE_externals_projects}"
             )
 
         if(UNIX)
@@ -69,7 +71,7 @@ function(pyncpp_project)
         ## Export variables
         ## #####################################################################
 
-        set(${ep}_DIR ${build_path} PARENT_SCOPE)
+        set(${ep}_ROOT "${build_path}" PARENT_SCOPE)
 
     endif()
 

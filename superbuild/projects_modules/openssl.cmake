@@ -114,7 +114,7 @@ endif()
 ## #############################################################################
 
 ExternalProject_Get_Property(${ep} binary_dir)
-set(${ep}_DIR ${binary_dir} PARENT_SCOPE)
+set(${ep}_ROOT ${binary_dir} PARENT_SCOPE)
 set(${ep}_INCLUDE_DIR ${EP_PATH_SOURCE}/${ep} PARENT_SCOPE)
 set(OPENSSL_BUILD ${build_path} PARENT_SCOPE)
 set(OPENSSL_ROOT_DIR "${EP_PATH_SOURCE}/${ep}" PARENT_SCOPE)

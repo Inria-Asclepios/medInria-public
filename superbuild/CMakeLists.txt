@@ -59,6 +59,8 @@ option(USE_OSPRay "Use OSPRay for CPU VR" OFF )
 
 option(USE_Python "Build with Python support" ON)
 
+option(USE_MUSIC_PLUGINS "Build MUSIC plugins" ON)
+
 if (NOT WIN32)
   option(USE_FFmpeg "Build with FFmpeg video export support" OFF)
   if (${USE_FFmpeg})
@@ -83,13 +85,18 @@ list(APPEND external_projects
      QtDCM
      dtk
      LogDemons
-     eigen
-     qwt
-     mmg
-     tetgen
-     zlib
-     quazip
      )
+
+if(USE_MUSIC_PLUGINS)
+    list(APPEND external_projects
+        eigen
+        qwt
+        mmg
+        tetgen
+        zlib
+        quazip
+        )
+endif()
 
 # Realtime
 option(USE_RealTimeWorkspace "Build the real time workspace and linked externals libraries" OFF)
@@ -110,8 +117,13 @@ endif()
 
 list(APPEND external_projects
      medInria
-     music-plugins
     )
+
+if(USE_MUSIC_PLUGINS)
+    list(APPEND external_projects
+         music-plugins
+        )
+endif()
 
 if (USE_OSPRay)
 SET(ospray_DIR CACHE PATH "The directory containing a CMAKE configuration file for OSPRay")
@@ -131,8 +143,6 @@ set(CMAKE_BUILD_TYPE_medInria Debug CACHE STRING "Build type configuration speci
 ## #############################################################################
 set(medInria_SOURCE_DIR ${CMAKE_SOURCE_DIR}/src)
 set(medInria_BINARY_DIR ${CMAKE_BINARY_DIR}/medInria-build)
-set(medInria_STAMP_DIR ${CMAKE_BINARY_DIR}/medInria-stamp)
-
 
 ## #############################################################################
 ## Add modules
@@ -222,10 +232,9 @@ endif()
 set(external_projects ${external_projects} PARENT_SCOPE)
 
 foreach(external_project ${external_projects})
-    if(NOT USE_SYSTEM_${external_project} AND BUILD_SHARED_LIBS_${external_project})
-        ExternalProject_Get_Property(${external_project} binary_dir)
-        ExternalProject_Get_Property(${external_project} source_dir)
-        set(${external_project}_DIR ${binary_dir} PARENT_SCOPE)
-        set(${external_project}_SOURCE_DIR ${source_dir} PARENT_SCOPE)
+    if(DEFINED ${external_project}_ROOT)
+        set(${external_project}_ROOT ${${external_project}_ROOT} PARENT_SCOPE)
     endif()
 endforeach()
+
+set(medInria_SOURCE_DIR ${medInria_SOURCE_DIR} PARENT_SCOPE)

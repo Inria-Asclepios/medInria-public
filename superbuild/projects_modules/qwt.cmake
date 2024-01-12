@@ -16,6 +16,7 @@ EP_Initialisation(${ep}
   USE_SYSTEM OFF 
   BUILD_SHARED_LIBS OFF
   REQUIRED_FOR_PLUGINS ON
+  NO_FIND_PACKAGE
 )
 
 if (NOT USE_SYSTEM_${ep})
@@ -80,7 +81,6 @@ ExternalProject_Add(${ep}
   CONFIGURE_COMMAND ${QT_QMAKE_EXECUTABLE} ${SPEC} <SOURCE_DIR>/qwt.pro
   BUILD_COMMAND ${MAKE_PROGRAM} sub-src
   INSTALL_COMMAND ""  
-  BUILD_ALWAYS 1
 )
 
 ## #############################################################################
@@ -88,8 +88,8 @@ ExternalProject_Add(${ep}
 ## #############################################################################
 
 ExternalProject_Get_Property(${ep} binary_dir)
-set(${ep}_DIR ${binary_dir} PARENT_SCOPE)
-set(${ep}_INCLUDE_DIR ${EP_PATH_SOURCE}/${ep} PARENT_SCOPE)
+set(${ep}_ROOT ${binary_dir} PARENT_SCOPE)
+set(${ep}_INCLUDE_DIR ${EP_PATH_SOURCE}/${ep}/src PARENT_SCOPE)
 
 endif() #NOT USE_SYSTEM_ep
 

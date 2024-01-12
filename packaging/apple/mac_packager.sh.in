@@ -16,9 +16,9 @@ cd @PROJECT_BINARY_DIR@
 
 \rm -fr TmpInstall
 mkdir -p TmpInstall/MUSICardio.app/Contents/Resources
-cp -r @medInria_DIR@/bin/MUSICardio.app/Contents/MacOS TmpInstall/MUSICardio.app/Contents
-cp @medInria_DIR@/bin/MUSICardio.app/Contents/Info.plist TmpInstall/MUSICardio.app/Contents
-cp @medInria_DIR@/bin/MUSICardio.app/Contents/Resources/MUSICardio.icns TmpInstall/MUSICardio.app/Contents/Resources
+cp -r @medInria_ROOT@/bin/MUSICardio.app/Contents/MacOS TmpInstall/MUSICardio.app/Contents
+cp @medInria_ROOT@/bin/MUSICardio.app/Contents/Info.plist TmpInstall/MUSICardio.app/Contents
+cp @medInria_ROOT@/bin/MUSICardio.app/Contents/Resources/MUSICardio.icns TmpInstall/MUSICardio.app/Contents/Resources
 
 cd TmpInstall
 
@@ -35,21 +35,26 @@ mkdir python_plugins
 injectDirs="$injectDirs -inject-dir=@PROJECT_BINARY_DIR@/TmpInstall/python_plugins"
 
 python_libs=''
-for python_lib in @medInria_DIR@/bin/plugins/python/*; do
+for python_lib in @medInria_ROOT@/bin/python_plugins/*; do
     lib=${python_lib##*/}
     libname=${lib%.so}
     cp $python_lib python_plugins/$libname.dylib
     python_libs="$python_libs $libname"
 done
 
-@dtk_DIR@/bin/dtkDeploy MUSICardio.app $injectDirs &>/dev/null
+@dtk_ROOT@/bin/dtkDeploy MUSICardio.app $injectDirs &>/dev/null
 
 mkdir MUSICardio.app/Contents/Plugins/python
-for python_lib in $python_libs; do
-    mv MUSICardio.app/Contents/Plugins/$python_lib.dylib MUSICardio.app/Contents/Plugins/python/$python_lib.so
-done
+if [ -n "${python_libs}" ]
+then
+    for python_lib in $python_libs; do
+        mv MUSICardio.app/Contents/Plugins/$python_lib.dylib MUSICardio.app/Contents/Plugins/python/$python_lib.so
+    done
+fi
 
-@CMAKE_COMMAND@ -DCMAKE_INSTALL_PREFIX:STRING=MUSICardio.app/Contents/Resources -DCMAKE_INSTALL_COMPONENT:STRING=Python -P @pyncpp_DIR@/cmake_install.cmake
+@CMAKE_COMMAND@ --install @pyncpp_ROOT@ --prefix . --component Runtime
+mkdir MUSICardio.app/Contents/Resources/lib
+mv lib/python@PYTHON_VERSION_MAJOR@.@PYTHON_VERSION_MINOR@ MUSICardio.app/Contents/Resources/lib
 
 #Run fancy packaging apple script
 

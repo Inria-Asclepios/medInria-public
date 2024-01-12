@@ -71,7 +71,7 @@ ExternalProject_Add(${ep}
 ## #############################################################################
 ## Set variable to provide infos about the project
 ## #############################################################################
-set(${ep}_DIR ${build_path} PARENT_SCOPE)
+set(${ep}_ROOT ${build_path} PARENT_SCOPE)
 
 ## #############################################################################
 ## Add custom targets

@@ -50,6 +50,7 @@ set(cmake_args
     -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE_externals_projects}
     -DBUILD_MMG:BOOL=ON
     -DLIBMMG_SHARED:BOOL=${BUILD_SHARED_LIBS_${ep}}
+    -DUSE_ELAS:BOOL=OFF
     -DUSE_SCOTCH:BOOL=OFF
     -DUSE_VTK:BOOL=OFF
   )
@@ -57,30 +58,38 @@ set(cmake_args
 ## #############################################################################
 ## Add external-project
 ## #############################################################################
+
+ep_GeneratePatchCommand(${ep} ${ep}_PATCH_COMMAND mmg.patch)
+
 epComputPath(${ep})
 
 ExternalProject_Add(${ep}
   PREFIX ${EP_PATH_SOURCE}
   SOURCE_DIR ${EP_PATH_SOURCE}/${ep}
   BINARY_DIR ${build_path}
+  INSTALL_DIR ${build_path}
   TMP_DIR ${tmp_path}
   STAMP_DIR ${stamp_path}
-
   GIT_REPOSITORY ${git_url}
   GIT_TAG ${git_tag}
   CMAKE_GENERATOR ${gen}
   CMAKE_GENERATOR_PLATFORM ${CMAKE_GENERATOR_PLATFORM}
   CMAKE_ARGS ${cmake_args}
   DEPENDS ${${ep}_dependencies}
-  INSTALL_COMMAND ""
+  PATCH_COMMAND ${${ep}_PATCH_COMMAND}
   UPDATE_COMMAND ""
   )
+
+ExternalProject_Add_Step(${ep} post_install
+    DEPENDEES install
+    COMMAND ${CMAKE_COMMAND} -E rm "<BINARY_DIR>/mmgConfig.cmake"
+    )
 
 ## #############################################################################
 ## Set variable to provide infos about the project
 ## #############################################################################
-set(${ep}_INCDIR ${build_path}/include PARENT_SCOPE)
-set(${ep}_LIBDIR ${build_path}/lib PARENT_SCOPE)
+
+set(${ep}_ROOT ${build_path} PARENT_SCOPE)
 
 endif() #NOT USE_SYSTEM_ep
 

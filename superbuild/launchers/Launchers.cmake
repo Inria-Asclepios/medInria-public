@@ -23,19 +23,17 @@ foreach (dir ${PRIVATE_PLUGINS_LEGACY_DIRS})
 	set(DEV_PLUGINS_LEGACY_DIRS "${DEV_PLUGINS_LEGACY_DIRS}:${dir}/bin/plugins_legacy")
 endforeach()
 
-ExternalProject_Get_Property(medInria binary_dir)
-
 set(LOCATE "")
 set(MEDINRIA_DIR ${CMAKE_BINARY_DIR})
 
 if (APPLE)
-  set(MEDINRIA_BIN ${binary_dir}/bin/MUSICardio.app/Contents/MacOS/MUSICardio)
+  set(MEDINRIA_BIN ${medInria_DIR}/bin/MUSICardio.app/Contents/MacOS/MUSICardio)
 else()
-  set(MEDINRIA_BIN ${binary_dir}/bin/MUSICardio)
+  set(MEDINRIA_BIN ${medInria_DIR}/bin/MUSICardio)
 endif()
 
-set(MEDINRIA_PLUGINS_DIRS "${binary_dir}/bin/plugins:${DEV_PLUGINS_DIRS}")
-set(MEDINRIA_PLUGINS_LEGACY_DIRS "${binary_dir}/bin/plugins_legacy:${DEV_PLUGINS_LEGACY_DIRS}")
+set(MEDINRIA_PLUGINS_DIRS "${medInria_DIR}/bin/plugins:${DEV_PLUGINS_DIRS}")
+set(MEDINRIA_PLUGINS_LEGACY_DIRS "${medInria_DIR}/bin/plugins_legacy:${DEV_PLUGINS_LEGACY_DIRS}")
 
 configure_file(${CMAKE_CURRENT_LIST_DIR}/MUSICardio.sh.in ${CMAKE_BINARY_DIR}/MUSICardio.sh @ONLY)
 
