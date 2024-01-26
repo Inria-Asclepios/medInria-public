@@ -24,16 +24,16 @@ foreach (dir ${PRIVATE_PLUGINS_LEGACY_DIRS})
 endforeach()
 
 set(LOCATE "")
-set(MEDINRIA_DIR ${CMAKE_BINARY_DIR})
+set(MEDINRIA_DIR ${medInria_ROOT})
 
 if (APPLE)
-  set(MEDINRIA_BIN ${medInria_DIR}/bin/MUSICardio.app/Contents/MacOS/MUSICardio)
+  set(MEDINRIA_BIN ${medInria_ROOT}/bin/MUSICardio.app/Contents/MacOS/MUSICardio)
 else()
-  set(MEDINRIA_BIN ${medInria_DIR}/bin/MUSICardio)
+  set(MEDINRIA_BIN ${medInria_ROOT}/bin/MUSICardio)
 endif()
 
-set(MEDINRIA_PLUGINS_DIRS "${medInria_DIR}/bin/plugins:${DEV_PLUGINS_DIRS}")
-set(MEDINRIA_PLUGINS_LEGACY_DIRS "${medInria_DIR}/bin/plugins_legacy:${DEV_PLUGINS_LEGACY_DIRS}")
+set(MEDINRIA_PLUGINS_DIRS "${medInria_ROOT}/bin/plugins:${DEV_PLUGINS_DIRS}")
+set(MEDINRIA_PLUGINS_LEGACY_DIRS "${medInria_ROOT}/bin/plugins_legacy:${DEV_PLUGINS_LEGACY_DIRS}")
 
 configure_file(${CMAKE_CURRENT_LIST_DIR}/MUSICardio.sh.in ${CMAKE_BINARY_DIR}/MUSICardio.sh @ONLY)
 
