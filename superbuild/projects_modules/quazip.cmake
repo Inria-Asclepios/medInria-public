@@ -13,7 +13,8 @@ list(APPEND ${ep}_dependencies
 ## Prepare the project
 ## ############################################################################# 
 
-set(ZLIB_ROOT ${zlib_DIR})
+set(ZLIB_ROOT ${zlib_ROOT})
+set(QuaZip-Qt5_ROOT ${quazip_ROOT})
 
 EP_Initialisation(${ep}
   USE_SYSTEM OFF 

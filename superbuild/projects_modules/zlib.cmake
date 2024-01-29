@@ -9,7 +9,7 @@ function(zlib_project)
         USE_SYSTEM OFF
         BUILD_SHARED_LIBS ON
         REQUIRED_FOR_PLUGINS OFF
-        NO_FIND_PACKAGE
+        NO_CONFIG_FILE
         )
 
     if (NOT USE_SYSTEM_${external_project})

@@ -12,6 +12,8 @@ list(APPEND ${ep}_dependencies "")
 ## Prepare the project
 ############################################################################### 
 
+set(Eigen3_ROOT "${eigen_ROOT}")
+
 EP_Initialisation(${ep}
   USE_SYSTEM OFF 
   BUILD_SHARED_LIBS OFF

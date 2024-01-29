@@ -31,7 +31,7 @@ function(pyncpp_project)
 
         set(project_args
             GIT_REPOSITORY ${GITHUB_PREFIX}LIRYC-IHU/pyncpp.git
-            GIT_TAG origin/working
+            GIT_TAG working
             GIT_SHALLOW True
             GIT_PROGRESS True
             )
