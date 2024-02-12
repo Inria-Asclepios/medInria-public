@@ -9,7 +9,6 @@ It comes with an access from the scripts to Python.
 - Fix a freeze in PolygonROI toolbox if the user contours outside the image borders.
 - Stop some toolboxes compatible with 3D data if the user is using 4D data.
 - Small enhancement of the GUI of Histogram Analysis.
-- We now deliver Ubuntu 22.04 binaries.
 
 medInria 3.4:
 - Fix an incorrect zoom for some data displayed in a view. The zoom is now calculated with x and y dims, and not z
