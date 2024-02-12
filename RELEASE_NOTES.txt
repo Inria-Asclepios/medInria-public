@@ -1,4 +1,4 @@
-MUSICardio 3.4:
+MUSICardio 4.0:
 - Put back the Pipelines workspace.
 Check the Pipelines documentation to see if your scripts need to be updated: https://music-test.inria.fr/musicardio/ in Development menu, or you can ask the team to help you.
 Main change: in your script line "from medPipeline import *" change "medPipeline" to "mscPipeline".
