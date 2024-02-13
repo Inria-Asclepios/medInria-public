@@ -71,7 +71,7 @@ medApplication::medApplication(int & argc, char**argv) :
             break;
         }
     }
-    splashLogo = splashLogo.scaled(914, 147, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    splashLogo = splashLogo.scaled(719, 87, Qt::KeepAspectRatio, Qt::SmoothTransformation);
     d->splashScreen = new QSplashScreen(splashLogo,
                                         Qt::WindowStaysOnTopHint | Qt::X11BypassWindowManagerHint);
     d->splashScreen->setAttribute(Qt::WA_DeleteOnClose, true);

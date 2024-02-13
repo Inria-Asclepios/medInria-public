@@ -149,7 +149,7 @@ medHomepageArea::medHomepageArea ( QWidget * parent ) : QWidget ( parent ), d ( 
     }
 
     QPixmap medLogo(qssLogoName);
-    medLogo = medLogo.scaled(576, 121, Qt::KeepAspectRatio, Qt::SmoothTransformation);
+    medLogo = medLogo.scaled(527, 110, Qt::KeepAspectRatio, Qt::SmoothTransformation);
     medInriaLabel->setPixmap(medLogo);
 
     QDate expiryDate = QDate::fromString(QString(MEDINRIA_BUILD_DATE), "dd_MM_yyyy")
