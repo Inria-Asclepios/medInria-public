@@ -76,7 +76,9 @@ set(cmake_args
 ## #############################################################################
   
 if (WIN32 AND ${CMAKE_GENERATOR} STREQUAL "Visual Studio 16 2019")
-    ep_GeneratePatchCommand(${ep} ${ep}_PATCH_COMMAND ITK.patch)
+    ep_GeneratePatchCommand(${ep} ${ep}_PATCH_COMMAND ITK_Win.patch)
+elseif(APPLE)
+    ep_GeneratePatchCommand(${ep} ${ep}_PATCH_COMMAND ITK_Mac.patch)
 endif()
 
 ## #############################################################################
