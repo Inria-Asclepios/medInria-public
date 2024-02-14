@@ -40,6 +40,14 @@ if(USE_Python AND UNIX)
     find_package(OpenSSL COMPONENTS SSL)
 endif()
 
+if(USE_MUSIC_PLUGINS)
+    find_package(OpenMP REQUIRED)
+
+    if(NOT OpenMP_CXX_FOUND)
+        message(FATAL_ERROR "OpenMP not found. It may have to be manually installed, with OpenMP_ROOT set to the installation path.")
+    endif()
+endif()
+
 ## #############################################################################
 ## Add exteral projects
 ## #############################################################################

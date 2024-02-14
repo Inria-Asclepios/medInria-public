@@ -77,6 +77,12 @@ function(music_plugins_project)
               )
         endif()
 
+        if (OpenMP_ROOT)
+            list(APPEND cmake_args
+                -DOpenMP_ROOT:PATH=${OpenMP_ROOT}
+                )
+        endif()
+
         epComputPath(${external_project})
         ExternalProject_Add(${external_project}
             PREFIX ${EP_PATH_SOURCE}
