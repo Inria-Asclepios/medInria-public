@@ -3,7 +3,7 @@ MUSICardio 4.0:
 MUSICardio 4 provides its own embedded Python 3.10 interpreter. This facilitates the development of Python scripts and components within the application. 
 A Python console and plugin API will be added in an upcoming version. Contact us at music-dev@inria.fr to discuss how this Python integration can help you.
 Check the Pipelines documentation to see if your scripts need to be updated: https://music-test.inria.fr/musicardio/ in Development menu, or you can ask the team to help you.
-Main change: switch "medPipelineObjectWrapper import *" and "from medPipeline import *" to "from mscPipeline import *".
+Main change: switch "from medPipelineObjectWrapper import *" and "from medPipeline import *" to "from mscPipeline import *".
 - Toolboxes in the application have been updated to fit the new Pipelines system.
 - We worked on the stability of the application concerning database connections and memory leaks.
 - Fix Paint toolbox widgets when the user switches from Paint/Erase to Magic Wand or clear the view.
