@@ -177,6 +177,12 @@ if(USE_Python)
         BUILD_PYTHON_HOME="${pyncpp_PYTHON_DIR}"
         BUILD_PYTHON_PLUGIN_PATH="${CMAKE_BINARY_DIR}/bin/python_plugins"
         )
+
+    if(WIN32)
+        target_compile_definitions(${TARGET_NAME} PUBLIC
+            PLUGINS_LEGACY_PATH="plugins_legacy"
+            )
+    endif()
 endif()
 
 ## #############################################################################

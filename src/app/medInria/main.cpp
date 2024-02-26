@@ -162,7 +162,8 @@ int main(int argc,char* argv[])
 #ifdef USE_PYTHON
     pyncpp::Manager pythonManager;
     QString pythonHomePath = PYTHON_HOME;
-    QDir pythonHome = qApp->applicationDirPath();
+    QDir applicationPath = qApp->applicationDirPath();
+    QDir pythonHome = applicationPath;
     QDir pythonPluginPath = pythonHome;
     bool pythonHomeFound = false;
     bool pythonPluginsFound = false;
@@ -199,10 +200,28 @@ int main(int argc,char* argv[])
                 pyncpp::Module sysModule = pyncpp::Module::import("sys");
                 sysModule.attribute("path").append(pyncpp::Object(pythonPluginPath.absolutePath()));
                 qInfo() << "Added Python plugin path: " << pythonPluginPath.path();
+
+#ifdef Q_OS_WIN
+                pyncpp::Module osModule = pyncpp::Module::import("os");
+                osModule.callMethod("add_dll_directory", pyncpp::Object(applicationPath.absolutePath()));
+                qInfo() << "Added Python DLL path: " << applicationPath.path();
+
+                QDir pluginsLegacyPath = applicationPath;
+
+                if (pluginsLegacyPath.cd(PLUGINS_LEGACY_PATH))
+                {
+                    osModule.callMethod("add_dll_directory", pyncpp::Object(pluginsLegacyPath.absolutePath()));
+                    qInfo() << "Added Python DLL path: " << pluginsLegacyPath.path();
+                }
+                else
+                {
+                    pythonErrorMessage = "Could not find legacy plugins path.";
+                }
+#endif // Q_OS_WIN
             }
         }
     }
-#endif
+#endif // USE_PYTHON
 
     medPluginManager::instance().setVerboseLoading(true);
     medPluginManager::instance().initialize();
