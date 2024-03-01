@@ -197,27 +197,34 @@ int main(int argc,char* argv[])
         {
             if (pythonPluginsFound)
             {
-                pyncpp::Module sysModule = pyncpp::Module::import("sys");
-                sysModule.attribute("path").append(pyncpp::Object(pythonPluginPath.absolutePath()));
-                qInfo() << "Added Python plugin path: " << pythonPluginPath.path();
+                try
+                {
+                    pyncpp::Module sysModule = pyncpp::Module::import("sys");
+                    sysModule.attribute("path").append(pyncpp::Object(pythonPluginPath.absolutePath()));
+                    qInfo() << "Added Python plugin path: " << pythonPluginPath.path();
 
 #ifdef Q_OS_WIN
-                pyncpp::Module osModule = pyncpp::Module::import("os");
-                osModule.callMethod("add_dll_directory", pyncpp::Object(applicationPath.absolutePath()));
-                qInfo() << "Added Python DLL path: " << applicationPath.path();
+                    pyncpp::Module osModule = pyncpp::Module::import("os");
+                    osModule.callMethod("add_dll_directory", pyncpp::Object(applicationPath.absolutePath()));
+                    qInfo() << "Added Python DLL path: " << applicationPath.path();
 
-                QDir pluginsLegacyPath = applicationPath;
+                    QDir pluginsLegacyPath = applicationPath;
 
-                if (pluginsLegacyPath.cd(PLUGINS_LEGACY_PATH))
-                {
-                    osModule.callMethod("add_dll_directory", pyncpp::Object(pluginsLegacyPath.absolutePath()));
-                    qInfo() << "Added Python DLL path: " << pluginsLegacyPath.path();
-                }
-                else
-                {
-                    pythonErrorMessage = "Could not find legacy plugins path.";
-                }
+                    if (pluginsLegacyPath.cd(PLUGINS_LEGACY_PATH))
+                    {
+                        osModule.callMethod("add_dll_directory", pyncpp::Object(pluginsLegacyPath.absolutePath()));
+                        qInfo() << "Added Python DLL path: " << pluginsLegacyPath.path();
+                    }
+                    else
+                    {
+                        pythonErrorMessage = "Could not find legacy plugins path.";
+                    }
 #endif // Q_OS_WIN
+                }
+                catch (pyncpp::Exception& e)
+                {
+                    pythonErrorMessage = e.what();
+                }
             }
         }
     }
@@ -273,8 +280,8 @@ int main(int argc,char* argv[])
 #ifdef USE_PYTHON
     if(!pythonErrorMessage.isEmpty())
     {
-        QMessageBox::warning(mainwindow, "Python", pythonErrorMessage);
-        qWarning() << pythonErrorMessage;
+        QMessageBox::warning(mainwindow, "Python error", pythonErrorMessage);
+        qWarning() << "(Python error) " << pythonErrorMessage;
     }
 #endif
 
