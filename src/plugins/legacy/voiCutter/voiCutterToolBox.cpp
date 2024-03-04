@@ -77,22 +77,21 @@ public:
 
         vtkRenderWindowInteractor *iren = static_cast<medVtkViewBackend*>
                 (tb->d->currentView->backend())->renWin->GetInteractor();
-        char keycode = iren->GetKeyCode();
 
         // enter => keep only VOI defined
         // tab => restore VOI defined
         // backspace => delete VOI defined
-        switch(keycode)
+        if (iren->GetKeySym() == vtkStdString("Delete"))
         {
-            case '\b': // backspace
-                tb->launchTheCutting(Remove);
-                break;
-            case '\r': // return
-                tb->launchTheCutting(Keep);
-                break;
-            case '\t': // tab
-                tb->launchTheCutting(Restore);
-                break;
+            tb->launchTheCutting(Remove);
+        }
+        else if (iren->GetKeySym() == vtkStdString("Return"))
+        {
+            tb->launchTheCutting(Keep);
+        }
+        else if (iren->GetKeySym() == vtkStdString("Tab"))
+        {
+            tb->launchTheCutting(Restore);
         }
     }
 
@@ -404,11 +403,15 @@ void voiCutterToolBox::launchTheCutting(MODE m)
 {
     if (d->currentView && d->scissorOn)
     {
+        this->setToolBoxOnWaitStatusForNonRunnableProcess();
+
         vtkImageView3D *view3D =  static_cast<medVtkViewBackend*>(d->currentView->backend())->view3D;
         std::vector<vtkVector2i> polygonPoints = static_cast<vtkInriaInteractorStyleDrawPolygon*>(view3D->GetInteractor()->GetInteractorStyle())->GetPolygonPoints();
         definePolygonsImage(polygonPoints, m);
         d->interactorStyleDrawPolygon->ResetPolygon();
         view3D->GetInteractor()->SetInteractorStyle(d->interactorStyleDrawPolygon);
+
+        this->setToolBoxOnReadyToUse();
     }
 }
 
