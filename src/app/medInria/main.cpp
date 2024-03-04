@@ -205,14 +205,14 @@ int main(int argc,char* argv[])
 
 #ifdef Q_OS_WIN
                     pyncpp::Module osModule = pyncpp::Module::import("os");
-                    osModule.callMethod("add_dll_directory", pyncpp::Object(applicationPath.absolutePath()));
+                    osModule.callMethod("add_dll_directory", applicationPath.absolutePath());
                     qInfo() << "Added Python DLL path: " << applicationPath.path();
 
                     QDir pluginsLegacyPath = applicationPath;
 
                     if (pluginsLegacyPath.cd(PLUGINS_LEGACY_PATH))
                     {
-                        osModule.callMethod("add_dll_directory", pyncpp::Object(pluginsLegacyPath.absolutePath()));
+                        osModule.callMethod("add_dll_directory", pluginsLegacyPath.absolutePath());
                         qInfo() << "Added Python DLL path: " << pluginsLegacyPath.path();
                     }
                     else
