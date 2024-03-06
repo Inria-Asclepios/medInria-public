@@ -200,10 +200,22 @@ int main(int argc,char* argv[])
                 try
                 {
                     pyncpp::Module sysModule = pyncpp::Module::import("sys");
-                    sysModule.attribute("path").append(pyncpp::Object(pythonPluginPath.absolutePath()));
+                    pyncpp::Object sysPath = sysModule.attribute("path");
+                    sysPath.append(pyncpp::Object(pythonPluginPath.absolutePath()));
                     qInfo() << "Added Python plugin path: " << pythonPluginPath.path();
 
 #ifdef Q_OS_WIN
+                    QDir sitePackages = pythonHome;
+
+                    if (sitePackages.cd("lib/site-packages"))
+                    {
+                        sysPath.append(pyncpp::Object(sitePackages.absolutePath()));
+                    }
+                    else
+                    {
+                        pythonErrorMessage = "Cannot find site directory.";
+                    }
+
                     pyncpp::Module osModule = pyncpp::Module::import("os");
                     osModule.callMethod("add_dll_directory", applicationPath.absolutePath());
                     qInfo() << "Added Python DLL path: " << applicationPath.path();
@@ -280,8 +292,8 @@ int main(int argc,char* argv[])
 #ifdef USE_PYTHON
     if(!pythonErrorMessage.isEmpty())
     {
-        QMessageBox::warning(mainwindow, "Python error", pythonErrorMessage);
         qWarning() << "(Python error) " << pythonErrorMessage;
+        QMessageBox::warning(mainwindow, "Python error", pythonErrorMessage);
     }
 #endif
 
