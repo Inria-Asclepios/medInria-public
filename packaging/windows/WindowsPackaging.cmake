@@ -135,6 +135,7 @@ file(INSTALL ${MEDINRIA_FILES}/
     FILES_MATCHING
     PATTERN \"*${CMAKE_EXECUTABLE_SUFFIX}\"
     PATTERN \"*${CMAKE_SHARED_LIBRARY_SUFFIX}\"
+    PATTERN \"*.pyd\"
     )
 
 foreach(file \${files})
