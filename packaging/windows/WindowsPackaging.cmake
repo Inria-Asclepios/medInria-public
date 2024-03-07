@@ -130,15 +130,20 @@ list(APPEND files \${dcm_files})
 list(APPEND files \${qt5_files})
 list(APPEND files \${zlib_files})
 
+file(INSTALL ${MEDINRIA_FILES}/
+    DESTINATION \${CMAKE_INSTALL_PREFIX}/bin/
+    FILES_MATCHING
+    PATTERN \"*${CMAKE_EXECUTABLE_SUFFIX}\"
+    PATTERN \"*${CMAKE_SHARED_LIBRARY_SUFFIX}\"
+    )
+
 foreach(file \${files})
   get_filename_component(file2delete \${file} NAME)
-  if(EXISTS \"${MEDINRIA_FILES}/\${file2delete}\")
+  if(EXISTS \"\${CMAKE_INSTALL_PREFIX}/bin/\${file2delete}\")
     file(REMOVE \"${MEDINRIA_FILES}/\${file2delete}\")
   endif()
 endforeach()
 
-file(INSTALL ${MEDINRIA_FILES}/                         DESTINATION \${CMAKE_INSTALL_PREFIX}/bin/              FILES_MATCHING PATTERN \"*${CMAKE_EXECUTABLE_SUFFIX}\")
-file(INSTALL ${MEDINRIA_FILES}/                         DESTINATION \${CMAKE_INSTALL_PREFIX}/bin/              FILES_MATCHING PATTERN \"*${CMAKE_SHARED_LIBRARY_SUFFIX}\")
 file(INSTALL ${QT_PLUGINS_DIR}/imageformats/qgif.dll    DESTINATION \${CMAKE_INSTALL_PREFIX}/bin/imageformats/ FILES_MATCHING PATTERN \"*${CMAKE_SHARED_LIBRARY_SUFFIX}\")
 file(INSTALL ${QT_PLUGINS_DIR}/imageformats/qicns.dll   DESTINATION \${CMAKE_INSTALL_PREFIX}/bin/imageformats/ FILES_MATCHING PATTERN \"*${CMAKE_SHARED_LIBRARY_SUFFIX}\")
 file(INSTALL ${QT_PLUGINS_DIR}/imageformats/qico.dll    DESTINATION \${CMAKE_INSTALL_PREFIX}/bin/imageformats/ FILES_MATCHING PATTERN \"*${CMAKE_SHARED_LIBRARY_SUFFIX}\")
