@@ -241,8 +241,8 @@ void medClutEditorToolBox::initializeTable(void)
 
     medClutEditorTable *lut = new medClutEditorTable("Unknown");
     this->getScene()->addItem( lut );
-    connect (lut, SIGNAL(vertexMoving()), this, SLOT(onVertexMoved()));
-    connect (lut, SIGNAL(vertexSet()), this, SLOT(onVertexMoved()));
+    connect (lut, SIGNAL(vertexMoving()),  this, SLOT(onVertexMoved()));
+    connect (lut, SIGNAL(vertexSet()),     this, SLOT(onVertexMoved()));
     connect (lut, SIGNAL(vertexAdded()),   this, SLOT(onVertexMoved()));
     connect (lut, SIGNAL(vertexRemoved()), this, SLOT(onVertexMoved()));
 
@@ -278,6 +278,7 @@ void medClutEditorToolBox::applyTable(medAbstractView* view)
         clutTable->getTransferFunction(scalars, colors);
         this->setColorLookupTable(view, scalars, colors);
         view->viewWidget()->update();
+        view->render();
 
         //modifies the interpolation used before rendering (default=linear, set when setting VR),
         //Neareast-N does not create new values (good for histogram consistency)
