@@ -12,6 +12,24 @@
 ################################################################################
 
 ## #############################################################################
+## Options
+## #############################################################################
+
+option(USE_DTKIMAGING "Use DTK imaging layer" OFF )
+
+option(USE_OSPRay "Use OSPRay for CPU VR" OFF )
+
+option(USE_Python "Build with Python support" ON)
+
+option(USE_MUSIC_PLUGINS "Build MUSIC plugins" ON)
+
+option(USE_RealTimeWorkspace "Build the real time workspace and linked externals libraries" OFF)
+
+if (NOT WIN32)
+  option(USE_FFmpeg "Build with FFmpeg video export support" OFF)
+endif()
+
+## #############################################################################
 ## Add packages
 ## #############################################################################
 
@@ -61,16 +79,7 @@ endif()
 #   * otherwise use download and compile locally the package as an external 
 #     module.
 
-option(USE_DTKIMAGING "Use DTK imaging layer" OFF )
-
-option(USE_OSPRay "Use OSPRay for CPU VR" OFF )
-
-option(USE_Python "Build with Python support" ON)
-
-option(USE_MUSIC_PLUGINS "Build MUSIC plugins" ON)
-
 if (NOT WIN32)
-  option(USE_FFmpeg "Build with FFmpeg video export support" OFF)
   if (${USE_FFmpeg})
       list(APPEND external_projects ffmpeg)
   endif()
@@ -107,7 +116,6 @@ if(USE_MUSIC_PLUGINS)
 endif()
 
 # Realtime
-option(USE_RealTimeWorkspace "Build the real time workspace and linked externals libraries" OFF)
 if (${USE_RealTimeWorkspace})
     list(APPEND external_projects
         jsoncons
