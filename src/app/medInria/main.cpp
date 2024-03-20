@@ -289,14 +289,6 @@ int main(int argc,char* argv[])
        QGLFormat::setDefaultFormat(format);
     }
 
-#ifdef USE_PYTHON
-    if(!pythonErrorMessage.isEmpty())
-    {
-        qWarning() << "(Python error) " << pythonErrorMessage;
-        QMessageBox::warning(mainwindow, "Python error", pythonErrorMessage);
-    }
-#endif
-
     if (medPluginManager::instance().plugins().isEmpty()) {
         QMessageBox::warning(mainwindow,
                              QObject::tr("No plugin loaded"),
@@ -310,6 +302,31 @@ int main(int argc,char* argv[])
     application.setMainWindow(mainwindow);
 
     forceShow(*mainwindow);
+
+#ifdef USE_PYTHON
+    if(pythonErrorMessage.isEmpty())
+    {
+        try
+        {
+            pythonManager.createConsole();
+            pythonManager.setConsoleShortcut(PYTHON_CONSOLE_SHORTCUT);
+            QObject::connect(mainwindow, &QObject::destroyed, [&]() { pythonManager.deleteConsole(); });
+            qInfo() << QString("The Python console can be accessed with %1")
+                       .arg(QKeySequence(PYTHON_CONSOLE_SHORTCUT).toString(QKeySequence::NativeText));
+            QObject::connect(&application, &QApplication::aboutToQuit, [&]() { pythonManager.finalize(); });
+        }
+        catch (pyncpp::Exception& e)
+        {
+            pythonErrorMessage = e.what();
+        }
+    }
+
+    if(!pythonErrorMessage.isEmpty())
+    {
+        qWarning() << "(Python error) " << pythonErrorMessage;
+        QMessageBox::warning(mainwindow, "Python error", pythonErrorMessage);
+    }
+#endif
 
     qInfo() << "### Application is running...";
 

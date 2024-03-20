@@ -15,6 +15,8 @@
 
 set(TARGET_NAME MUSICardio)
 
+set(${PROJECT_NAME}_PYTHON_CONSOLE_SHORTCUT "Ctrl+Shift+P" CACHE STRING "Shortcut to display the Python console.")
+
 ## #############################################################################
 ## List Sources
 ## #############################################################################
@@ -176,6 +178,7 @@ if(USE_Python)
         PYTHON_PLUGIN_PATH="${python_plugin_path}"
         BUILD_PYTHON_HOME="${pyncpp_PYTHON_DIR}"
         BUILD_PYTHON_PLUGIN_PATH="${CMAKE_BINARY_DIR}/bin/python_plugins"
+        PYTHON_CONSOLE_SHORTCUT="${${PROJECT_NAME}_PYTHON_CONSOLE_SHORTCUT}"
         )
 
     if(WIN32)
