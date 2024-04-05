@@ -1,3 +1,6 @@
+MUSICardio 4.0.2:
+- Fix drawing problem in pipelines with custom step of PolygonROI.
+
 MUSICardio 4.0.1:
 - Fix Python module installation bug on macOS.
 - Fix Real Time compilation on Ubuntu/Fedora/macOS and Windows.
