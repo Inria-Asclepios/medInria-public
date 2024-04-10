@@ -138,14 +138,6 @@ file(INSTALL ${MEDINRIA_FILES}/
     PATTERN \"*.pyd\"
     )
 
-file(INSTALL ${MEDINRIA_FILES}/
-    DESTINATION \${CMAKE_INSTALL_PREFIX}/bin/
-    FILES_MATCHING
-    PATTERN \"*${CMAKE_EXECUTABLE_SUFFIX}\"
-    PATTERN \"*${CMAKE_SHARED_LIBRARY_SUFFIX}\"
-    PATTERN \"*.pyd\"
-    )
-
 foreach(file \${files})
   get_filename_component(file2delete \${file} NAME)
   if(EXISTS \"\${CMAKE_INSTALL_PREFIX}/bin/\${file2delete}\")
