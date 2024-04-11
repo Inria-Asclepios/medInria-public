@@ -14,11 +14,23 @@
 macro(ep_Initialisation ep)
 
 cmake_parse_arguments(ep_Initialisation
-    "NO_CONFIG_FILE"
+    "NO_CMAKE_PACKAGE"
     "USE_SYSTEM;BUILD_SHARED_LIBS;REQUIRED_FOR_PLUGINS;PACKAGE_NAME"
     ""
     ${ARGN}
     )
+
+if (NOT ep_Initialisation_USE_SYSTEM)
+    set(ep_Initialisation_USE_SYSTEM OFF)
+endif()
+
+if (NOT ep_Initialisation_BUILD_SHARED_LIBS)
+    set(ep_Initialisation_BUILD_SHARED_LIBS ON)
+endif()
+
+if (NOT ep_Initialisation_REQUIRED_FOR_PLUGINS)
+    set(ep_Initialisation_REQUIRED_FOR_PLUGINS OFF)
+endif()
 
 if (NOT ep_Initialisation_PACKAGE_NAME)
     set(ep_Initialisation_PACKAGE_NAME ${ep})
@@ -35,10 +47,8 @@ option(USE_SYSTEM_${ep}
 
 if (USE_SYSTEM_${ep})
 
-    if(NOT ep_Initialisation_NO_CONFIG_FILE)
-        find_package(${ep_Initialisation_PACKAGE_NAME} REQUIRED
-            PATH_SUFFIXES install build
-            )
+    if(NOT ep_Initialisation_NO_CMAKE_PACKAGE)
+        find_package(${ep_Initialisation_PACKAGE_NAME} REQUIRED)
 
 ## #############################################################################
 ## Complete superProjectConfig.cmake
@@ -61,28 +71,30 @@ else()
 ## ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 ## ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
   
-  if (ep_Initialisation_REQUIRED_FOR_PLUGINS)
-    if (DEFINED ${ep}_BINARY_DIR)
-      file(APPEND ${${PROJECT_NAME}_CONFIG_FILE}
-      "find_package(${ep_Initialisation_PACKAGE_NAME} REQUIRED
-        PATHS \"${${ep_Initialisation_PACKAGE_NAME}_BINARY_DIR}\"
-        PATH_SUFFIXES install build
-        )\n"
-      )
-    else()
-	  if(DEFINED EP_PATH_BUILD)
-	      set(build_dir ${EP_PATH_BUILD})
-	  else()
-	      set(build_dir "${EP_PATH_SOURCE}/${ep}-build" )
-	  endif()
-	  
-      file(APPEND ${${PROJECT_NAME}_CONFIG_FILE}
-        "find_package(${ep} REQUIRED
-          PATHS \"${build_dir}\" 
-          PATH_SUFFIXES install build
-          )\n"
-        )
-    endif()
+  if(NOT ep_Initialisation_NO_CMAKE_PACKAGE)
+      if (ep_Initialisation_REQUIRED_FOR_PLUGINS)
+          if (DEFINED ${ep}_BINARY_DIR)
+              file(APPEND ${${PROJECT_NAME}_CONFIG_FILE}
+                  "find_package(${ep_Initialisation_PACKAGE_NAME} REQUIRED
+                      PATHS \"${${ep_Initialisation_PACKAGE_NAME}_BINARY_DIR}\"
+                      PATH_SUFFIXES install build
+                      )\n"
+                  )
+          else()
+              if(DEFINED EP_PATH_BUILD)
+                  set(build_dir ${EP_PATH_BUILD})
+              else()
+                  set(build_dir "${EP_PATH_SOURCE}/${ep}-build" )
+              endif()
+
+              file(APPEND ${${PROJECT_NAME}_CONFIG_FILE}
+                  "find_package(${ep} REQUIRED
+                      PATHS \"${build_dir}\"
+                      PATH_SUFFIXES install build
+                      )\n"
+                  )
+          endif()
+      endif()
   endif()
 
 

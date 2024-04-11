@@ -94,15 +94,15 @@ if (USE_Python)
 endif()
 
 list(APPEND external_projects
-     VTK
-     ITK
-     RPI
-     TTK
-     DCMTK
-     QtDCM
-     dtk
-     LogDemons
-     )
+  VTK
+  ITK
+  RPI
+  TTK
+  DCMTK
+  QtDCM
+  dtk
+  LogDemons
+  )
 
 if(USE_MUSIC_PLUGINS)
     list(APPEND external_projects
@@ -165,10 +165,10 @@ set(medInria_BINARY_DIR ${CMAKE_BINARY_DIR}/medInria-build)
 ## #############################################################################
 
 set(CMAKE_MODULE_PATH
-    ${CMAKE_CURRENT_SOURCE_DIR}
-    ${CMAKE_CURRENT_SOURCE_DIR}/external_projects_tools
-    ${CMAKE_MODULE_PATH}
-    )
+  ${CMAKE_CURRENT_SOURCE_DIR}
+  ${CMAKE_CURRENT_SOURCE_DIR}/external_projects_tools
+  ${CMAKE_MODULE_PATH}
+  )
 
 option(USE_GITHUB_SSH 
        "Use by default Git SSH addresses, requires public key set on github" OFF
@@ -182,12 +182,12 @@ option(USE_GITLAB_INRIA_SSH
 # Asclepios and visages plugins
 set(${PROJECT_NAME}_CONFIG_FILE "${CMAKE_BINARY_DIR}/${PROJECT_NAME}Config.cmake")
 file(WRITE ${${PROJECT_NAME}_CONFIG_FILE}
-     "set(CMAKE_MODULE_PATH
-     ${CMAKE_MODULE_PATH}
-     \${CMAKE_MODULE_PATH}
-     )\n\n
-set(USE_GITHUB_SSH ${USE_GITHUB_SSH})\n"
-)
+  "set(CMAKE_MODULE_PATH
+    ${CMAKE_MODULE_PATH}
+    \${CMAKE_MODULE_PATH}
+    )\n\n
+    set(USE_GITHUB_SSH ${USE_GITHUB_SSH})\n"
+  )
 
 # Add CMAKE_MODULE_PATH to superProjectConfig.cmake, usefull for 
 # Asclepios and visages plugins
@@ -213,9 +213,9 @@ set(PRIVATE_PLUGINS_LEGACY_DIRS "" CACHE PATH "Folders containing legacy private
 ## #############################################################################
 
 set(global_targets 
-    configure
-    install
-    )
+  configure
+  install
+  )
 
 # This adds targets that will be run in each external-projects
 set_property(DIRECTORY PROPERTY EP_STEP_TARGETS ${global_targets})
