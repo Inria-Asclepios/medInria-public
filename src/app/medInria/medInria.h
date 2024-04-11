@@ -1,3 +1,4 @@
+#pragma once
 /*=========================================================================
 
  medInria
@@ -11,9 +12,6 @@
 
 =========================================================================*/
 
-#include "medInria.h"
+#include "medInriaExport.h"
 
-int main(int argc, char* argv[])
-{
-    return run(argc, argv);
-}
+MEDINRIA_EXPORT int run(int argc,char* argv[]);

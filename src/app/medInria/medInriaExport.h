@@ -1,3 +1,4 @@
+#pragma once
 /*=========================================================================
 
  medInria
@@ -11,9 +12,12 @@
 
 =========================================================================*/
 
-#include "medInria.h"
-
-int main(int argc, char* argv[])
-{
-    return run(argc, argv);
-}
+#ifdef WIN32
+    #ifdef medInria_EXPORTS
+        #define MEDINRIA_EXPORT __declspec(dllexport)
+    #else
+        #define MEDINRIA_EXPORT __declspec(dllimport)
+    #endif
+#else
+    #define MEDINRIA_EXPORT
+#endif
