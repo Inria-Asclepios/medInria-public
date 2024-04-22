@@ -103,15 +103,11 @@ if (WIN32)
 endif()
 
 ## #############################################################################
-## Add Exe
+## Add targets
 ## #############################################################################
 
 add_executable(${TARGET_NAME} ${DEPLOYMENT_SYSTEM} # Empty for Linux
-  ${${TARGET_NAME}_CFILES}
-  ${${TARGET_NAME}_QRC}
-  ${${TARGET_NAME}_QSS} # Just to have it in EDI
-  ${${TARGET_NAME}_RC}  # Empty for Unix
-  ${${TARGET_NAME}_HTML}
+    main.cpp
   )
 
 if (APPLE)
@@ -119,11 +115,21 @@ if (APPLE)
   import_external_resources(${TARGET_NAME} FILES "${CMAKE_CURRENT_SOURCE_DIR}/resources/${TARGET_NAME}.icns")
 endif()
 
+add_library(${TARGET_NAME}_LIBRARY
+  ${${TARGET_NAME}_CFILES}
+  ${${TARGET_NAME}_QRC}
+  ${${TARGET_NAME}_QSS} # Just to have it in EDI
+  ${${TARGET_NAME}_RC}  # Empty for Unix
+  ${${TARGET_NAME}_HTML}
+  )
+
+set_target_properties(${TARGET_NAME}_LIBRARY PROPERTIES OUTPUT_NAME "${PROJECT_NAME}")
+
 ## #############################################################################
 ## include directorie.
 ## #############################################################################
 
-target_include_directories(${TARGET_NAME}
+target_include_directories(${TARGET_NAME}_LIBRARY
   PRIVATE ${${TARGET_NAME}_INCLUDE_DIRS}
   ${Boost_INCLUDE_DIR}
   )
@@ -134,6 +140,10 @@ target_include_directories(${TARGET_NAME}
 ## #############################################################################
 
 target_link_libraries(${TARGET_NAME}
+    ${TARGET_NAME}_LIBRARY
+    )
+
+target_link_libraries(${TARGET_NAME}_LIBRARY
   Qt5::Core
   Qt5::Widgets
   Qt5::Gui
@@ -154,7 +164,7 @@ target_link_libraries(${TARGET_NAME}
 ## #############################################################################
 
 if(USE_Python)
-    target_link_libraries(${TARGET_NAME} ${pyncpp_CPP_API_LIBRARY})
+    target_link_libraries(${TARGET_NAME}_LIBRARY ${pyncpp_CPP_API_LIBRARY})
 
     if(APPLE)
         set(python_home "../Resources")
@@ -170,7 +180,7 @@ if(USE_Python)
         set(python_plugin_path "python_plugins")
     endif()
 
-    target_compile_definitions(${TARGET_NAME} PUBLIC
+    target_compile_definitions(${TARGET_NAME}_LIBRARY PUBLIC
         USE_PYTHON
         PYTHON_HOME="${python_home}"
         PYTHON_PLUGIN_PATH="${python_plugin_path}"
@@ -179,7 +189,7 @@ if(USE_Python)
         )
 
     if(WIN32)
-        target_compile_definitions(${TARGET_NAME} PUBLIC
+        target_compile_definitions(${TARGET_NAME}_LIBRARY PUBLIC
             PLUGINS_LEGACY_PATH="plugins_legacy"
             )
     endif()
@@ -191,3 +201,4 @@ endif()
 
 ## see cmake/module/set_lib_install_rules.Cmake
 set_exe_install_rules(${TARGET_NAME})
+set_lib_install_rules(${TARGET_NAME}_LIBRARY)
