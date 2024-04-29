@@ -1,3 +1,6 @@
+MUSICardio 4.1.0:
+- Switch to Ubuntu 22.
+
 MUSICardio 4.0.2:
 - Fix drawing problem in pipelines with custom step of PolygonROI.
 
