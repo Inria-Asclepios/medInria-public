@@ -1,6 +1,8 @@
-MUSICardio 4.1.0:
+MUSICardio 4.0.3:
 - Switch to Ubuntu 22.
 - PolygonROI: update icons, fix a glitch when users change ROI label, hide label panel in pipelines.
+- Histogram Analysis: enhance memory management and remove useless computation.
+- Pipelines: correct arithmetic filters computation. 
 
 MUSICardio 4.0.2:
 - Fix drawing problem in pipelines with custom step of PolygonROI.
