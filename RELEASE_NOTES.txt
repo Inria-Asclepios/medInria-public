@@ -1,3 +1,6 @@
+MUSICardio 4.0.4:
+- Fix some plugins wrongly loaded on Windows.
+
 MUSICardio 4.0.3:
 - Switch to Ubuntu 22.
 - PolygonROI: update icons, fix a glitch when users change ROI label, hide label panel in pipelines.
