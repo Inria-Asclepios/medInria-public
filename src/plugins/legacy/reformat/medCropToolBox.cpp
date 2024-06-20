@@ -49,12 +49,15 @@ public:
     vtkImageView3D *view3D;
     QPushButton *applyButton;
     QPushButton *saveButton;
+    QPushButton *resetButton;
     vtkSmartPointer<vtkBorderWidget> borderWidget;
     int currentOrientation;
     QList<dtkSmartPointer<medAbstractData> > outputData;
     vtkSmartPointer<medCropCallback> cropCallback;
     vtkMatrix4x4 *orientationMatrix;
     vtkSmartPointer<vtkMatrix4x4> inverseOrientationMatrix;
+    double minInitialPositionBox[3];
+    double maxInitialPositionBox[3];
 
     void updateBorderWidgetIfVisible();
     void updateCurrentOrientation();
@@ -70,6 +73,7 @@ public:
     template <typename ImageType> int extractCroppedImage(medAbstractData *input, int *minIndices, int *maxIndices, medAbstractData **output);
     void replaceViewWithOutputData(medAbstractWorkspaceLegacy &workspace);
     void importOutput();
+    void saveInitialBoxPlace(double minBoxCorner[3], double maxBoxCorner[3]);
 };
 
 class medCropCallback : public vtkCommand
@@ -137,6 +141,12 @@ medCropToolBox::medCropToolBox(QWidget* parent)
     cropToolBoxLayout->addWidget(d->saveButton);
     connect(d->saveButton, SIGNAL(clicked()), this, SLOT(saveCrop()));
 
+    d->resetButton = new QPushButton("Reset Box", this);
+    d->resetButton->setToolTip("Reset the cropping box");
+    d->resetButton->setObjectName("ResetBox");
+    cropToolBoxLayout->addWidget(d->resetButton);
+    connect(d->resetButton, &QPushButton::clicked, this, &medCropToolBox::resetBoxPlace);
+
     d->cropCallback = vtkSmartPointer<medCropCallback>::New();
     d->cropCallback->toolBox = this;
 
@@ -144,6 +154,8 @@ medCropToolBox::medCropToolBox(QWidget* parent)
     d->view2D = nullptr;
     d->view3D = nullptr;
     enableButtons(false);
+
+    initializeBoxPlace();
 }
 
 medCropToolBox::~medCropToolBox()
@@ -201,6 +213,7 @@ void medCropToolBox::updateView()
             }
         }
 
+        bool isNewData = false;
         if (view != d->view)
         {
             d->view = view;
@@ -221,8 +234,22 @@ void medCropToolBox::updateView()
             d->view2D->GetInteractorStyle()->AddObserver(vtkImageView2DCommand::CameraMoveEvent, d->cropCallback);
 
             enableButtons(true);
+
+            isNewData = true;
         }
+
         d->updateBorderWidgetIfVisible();
+
+        if (isNewData)
+        {
+            // After "Apply" on a data, the output is put in the view,
+            // we need to reset the initial box.
+            if(d->minInitialPositionBox[0] != -1)
+            {
+                initializeBoxPlace();
+                d->updateBoxWidgetFromBorderWidget();
+            }
+        }
 
         // do not allow to split the container
         currentContainer->setUserSplittable(false);
@@ -240,6 +267,7 @@ void medCropToolBox::enableButtons(bool wantToEnable)
 {
     d->applyButton->setEnabled(wantToEnable);
     d->saveButton->setEnabled(wantToEnable);
+    d->resetButton->setEnabled(wantToEnable);
 }
 
 void medCropToolBox::applyCrop()
@@ -273,6 +301,7 @@ void medCropToolBox::showEvent(QShowEvent *event)
 {
     medAbstractSelectableToolBox::showEvent(event);
     setEnable(true);
+    resetBoxPlace();
 }
 
 void medCropToolBox::clear()
@@ -297,6 +326,38 @@ void medCropToolBox::setEnable(bool enable)
         {
             d->borderWidget->GetCurrentRenderer()->GetRenderWindow()->Render();
         }
+    }
+}
+
+void medCropToolBox::initializeBoxPlace()
+{
+    for (int i = 0; i < 3; ++i)
+    {
+        d->minInitialPositionBox[i] = -1;
+        d->maxInitialPositionBox[i] = -1;
+    }
+}
+
+void medCropToolBoxPrivate::saveInitialBoxPlace(double minBoxCorner[3], double maxBoxCorner[3])
+{
+    if(minInitialPositionBox[0] == -1)
+    {
+        for (int i = 0; i < 3; ++i)
+        {
+            minInitialPositionBox[i] = minBoxCorner[i];
+            maxInitialPositionBox[i] = maxBoxCorner[i];
+        }
+    }
+}
+
+void medCropToolBox::resetBoxPlace()
+{
+    if(d->view3D && d->borderWidget && (d->minInitialPositionBox[0] != -1))
+    {
+        d->view3D->GetBoxWidget()->PlaceWidget(d->minInitialPositionBox[0], d->maxInitialPositionBox[0], 
+                                            d->minInitialPositionBox[1], d->maxInitialPositionBox[1],
+                                            d->minInitialPositionBox[2], d->maxInitialPositionBox[2]);
+        d->updateBorderWidgetIfVisible();
     }
 }
 
@@ -343,6 +404,8 @@ void medCropToolBoxPrivate::updateBoxWidgetFromBorderWidget()
 
     adjustBoxCornersToAnnulPlaceFactor(maxBoxCorner, minBoxCorner);
     view3D->GetBoxWidget()->PlaceWidget(minBoxCorner[0], maxBoxCorner[0], minBoxCorner[1], maxBoxCorner[1], minBoxCorner[2], maxBoxCorner[2]);
+
+    saveInitialBoxPlace(minBoxCorner, maxBoxCorner);
 }
 
 void medCropToolBoxPrivate::adjustBoxCornersToAnnulPlaceFactor(double *maxBoxCorner, double *minBoxCorner)
