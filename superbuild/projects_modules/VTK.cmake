@@ -43,7 +43,7 @@ if (NOT USE_SYSTEM_${ep})
 ## #############################################################################
 
 set(git_url ${GITHUB_PREFIX}Kitware/VTK.git)
-set(git_tag v8.1.2)
+set(git_tag v9.2.6)
 
 
 ## #############################################################################
@@ -72,15 +72,14 @@ set(cmake_args
   -DCMAKE_SHARED_LINKER_FLAGS=${${ep}_shared_linker_flags}  
   -DCMAKE_INSTALL_PREFIX=<INSTALL_DIR>  
   -DBUILD_SHARED_LIBS=${BUILD_SHARED_LIBS_${ep}}
-  -DBUILD_TESTING=OFF
-  -DBUILD_DOCUMENTATION=OFF
-  -DBUILD_EXAMPLES=OFF
+  -DVTK_BUILD_TESTING=OFF
+  -DVTK_BUILD_DOCUMENTATION=OFF
+  -DVTK_BUILD_EXAMPLES=OFF
   -DVTK_RENDERING_BACKEND=OpenGL2
-  -DVTK_Group_Qt=ON
-  -DModule_vtkGUISupportQtOpenGL=ON
-  -DModule_vtkRenderingOSPRay:BOOL=${USE_OSPRay}
   -DVTK_QT_VERSION=5
-  -DVTK_USE_OGGTHEORA_ENCODER:BOOL=ON # OGV Export
+  -DVTK_MODULE_ENABLE_VTK_GUISupportQt=YES
+  -DVTK_MODULE_ENABLE_VTK_RenderingQt=YES
+  -DVTK_USE_OGGTHEORA_ENCODER:BOOL=ON
   )
   
 set(cmake_cache_args
@@ -89,6 +88,7 @@ set(cmake_cache_args
 
 if(USE_OSPRay)
     list(APPEND cmake_args
+        -DVTK_MODULE_ENABLE_VTK_RenderingOSPRay=YES
         -Dospray_DIR=${ospray_DIR}
         -DOSPRAY_INSTALL_DIR=${OSPRAY_INSTALL_DIR}
     )
@@ -98,7 +98,7 @@ endif()
 if(${USE_FFmpeg})
     list(APPEND cmake_args
         # FFMPEG
-        -DModule_vtkIOFFMPEG:BOOL=ON
+        -DVTK_MODULE_ENABLE_VTK_IOFFMPEG=YES
         -DFFMPEG_ROOT:STRING=${EP_PATH_BUILD}/ffmpeg
         -DFFMPEG_INCLUDE_DIR:STRING=${EP_PATH_BUILD}/ffmpeg/include/
 
@@ -134,18 +134,12 @@ if(USE_Python)
         -DVTK_WRAP_PYTHON:BOOL=ON
         -DModule_vtkPython:BOOL=ON
         -DModule_vtkWrappingTools:BOOL=ON
-        -DVTK_PYTHON_VERSION:STRING=${python_version}
+        -DVTK_PYTHON_VERSION:STRING=${PYTHON_VERSION_MAJOR}
         -DPYTHON_EXECUTABLE:PATH=${python_executable}
         -DPYTHON_INCLUDE_DIR:PATH=${python_include}
         -DPYTHON_LIBRARY:PATH=${python_library}
         )
 endif()
-
-## #############################################################################
-## Check if patch has to be applied
-## #############################################################################
-
-ep_GeneratePatchCommand(${ep} ${ep}_PATCH_COMMAND VTK.patch)
 
 ## #############################################################################
 ## Add external-project
@@ -170,7 +164,6 @@ ExternalProject_Add(${ep}
   DEPENDS ${${ep}_dependencies}
   INSTALL_COMMAND ""
   )
-  
 ## #############################################################################
 ## Set variable to provide infos about the project
 ## #############################################################################
