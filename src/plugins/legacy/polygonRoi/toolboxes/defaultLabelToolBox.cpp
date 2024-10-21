@@ -24,6 +24,7 @@ defaultLabelToolBox::defaultLabelToolBox(QWidget *parent):
 
     auto widget = new QWidget();
     auto layout = new QVBoxLayout;
+    layout->setContentsMargins(0, 0, 0, 0);
     widget->setLayout(layout);
 
     dataName = new QLabel("No Data");

@@ -1,3 +1,6 @@
+MUSICardio 4.0.6:
+- PolygonROI: remove shift-click to draw, fix contrast after deactivation of repulsor and hide deactivated widgets.
+
 MUSICardio 4.0.5:
 - Allow to use data with different size or spacing in LCCLogDemons and DiffeomorphicDemons.
 - Manual Registration: enhance landmark numbers for better user understanding.
