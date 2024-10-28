@@ -280,12 +280,21 @@ dtkPlugin* voiCutterToolBox::plugin()
     return medPluginManager::instance().plugin("VOI Cutter");
 }
 
+/**
+ * @brief Return cropped data if VOI Cutter has been used or initial data, or nullptr if no data is found.
+ * 
+ * @return medAbstractData* 
+ */
 medAbstractData *voiCutterToolBox::processOutput()
 {
     if (d->resultData)
     {
         fillOutputMetaData();
         return d->resultData;
+    }
+    else if (d->currentView)
+    {
+        return d->currentView->layerData(d->currentView->currentLayer());
     }
     return nullptr;
 }
