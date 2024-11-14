@@ -9,7 +9,7 @@ function(ZLIB_project)
         USE_SYSTEM OFF
         BUILD_SHARED_LIBS ON
         REQUIRED_FOR_PLUGINS OFF
-        NO_CONFIG_FILE
+        NO_CMAKE_PACKAGE
         )
 
     if (NOT USE_SYSTEM_${external_project})
