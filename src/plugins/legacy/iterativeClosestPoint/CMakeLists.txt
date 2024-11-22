@@ -36,7 +36,8 @@ include_directories(${dtk_INCLUDE_DIRS})
 find_package(ITK REQUIRED COMPONENTS ITKCommon)
 include(${ITK_USE_FILE})
 
-find_package(VTK REQUIRED COMPONENTS CommonCore CommonDataModel FiltersGeneral)
+find_package(VTK REQUIRED COMPONENTS vtkCommonCore vtkCommonDataModel vtkFiltersGeneral)
+include(${VTK_USE_FILE})
 
 ## #############################################################################
 ## List Sources
@@ -73,13 +74,11 @@ add_library(${TARGET_NAME} SHARED
 
 target_link_libraries(${TARGET_NAME}
   ${QT_LIBRARIES}
+  ${VTK_LIBRARIES}
   medCore
   medVtkInria
   medUtilities
-  ${VTK_LIBRARIES}
   )
-
-vtk_module_autoinit(TARGETS ${TARGET_NAME} MODULES ${VTK_LIBRARIES})
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 

@@ -141,9 +141,10 @@ ExternalProject_Add(${ep}
 ## #############################################################################
 
 if (WIN32)
+  file(REAL_PATH ${TTK_DIR}/../../../ _TTK_DIR)
   file(TO_NATIVE_PATH ${ITK_ROOT}                ITK_BIN_BASE)
   file(TO_NATIVE_PATH ${VTK_ROOT}                VTK_BIN_BASE)
-  file(TO_NATIVE_PATH ${TTK_ROOT}                TTK_BIN_BASE)
+  file(TO_NATIVE_PATH ${_TTK_DIR}                TTK_BIN_BASE)
   file(TO_NATIVE_PATH ${dtk_ROOT}                DTK_BIN_BASE)
   file(TO_NATIVE_PATH ${QtDCM_ROOT}              DCM_BIN_BASE)
   file(TO_NATIVE_PATH ${_qt5Core_install_prefix} QT5_BIN_BASE)

@@ -22,8 +22,9 @@ set(TARGET_NAME medVtkDataMeshBase)
 find_package(dtk REQUIRED)
 include_directories(${dtk_INCLUDE_DIRS})
 
-find_package(VTK REQUIRED COMPONENTS CommonCore CommonDataModel RenderingCore RenderingVolumeOpenGL2 
-  InteractionStyle InteractionWidgets IOParallelXML IOImage IOGeometry IOExport RenderingContext2D IOInfovis)
+
+find_package(VTK REQUIRED COMPONENTS vtkCommonCore vtkCommonDataModel vtkRenderingCore vtkRenderingVolumeOpenGL2 vtkInteractionStyle vtkInteractionWidgets vtkIOParallelXML vtkIOImage vtkIOGeometry  vtkIOExport vtkRenderingContext2D vtkIOInfovis)
+include(${VTK_USE_FILE})
 
 find_package(ITK REQUIRED COMPONENTS ITKCommon)
 include(${ITK_USE_FILE})
@@ -62,13 +63,12 @@ target_include_directories(${TARGET_NAME}
 ## #############################################################################
 
 target_link_libraries(${TARGET_NAME}
-  ${VTK_LIBRARIES}
+  vtkIOInfovis
   medCore
   medLog
   medVtkInria
   )
 
-vtk_module_autoinit(TARGETS ${TARGET_NAME} MODULES ${VTK_LIBRARIES})
 
 ## #############################################################################
 ## install

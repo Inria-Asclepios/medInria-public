@@ -6,7 +6,8 @@ set(TARGET_NAME ttkTensorScalarMapsProcessPlugin)
 
 find_package(TTK REQUIRED COMPONENTS ITKTensor ttkAlgorithms)
 
-find_package(VTK REQUIRED COMPONENTS RenderingCore)
+find_package(VTK REQUIRED COMPONENTS vtkRenderingCore)
+include(${VTK_USE_FILE})
 
 find_package(ITK REQUIRED COMPONENTS ITKCommon)
 include(${ITK_USE_FILE})
@@ -57,10 +58,8 @@ target_link_libraries(${TARGET_NAME}
   medCoreLegacy
   medVtkInria
   medWidgets
-  VTK::RenderingCore
+  vtkRenderingCore
   )
-
-vtk_module_autoinit(TARGETS ${TARGET_NAME} MODULES ${VTK_LIBRARIES})
 
 ## #################################################################
 ## Install rules

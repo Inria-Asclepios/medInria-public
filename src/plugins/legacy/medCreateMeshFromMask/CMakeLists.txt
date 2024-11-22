@@ -36,7 +36,8 @@ include_directories(${dtk_INCLUDE_DIRS})
 find_package(ITK REQUIRED COMPONENTS ITKCommon ITKVtkGlue)
 include(${ITK_USE_FILE})
 
-find_package(VTK REQUIRED COMPONENTS CommonCore)
+find_package(VTK REQUIRED COMPONENTS vtkCommonCore)
+include(${VTK_USE_FILE})
 
 ## #############################################################################
 ## List Sources
@@ -77,7 +78,6 @@ target_link_libraries(${TARGET_NAME}
   medVtkInria
   medUtilities
   ITKVtkGlue
-  VTK::CommonCore
   )
 
 set(CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)

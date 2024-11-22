@@ -115,7 +115,7 @@ medDiffusionSelectorToolBox::medDiffusionSelectorToolBox(QWidget *parent, Select
 
         case Tractography:
         default:
-            labelTitle = tr("Tractography");
+            labelTitle = tr("Tractography algorithm");
             for(QString pluginKey : medCore::tractography::pluginFactory().keys())
             {
                 medAbstractProcess *process = medCore::tractography::pluginFactory().create(pluginKey);

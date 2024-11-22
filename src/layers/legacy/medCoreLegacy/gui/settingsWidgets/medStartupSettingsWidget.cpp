@@ -24,11 +24,23 @@
 class medStartupSettingsWidgetPrivate
 {
 public:
+    QWidget *parent;
     QCheckBox *startInFullScreen;
     QComboBox *defaultStartingArea;
     QComboBox* theme;
     QComboBox *defaultSegmentationSpeciality;
+
+    medStartupSettingsWidgetPrivate();
+    ~medStartupSettingsWidgetPrivate();
 };
+
+medStartupSettingsWidgetPrivate::medStartupSettingsWidgetPrivate()
+{
+}
+
+medStartupSettingsWidgetPrivate::~medStartupSettingsWidgetPrivate()
+{
+}
 
 medStartupSettingsWidget::medStartupSettingsWidget(QWidget *parent) : medSettingsWidget(parent), d(new medStartupSettingsWidgetPrivate())
 {

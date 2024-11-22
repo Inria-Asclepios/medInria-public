@@ -40,9 +40,9 @@ include_directories(${${PROJECT_NAME}_INCLUDE_DIRS}
 ## Add definitions
 ## #############################################################################
 
-add_definitions("-DCMAKE_DTK_DIR=\"${dtk_ROOT}\""
-  "-DCMAKE_ITK_DIR=\"${ITK_ROOT}\""
-  "-DCMAKE_RPI_DIR=\"${RPI_ROOT}\""
+add_definitions("-DCMAKE_DTK_DIR=\"${dtk_DIR}\""
+  "-DCMAKE_ITK_DIR=\"${ITK_DIR}\""
+  "-DCMAKE_RPI_DIR=\"${RPI_DIR}\""
   "-DCMAKE_BINARY_DIR=\"${CMAKE_BINARY_DIR}\""
   )
 

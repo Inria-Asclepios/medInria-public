@@ -12,7 +12,6 @@ PURPOSE.
 
 =========================================================================*/
 
-
 #include "resliceToolBox.h"
 
 #include <medAbstractView.h>
@@ -22,7 +21,7 @@ PURPOSE.
 
 #include <itkImage.h>
 
-#include <QVTKOpenGLNativeWidget.h>
+#include <QVTKOpenGLWidget.h>
 
 #include <vtkImagePlaneWidget.h>
 #include <vtkResliceImageViewer.h>
@@ -54,6 +53,11 @@ public:
 public slots:
 
     virtual void thickMode(int);
+    virtual void blendMode(int);
+    virtual void SetBlendModeToMaxIP();
+    virtual void SetBlendModeToMinIP();
+    virtual void SetBlendModeToMeanIP();
+    virtual void SetBlendMode(int);
     virtual void reset();
     virtual void resetViews();
     virtual void render();
@@ -79,7 +83,7 @@ protected:
     vtkSmartPointer<vtkImagePlaneWidget> planeWidget[3];
     double planeNormal[3][3];
     QWidget *viewBody;
-    QVTKOpenGLNativeWidget *views[4];
+    QVTKOpenGLWidget *views[4];
     dtkSmartPointer<medAbstractData> inputData;
     std::array<double, 3> outputSpacingOrSize;
     unsigned char selectedView;

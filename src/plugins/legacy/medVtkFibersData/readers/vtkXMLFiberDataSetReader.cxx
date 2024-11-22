@@ -26,7 +26,6 @@
 #include "vtkInformationVector.h"
 #include <vtkVector.h>
 #include <vtkCellData.h>
-#include <vtkUnsignedCharArray.h>
 
 vtkStandardNewMacro(vtkXMLFiberDataSetReader);
 
