@@ -48,6 +48,8 @@ public:
                                 const QUuid &uuid);
     ~medAbstractDatabaseImporter() override;
 
+    medDataIndex index(void) const;
+
 signals:
     /**
      * This signal is emitted after a successful import/index.
@@ -74,7 +76,6 @@ protected:
     bool indexWithoutImporting ( void );
     QMap<int, QString> volumeIdToImageFile ( void );
     QString callerUuid ( void );
-    medDataIndex index(void) const;
 
     void populateMissingMetadata ( medAbstractData* medData, const QString seriesDescription );
     void addAdditionalMetaData ( medAbstractData* imData, QString aggregatedFileName, QStringList aggregatedFilesPaths );
