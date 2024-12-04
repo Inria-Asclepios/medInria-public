@@ -203,6 +203,7 @@ medAbstractData* medDatabaseReader::run()
     QFileInfo fullThumbnailPathInfo(fullThumbnailPath);
     medMetaDataKeys::SeriesThumbnail.add (medData, fullThumbnailPath);
 
+    medMetaDataKeys::FilePaths.set ( medData, seriesPath );
     medMetaDataKeys::PatientID.set ( medData, patientId );
     medMetaDataKeys::PatientName.set ( medData, patientName );
     medMetaDataKeys::BirthDate.set ( medData, birthdate );

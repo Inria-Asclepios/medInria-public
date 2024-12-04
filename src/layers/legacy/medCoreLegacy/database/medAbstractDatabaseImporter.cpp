@@ -514,6 +514,7 @@ void medAbstractDatabaseImporter::importData()
 
     // Now, populate the database
     medDataIndex index = this->populateDatabaseAndGenerateThumbnails (  d->data, thumb_dir );
+    d->index = index;
 
     if (d->data->hasMetaData(medMetaDataKeys::Toolbox.key()) &&
     d->data->metadata(medMetaDataKeys::Toolbox.key())=="PolygonROI" &&

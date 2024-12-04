@@ -80,6 +80,8 @@ void medDatabasePersistentControllerPrivate::buildMetaDataLookup()
     metaDataLookup.insert(medMetaDataKeys::StudyDate.key(),
                           TableEntryList() << TableEntry(T_study, "date"));
     // Series Data
+    metaDataLookup.insert(medMetaDataKeys::FilePaths.key(),
+                          TableEntryList() << TableEntry(T_series, "path"));
     metaDataLookup.insert(medMetaDataKeys::Size.key(),
                           TableEntryList() << TableEntry(T_series, "size"));
     metaDataLookup.insert(medMetaDataKeys::SeriesDescription.key(),
