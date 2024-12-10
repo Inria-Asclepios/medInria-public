@@ -5,6 +5,7 @@ MUSICardio 4.0.6:
     * put back the possibility of closing layers at result steps,
     * fix VOICutter if no segmentation is done,
     * fix Histogram Analysis non manual algorithms.
+    * fix pipeline crash when saving data.
 
 MUSICardio 4.0.5:
 - Allow to use data with different size or spacing in LCCLogDemons and DiffeomorphicDemons.
