@@ -62,7 +62,9 @@ void defaultViewEvent::deleteLabel(polygonLabel *manager)
     int position = deleteLabelBase(manager);
     if (position==-1)
     {
-        dLabelToolBox->unselectAll();
+        // The last contour/node of the data has been removed, we need to reset
+        dLabelToolBox->selectRow(0);
+        dLabelToolBox->forceItemSelection();
     }
     else
     {

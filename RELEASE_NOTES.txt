@@ -1,3 +1,8 @@
+MUSICardio 4.0.7:
+- PolygonROI:
+    * fix drawing a contour with shift-click to be able to change zoom/contrast with click.
+    * fix removing a last contour/node which reset the label tool and allow to draw again.
+
 MUSICardio 4.0.6:
 - Debug import of Carto .zip archives and .mesh files.
 - PolygonROI: remove shift-click to draw, fix contrast after deactivation of repulsor and hide deactivated widgets.

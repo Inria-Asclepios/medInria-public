@@ -224,7 +224,7 @@ bool baseViewEvent::mousePressEvent(medAbstractView * view, QMouseEvent *mouseEv
             globalVtkLeftButtonBehaviour = view2d->GetLeftButtonInteractionStyle();
             view2d->SetLeftButtonInteractionStyle(vtkInteractorStyleImageView2D::InteractionTypeNull);
         }
-        else if (mouseEvent->modifiers() == Qt::NoModifier)
+        else if (mouseEvent->modifiers() == Qt::ShiftModifier)
         {
             for (polygonLabel *label : labelList)
             {
@@ -236,6 +236,20 @@ bool baseViewEvent::mousePressEvent(medAbstractView * view, QMouseEvent *mouseEv
                 }
             }
             leftButtonBehaviour(view);
+        }
+        else if (mouseEvent->modifiers()==Qt::NoModifier)
+        {
+            if (!isRepulsorActivated )
+            {
+                vtkImageView2D *view2d = static_cast<medVtkViewBackend*>(currentView->backend())->view2D;
+                int currentLeftButtonBehaviour = view2d->GetLeftButtonInteractionStyle();
+                if (currentLeftButtonBehaviour != globalVtkLeftButtonBehaviour &&
+                currentLeftButtonBehaviour != vtkInteractorStyleImageView2D::InteractionTypeNull)
+                {
+                    globalVtkLeftButtonBehaviour = currentLeftButtonBehaviour;
+                }
+                view2d->SetLeftButtonInteractionStyle(globalVtkLeftButtonBehaviour);
+            }
         }
     }
     else if (mouseEvent->button()==Qt::RightButton)

@@ -608,7 +608,7 @@ void polygonRoiToolBox::showHelp() const
     
     QString main = QString("<h3>Main features</h3>")
         + QString("<ul>")
-        + QString("<li><b>Draw a contour</b>: click on the data to create a contour</li>")
+        + QString("<li><b>Draw a contour</b>: shift+click on the data to create a contour</li>")
         + QString("<li><b>Add a new label</b>: click on '+' button in the label list</li>")
         + QString("<li><b>Remove a label</b>: click on '-' button in the label list</li>")
         + QString("<li><b>Use a new label</b>: select a label in the list, then click on the data</li>")
