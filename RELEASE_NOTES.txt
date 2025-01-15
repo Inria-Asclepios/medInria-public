@@ -2,6 +2,8 @@ MUSICardio 4.0.7:
 - PolygonROI:
     * fix drawing a contour with shift-click to be able to change zoom/contrast with click.
     * fix removing a last contour/node which reset the label tool and allow to draw again.
+- Registration step in pipelines allows to use Mouse Interaction Toolbox.
+- VOICutterToolBox fix a crash with metadata in pipelines sometimes if a cut has been made.
 
 MUSICardio 4.0.6:
 - Debug import of Carto .zip archives and .mesh files.

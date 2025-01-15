@@ -289,7 +289,6 @@ medAbstractData *voiCutterToolBox::processOutput()
 {
     if (d->resultData)
     {
-        fillOutputMetaData();
         return d->resultData;
     }
     else if (d->currentView)
