@@ -51,6 +51,8 @@ protected:
     virtual void clear();
     int generateOutput();
     void enableButtons(bool wantToEnable);
+    void initializeBoxPlace();
+    void resetBoxPlace();
 
 private:
     medCropToolBoxPrivate* const d;
