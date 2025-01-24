@@ -519,8 +519,6 @@ medAbstractData* AlgorithmPaintToolBox::processOutput()
     // Check if painted data on the volume
     if (!m_undoStacks->empty() && !m_undoStacks->value(currentView)->isEmpty())
     {
-        updateMaskWithMasterLabel();
-        copyMetaData(m_maskData, m_imageData);
         return m_maskData; // return output data
     }
     else
@@ -928,6 +926,7 @@ void AlgorithmPaintToolBox::setData( medAbstractData *medData )
         else
         {
             m_maskData = medAbstractDataFactory::instance()->createSmartPointer( "itkDataImageUChar3" );
+            medUtilities::setDerivedMetaData(m_maskData, m_imageData, "");
 
             if ( !m_maskData )
             {
