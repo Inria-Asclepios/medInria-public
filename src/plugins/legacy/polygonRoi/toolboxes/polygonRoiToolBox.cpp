@@ -74,6 +74,7 @@ polygonRoiToolBox::polygonRoiToolBox(QWidget *parent ) :
     pMedToolBox->setObjectName("labelTool");
     layout->addWidget(pMedToolBox);
     connect(activateTBButton, SIGNAL(toggled(bool)), pMedToolBox, SLOT(setEnabled(bool)), Qt::UniqueConnection);
+    connect(activateTBButton, SIGNAL(toggled(bool)), pMedToolBox, SLOT(setVisible(bool)), Qt::UniqueConnection);
 
     // Actions on contours
     interpolate = new QCheckBox(tr("Interpolate between contours"));
@@ -396,6 +397,7 @@ void polygonRoiToolBox::clickClosePolygon(bool state)
     }
     else
     {
+        activateTBButton->setText("Deactivate Toolbox");
         pMedToolBox->show();
         for (baseViewEvent *event : viewEventHash.values())
         {
@@ -413,12 +415,8 @@ void polygonRoiToolBox::clickClosePolygon(bool state)
         {
             viewEventHash.values().first()->getCurrentView()->selectedRequest(true);
         }
-        saveBinaryMaskButton->setEnabled(state);
-        saveContourButton->setEnabled(state);
-        saveLabel->setEnabled(state);
-        interpolate->setEnabled(state);
-        repulsorTool->setEnabled(state);
-        repulsorLabel->setEnabled(state);
+
+        enableInnerWidgets(state);
     }
 }
 
@@ -451,14 +449,27 @@ void polygonRoiToolBox::disableButtons()
 {
     activateTBButton->setEnabled(false);
     activateTBButton->setChecked(false);
-    repulsorTool->setEnabled(false);
-    repulsorTool->setChecked(false);
-    repulsorLabel->setEnabled(false);
-    saveBinaryMaskButton->setEnabled(false);
-    saveContourButton->setEnabled(false);
-    saveLabel->setEnabled(false);
-    interpolate->setEnabled(false);
+
+    enableInnerWidgets(false);
     interpolate->setChecked(true);
+    repulsorTool->setChecked(false);
+}
+
+void polygonRoiToolBox::enableInnerWidgets(bool state)
+{
+    repulsorTool->setEnabled(state);
+    repulsorTool->setVisible(state);
+    repulsorLabel->setEnabled(state);
+    repulsorLabel->setVisible(state);
+    saveBinaryMaskButton->setEnabled(state);
+    saveBinaryMaskButton->setVisible(state);
+    saveContourButton->setEnabled(state);
+    saveContourButton->setVisible(state);
+    saveLabel->setEnabled(state);
+    saveLabel->setVisible(state);
+    interpolate->setEnabled(state);
+    interpolate->setVisible(state);
+    helpButton->setVisible(state);
 }
 
 void polygonRoiToolBox::saveContours()
@@ -600,8 +611,8 @@ void polygonRoiToolBox::showHelp() const
         + QString("<li><b>Draw a contour</b>: shift+click on the data to create a contour</li>")
         + QString("<li><b>Add a new label</b>: click on '+' button in the label list</li>")
         + QString("<li><b>Remove a label</b>: click on '-' button in the label list</li>")
-        + QString("<li><b>Use a new label</b>: select a label in the list, then shift+click on the data</li>")
-        + QString("<li><b>Alt+click</b>: draw a landmark at that position in all views</li>")
+        + QString("<li><b>Use a new label</b>: select a label in the list, then click on the data</li>")
+        + QString("<li><b>Alt+click</b>: draw a landmark at that position in all slices</li>")
         + QString("</ul>");
 
     QString shortcut = QString("<h3>Shortcuts</h3>")

@@ -410,7 +410,6 @@ void baseViewEvent::setLabelActivationState()
     }
 }
 
-
 bool baseViewEvent::rightButtonBehaviour(medAbstractView *view, QMouseEvent *mouseEvent)
 {
     if (!view)
@@ -706,7 +705,6 @@ void baseViewEvent::activateRepulsor(bool state)
         cursorState = CURSORSTATE::CS_DEFAULT;
         vtkInteractorStyleImageView2D *interactorStyle2D = vtkInteractorStyleImageView2D::New();
         globalVtkLeftButtonBehaviour = view2d->GetLeftButtonInteractionStyle();
-        interactorStyle2D->SetLeftButtonInteraction(vtkInteractorStyleImageView2D::InteractionTypeNull);
         view2d->SetInteractorStyle(interactorStyle2D);
         view2d->SetupInteractor(originalInteractor);
         interactorStyle2D->Delete();

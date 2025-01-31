@@ -240,10 +240,6 @@ bool itkDataImageReaderBase::readInformation (const QString& path)
         {
             medData->setMetaData(metaDataKey, QString(value.c_str()));
         }
-        else
-        {
-            qDebug() << metaObject()->className() << ":: found unknown key:" << QString::fromStdString(key);
-        }
     }
     // [END OF HACK]
 
@@ -325,10 +321,6 @@ void itkDataImageReaderBase::extractMetaData()
         if (!metaDataKey.isEmpty())
         {
             data()->setMetaData(metaDataKey, QString(value.c_str()));
-        }
-        else
-        {
-            qDebug() << metaObject()->className() << ":: found unknown key:" << QString::fromStdString(key);
         }
     }
 }

@@ -1,3 +1,27 @@
+MUSICardio 4.1:
+- Switch to VTK 9.2.6, ITK 5.4rc04.
+
+MUSICardio 4.0.7:
+- PolygonROI:
+    * fix drawing a contour with shift-click to be able to change zoom/contrast with click.
+    * fix removing a last contour/node which reset the label tool and allow to draw again.
+- Registration step in pipelines allows to use Mouse Interaction Toolbox.
+- VOICutterToolBox fix a crash with metadata in pipelines sometimes if a cut has been made.
+
+MUSICardio 4.0.6:
+- Debug import of Carto .zip archives and .mesh files.
+- PolygonROI: remove shift-click to draw, fix contrast after deactivation of repulsor and hide deactivated widgets.
+- Pipelines: 
+    * put back the possibility of closing layers at result steps,
+    * fix VOICutter if no segmentation is done,
+    * fix Histogram Analysis non manual algorithms.
+    * fix pipeline crash when saving data.
+
+MUSICardio 4.0.5:
+- Allow to use data with different size or spacing in LCCLogDemons and DiffeomorphicDemons.
+- Manual Registration: enhance landmark numbers for better user understanding.
+- Fix Histogram Analysis width problem displaying multi-results.
+
 MUSICardio 4.0.4:
 - Fix some plugins wrongly loaded on Windows.
 

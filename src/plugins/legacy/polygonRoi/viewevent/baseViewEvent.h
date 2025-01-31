@@ -19,6 +19,7 @@
 #include <QLineEdit>
 #include <QListWidget>
 #include <QWidgetAction>
+
 #include <medLabelProperty.h>
 #include <medDisplayPosContours.h>
 #include <medTagContours.h>
@@ -120,7 +121,7 @@ private:
     QList<medDisplayPosContours> copyNodesList;
     double savedMousePosition[2];
     dtkSmartPointer<medAbstractData> contourOutput;
-    vtkRenderWindowInteractor* originalInteractor;
+    vtkRenderWindowInteractor *originalInteractor;
 
     void leftButtonBehaviour(medAbstractView *view);
     bool rightButtonBehaviour(medAbstractView *view, QMouseEvent *mouseEvent);

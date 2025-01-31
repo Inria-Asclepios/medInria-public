@@ -71,6 +71,7 @@ public slots:
 private slots:
 
     void disableButtons();
+    void enableInnerWidgets(bool state);
     void saveContours();
     void saveBinaryImage();
 
