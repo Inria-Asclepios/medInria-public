@@ -17,7 +17,7 @@ list(APPEND ${ep}_dependencies
 EP_Initialisation(${ep}
   USE_SYSTEM OFF 
   BUILD_SHARED_LIBS OFF
-  REQUIRED_FOR_PLUGINS OFF
+  REQUIRED_FOR_PLUGINS ON
   NO_CMAKE_PACKAGE
   )
 

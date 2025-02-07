@@ -25,7 +25,7 @@ if (NOT ep_Initialisation_USE_SYSTEM)
 endif()
 
 if (NOT ep_Initialisation_BUILD_SHARED_LIBS)
-    set(ep_Initialisation_BUILD_SHARED_LIBS ON)
+    set(ep_Initialisation_BUILD_SHARED_LIBS OFF)
 endif()
 
 if (NOT ep_Initialisation_REQUIRED_FOR_PLUGINS)
@@ -58,7 +58,7 @@ if (USE_SYSTEM_${ep})
             #  provide path of project needeed for Asclepios and visages plugins
             file(APPEND ${${PROJECT_NAME}_CONFIG_FILE}
                 "find_package(${ep_Initialisation_PACKAGE_NAME} REQUIRED
-                    PATHS \"${${ep_Initialisation_PACKAGE_NAME}_DIR}\"
+                    PATHS \"${${ep_Initialisation_PACKAGE_NAME}_ROOT}\"
                     )\n"
                 )
         endif()
@@ -97,7 +97,6 @@ else()
       endif()
   endif()
 
-
 ## #############################################################################
 ## Add Variable : do we want a static or a dynamic build ?
 ## #############################################################################
@@ -108,7 +107,10 @@ else()
     )
   mark_as_advanced(BUILD_SHARED_LIBS_${ep})
   
-  
+  if (NOT ep_Initialisation_BUILD_SHARED_LIBS)
+    set(BUILD_SHARED_LIBS_${ep} OFF CACHE BOOL "Build shared libs for ${ep}" FORCE)
+  endif()
+
 ## #############################################################################
 ## Set compilation flags
 ## #############################################################################
@@ -117,15 +119,13 @@ else()
   set(${ep}_cxx_flags ${ep_common_cxx_flags})
   set(${ep}_shared_linker_flags ${ep_common_shared_linker_flags})
   
-  # Add PIC flag if Static build on UNIX with amd64 arch
+  # Add PIC flag if Static build on UNIX
   if (UNIX)
-    if (NOT BUILD_SHARED_LIBS_${ep} AND 
-        "${CMAKE_SYSTEM_PROCESSOR}" MATCHES 64)
-        
+    if (NOT BUILD_SHARED_LIBS_${ep})
       set(${ep}_c_flags "${${ep}_c_flags} -fPIC")
       set(${ep}_cxx_flags "${${ep}_cxx_flags} -fPIC")
     endif()
-  endif()  
+  endif()
 
   if (APPLE)
     if (BUILD_SHARED_LIBS_${ep})
