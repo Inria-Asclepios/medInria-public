@@ -74,6 +74,7 @@ polygonRoiToolBox::polygonRoiToolBox(QWidget *parent ) :
     pMedToolBox->setObjectName("labelTool");
     layout->addWidget(pMedToolBox);
     connect(activateTBButton, SIGNAL(toggled(bool)), pMedToolBox, SLOT(setEnabled(bool)), Qt::UniqueConnection);
+    connect(activateTBButton, SIGNAL(toggled(bool)), pMedToolBox, SLOT(setVisible(bool)), Qt::UniqueConnection);
 
     // Actions on contours
     interpolate = new QCheckBox(tr("Interpolate between contours"));
