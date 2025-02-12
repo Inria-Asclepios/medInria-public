@@ -316,6 +316,7 @@ int main(int argc,char* argv[])
     //  Start main loop.
     const int status = application.exec();
 
+    medDataManager::instance().garbageCollect();
     medPluginManager::instance().uninitialize();
 
     return status;
