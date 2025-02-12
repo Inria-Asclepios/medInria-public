@@ -64,6 +64,8 @@ public:
 
     QList<medDataIndex> getSeriesListFromStudy(const medDataIndex &indexStudy);
 
+    void garbageCollect();
+
     // ------------------------- To be moved elsewhere -----------------------
 
     QList<medDataIndex> moveStudy(const medDataIndex& indexStudy, const medDataIndex& toPatient);
@@ -92,7 +94,6 @@ signals:
 
 private slots:
     void exportDialog_updateSuffix(int index);
-    void garbageCollect();
     void removeFromNonPersistent(medDataIndex,QUuid);
     void setWriterPriorities();
 
