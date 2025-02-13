@@ -37,6 +37,7 @@
 #include <vtkPlane.h>
 #include <vtkPolyData.h>
 #include <vtkProperty2D.h>
+#include <vtkNamedColors.h>
 #include <vtkRenderer.h>
 
 class medCropCallback;
@@ -109,9 +110,13 @@ medCropToolBox::medCropToolBox(QWidget* parent)
     : medAbstractSelectableToolBox(parent), applyButtonName("Apply"), saveButtonName("Save"), d(new medCropToolBoxPrivate())
 {
     d->borderWidget = vtkSmartPointer<vtkBorderWidget>::New();
-    d->borderWidget->CreateDefaultRepresentation();
     d->borderWidget->SelectableOff();
-    static_cast<vtkBorderRepresentation*>(d->borderWidget->GetRepresentation())->GetBorderProperty()->SetColor(0,1,0);
+
+    vtkNew<vtkNamedColors> colors;
+    vtkNew<vtkBorderRepresentation> rep;
+    rep->BuildRepresentation();
+    rep->SetBorderColor(colors->GetColor3d("Chartreuse").GetData());
+    d->borderWidget->SetRepresentation(rep);
 
     QWidget *cropToolBoxBody = new QWidget(this);
     QVBoxLayout *cropToolBoxLayout = new QVBoxLayout(cropToolBoxBody);
