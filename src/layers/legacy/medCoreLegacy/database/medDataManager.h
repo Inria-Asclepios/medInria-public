@@ -64,8 +64,6 @@ public:
 
     QList<medDataIndex> getSeriesListFromStudy(const medDataIndex &indexStudy);
 
-    void garbageCollect();
-
     // ------------------------- To be moved elsewhere -----------------------
 
     QList<medDataIndex> moveStudy(const medDataIndex& indexStudy, const medDataIndex& toPatient);
@@ -91,6 +89,9 @@ signals:
     void updateProgress(int level);
     void moveRequested(const QString &uid, const QString &queryLevel);
     void moveState(int status, const QString &pathOrMessage);
+
+public slots:
+    void garbageCollect();
 
 private slots:
     void exportDialog_updateSuffix(int index);
