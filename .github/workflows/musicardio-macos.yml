@@ -5,8 +5,8 @@ name: MUSICardio on macOS
 on:
   push:
     branches: [ "4.1" ]
-  pull_request:
-    branches: [ "4.1" ]
+  #pull_request:
+  #  branches: [ "4.1" ]
   workflow_dispatch:
     inputs:
       EXPIRATION_TIME:
@@ -14,8 +14,8 @@ on:
         required: true
         default: '12'
         type: string
-  #schedule:
-  #  - cron: '0 0 * * 1'  # Each monday at 0h00, MIN HOUR DAY_IN_MONTH MONTH WEEK_DAY
+  schedule:
+    - cron: '0 0 * * 1'  # Each monday at 0h00, MIN HOUR DAY_IN_MONTH MONTH WEEK_DAY
 
 env:
   BUILD_TYPE: Release
