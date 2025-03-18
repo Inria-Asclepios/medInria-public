@@ -28,7 +28,7 @@ public:
     ~vtkDataMeshWriterBase() override = default;
 
 public slots:
-    bool canWrite (const QString& path) override;
+    bool canWrite (const QString& path);
 
     void addMetaDataAsFieldData(vtkMetaDataSet* dataSet);
     void clearMetaDataFieldData(vtkMetaDataSet* dataSet);
