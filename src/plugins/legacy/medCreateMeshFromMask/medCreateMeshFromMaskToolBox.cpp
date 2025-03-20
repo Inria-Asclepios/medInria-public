@@ -23,8 +23,7 @@
 class medCreateMeshFromMaskToolBoxPrivate
 {
 public:
-
-    medCreateMeshFromMask *process;
+    QPointer<medCreateMeshFromMask> process;
     medAbstractLayeredView *view;
     medDoubleParameterL *thresholdSlider;
     QDoubleSpinBox *reductionSpinBox;
@@ -123,12 +122,17 @@ medCreateMeshFromMaskToolBox::medCreateMeshFromMaskToolBox(QWidget *parent)
     this->addWidget(widget);
 
     d->view = nullptr;
+    d->process = nullptr;
 
     connect(runButton, SIGNAL(clicked()), this, SLOT(run()));
 }
 
 medCreateMeshFromMaskToolBox::~medCreateMeshFromMaskToolBox()
 {
+    if (d->process)
+    {
+        delete d->process;
+    }
     delete d;
     d = nullptr;
 }
@@ -196,10 +200,16 @@ void medCreateMeshFromMaskToolBox::updateView()
 void medCreateMeshFromMaskToolBox::addMeshToView()
 {
     medAbstractData *data = this->processOutput();
-
-    int current = d->view->currentLayer();
-    d->view->addLayer(data);
-    d->view->setCurrentLayer(current);
+    if (data)
+    {
+        int current = d->view->currentLayer();
+        d->view->addLayer(data);
+        d->view->setCurrentLayer(current);
+    }
+    else
+    {
+        qDebug()<<"medCreateMeshFromMaskToolBox::addMeshToView error no output data.";
+    }
 }
 
 void medCreateMeshFromMaskToolBox::clear()
@@ -216,7 +226,10 @@ void medCreateMeshFromMaskToolBox::run()
         {
             this->setToolBoxOnWaitStatus();
 
-            d->process = new medCreateMeshFromMask();
+            if (!d->process)
+            {
+                d->process = new medCreateMeshFromMask();
+            }
             d->process->setInput(d->view->layerData(d->view->currentLayer()));
 
             d->process->setParameter(static_cast<double>(d->thresholdSlider->value()),      0); // iso value
