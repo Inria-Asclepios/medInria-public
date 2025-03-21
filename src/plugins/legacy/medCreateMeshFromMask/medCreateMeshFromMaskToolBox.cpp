@@ -23,7 +23,7 @@
 class medCreateMeshFromMaskToolBoxPrivate
 {
 public:
-    QPointer<medCreateMeshFromMask> process;
+    dtkSmartPointer <medCreateMeshFromMask> process;
     medAbstractLayeredView *view;
     medDoubleParameterL *thresholdSlider;
     QDoubleSpinBox *reductionSpinBox;
@@ -129,10 +129,6 @@ medCreateMeshFromMaskToolBox::medCreateMeshFromMaskToolBox(QWidget *parent)
 
 medCreateMeshFromMaskToolBox::~medCreateMeshFromMaskToolBox()
 {
-    if (d->process)
-    {
-        delete d->process;
-    }
     delete d;
     d = nullptr;
 }

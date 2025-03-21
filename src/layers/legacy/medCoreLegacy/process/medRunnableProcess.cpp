@@ -21,7 +21,7 @@
 class medRunnableProcessPrivate
 {
 public:
-    dtkAbstractProcess *process; // process is deleted by the toolbox calling medRunnableProcess
+    dtkSmartPointer<dtkAbstractProcess> process;
 };
 
 
