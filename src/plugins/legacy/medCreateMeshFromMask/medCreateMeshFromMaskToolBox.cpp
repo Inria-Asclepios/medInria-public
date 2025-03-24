@@ -122,7 +122,6 @@ medCreateMeshFromMaskToolBox::medCreateMeshFromMaskToolBox(QWidget *parent)
     this->addWidget(widget);
 
     d->view = nullptr;
-    d->process = nullptr;
 
     connect(runButton, SIGNAL(clicked()), this, SLOT(run()));
 }
