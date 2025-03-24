@@ -86,26 +86,24 @@ template <class PixelType> int medCreateMeshFromMaskPrivate::update()
 
     //------------------------------------------------------
 
-    vtkImageData *vtkImage = filter->GetOutput();
+    vtkSmartPointer<vtkContourFilter> contourFilter = vtkSmartPointer<vtkContourFilter>::New();
+    contourFilter->SetInputData(filter->GetOutput());
+    contourFilter->SetValue(0, isoValue);
+    contourFilter->Update();
 
-    vtkContourFilter *contour = vtkContourFilter::New();
-    contour->SetInputData(vtkImage);
-    contour->SetValue(0, isoValue);
-    contour->Update();
-
-    vtkTriangleFilter *contourTrian = vtkTriangleFilter::New();
-    contourTrian->SetInputConnection(contour->GetOutputPort());
+    vtkSmartPointer<vtkTriangleFilter> contourTrian = vtkSmartPointer<vtkTriangleFilter>::New();
+    contourTrian->SetInputConnection(contourFilter->GetOutputPort());
     contourTrian->PassVertsOn();
     contourTrian->PassLinesOn();
     contourTrian->Update();
 
-    vtkPolyDataAlgorithm *lastAlgo = contourTrian;
+    vtkSmartPointer<vtkPolyDataAlgorithm> lastAlgo = contourTrian;
 
-    vtkDecimatePro *contourDecimated = nullptr;
+    vtkSmartPointer<vtkDecimatePro> contourDecimated = nullptr;
     if (decimate)
     {
         // Decimate the mesh if required
-        contourDecimated = vtkDecimatePro::New();
+        contourDecimated = vtkSmartPointer<vtkDecimatePro>::New();
         contourDecimated->SetInputConnection(lastAlgo->GetOutputPort());
         contourDecimated->SetTargetReduction(targetReduction);
         contourDecimated->SplittingOff();
@@ -114,11 +112,11 @@ template <class PixelType> int medCreateMeshFromMaskPrivate::update()
         lastAlgo = contourDecimated;
     }
 
-    vtkSmoothPolyDataFilter *contourSmoothed = nullptr;
+    vtkSmartPointer<vtkSmoothPolyDataFilter> contourSmoothed = nullptr;
     if(smooth)
     {
         // Smooth the mesh if required
-        contourSmoothed = vtkSmoothPolyDataFilter::New();
+        contourSmoothed = vtkSmartPointer<vtkSmoothPolyDataFilter>::New();
         contourSmoothed->SetInputConnection(lastAlgo->GetOutputPort());
         contourSmoothed->SetNumberOfIterations(iterations);
         contourSmoothed->SetRelaxationFactor(relaxationFactor);
@@ -126,7 +124,7 @@ template <class PixelType> int medCreateMeshFromMaskPrivate::update()
         lastAlgo = contourSmoothed;
     }
 
-    vtkPolyData *polydata = lastAlgo->GetOutput();
+    vtkSmartPointer<vtkPolyData> polydata = lastAlgo->GetOutput();
     nbTriangles = polydata->GetNumberOfPolys();
 
     if (nbTriangles > 0)
@@ -142,19 +140,8 @@ template <class PixelType> int medCreateMeshFromMaskPrivate::update()
 
         polydata->DeepCopy(transformFilter->GetOutput());
 
-        vtkMetaSurfaceMesh *smesh = vtkMetaSurfaceMesh::New();
+        vtkSmartPointer<vtkMetaSurfaceMesh> smesh = vtkSmartPointer<vtkMetaSurfaceMesh>::New();
         smesh->SetDataSet(polydata);
-
-        contour->Delete();
-        contourTrian->Delete();
-        if (contourDecimated)
-        {
-            contourDecimated->Delete();
-        }
-        if (contourSmoothed)
-        {
-            contourSmoothed->Delete();
-        }
 
         output = medAbstractDataFactory::instance()->createSmartPointer("vtkDataMesh");
         medUtilities::setDerivedMetaData(output, input, "mesh from mask");
