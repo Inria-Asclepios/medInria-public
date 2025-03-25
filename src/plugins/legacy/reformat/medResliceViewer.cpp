@@ -199,10 +199,17 @@ medResliceViewer::medResliceViewer(medAbstractView *view, QWidget *parent): medA
     views[2]->setRenderWindow(riw[2]->GetRenderWindow());
     riw[2]->SetupInteractor(views[2]->renderWindow()->GetInteractor());
 
+    vtkSmartPointer<vtkCellPicker> picker = vtkSmartPointer<vtkCellPicker>::New();
+    picker->SetTolerance(0.005);
+
+    vtkSmartPointer<vtkProperty> ipwProp = vtkSmartPointer<vtkProperty>::New();
+
     vtkSmartPointer<vtkRenderer> ren = vtkSmartPointer<vtkRenderer>::New();
+
     vtkNew<vtkGenericOpenGLRenderWindow> renderWindow;
     views[3]->setRenderWindow(renderWindow);
     views[3]->renderWindow()->AddRenderer(ren);
+    vtkRenderWindowInteractor *iren = views[3]->interactor();
 
     // Make them all share the same reslice cursor object.
     for (int i = 0; i < 3; i++)
@@ -223,30 +230,22 @@ medResliceViewer::medResliceViewer(medAbstractView *view, QWidget *parent): medA
         rep->GetResliceCursorActor()->GetCenterlineProperty(2)->SetRepresentationToWireframe();
     }
 
-    vtkSmartPointer<vtkCellPicker> picker = vtkSmartPointer<vtkCellPicker>::New();
-    picker->SetTolerance(0.005);
-
-    vtkSmartPointer<vtkProperty> ipwProp = vtkSmartPointer<vtkProperty>::New();
-
-    vtkRenderWindowInteractor *iren = views[3]->interactor();
-
     // Build planes on views
     for (int i = 0; i < 3; i++)
     {
         planeWidget[i] = vtkSmartPointer<vtkImagePlaneWidget>::New();
-        planeWidget[i]->SetInteractor(iren);
         planeWidget[i]->SetPicker(picker);
         planeWidget[i]->RestrictPlaneToVolumeOn();
-
         // Plane colors
         double color[3] = {0, 0, 0};
         color[i] = 1;
         planeWidget[i]->GetPlaneProperty()->SetColor(color);
-
         planeWidget[i]->SetTexturePlaneProperty(ipwProp);
         planeWidget[i]->TextureInterpolateOff();
         planeWidget[i]->SetResliceInterpolateToLinear();
-        planeWidget[i]->SetInputConnection(view3d->GetInputAlgorithm(view3d->GetCurrentLayer())->GetOutputPort());
+        planeWidget[i]->SetInputData(vtkViewData);
+        planeWidget[i]->UpdatePlacement();
+        planeWidget[i]->SetInteractor(iren);
         planeWidget[i]->SetPlaneOrientation(i);
         planeWidget[i]->SetSliceIndex(imageDims[i]/2);
         planeWidget[i]->DisplayTextOn();
@@ -284,9 +283,15 @@ medResliceViewer::medResliceViewer(medAbstractView *view, QWidget *parent): medA
     updatePlaneNormals();
 
     // Turn the 3D view in the radiological convention
-    planeWidget[0]->GetCurrentRenderer()->ResetCamera();
-    planeWidget[0]->GetCurrentRenderer()->GetActiveCamera()->Azimuth(180);
-    planeWidget[0]->GetCurrentRenderer()->GetActiveCamera()->Roll(180);
+    auto currentRenderer = planeWidget[0]->GetCurrentRenderer();
+    if (!currentRenderer)
+    {
+        qDebug()<<"medResliceViewer, error current renderer of the plane widget is empty.";
+        return;
+    }
+    currentRenderer->ResetCamera();
+    currentRenderer->GetActiveCamera()->Azimuth(180);
+    currentRenderer->GetActiveCamera()->Roll(180);
 
     views[0]->show();
     views[1]->show();
