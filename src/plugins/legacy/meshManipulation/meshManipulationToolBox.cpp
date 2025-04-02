@@ -490,7 +490,8 @@ void meshManipulationToolBox::computeData()
         else if (data->identifier().contains("EPMap"))
         {
             // dedicated process
-            dtkSmartPointer<medAbstractProcessLegacy> applyTransformProcess = dtkAbstractProcessFactory::instance()->createSmartPointer("ApplyTransformProcess");
+            dtkSmartPointer<medAbstractProcessLegacy> applyTransformProcess
+                = dtkAbstractProcessFactory::instance()->createSmartPointer("msc::ApplyTransformProcess");
             if (applyTransformProcess)
             {
                 double matrix[16];
