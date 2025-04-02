@@ -285,7 +285,7 @@ void iterativeClosestPointToolBox::addLayer(unsigned int layer)
     QString name = medMetaDataKeys::SeriesDescription.getFirstValue(data,"<i>no name</i>");
 
     if(data && (data->identifier().contains("vtkDataMesh") ||
-                data->identifier().contains("EPMap")))
+                data->identifier().contains("msc::EPMap")))
     {
         d->layerSource->addItem(name);
         d->layerTarget->addItem(name);

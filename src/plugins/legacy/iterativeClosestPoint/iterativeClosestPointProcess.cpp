@@ -98,7 +98,7 @@ QString iterativeClosestPointProcess::description() const
 void iterativeClosestPointProcess::setInput(medAbstractData *data, int channel)
 {
     if (data && (data->identifier().contains("vtkDataMesh") ||
-                 data->identifier().contains("EPMap")))
+                 data->identifier().contains("msc::EPMap")))
     {
         if (channel == 0)
         {
@@ -265,7 +265,7 @@ int iterativeClosestPointProcess::update()
     output_mesh->Delete();
 
     // manually transform catheter coordinates;
-    if (d->output->identifier().contains("EPMap"))
+    if (d->output->identifier().contains("msc::EPMap"))
     {
         QStringList arrayNames;
         arrayNames << "KT_Coordinates" << "_catheter_electrode_positions";
