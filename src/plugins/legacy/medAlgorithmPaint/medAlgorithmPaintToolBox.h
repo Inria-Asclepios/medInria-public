@@ -70,6 +70,7 @@ typedef itk::ImageRegionIterator <Mask2dFloatType> Mask2dFloatIterator;
 * This toolbox has several named widgets which can be accessed in python pipelines:\n\n
 * "paintButton" : QPushButton\n
 * "Magic Wand" : QPushButton\n
+* "Interpolate" : QPushButton\n
 * "Upper Threshold" : medDoubleParameter\n
 * "Lower Threshold" : medDoubleParameter\n
 * "Activate 3D mode" : QCheckBox\n

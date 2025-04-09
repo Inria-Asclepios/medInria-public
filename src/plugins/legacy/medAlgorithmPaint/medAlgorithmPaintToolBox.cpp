@@ -276,6 +276,7 @@ AlgorithmPaintToolBox::AlgorithmPaintToolBox(QWidget *parent ) :
     m_strokeButton->setObjectName("paintButton");
 
     m_interpolateButton = new QPushButton( tr("Interpolate") );
+    m_interpolateButton->setObjectName("Interpolate");
 
     m_magicWandButton = new QPushButton(tr("Magic Wand"));
     m_magicWandButton->setObjectName("Magic Wand");
