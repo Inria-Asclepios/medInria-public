@@ -15,14 +15,12 @@
 
 #include <medStringListParameterL.h>
 
-#include <QComboBox>
 #include <dtkLog>
-
 
 class medStringListParameterLPrivate
 {
 public:
-    QComboBox* comboBox;
+    medComboBox* comboBox;
     QStringList items;
     QHash <QString, QIcon> iconForItem;
 
@@ -87,11 +85,11 @@ QStringList medStringListParameterL::items() const
 }
 
 
-QComboBox* medStringListParameterL::getComboBox()
+medComboBox* medStringListParameterL::getComboBox()
 {
     if(!d->comboBox)
     {
-        d->comboBox = new QComboBox;
+        d->comboBox = new medComboBox;
         for(QString item : d->items)
         {
             d->comboBox->addItem(d->iconForItem.value(item), item);

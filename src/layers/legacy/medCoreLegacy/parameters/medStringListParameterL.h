@@ -17,9 +17,9 @@
 #include <QIcon>
 
 #include <medAbstractParameterL.h>
+#include <medComboBox.h>
 #include <medCoreLegacyExport.h>
 
-class QComboBox;
 class QWidget;
 class QStringList;
 
@@ -40,7 +40,7 @@ public:
     void clear();
 
     QStringList items() const;
-    QComboBox* getComboBox();
+    medComboBox* getComboBox();
 
     virtual QWidget* getWidget();
 
