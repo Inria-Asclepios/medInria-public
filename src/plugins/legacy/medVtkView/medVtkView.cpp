@@ -554,7 +554,7 @@ void medVtkView::resetKeyboardInteractionModifier()
 void medVtkView::resetCameraOnLayer(int layer)
 {
     medAbstractData *data = layerData(layer);
-    if (data && (data->identifier() == "vtkDataMesh" || data->identifier() == "EPMap"))
+    if (data && (data->identifier() == "vtkDataMesh" || data->identifier() == "msc::EPMap"))
     {
         vtkMetaDataSet *metaDataSet = static_cast<vtkMetaDataSet*>(data->data());
         vtkDataSet *arg = metaDataSet->GetDataSet();
