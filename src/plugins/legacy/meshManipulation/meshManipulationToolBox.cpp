@@ -259,7 +259,7 @@ void meshManipulationToolBox::retrieveRegistrationMatricesFromLayers()
     {
         medAbstractData* abstractData = _view->layerData(i);
         QString identifier = abstractData->identifier();
-        if (identifier.contains("vtkDataMesh") || identifier.contains("EPMap"))
+        if (identifier.contains("vtkDataMesh") || identifier.contains("msc::EPMap"))
         {
             // check if the vtk dataset has matrices stored
             vtkMetaDataSet* metaData = static_cast<vtkMetaDataSet*>(abstractData->data());
@@ -353,7 +353,7 @@ void meshManipulationToolBox::checkLayer()
     if (_view)
     {
         medAbstractData* data = _view->layerData(_view->currentLayer());
-        if (!(data->identifier().contains("EPMap") || data->identifier().contains("vtkDataMesh")))
+        if (!(data->identifier().contains("msc::EPMap") || data->identifier().contains("vtkDataMesh")))
         {
             displayMessageError("This toolbox is designed to be used with 3D meshes and EP maps");
         }
@@ -376,7 +376,7 @@ void meshManipulationToolBox::handleLayerChange()
             medAbstractData *data = _view->layerData(layerIndex);
 
             if ((data->identifier().contains("vtkDataMesh") ||
-                 data->identifier().contains("EPMap")))
+                 data->identifier().contains("msc::EPMap")))
             {
                 _selectedData.append(data);
             }
@@ -487,10 +487,11 @@ void meshManipulationToolBox::computeData()
             output->setData(newSeq);
             newSeq->Delete();
         }
-        else if (data->identifier().contains("EPMap"))
+        else if (data->identifier().contains("msc::EPMap"))
         {
             // dedicated process
-            dtkSmartPointer<medAbstractProcessLegacy> applyTransformProcess = dtkAbstractProcessFactory::instance()->createSmartPointer("ApplyTransformProcess");
+            dtkSmartPointer<medAbstractProcessLegacy> applyTransformProcess
+                = dtkAbstractProcessFactory::instance()->createSmartPointer("msc::ApplyTransformProcess");
             if (applyTransformProcess)
             {
                 double matrix[16];
@@ -580,7 +581,7 @@ void meshManipulationToolBox::reset()
         {
             medAbstractData *data = _view->layerData(i);
             if ((data->identifier().contains("vtkDataMesh") ||
-                 data->identifier().contains("EPMap")))
+                 data->identifier().contains("msc::EPMap")))
             {
                 vtkMetaDataSet *dataset = static_cast<vtkMetaDataSet*>(data->data());
                 for(unsigned int j = 0; j < dataset->GetNumberOfActors(); j++)
