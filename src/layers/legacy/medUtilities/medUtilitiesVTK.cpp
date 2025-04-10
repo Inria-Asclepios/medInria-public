@@ -49,7 +49,7 @@ vtkDataArray* medUtilitiesVTK::getArray(medAbstractData* data,
 {
     vtkDataArray* result = nullptr;
     if (data->identifier().contains("vtkDataMesh") ||
-        data->identifier().contains("EPMap"))
+        data->identifier().contains("msc::EPMap"))
     {
         vtkMetaDataSet* metaData = static_cast<vtkMetaDataSet*>(data->data());
         vtkDataSet* mesh = metaData->GetDataSet();
@@ -76,7 +76,7 @@ int medUtilitiesVTK::getArrayIndex(medAbstractData* data,
     int arrayId = -1;
     DataArrayType type = DataArrayType::UNKNOWN;
     if (data->identifier().contains("vtkDataMesh") ||
-        data->identifier().contains("EPMap"))
+        data->identifier().contains("msc::EPMap"))
     {
         vtkMetaDataSet* metaData = static_cast<vtkMetaDataSet*>(data->data());
         vtkDataSet* mesh = metaData->GetDataSet();
