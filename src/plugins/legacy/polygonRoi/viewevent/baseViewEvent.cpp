@@ -188,7 +188,7 @@ bool baseViewEvent::mouseMoveEvent(medAbstractView *view, QMouseEvent *mouseEven
     {
         if (currentLabel->getMinimumDistanceFromNodesToMouse(savedMousePosition, false) < 20.)
         {
-            setCustomCursor(view, Qt::red);
+            view->viewWidget()->setCursor(Qt::OpenHandCursor);
         }
         else
         {
