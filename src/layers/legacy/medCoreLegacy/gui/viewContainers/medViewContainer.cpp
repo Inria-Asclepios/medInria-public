@@ -1183,20 +1183,26 @@ void medViewContainer::enableNonSplitWidgetsInToolsMenu(bool state)
 /**
  * @brief saves the scene in a XML file
  * Saves views (all layers), and toolboxes parameters
- * 	expected tree is as follow:
+ *  expected tree is as follow:
  *  workingDir (user-defined)
- * 		|-viewID0
- * 			|-mapping.xml
- * 			|-layerID01.xml
- * 			|-layerID02.xml
- * 			|-data_file (as saved by the dedicated writer)
+ *      |-viewID0
+ *          |-mapping.xml
+ *          |-layerID01.xml
+ *          |-layerID02.xml
+ *          |-data_file (as saved by the dedicated writer)
  */
 QString medViewContainer::saveScene()
 {
     QString dirPath = QFileDialog::getExistingDirectory(this, 
                                                         tr("Open Directory"),
                                                         QDir::homePath(),
-                                                        QFileDialog::ShowDirsOnly);
+                                                        QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
+    
+    if (dirPath.isEmpty())
+    {
+        return QString();
+    }
+    
     QDir workingDir(dirPath);
     QDomDocument doc("xml");
     QDomElement root = doc.createElement("scene");
