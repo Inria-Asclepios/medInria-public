@@ -12,8 +12,9 @@ function(music_plugins_project)
         tetgen
         eigen
         qwt
-        quazip
         ZLIB
+        xz
+        libarchive
         )
 
     if (${USE_RealTimeWorkspace})
@@ -40,8 +41,8 @@ function(music_plugins_project)
 
     if (NOT USE_SYSTEM_${external_project})
 
-        set(git_url ${GITHUB_PREFIX}Inria-Asclepios/music.git)
-        set(git_tag 4.1)
+        set(git_url ${GITHUB_PREFIX}mathildemerle/music.git)
+        set(git_tag carto)
 
         set(cmake_args
             ${ep_common_cache_args}
@@ -66,8 +67,9 @@ function(music_plugins_project)
             -DQWT_INCLUDE_DIR:PATH=${qwt_INCLUDE_DIR}
             -Dqwt_ROOT:PATH=${qwt_ROOT}
             -Dtetgen_ROOT:PATH=${tetgen_ROOT}
-            -DQuaZip-Qt5_ROOT:PATH=${quazip_ROOT}
             -DZLIB_ROOT:PATH=${ZLIB_ROOT}
+            -Dlibarchive_ROOT:PATH=${libarchive_ROOT}
+            -Dxz_ROOT:PATH=${xz_ROOT}
             -DUSE_RealTimeWorkspace=${USE_RealTimeWorkspace}
             )
 
