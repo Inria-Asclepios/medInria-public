@@ -41,8 +41,8 @@ function(music_plugins_project)
 
     if (NOT USE_SYSTEM_${external_project})
 
-        set(git_url ${GITHUB_PREFIX}mathildemerle/music.git)
-        set(git_tag carto)
+        set(git_url ${GITHUB_PREFIX}Inria-Asclepios/music.git)
+        set(git_tag 4.1)
 
         set(cmake_args
             ${ep_common_cache_args}

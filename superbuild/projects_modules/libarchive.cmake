@@ -26,8 +26,7 @@ if (NOT USE_SYSTEM_${ep})
 ## Define repository where get the sources
 ## #############################################################################
 
-set(git_url ${GITHUB_PREFIX}libarchive/libarchive.git)
-set(git_tag v3.7.9)
+set(release_url https://github.com/libarchive/libarchive/releases/download/v3.8.0/libarchive-3.8.0.tar.xz)
 
 ## #############################################################################
 ## Add specific cmake arguments for configuration step of the project
@@ -56,6 +55,14 @@ set(cmake_args
   -DLIBLZMA_LIBRARY=${LZMA_LIBRARY}
   -DLIBLZMA_INCLUDE_DIR=${LZMA_INCLUDE_DIR}
   -DENABLE_LZMA=ON
+  -DENABLE_LZ4=OFF
+  -DENABLE_ZSTD=OFF
+  -DENABLE_BZip2=OFF
+  -DENABLE_LIBXML2=OFF
+  -DENABLE_WIN32_XMLLITE=OFF
+  -DENABLE_XAR=OFF
+  -DENABLE_EXPAT=OFF
+  -DENABLE_ICONV=OFF
 )
 # LZMA is compiled through XZ
 
@@ -72,14 +79,15 @@ ExternalProject_Add(${ep}
   INSTALL_DIR ${build_path}/install
   TMP_DIR ${tmp_path}
   STAMP_DIR ${stamp_path}
-  GIT_REPOSITORY ${git_url}
-  GIT_TAG ${git_tag}
+  URL ${release_url}
+  URL_HASH SHA256=67bfac3798a778143f4b1cadcdb3792b4269486f8e1b70ca5c0ee5841398bfdf
   CMAKE_GENERATOR ${gen}
   CMAKE_GENERATOR_PLATFORM ${CMAKE_GENERATOR_PLATFORM}
   CMAKE_ARGS ${cmake_args}
   DEPENDS ${${ep}_dependencies}
   UPDATE_COMMAND ""
 )
+# URL_HASH found with 'sha256sum libarchive-3.8.0.tar.xz'
 
 ## #############################################################################
 ## Set variable to provide infos about the project
