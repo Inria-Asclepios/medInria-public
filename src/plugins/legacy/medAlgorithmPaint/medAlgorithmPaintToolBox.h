@@ -216,7 +216,7 @@ private:
     QShortcut *removeSeed_shortcut;
     QCheckBox *m_wand3DCheckbox, *m_wand3DRealTime;
     QLabel *m_wandInfo;
-    QTime wandTimer;
+    QElapsedTimer wandTimer;
 
     bool seedPlanted;
     QVector3D m_seed;
