@@ -255,7 +255,7 @@ private :
     std::vector<QVector3D> m_points;
     PaintState::E m_paintState;
     PaintState::E m_lastPaintState;
-    QTime timer; // timer used to improve the visualization of the cursor
+    QElapsedTimer timer; // timer used to improve the visualization of the cursor
 };
 
 AlgorithmPaintToolBox::AlgorithmPaintToolBox(QWidget *parent ) :
@@ -343,8 +343,6 @@ AlgorithmPaintToolBox::AlgorithmPaintToolBox(QWidget *parent ) :
     // Sliders connects are in updateMagicWandComputationSpeed() and depend on realTime parameter
     connect(m_wandUpperThresholdSlider->getSpinBox(),SIGNAL(valueChanged(double)),this,SLOT(updateMagicWandComputation()),Qt::UniqueConnection);
     connect(m_wandLowerThresholdSlider->getSpinBox(),SIGNAL(valueChanged(double)),this,SLOT(updateMagicWandComputation()),Qt::UniqueConnection);
-
-    wandTimer = QTime();
 
     // Remove seed button
     m_removeSeedButton = new QPushButton("Remove seed");
@@ -507,6 +505,8 @@ AlgorithmPaintToolBox::AlgorithmPaintToolBox(QWidget *parent ) :
 
 AlgorithmPaintToolBox::~AlgorithmPaintToolBox()
 {
+    deactivateCustomedCursor();
+
     setOfPaintBrushRois.clear();
 
     if (m_imageData && m_maskAnnotationData)
@@ -640,14 +640,20 @@ void AlgorithmPaintToolBox::activateCustomedCursor()
     painter.setRenderHint( QPainter::Antialiasing );
     painter.setBackgroundMode(Qt::TransparentMode);
     painter.setBackground(QColor(255,255,255,255));
-    painter.setPen( Qt::white );
-    painter.drawEllipse( 0, 0, radiusSizeInt, radiusSizeInt );
-    painter.setPen( Qt::cyan );
-    painter.drawPoint(floor(radiusSizeDouble/2.0+0.5),     floor(radiusSizeDouble/2.0+0.5));
-    painter.drawPoint(floor(radiusSizeDouble/2.0-1.0+0.5), floor(radiusSizeDouble/2.0+0.5));
-    painter.drawPoint(floor(radiusSizeDouble/2.0+1.0+0.5), floor(radiusSizeDouble/2.0+0.5));
-    painter.drawPoint(floor(radiusSizeDouble/2.0+0.5),     floor(radiusSizeDouble/2.0-1.0+0.5));
-    painter.drawPoint(floor(radiusSizeDouble/2.0+0.5),     floor(radiusSizeDouble/2.0+1.0+0.5));
+
+    QPen pen(QColor(255, 255, 0));
+    pen.setWidth(2);
+    painter.setPen(pen);
+
+    QRectF circleRect(0.5, 0.5, radiusSizeInt - 1.0, radiusSizeInt - 1.0);
+    painter.drawEllipse(circleRect);
+
+    double center = floor(radiusSizeDouble / 2.0 + 0.5);
+    painter.drawPoint(center, center);
+    painter.drawPoint(center - 1, center);
+    painter.drawPoint(center + 1, center);
+    painter.drawPoint(center, center - 1);
+    painter.drawPoint(center, center + 1);
 
     // Update the cursor
     currentView->viewWidget()->setCursor(QCursor(pix, -1, -1));
@@ -655,12 +661,14 @@ void AlgorithmPaintToolBox::activateCustomedCursor()
 
 void AlgorithmPaintToolBox::deactivateCustomedCursor()
 {
-    if (!currentView) // no data
+    if (currentView)
     {
-        return;
+        if (currentView->viewWidget())
+        {
+            currentView->viewWidget()->unsetCursor();
+            currentView->viewWidget()->setCursor(Qt::CrossCursor);
+        }
     }
-
-    currentView->viewWidget()->setCursor(Qt::CrossCursor);
 }
 
 void AlgorithmPaintToolBox::activateMagicWand(bool checked)
