@@ -69,10 +69,6 @@ for use in the OpenSSL Toolkit (http://www.openssl.org/):
 sources: https://github.com/openssl/openssl
 license: https://github.com/openssl/openssl/blob/master/LICENSE.txt
 
-* quazip
-sources: https://github.com/stachenov/quazip
-license: https://github.com/stachenov/quazip/blob/master/COPYING
-
 * qwt
 sources: https://github.com/Inria-Asclepios/qwt
 license: https://github.com/Inria-Asclepios/qwt/blob/master/qwt/COPYING
@@ -88,3 +84,11 @@ license: https://github.com/zaphoyd/websocketpp/blob/master/COPYING
 * zlib
 sources: https://github.com/madler/zlib
 license: https://github.com/madler/zlib/blob/master/README
+
+* libarchive
+sources: https://github.com/libarchive/libarchive
+license: https://github.com/libarchive/libarchive/blob/master/COPYING
+
+* xz
+sources: https://github.com/tukaani-project/xz
+license: https://github.com/tukaani-project/xz/blob/master/COPYING
