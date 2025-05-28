@@ -12,8 +12,9 @@ function(music_plugins_project)
         tetgen
         eigen
         qwt
-        quazip
         ZLIB
+        xz
+        libarchive
         )
 
     if (${USE_RealTimeWorkspace})
@@ -66,8 +67,9 @@ function(music_plugins_project)
             -DQWT_INCLUDE_DIR:PATH=${qwt_INCLUDE_DIR}
             -Dqwt_ROOT:PATH=${qwt_ROOT}
             -Dtetgen_ROOT:PATH=${tetgen_ROOT}
-            -DQuaZip-Qt5_ROOT:PATH=${quazip_ROOT}
             -DZLIB_ROOT:PATH=${ZLIB_ROOT}
+            -Dlibarchive_ROOT:PATH=${libarchive_ROOT}
+            -Dxz_ROOT:PATH=${xz_ROOT}
             -DUSE_RealTimeWorkspace=${USE_RealTimeWorkspace}
             )
 
