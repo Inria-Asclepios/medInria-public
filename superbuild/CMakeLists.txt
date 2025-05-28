@@ -111,7 +111,8 @@ if(USE_MUSIC_PLUGINS)
         mmg
         tetgen
         ZLIB
-        quazip
+        xz
+        libarchive
         )
 endif()
 
