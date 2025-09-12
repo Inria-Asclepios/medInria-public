@@ -40,8 +40,8 @@ if (NOT USE_SYSTEM_${ep})
 ## Set up versioning control
 ## #############################################################################
 
-set(git_url ${GITHUB_PREFIX}medInria/qtdcm.git)
-set(git_tag APHP)
+set(git_url ${GITHUB_PREFIX}mathildemerle/qtdcm.git)
+set(git_tag dcmtk3.6.8)
 
 ## #############################################################################
 ## Add specific cmake arguments for configuration step of the project
@@ -50,9 +50,8 @@ set(git_tag APHP)
 # set compilation flags
 if (WIN32)
   set(BUILD_SHARED_LIBS_${ep} OFF)
-  set(DCMTK_WIDE_CHAR_FILE_IO_FUNCTIONS ON)
 else()
-  set(DCMTK_WIDE_CHAR_FILE_IO_FUNCTIONS OFF)
+  set(BUILD_SHARED_LIBS_${ep} ${BUILD_SHARED_LIBS})
 endif()
 
 if (UNIX)
@@ -72,8 +71,7 @@ set(cmake_args
   -DCMAKE_SHARED_LINKER_FLAGS=${${ep}_shared_linker_flags}  
   -DCMAKE_INSTALL_PREFIX=<INSTALL_DIR>
   -DBUILD_SHARED_LIBS=${BUILD_SHARED_LIBS_${ep}}
-  -DDCMTK_FIND_PACKAGE_USE_CONFIG_ONLY=ON
-  -DDCMTK_WIDE_CHAR_FILE_IO_FUNCTIONS:BOOL=${DCMTK_WIDE_CHAR_FILE_IO_FUNCTIONS}
+  -DDCMTK_SOURCE_DIR=${EP_PATH_SOURCE}/DCMTK
   )
   
 set(cmake_cache_args
@@ -82,7 +80,6 @@ set(cmake_cache_args
   -DDCMTK_ROOT:FILEPATH=${DCMTK_ROOT}
   )
 
-  
 ## #############################################################################
 ## Add external-project
 ## #############################################################################

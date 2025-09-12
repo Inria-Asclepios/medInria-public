@@ -88,7 +88,7 @@ set(cmake_cache_args
 ## Add external-project
 ## #############################################################################
 
-ep_GeneratePatchCommand(${ep} DTK_PATCH_COMMAND dtk-1.7.1.patch)
+ep_GeneratePatchCommand(${ep} DTK_PATCH_COMMAND dtk.patch)
 
 epComputPath(${ep})
 

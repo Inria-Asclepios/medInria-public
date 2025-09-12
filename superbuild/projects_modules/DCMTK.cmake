@@ -14,7 +14,6 @@
 function(DCMTK_project)
 set(ep DCMTK)
 
-
 ## #############################################################################
 ## List the dependencies of the project
 ## #############################################################################
@@ -40,14 +39,13 @@ if (NOT USE_SYSTEM_${ep})
 ## #############################################################################
 
 set(git_url ${GITHUB_PREFIX}DCMTK/dcmtk.git)
-set(git_tag DCMTK-3.6.2)
-
+set(git_tag DCMTK-3.6.9)
 
 ## #############################################################################
 ## Check if patch has to be applied
 ## #############################################################################
-  
-ep_GeneratePatchCommand(${ep} ${ep}_PATCH_COMMAND DCMTK_STL_QUIET.patch)
+
+ep_GeneratePatchCommand(${ep} ${ep}_PATCH_COMMAND DCMTK.patch)
 
 ## #############################################################################
 ## Add specific cmake arguments for configuration step of the project
@@ -57,6 +55,7 @@ if (WIN32)
   set(BUILD_SHARED_LIBS_${ep} OFF)
   set(DCMTK_WIDE_CHAR_FILE_IO_FUNCTIONS ON)
 else()
+  set(BUILD_SHARED_LIBS_${ep} ${BUILD_SHARED_LIBS})
   set(DCMTK_WIDE_CHAR_FILE_IO_FUNCTIONS OFF)
 endif()
 
@@ -74,6 +73,13 @@ set(cmake_args
   -DCMAKE_SHARED_LINKER_FLAGS:=${${ep}_shared_linker_flags}  
   -DCMAKE_INSTALL_PREFIX:=<INSTALL_DIR>
   -DBUILD_SHARED_LIBS=${BUILD_SHARED_LIBS_${ep}}
+  -DCMAKE_CXX_STANDARD=14
+  -DCMAKE_CXX_STANDARD_REQUIRED=ON
+  -DCMAKE_CXX_EXTENSIONS=OFF
+  -DDCMTK_OVERWRITE_WIN32_COMPILER_FLAGS:BOOL=OFF
+  -DDCMTK_ENABLE_STL:BOOL=ON
+  -DBUILD_APPS:BOOL=OFF
+  -DDCMTK_ENABLE_PRIVATE_TAGS:BOOL=ON
   -DDCMTK_WIDE_CHAR_FILE_IO_FUNCTIONS:BOOL=${DCMTK_WIDE_CHAR_FILE_IO_FUNCTIONS}
   -DDCMTK_WITH_DOXYGEN:BOOL=OFF
   -DDCMTK_WITH_ZLIB:BOOL=OFF    
@@ -84,12 +90,6 @@ set(cmake_args
   -DDCMTK_WITH_XML:BOOL=OFF
   -DDCMTK_WITH_WRAP:BOOL=OFF
   -DDCMTK_WITH_ICONV:BOOL=OFF
-  -DDCMTK_ENABLE_STL:BOOL=ON
-  -DDCMTK_ENABLE_CXX11:BOOL=ON
-  -DBUILD_APPS:BOOL=OFF
-  -DDCMTK_OVERWRITE_WIN32_COMPILER_FLAGS:BOOL=OFF
-  -DDCMTK_ENABLE_BUILTIN_DICTIONARY:BOOL=ON
-  -DDCMTK_ENABLE_PRIVATE_TAGS:BOOL=ON
   -DDCMTK_FORCE_FPIC_ON_UNIX:BOOL=ON
   )
 
@@ -103,6 +103,7 @@ ExternalProject_Add(${ep}
   PREFIX ${EP_PATH_SOURCE}
   SOURCE_DIR ${EP_PATH_SOURCE}/${ep}
   BINARY_DIR ${build_path}
+  INSTALL_DIR ${build_path}
   TMP_DIR ${tmp_path}
   STAMP_DIR ${stamp_path}
 

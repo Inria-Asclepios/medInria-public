@@ -43,8 +43,7 @@ if (NOT USE_SYSTEM_${ep})
 ## #############################################################################
 
 set(git_url ${GITHUB_PREFIX}Kitware/VTK.git)
-set(git_tag v9.2.6)
-
+set(git_tag v9.5.0)
 
 ## #############################################################################
 ## Add specific cmake arguments for configuration step of the project
@@ -145,7 +144,7 @@ endif()
 ## Check if patch has to be applied
 ## #############################################################################
   
-ep_GeneratePatchCommand(${ep} ${ep}_PATCH_COMMAND VTK.patch)
+#ep_GeneratePatchCommand(${ep} ${ep}_PATCH_COMMAND VTK.patch)
 
 ## #############################################################################
 ## Add external-project

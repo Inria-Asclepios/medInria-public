@@ -36,7 +36,6 @@
 #include "vtkTransformPolyDataFilter.h"
 #include "vtkTransform.h"
 
-
 vtkStandardNewMacro(vtkImageOrientedPointWidget);
 
 vtkCxxSetObjectMacro(vtkImageOrientedPointWidget, HandleProperty1, vtkProperty);
@@ -1459,28 +1458,3 @@ void vtkImageOrientedPointWidget::SizeHandles()
   // TODO...
   return;
 }
-
-//----------------------------------------------------------------------------
-#ifndef VTK_LEGACY_REMOVE
-# ifdef VTK_WORKAROUND_WINDOWS_MANGLE
-#  undef SetProp
-void vtkImageOrientedPointWidget::SetPropA(vtkProp* prop)
-{
-  VTK_LEGACY_REPLACED_BODY(vtkImageOrientedPointWidget::SetProp, "VTK 5.0",
-                           vtkImageOrientedPointWidget::SetViewProp);
-  this->SetViewProp(prop);
-}
-void vtkImageOrientedPointWidget::SetPropW(vtkProp* prop)
-{
-  VTK_LEGACY_REPLACED_BODY(vtkImageOrientedPointWidget::SetProp, "VTK 5.0",
-                           vtkImageOrientedPointWidget::SetViewProp);
-  this->SetViewProp(prop);
-}
-# endif
-void vtkImageOrientedPointWidget::SetProp(vtkProp* prop)
-{
-  VTK_LEGACY_REPLACED_BODY(vtkImageOrientedPointWidget::SetProp, "VTK 5.0",
-                           vtkImageOrientedPointWidget::SetViewProp);
-  this->SetViewProp(prop);
-}
-#endif

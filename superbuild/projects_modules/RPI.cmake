@@ -40,8 +40,8 @@ if (NOT USE_SYSTEM_${ep})
 ## Set up versioning control
 ## #############################################################################
 
-set(git_url ${GITHUB_PREFIX}Inria-Asclepios/RPI.git)
-set(git_tag ITK5.4rc04)
+set(git_url ${GITHUB_PREFIX}mathildemerle/RPI.git)
+set(git_tag update)
 
 ## #############################################################################
 ## Add specific cmake arguments for configuration step of the project
@@ -71,7 +71,6 @@ set(cmake_args
 set(cmake_cache_args
   -DITK_ROOT:FILEPATH=${ITK_ROOT}
   )
-
 
 ## #############################################################################
 ## Add external-project

@@ -69,7 +69,7 @@ ExternalProject_Add(${ep}
 ## #############################################################################
 
 ExternalProject_Get_Property(${ep} install_dir)
-set(${ep}_ROOT ${install_dir} PARENT_SCOPE)
+set(${ep}_ROOT ${build_path}/install PARENT_SCOPE)
 
 endif() #NOT USE_SYSTEM_ep
 

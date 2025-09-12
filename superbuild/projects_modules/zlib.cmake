@@ -30,7 +30,7 @@ function(ZLIB_project)
             PREFIX ${EP_PATH_SOURCE}
             SOURCE_DIR ${EP_PATH_SOURCE}/${external_project}
             BINARY_DIR ${build_path}
-            INSTALL_DIR ${build_path}
+            INSTALL_DIR ${build_path}/install
             TMP_DIR ${tmp_path}
             STAMP_DIR ${stamp_path}
 
@@ -43,7 +43,7 @@ function(ZLIB_project)
             UPDATE_COMMAND ""
             )
 
-        set(${external_project}_ROOT ${build_path} PARENT_SCOPE)
+        set(${external_project}_ROOT ${build_path}/install PARENT_SCOPE)
 
     endif()
 
