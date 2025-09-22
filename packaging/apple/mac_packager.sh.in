@@ -1,30 +1,28 @@
 #!/bin/bash
 
-# Usage:
-# - mac_packager.sh path_to_plugins1 path_to_plugins2...
-
-# To build a stand-alone mac version of the application, do the following:
-
-# 1. build medInria
-# 2. build medInria-plugins as well as your desired own plugins
-# 3. chmod u+x mac_pacakger.sh
-# 4. run mac_pacakger.sh with each argument being a script to package your plugins, e.g. : ./mac_packager.sh ${Plugins_Build_Dir}/mac_visages_plugins_packager.sh
-
-# The bundle medInria.app will contain all plugins and will be standalone, packaged into MedINRIA.dmg in the install dir
-
 cd @PROJECT_BINARY_DIR@
 
-\rm -fr TmpInstall
+# Prepare temporary directory
+rm -fr TmpInstall
 mkdir -p TmpInstall/MUSICardio.app/Contents/Resources
-cp -r @medInria_ROOT@/bin/MUSICardio.app/Contents/MacOS TmpInstall/MUSICardio.app/Contents
-cp @medInria_ROOT@/bin/MUSICardio.app/Contents/Info.plist TmpInstall/MUSICardio.app/Contents
-cp @medInria_ROOT@/bin/MUSICardio.app/Contents/Resources/MUSICardio.icns TmpInstall/MUSICardio.app/Contents/Resources
+
+@CMAKE_COMMAND@ -E copy_directory \
+    "@medInria_ROOT@/bin/MUSICardio.app/Contents/MacOS" \
+    "TmpInstall/MUSICardio.app/Contents"
+
+@CMAKE_COMMAND@ -E copy \
+    "@medInria_ROOT@/bin/MUSICardio.app/Contents/Info.plist" \
+    "TmpInstall/MUSICardio.app/Contents"
+
+@CMAKE_COMMAND@ -E copy \
+    "@medInria_ROOT@/bin/MUSICardio.app/Contents/Resources/MUSICardio.icns" \
+    "TmpInstall/MUSICardio.app/Contents/Resources"
 
 cd TmpInstall
 
 @Qt5_DIR@/../../../bin/macdeployqt MUSICardio.app -appstore-compliant
 
-#Run sub-packagers
+# Run sub-packagers
 injectDirs=''
 for i in $*; do
         echo $i
@@ -38,7 +36,7 @@ python_libs=''
 for python_lib in @medInria_ROOT@/bin/python_plugins/*; do
     lib=${python_lib##*/}
     libname=${lib%.so}
-    cp $python_lib python_plugins/$libname.dylib
+    @CMAKE_COMMAND@ -E copy "$python_lib" "python_plugins/${libname}.dylib"
     python_libs="$python_libs $libname"
 done
 
@@ -56,18 +54,38 @@ fi
 mkdir MUSICardio.app/Contents/Resources/lib
 mv lib/python@PYTHON_VERSION_MAJOR@.@PYTHON_VERSION_MINOR@ MUSICardio.app/Contents/Resources/lib
 
-#Run fancy packaging apple script
+# Keep an .app for signature
+@CMAKE_COMMAND@ -E copy_directory "MUSICardio.app" "@CMAKE_BINARY_DIR@"
 
-\cp -f @medInria_SOURCE_DIR@/utils/osx_packaging/BaseMedinriaPackage.sparseimage.gz @PROJECT_BINARY_DIR@/MedinriaPackage.sparseimage.gz
+# Prepare the original sparseimage
+@CMAKE_COMMAND@ -E copy \
+    "@medInria_SOURCE_DIR@/utils/osx_packaging/BaseMedinriaPackage.sparseimage.gz" \
+    "@PROJECT_BINARY_DIR@/MedinriaPackage.sparseimage.gz"
+
 cd @PROJECT_BINARY_DIR@
 gunzip -f MedinriaPackage.sparseimage.gz
 
-devName=`hdiutil attach -readwrite -noverify -noautoopen MedinriaPackage.sparseimage | egrep '^/dev/' | sed 1q | awk '{print $1}'`
-diskutil rename "medInria base" "MUSICardio @MEDINRIA_SUPERBUILD_VERSION@"
-\cp -rf @PROJECT_BINARY_DIR@/TmpInstall/MUSICardio.app /Volumes/"MUSICardio @MEDINRIA_SUPERBUILD_VERSION@"/
+# Sometimes it's needed after a compilation bug to detach the previous volumes
+hdiutil detach "/Volumes/medInria base" 2>/dev/null || true
+hdiutil detach "/Volumes/MUSICardio"    2>/dev/null || true
+
+# Attach disk in RW mode
+attach_output=$(hdiutil attach -readwrite -noverify -noautoopen MedinriaPackage.sparseimage)
+devName=$(echo "$attach_output" | awk '$1 ~ "^/dev/" {print $1; exit}')
+
+# Rename the volume
+diskutil rename "medInria base" "MUSICardio"
+
+# Copying
+echo "### Copying the app into the mounted volume..."
+@CMAKE_COMMAND@ -E copy_directory \
+    "@PROJECT_BINARY_DIR@/TmpInstall/MUSICardio.app" \
+    "/Volumes/MUSICardio"
 
 sync
 hdiutil detach $devName
+
+# Convert the sparseimage into final DMG
 hdiutil convert MedinriaPackage.sparseimage -format UDZO -imagekey zlib-level=9 -o "MUSICardio-@MEDINRIA_SUPERBUILD_VERSION@.dmg" 1>/dev/null 2>/dev/null
-\rm -fr MedinriaPackage.sparseimage @PROJECT_BINARY_DIR@/TmpInstall
-\mv MUSICardio-@MEDINRIA_SUPERBUILD_VERSION@.dmg @CMAKE_BINARY_DIR@
+rm -fr MedinriaPackage.sparseimage @PROJECT_BINARY_DIR@/TmpInstall
+mv MUSICardio-@MEDINRIA_SUPERBUILD_VERSION@.dmg @CMAKE_BINARY_DIR@
