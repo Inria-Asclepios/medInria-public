@@ -1,35 +1,54 @@
 #!/bin/bash
 
+check_certificate()
+{
+    local cert_name="$1"
+    local identities=$(security find-identity -v -p codesigning 2>/dev/null)
+    [[ $? -ne 0 ]] && return 1 # certificate not found
+    printf '%s\n' "$identities" | grep -F -q "$cert_name" # certificate found we send grep output
+}
+
+# Cleaning step
+echo "# Clean previous dmg in build"
+dmgs_found=$(find . -maxdepth 1 -type f -name "*.dmg")
+if [[ -n "$dmgs_found" ]]; then
+    # We only remove .dmg files
+    find . -maxdepth 1 -type f -name "*.dmg" -exec rm -f {} +
+fi
+
+# Preparation of the new bundle in TmpInstall
+echo "# Prepare the bundle"
+BUNDLE="MUSICardio"
 cd @PROJECT_BINARY_DIR@
-
-# Prepare temporary directory
 rm -fr TmpInstall
-mkdir -p TmpInstall/MUSICardio.app/Contents/Resources
-
-@CMAKE_COMMAND@ -E copy_directory \
-    "@medInria_ROOT@/bin/MUSICardio.app/Contents/MacOS" \
-    "TmpInstall/MUSICardio.app/Contents"
-
-@CMAKE_COMMAND@ -E copy \
-    "@medInria_ROOT@/bin/MUSICardio.app/Contents/Info.plist" \
-    "TmpInstall/MUSICardio.app/Contents"
-
-@CMAKE_COMMAND@ -E copy \
-    "@medInria_ROOT@/bin/MUSICardio.app/Contents/Resources/MUSICardio.icns" \
-    "TmpInstall/MUSICardio.app/Contents/Resources"
-
+mkdir -p TmpInstall/${BUNDLE}.app/Contents/{MacOS,Resources}
 cd TmpInstall
 
-@Qt5_DIR@/../../../bin/macdeployqt MUSICardio.app -appstore-compliant
+@CMAKE_COMMAND@ -E copy \
+    "@medInria_ROOT@/bin/${BUNDLE}.app/Contents/MacOS/${BUNDLE}" \
+    "${BUNDLE}.app/Contents/MacOS/"
+
+@CMAKE_COMMAND@ -E copy \
+    "@medInria_ROOT@/bin/${BUNDLE}.app/Contents/Info.plist" \
+    "${BUNDLE}.app/Contents"
+
+@CMAKE_COMMAND@ -E copy \
+    "@medInria_ROOT@/bin/${BUNDLE}.app/Contents/Resources/${BUNDLE}.icns" \
+    "${BUNDLE}.app/Contents/Resources"
+
+# Deploy Qt libraries using their tool
+echo "# Deploy Qt libs"
+@Qt5_DIR@/../../../bin/macdeployqt ${BUNDLE}.app -appstore-compliant
 
 # Run sub-packagers
+echo "# Run sub-packager"
 injectDirs=''
 for i in $*; do
-        echo $i
-        injectDirs="$injectDirs -inject-dir=$i"
+    echo $i
+    injectDirs="$injectDirs -inject-dir=$i"
 done
 
-mkdir python_plugins
+mkdir -p python_plugins
 injectDirs="$injectDirs -inject-dir=@PROJECT_BINARY_DIR@/TmpInstall/python_plugins"
 
 python_libs=''
@@ -40,52 +59,78 @@ for python_lib in @medInria_ROOT@/bin/python_plugins/*; do
     python_libs="$python_libs $libname"
 done
 
-@dtk_ROOT@/bin/dtkDeploy MUSICardio.app $injectDirs &>/dev/null
+# Deploy libs with dtk tool
+echo "# DTK Deploy"
+@dtk_ROOT@/bin/dtkDeploy ${BUNDLE}.app $injectDirs &>/dev/null
 
-mkdir MUSICardio.app/Contents/Plugins/python
+# Correct library paths for plugins, it's needed for the application to find them and also for the signature
+echo "# Correct library paths for plugins"
+PLUGIN_DIR="${BUNDLE}.app/Contents/PlugIns" 
+OLD_PREFIX="@medInria_ROOT@/bin/plugins_legacy" # absolute path
+NEW_PREFIX='@executable_path/../PlugIns'        # new relative path
+find "$PLUGIN_DIR" -type f -name "*.dylib" | while read -r current_lib; do
+    # On each lib in plugins directory we check the dependencies
+    otool -L "$current_lib" 2>/dev/null | tail -n +2 | while read -r line; do
+        dependency_path=$(echo "$line" | awk '{print $1}')
+
+        [[ "$dependency_path" != /* ]] && continue             # no need to change the path if the actual path is relative
+        [[ "$dependency_path" != "$OLD_PREFIX"* ]] && continue # or if the path links to the system 
+
+        new_path="${NEW_PREFIX}/$(basename "$dependency_path")"
+        echo "New path: $new_path"
+        install_name_tool -change "$dependency_path" "$new_path" "$current_lib"
+    done
+done
+
+# Python libs preparation
+echo "# Installation of Python libraries"
+mkdir -p ${BUNDLE}.app/Contents/PlugIns/python
 if [ -n "${python_libs}" ]
 then
     for python_lib in $python_libs; do
-        mv MUSICardio.app/Contents/Plugins/$python_lib.dylib MUSICardio.app/Contents/Plugins/python/$python_lib.so
+        mv ${BUNDLE}.app/Contents/PlugIns/$python_lib.dylib ${BUNDLE}.app/Contents/PlugIns/python/$python_lib.so
     done
 fi
 
 @CMAKE_COMMAND@ --install @pyncpp_ROOT@ --prefix . --component Runtime
-mkdir MUSICardio.app/Contents/Resources/lib
-mv lib/python@PYTHON_VERSION_MAJOR@.@PYTHON_VERSION_MINOR@ MUSICardio.app/Contents/Resources/lib
 
-# Keep an .app for signature
-@CMAKE_COMMAND@ -E copy_directory "MUSICardio.app" "@CMAKE_BINARY_DIR@"
+mkdir -p ${BUNDLE}.app/Contents/Resources/lib
+mv lib/python@PYTHON_VERSION_MAJOR@.@PYTHON_VERSION_MINOR@ ${BUNDLE}.app/Contents/Resources/lib
 
-# Prepare the original sparseimage
-@CMAKE_COMMAND@ -E copy \
-    "@medInria_SOURCE_DIR@/utils/osx_packaging/BaseMedinriaPackage.sparseimage.gz" \
-    "@PROJECT_BINARY_DIR@/MedinriaPackage.sparseimage.gz"
+# Sign the app
+if check_certificate "$CERT_NAME"; then
+    echo "# Sign the app"
+    CERT_NAME="MDS-certificate"
+    find "${BUNDLE}.app/Contents/PlugIns" -type f -name "*.dylib" -exec \
+        codesign --force --options runtime --timestamp --sign "$CERT_NAME" {} \;
 
-cd @PROJECT_BINARY_DIR@
-gunzip -f MedinriaPackage.sparseimage.gz
+    find "${BUNDLE}.app/Contents/PlugIns/python" -type f -name "*.so" -exec \
+        codesign --force --options runtime --timestamp --sign "$CERT_NAME" {} \;
 
-# Sometimes it's needed after a compilation bug to detach the previous volumes
-hdiutil detach "/Volumes/medInria base" 2>/dev/null || true
-hdiutil detach "/Volumes/MUSICardio"    2>/dev/null || true
+    find "${BUNDLE}.app/Contents/Frameworks" -type d -name "*.framework" -exec \
+        codesign --force --options runtime --timestamp --sign "$CERT_NAME" {} \;
 
-# Attach disk in RW mode
-attach_output=$(hdiutil attach -readwrite -noverify -noautoopen MedinriaPackage.sparseimage)
-devName=$(echo "$attach_output" | awk '$1 ~ "^/dev/" {print $1; exit}')
+    find "${BUNDLE}.app/Contents/Frameworks" -type f -name "*.dylib" -exec \
+        codesign --force --options runtime --timestamp --sign "$CERT_NAME" {} \;
 
-# Rename the volume
-diskutil rename "medInria base" "MUSICardio"
+    codesign --force --options runtime --timestamp --sign "$CERT_NAME" "${BUNDLE}.app/Contents/MacOS/${BUNDLE}"
+    codesign --force --deep --options runtime --timestamp --sign "$CERT_NAME" "${BUNDLE}.app"
+    codesign --verify --deep --strict --verbose=1 ${BUNDLE}.app
+else
+    echo "# No certificate found for the application, we do not sign it"
+fi
 
-# Copying
-echo "### Copying the app into the mounted volume..."
-@CMAKE_COMMAND@ -E copy_directory \
-    "@PROJECT_BINARY_DIR@/TmpInstall/MUSICardio.app" \
-    "/Volumes/MUSICardio"
+# Create the DMG
+echo "# Create the DMG"
+# To install: /usr/bin/python3 -m pip install --user dmgbuild
+DMG_NAME="${BUNDLE}-@MEDINRIA_SUPERBUILD_VERSION@.dmg"
+/usr/bin/python3 -m dmgbuild \
+    -s "../../../packaging/apple/settings.json" \
+    "${BUNDLE}" \
+    "${DMG_NAME}"
 
-sync
-hdiutil detach $devName
+# Sign the DMG
+echo "# Sign the DMG"
+codesign --sign "${CERT_NAME}" --timestamp --options runtime "${DMG_NAME}"
 
-# Convert the sparseimage into final DMG
-hdiutil convert MedinriaPackage.sparseimage -format UDZO -imagekey zlib-level=9 -o "MUSICardio-@MEDINRIA_SUPERBUILD_VERSION@.dmg" 1>/dev/null 2>/dev/null
-rm -fr MedinriaPackage.sparseimage @PROJECT_BINARY_DIR@/TmpInstall
-mv MUSICardio-@MEDINRIA_SUPERBUILD_VERSION@.dmg @CMAKE_BINARY_DIR@
+mv "${DMG_NAME}" @CMAKE_BINARY_DIR@/

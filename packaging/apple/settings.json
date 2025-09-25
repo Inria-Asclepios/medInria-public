@@ -1,13 +1,25 @@
 {
-    "title": "MUSICardio",
-    "background": "../src/app/medInria/resources/pixmaps/MUSICardio-logo-dmg.png",
-    "icon": "../src/app/medInria/resources/pixmaps/MUSICardio_dmg_mountedimage.icns",
-    "format": "UDZO",
-    "compression-level": 9,
-    "window": { "position": { "x": 100, "y": 100 },
-                "size": { "width": 640, "height": 300 } },
-    "contents": [
-        { "x": 140, "y": 165, "type": "file", "path": "/Volumes/MUSICardio 4.1.0/MUSICardio.app" },
-        { "x": 480, "y": 165, "type": "link", "path": "/Applications" }
-    ]
+  "title": "MUSICardio",
+  "background": "../../../src/app/medInria/resources/pixmaps/MUSICardio-logo-dmg.png",
+  "icon": "../../../src/app/medInria/resources/pixmaps/MUSICardio_dmg_mountedimage.icns",
+  "format": "UDZO",
+  "compression-level": 9,
+  "window": {
+    "position": { "x": 100, "y": 100 },
+    "size": { "width": 640, "height": 300 }
+  },
+  "contents": [
+    {
+      "x": 140,
+      "y": 165,
+      "type": "file",
+      "path": "MUSICardio.app"
+    },
+    {
+      "x": 480,
+      "y": 165,
+      "type": "link",
+      "path": "/Applications"
+    }
+  ]
 }
