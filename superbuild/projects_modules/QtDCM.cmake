@@ -57,8 +57,11 @@ endif()
 if (UNIX)
   set(${ep}_c_flags "${${ep}_c_flags} -Wall")
   set(${ep}_cxx_flags "${${ep}_cxx_flags} -Wall")
+else()
+  if (WIN32)
+    set(${ep}_cxx_flags "${${ep}_cxx_flags} /Zc:__cplusplus")
+  endif()
 endif()
-
 if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     set(${ep}_cxx_flags "${${ep}_cxx_flags} -Wno-inconsistent-missing-override")
 endif()
@@ -71,14 +74,14 @@ set(cmake_args
   -DCMAKE_SHARED_LINKER_FLAGS=${${ep}_shared_linker_flags}  
   -DCMAKE_INSTALL_PREFIX=<INSTALL_DIR>
   -DBUILD_SHARED_LIBS=${BUILD_SHARED_LIBS_${ep}}
+  -DCMAKE_MSVC_RUNTIME_LIBRARY=${CMAKE_MSVC_RUNTIME_LIBRARY}
   -DDCMTK_SOURCE_DIR=${EP_PATH_SOURCE}/DCMTK
-  )
-  
-set(cmake_cache_args
   -DQt5_DIR:FILEPATH=${Qt5_DIR}
   -DITK_ROOT:FILEPATH=${ITK_ROOT}
   -DDCMTK_ROOT:FILEPATH=${DCMTK_ROOT}
   )
+#   -DCMAKE_CXX_STANDARD=${CMAKE_CXX_STANDARD}
+#   -DCMAKE_CXX_EXTENSIONS=OFF
 
 ## #############################################################################
 ## Add external-project

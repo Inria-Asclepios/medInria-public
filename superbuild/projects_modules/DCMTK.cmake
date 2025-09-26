@@ -63,7 +63,14 @@ endif()
 if (UNIX)
   set(${ep}_c_flags "${${ep}_c_flags} -w")
   set(${ep}_cxx_flags "${${ep}_cxx_flags} -w")
+else()
+  if (WIN32)
+    set(${ep}_cxx_flags "${${ep}_cxx_flags} /Zc:__cplusplus") 
+  endif()
 endif()
+
+message("### DCMTK CMAKE_MSVC_RUNTIME_LIBRARY ${CMAKE_MSVC_RUNTIME_LIBRARY} ")
+message("### DCMTK CMAKE_CXX_STANDARD ${CMAKE_CXX_STANDARD} ")
 
 set(cmake_args
   ${ep_common_cache_args}
@@ -73,8 +80,8 @@ set(cmake_args
   -DCMAKE_SHARED_LINKER_FLAGS:=${${ep}_shared_linker_flags}  
   -DCMAKE_INSTALL_PREFIX:=<INSTALL_DIR>
   -DBUILD_SHARED_LIBS=${BUILD_SHARED_LIBS_${ep}}
-  -DCMAKE_CXX_STANDARD=14
-  -DCMAKE_CXX_STANDARD_REQUIRED=ON
+  -DCMAKE_MSVC_RUNTIME_LIBRARY=${CMAKE_MSVC_RUNTIME_LIBRARY}
+  -DDCMTK_FORCE_STATIC_RUNTIME:BOOL=OFF
   -DCMAKE_CXX_EXTENSIONS=OFF
   -DDCMTK_OVERWRITE_WIN32_COMPILER_FLAGS:BOOL=OFF
   -DDCMTK_ENABLE_STL:BOOL=ON
@@ -92,6 +99,7 @@ set(cmake_args
   -DDCMTK_WITH_ICONV:BOOL=OFF
   -DDCMTK_FORCE_FPIC_ON_UNIX:BOOL=ON
   )
+#  -DCMAKE_CXX_STANDARD=${CMAKE_CXX_STANDARD}
 
 ## #############################################################################
 ## Add external-project
