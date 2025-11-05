@@ -2,10 +2,9 @@
 
 check_certificate()
 {
-    local cert_name="$1"
-    local identities=$(security find-identity -v -p codesigning 2>/dev/null)
-    [[ $? -ne 0 ]] && return 1 # certificate not found
-    printf '%s\n' "$identities" | grep -F -q "$cert_name" # certificate found we send grep output
+    local certificate_name="$1"
+    local identities=$(security find-identity -v -p codesigning 2>/dev/null) || return 1 # either the identity succeeds or we return an error code
+    printf '%s\n' "$identities" | grep -F -q "$certificate_name" # certificate found we send grep output
 }
 
 # Cleaning step
@@ -19,6 +18,10 @@ fi
 # Preparation of the new bundle in TmpInstall
 echo "# Prepare the bundle"
 BUNDLE="MUSICardio"
+APP_EXE="${BUNDLE}.app/Contents/MacOS/${BUNDLE}"
+PLUGIN_DIR="${BUNDLE}.app/Contents/PlugIns"
+FRAMEWORK_DIR="${BUNDLE}.app/Contents/Frameworks"
+
 cd @PROJECT_BINARY_DIR@
 rm -fr TmpInstall
 mkdir -p TmpInstall/${BUNDLE}.app/Contents/{MacOS,Resources}
@@ -63,22 +66,28 @@ done
 echo "# DTK Deploy"
 @dtk_ROOT@/bin/dtkDeploy ${BUNDLE}.app $injectDirs &>/dev/null
 
-# Correct library paths for plugins, it's needed for the application to find them and also for the signature
+# Correct library paths, it's needed to load plugins and also for the signature
 echo "# Correct library paths for plugins"
-PLUGIN_DIR="${BUNDLE}.app/Contents/PlugIns" 
-OLD_PREFIX="@medInria_ROOT@/bin/plugins_legacy" # absolute path
+OLD_PREFIX="@medInria_ROOT@/bin/plugins_legacy" # absolute path before
 NEW_PREFIX='@executable_path/../PlugIns'        # new relative path
-find "$PLUGIN_DIR" -type f -name "*.dylib" | while read -r current_lib; do
-    # On each lib in plugins directory we check the dependencies
-    otool -L "$current_lib" 2>/dev/null | tail -n +2 | while read -r line; do
-        dependency_path=$(echo "$line" | awk '{print $1}')
+candidate_libs=($(ls /usr/lib/libz*.dylib 2>/dev/null)) # There are some path errors with libz which is a system lib
+SYSTEM_Z=${candidate_libs[0]}
 
-        [[ "$dependency_path" != /* ]] && continue             # no need to change the path if the actual path is relative
-        [[ "$dependency_path" != "$OLD_PREFIX"* ]] && continue # or if the path links to the system 
+find "$PLUGIN_DIR" -type f -name "*.dylib" | while read -r lib; do
+    otool -L "$lib" 2>/dev/null | tail -n +2 | while read -r line; do
+        dep=$(echo "$line" | awk '{print $1}')
 
-        new_path="${NEW_PREFIX}/$(basename "$dependency_path")"
-        echo "New path: $new_path"
-        install_name_tool -change "$dependency_path" "$new_path" "$current_lib"
+        # Solving libz wrong paths
+        if [[ "$dep" == *"/libz."*".dylib" ]] || [[ "$dep" == *"/libz.dylib" ]]; then
+            install_name_tool -change "$dep" "$SYSTEM_Z" "$lib"
+            continue
+        fi
+
+        # Solving absolute paths in plugins
+        if [[ "$dep" == "$OLD_PREFIX"* ]]; then
+            new_path="${NEW_PREFIX}/$(basename "$dep")"
+            install_name_tool -change "$dep" "$new_path" "$lib"
+        fi
     done
 done
 
@@ -92,37 +101,34 @@ then
     done
 fi
 
-@CMAKE_COMMAND@ --install @pyncpp_ROOT@ --prefix . --component Runtime
+@CMAKE_COMMAND@ --install @pyncpp_ROOT@ --prefix . --component Runtime &>/dev/null
 
 mkdir -p ${BUNDLE}.app/Contents/Resources/lib
 mv lib/python@PYTHON_VERSION_MAJOR@.@PYTHON_VERSION_MINOR@ ${BUNDLE}.app/Contents/Resources/lib
 
 # Sign the app
+CERT_NAME="MDS-certificate"
 if check_certificate "$CERT_NAME"; then
     echo "# Sign the app"
-    CERT_NAME="MDS-certificate"
-    find "${BUNDLE}.app/Contents/PlugIns" -type f -name "*.dylib" -exec \
-        codesign --force --options runtime --timestamp --sign "$CERT_NAME" {} \;
 
-    find "${BUNDLE}.app/Contents/PlugIns/python" -type f -name "*.so" -exec \
-        codesign --force --options runtime --timestamp --sign "$CERT_NAME" {} \;
+    find "$FRAMEWORK_DIR" -type f -name "*.dylib" -exec \
+        codesign --force --timestamp --sign "$CERT_NAME" {} \;
+    find "$PLUGIN_DIR" -type f -name "*.dylib" -exec \
+        codesign --force --timestamp --sign "$CERT_NAME" {} \;
+    find "$PLUGIN_DIR/python" -type f -name "*.so" -exec \
+        codesign --force --timestamp --sign "$CERT_NAME" {} \;
+    codesign --force --timestamp --sign "$CERT_NAME" "$APP_EXE"
+    codesign --force --deep --timestamp --sign "$CERT_NAME" "${BUNDLE}.app"
 
-    find "${BUNDLE}.app/Contents/Frameworks" -type d -name "*.framework" -exec \
-        codesign --force --options runtime --timestamp --sign "$CERT_NAME" {} \;
-
-    find "${BUNDLE}.app/Contents/Frameworks" -type f -name "*.dylib" -exec \
-        codesign --force --options runtime --timestamp --sign "$CERT_NAME" {} \;
-
-    codesign --force --options runtime --timestamp --sign "$CERT_NAME" "${BUNDLE}.app/Contents/MacOS/${BUNDLE}"
-    codesign --force --deep --options runtime --timestamp --sign "$CERT_NAME" "${BUNDLE}.app"
-    codesign --verify --deep --strict --verbose=1 ${BUNDLE}.app
+    # Check
+    codesign --verify --deep --strict --verbose=2 "${BUNDLE}.app"
+    spctl -a -vv "${BUNDLE}.app"
 else
     echo "# No certificate found for the application, we do not sign it"
 fi
 
 # Create the DMG
 echo "# Create the DMG"
-# To install: /usr/bin/python3 -m pip install --user dmgbuild
 DMG_NAME="${BUNDLE}-@MEDINRIA_SUPERBUILD_VERSION@.dmg"
 /usr/bin/python3 -m dmgbuild \
     -s "../../../packaging/apple/settings.json" \
