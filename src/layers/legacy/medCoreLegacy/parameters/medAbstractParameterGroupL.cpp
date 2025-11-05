@@ -37,7 +37,8 @@ medAbstractParameterGroupL::medAbstractParameterGroupL(QString name, QObject *pa
     setParent(parent);
     d->name = name;
     d->linkAll = false;
-    d->color = QColor::fromHsv(qrand()%360, 255, 210);
+    int hue = QRandomGenerator::global()->bounded(360);
+    d->color = QColor::fromHsv(hue, 255, 210);
     d->workspace = workspace;
 }
 

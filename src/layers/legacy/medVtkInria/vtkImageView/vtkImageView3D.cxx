@@ -409,20 +409,17 @@ void vtkImageView3D::UnInstallInteractor()
     BoxWidget->SetInteractor (nullptr);
     PlaneWidget->SetInteractor (nullptr);
     Marker->SetInteractor (nullptr);
+
     // Happening for instance switching from 2D->3D->2D
     if (Interactor)
     {
-        if (Interactor->GetRenderWindow())
+        Interactor->SetInteractorStyle(nullptr);
+        if (auto* rw = Interactor->GetRenderWindow())
         {
-            auto poRenderer = Interactor->GetRenderWindow()->GetRenderers()->GetFirstRenderer();
-            while (poRenderer)
-            {
-                RenderWindow->RemoveRenderer(poRenderer);
-                poRenderer = Interactor->GetRenderWindow()->GetRenderers()->GetFirstRenderer();
-            }
-            Interactor->SetRenderWindow (nullptr);
+            // Remove all renderers
+            rw->GetRenderers()->RemoveAllItems();
+            Interactor->SetRenderWindow(nullptr);
         }
-        Interactor->SetInteractorStyle (nullptr);
         IsInteractorInstalled = 0;
     }
 }
@@ -590,7 +587,6 @@ void vtkImageView3D::InternalUpdate()
         }
     }
     // Read bounds and use these to place widget, rather than force whole dataset to be read.
-
     auto image = appender->GetOutput();
     double * bounds = image->GetBounds();
 
@@ -608,11 +604,6 @@ void vtkImageView3D::InternalUpdate()
 void vtkImageView3D::SetOrientationMatrix (vtkMatrix4x4* matrix)
 {
   this->Superclass::SetOrientationMatrix (matrix);
-  VolumeActor->SetUserMatrix (OrientationMatrix);
-  BoxWidget->SetOrientationMatrix (OrientationMatrix);
-  ActorX->SetUserMatrix (OrientationMatrix);
-  ActorY->SetUserMatrix (OrientationMatrix);
-  ActorZ->SetUserMatrix (OrientationMatrix);
 }
 
 //----------------------------------------------------------------------------

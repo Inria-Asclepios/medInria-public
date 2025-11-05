@@ -111,17 +111,22 @@ vtkImageView::vtkImageView()
     this->CornerAnnotation->PickableOff();
     this->CornerAnnotation->SetText (3, "<patient>\n<study>\n<series>");
 
-    this->ScalarBar->SetLabelFormat ("%.3E");
-    this->ScalarBar->SetNumberOfLabels (3);
+    // As for VTK 9.2 SetFontSize is not working since vtkScalarBarActor scales
+    // the font size on the widget on which it's attached (the renderer).
+    // Changing the size of the view/app scales font size.
+    // Using SetUnconstrainedFontSize for instance does not help neither.
+    this->ScalarBar->SetLabelFormat("%g");
+    this->ScalarBar->SetNumberOfLabels(5);
+    this->ScalarBar->SetTextPad(4);
     this->ScalarBar->GetPositionCoordinate()->SetCoordinateSystemToNormalizedViewport();
     this->ScalarBar->SetLabelTextProperty (this->TextProperty);
     this->ScalarBar->GetLabelTextProperty()->SetFontSize (1);
     this->ScalarBar->GetLabelTextProperty()->BoldOff();
     this->ScalarBar->GetLabelTextProperty()->ShadowOff();
     this->ScalarBar->GetLabelTextProperty()->ItalicOff();
-    this->ScalarBar->SetWidth (0.1);
+    this->ScalarBar->SetWidth(0.07);
     this->ScalarBar->SetHeight (0.5);
-    this->ScalarBar->SetPosition (0.9,0.3);
+    this->ScalarBar->SetPosition(0.92, 0.3);
     this->ScalarBar->PickableOff();
     this->ScalarBar->VisibilityOn();
 

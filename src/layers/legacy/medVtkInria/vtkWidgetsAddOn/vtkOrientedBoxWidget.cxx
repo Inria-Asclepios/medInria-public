@@ -62,53 +62,46 @@ vtkOrientedBoxWidget::~vtkOrientedBoxWidget()
 //----------------------------------------------------------------------------
 void vtkOrientedBoxWidget::SetOrientationMatrix(vtkMatrix4x4* matrix)
 {
-  if (matrix == this->OrientationMatrix)
-    return;
-
-  if (this->OrientationMatrix)
-  {
-    this->OrientationMatrix->UnRegister (this);
-    this->OrientationMatrix = nullptr;
-  }
-
-  this->OrientationMatrix = matrix;
-  
-  if ( this->OrientationMatrix )
-  {
-    this->OrientationMatrix->Register(this);
-  }
-
-  // move all the actors according to the user-matrix
-  this->HexActor->SetUserMatrix (matrix);
-  this->HexFace->SetUserMatrix (matrix);
-  this->HexOutline->SetUserMatrix (matrix);
-  
-  for (unsigned int i=0; i<7; i++)
-    this->Handle[i]->SetUserMatrix (matrix);
-
-  if (matrix->Determinant()<0.0)
-  {
-    for (unsigned int i=0; i<7; i++)
+    if (matrix == this->OrientationMatrix)
     {
-      if (vtkPolyData *input = vtkPolyData::SafeDownCast (this->Handle[i]->GetMapper()->GetInput()))
-      {
-	vtkReverseSense *reverse = vtkReverseSense::New();
-    reverse->SetInputData (input);
-	reverse->ReverseNormalsOn();
-	reverse->ReverseCellsOff();
-	reverse->Update();
-    vtkPolyDataMapper::SafeDownCast (this->Handle[i]->GetMapper())->SetInputData (reverse->GetOutput());
-	reverse->Delete();
-      }
+        return;
     }
-  }
-  
-  if (this->OrientationMatrix)
-  { 
-    // initialize inverse matrix
-    vtkMatrix4x4::Invert (this->OrientationMatrix, this->InvertedOrientationMatrix);
-  }
-  
+
+    if (this->OrientationMatrix)
+    {
+        this->OrientationMatrix->UnRegister (this);
+        this->OrientationMatrix = nullptr;
+    }
+
+    this->OrientationMatrix = matrix;
+    
+    if ( this->OrientationMatrix )
+    {
+        this->OrientationMatrix->Register(this);
+    }
+
+    if (matrix->Determinant()<0.0)
+    {
+        for (unsigned int i=0; i<7; i++)
+        {
+            if (vtkPolyData *input = vtkPolyData::SafeDownCast (this->Handle[i]->GetMapper()->GetInput()))
+            {
+                vtkReverseSense *reverse = vtkReverseSense::New();
+                reverse->SetInputData (input);
+                reverse->ReverseNormalsOn();
+                reverse->ReverseCellsOff();
+                reverse->Update();
+                vtkPolyDataMapper::SafeDownCast (this->Handle[i]->GetMapper())->SetInputData (reverse->GetOutput());
+                reverse->Delete();
+            }
+        }
+    }
+    
+    if (this->OrientationMatrix)
+    { 
+        // initialize inverse matrix
+        vtkMatrix4x4::Invert (this->OrientationMatrix, this->InvertedOrientationMatrix);
+    }
 }
 
 

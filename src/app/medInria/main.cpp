@@ -84,8 +84,8 @@ int main(int argc,char* argv[])
     fmt.setGreenBufferSize(1);
     fmt.setBlueBufferSize(1);
     fmt.setDepthBufferSize(1);
-    fmt.setStencilBufferSize(0);
-    fmt.setAlphaBufferSize(1);
+    fmt.setStencilBufferSize(8);
+    fmt.setAlphaBufferSize(8);
     fmt.setStereo(false);
     fmt.setSamples(0);
     QSurfaceFormat::setDefaultFormat(fmt);

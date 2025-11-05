@@ -337,12 +337,12 @@ void vtkTensorVisuManager::SetInput(vtkUnstructuredGrid* data, vtkMatrix4x4 *mat
 {
     if( !data )
     {
-        std::cerr << "Error: null data." << std::endl;
+        std::cerr << "Error in Tensor Manager: null data." << std::endl;
         return;
     }
     if( !(data->GetPointData()->GetTensors()) )
     {
-        std::cerr << "Error: null tensors data." << std::endl;
+        std::cerr << "Error in Tensor Manager: null tensors data." << std::endl;
         return;
     }
 
