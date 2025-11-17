@@ -53,7 +53,7 @@ vtkImageView3D::vtkImageView3D()
   VolumeMapper = vtkSmartVolumeMapper::New();
 
   Callback    = vtkImageView3DCroppingBoxCallback::New();
-  BoxWidget   = vtkOrientedBoxWidget::New();
+  BoxWidget   = vtkBoxWidget::New();
   PlaneWidget = vtkPlaneWidget::New();
   Marker      = vtkOrientationMarkerWidget::New();
   Cube        = vtkAnnotatedCubeActor::New();
@@ -535,7 +535,7 @@ void vtkImageView3D::InternalUpdate()
         }
     }
     appender->Update();
-    appender->GetOutput();
+
     VolumeMapper->SetInputConnection( appender->GetOutputPort());
     VolumeMapper->Update();
     VolumeMapper->Modified();
@@ -586,24 +586,19 @@ void vtkImageView3D::InternalUpdate()
             ActorZ->GetMapper()->SetInputConnection(PlanarWindowLevelZ->GetOutputPort());
         }
     }
-    // Read bounds and use these to place widget, rather than force whole dataset to be read.
-    auto image = appender->GetOutput();
-    double * bounds = image->GetBounds();
-
+    // Bounds of vtkBoxWidget should be in image-coordinates.
+    // Since VTK 9.3 bounds from actors and vtkImageData are in world coordinates.
+    double bounds [6];
+    GetInputBounds(bounds);
     BoxWidget->SetInputConnection(appender->GetOutputPort());
-    BoxWidget->PlaceWidget (bounds);
+    BoxWidget->PlaceWidget(bounds);
+
     Callback->Execute (BoxWidget, 0, bounds);
     PlaneWidget->SetInputConnection(appender->GetOutputPort());
     PlaneWidget->PlaceWidget(bounds);
     UpdateDisplayExtent();
 
     appender->Delete();
-}
-
-//----------------------------------------------------------------------------
-void vtkImageView3D::SetOrientationMatrix (vtkMatrix4x4* matrix)
-{
-  this->Superclass::SetOrientationMatrix (matrix);
 }
 
 //----------------------------------------------------------------------------

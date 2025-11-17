@@ -2057,7 +2057,6 @@ void vtkImageView2D::RemoveLayer(int layer)
     {
         // ////////////////////////////////////////////////////////////////////////
         // Save image informations of layer 0
-        double  bounds[6];
         vtkMatrix4x4 *matrix  = nullptr;
         int    *imageSize     = nullptr;
         double *imageSpacing  = nullptr;
@@ -2065,7 +2064,6 @@ void vtkImageView2D::RemoveLayer(int layer)
     
         medVtkImageInfo   sImgInfo;
         medVtkImageInfo* psImgInfo  = GetMedVtkImageInfo();
-        GetInputBounds(bounds);
   
         if (psImgInfo)
         {
@@ -2076,7 +2074,6 @@ void vtkImageView2D::RemoveLayer(int layer)
             imageSpacing = sImgInfo.spacing;
             imageOrigin = sImgInfo.origin;
         }
-
 
         // ////////////////////////////////////////////////////////////////////////
         // Remove layer

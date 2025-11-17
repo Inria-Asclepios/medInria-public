@@ -1548,35 +1548,22 @@ vtkDataSet* vtkImageView::FindActorDataSet (vtkProp3D* arg)
     return vtkDataSet::SafeDownCast (this->DataSetCollection->GetItemAsObject (id-1));
 }
 
-/////////////////////////////////////////////////////////////////////
-///////////////// One comment on the origin handling ////////////////
-/////////////////////////////////////////////////////////////////////
-
-/// The 4th column of the OrientationMatrix instance is intensively
-/// used in this class in order to estimate world coordinate position
-/// and other conversions. The fact that vtkImageData class does not
-/// handle any orientation matrix makes this class weak, compared to
-/// ITK version. Therefore I think that ALL orientation AND origin
-/// information should be stored in the same instance, i.e. a vtkMatrix4x4.
-/// Thus impliing that the origin in a vtkImageData should be forced to 0.
-/// If we mix the information between vtkImageData "origin" and the
-/// vtkMatrix4x4 instances, it will be VERY confusing. and it will
-/// introduce misbehaviours in the position evaluation in this class.
-
-
 /**
-*  Get the bounding box of the input image
+*  Get the bounding box of the input image in image coordinates
 */
 void vtkImageView::GetInputBounds ( double * bounds )
 {
-    const int* wholeExtent = this->GetMedVtkImageInfo()->extent ;
-    const double * spacing = this->GetMedVtkImageInfo()->spacing;
-    const double * origin = this->GetMedVtkImageInfo ()->origin ;
-
-    for ( int i(0); i < 3; ++i )
+    if (GetMedVtkImageInfo())
     {
-        bounds[ 2*i     ] = spacing [ i ]*wholeExtent [ 2*i     ] + origin [ i ];
-        bounds[ 2*i + 1 ] = spacing [ i ]*wholeExtent [ 2*i + 1 ] + origin [ i ];
+        const int *wholeExtent = this->GetMedVtkImageInfo()->extent;
+        const double *spacing  = this->GetMedVtkImageInfo()->spacing;
+        const double *origin   = this->GetMedVtkImageInfo()->origin;
+
+        for ( int i(0); i < 3; ++i )
+        {
+            bounds[ 2*i     ] = spacing [ i ]*wholeExtent [ 2*i     ] + origin [ i ];
+            bounds[ 2*i + 1 ] = spacing [ i ]*wholeExtent [ 2*i + 1 ] + origin [ i ];
+        }
     }
 }
 
