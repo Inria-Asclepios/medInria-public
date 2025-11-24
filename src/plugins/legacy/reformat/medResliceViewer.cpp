@@ -155,6 +155,10 @@ medResliceViewer::medResliceViewer(medAbstractView *view, QWidget *parent): medA
     vtkViewData = vtkSmartPointer<vtkImageData>::New();
     vtkViewData->DeepCopy(view3d->GetInputAlgorithm(view3d->GetCurrentLayer())->GetOutput());
 
+    // TODO Set matrice to identity for VTK since 9.3.
+    // Otherwise the data transformations in the views are incorrect.
+    vtkViewData->GetDirectionMatrix()->Identity();
+
     // Build reslice viewers
     for (int i = 0; i < 3; i++)
     {
@@ -264,9 +268,9 @@ medResliceViewer::medResliceViewer(medAbstractView *view, QWidget *parent): medA
 
         riw[i]->GetResliceCursorWidget()->AddObserver(vtkResliceCursorWidget::ResliceAxesChangedEvent, cbk);
         riw[i]->GetResliceCursorWidget()->AddObserver(vtkResliceCursorWidget::WindowLevelEvent, cbk);
-        riw[i]->GetResliceCursorWidget()->AddObserver(vtkResliceCursorWidget::ResliceThicknessChangedEvent, cbk);
         riw[i]->GetResliceCursorWidget()->AddObserver(vtkResliceCursorWidget::ResetCursorEvent, cbk);
         riw[i]->GetInteractorStyle()->AddObserver(vtkCommand::WindowLevelEvent, cbk);
+        riw[i]->AddObserver(vtkResliceImageViewer::SliceChangedEvent, cbk);
 
         // Make them all share the same color map.
         riw[i]->SetLookupTable(riw[selectedView]->GetLookupTable());
@@ -296,8 +300,6 @@ medResliceViewer::medResliceViewer(medAbstractView *view, QWidget *parent): medA
     views[0]->show();
     views[1]->show();
     views[2]->show();
-
-    this->initialiseNavigators();
 }
 
 medResliceViewer::~medResliceViewer()
@@ -321,15 +323,6 @@ void medResliceViewer::setToolBox(resliceToolBox *tlbx)
     reformaTlbx = tlbx;
 }
 
-void medResliceViewer::thickMode(int val)
-{
-    for (int i = 0; i < 3; i++)
-    {
-        riw[i]->SetThickMode(val);
-        riw[i]->Render();
-    }
-}
-
 void medResliceViewer::reset()
 {
     resetViews();
@@ -347,13 +340,11 @@ void medResliceViewer::resetViews()
     riw[2]->GetRenderer()->GetActiveCamera()->SetViewUp(0, -1, 0);
 }
 
+/**
+ * Herited from medAbstractView
+ */
 void medResliceViewer::render()
 {
-    for (int i = 0; i < 3; i++)
-    {
-        riw[i]->Render();
-    }
-    views[2]->renderWindow()->Render();
 }
 
 void medResliceViewer::saveImage()
@@ -367,7 +358,6 @@ void medResliceViewer::saveImage()
     reslicerTop->SetResliceAxes(resliceMatrix);
     reslicerTop->SetBackgroundLevel(riw[0]->GetInput()->GetScalarRange()[0]);
     reslicerTop->SetInterpolationModeToLinear();
-
     // Apply resampling in mm
     if (reformaTlbx->findChild<QComboBox*>("bySpacingOrSize")->currentText() == "Spacing")
     {
@@ -531,12 +521,6 @@ void medResliceViewer::applyRadiologicalConvention()
     }
     resliceCursor->GetPlane(2)->SetNormal(normal);
     resliceCursor->Update();
-
-    for (int i = 0; i < 3; i++)
-    {
-        getResliceImageViewer(i)->GetResliceCursorWidget()->Render();
-    }
-    getImagePlaneWidget(0)->GetInteractor()->GetRenderWindow()->Render();
 }
 
 void medResliceViewer::calculateResliceMatrix(vtkMatrix4x4* result)
@@ -651,7 +635,9 @@ void medResliceViewer::updatePlaneNormals()
     }
 }
 
-// The two fixed planes must be moved so that they stay orthogonal to the moving plane
+/**
+ * The two fixed planes must be moved so that they stay orthogonal to the moving plane
+ */
 void medResliceViewer::ensureOrthogonalPlanes()
 {
     int movingPlaneIndex = findMovingPlaneIndex();
@@ -664,7 +650,9 @@ void medResliceViewer::ensureOrthogonalPlanes()
     updatePlaneNormals();
 }
 
-// The plane who's normal has changed the most is the currently moving plane.
+/**
+ * The plane who's normal has changed the most is the currently moving plane.
+ */
 int medResliceViewer::findMovingPlaneIndex()
 {
     int movingPlaneIndex = 0;
@@ -707,6 +695,9 @@ void medResliceViewer::makePlaneOrthogonalToOtherPlanes(vtkPlane* targetPlane, v
     targetPlane->SetNormal(idealNormal);
 }
 
+/**
+ * Method to generate an image output reslice to the orientation, spacing and dimension asked by the user.
+ */
 template <typename DATA_TYPE>
 void medResliceViewer::generateOutput(vtkImageReslice* reslicer, QString destType)
 {
@@ -738,6 +729,9 @@ void medResliceViewer::generateOutput(vtkImageReslice* reslicer, QString destTyp
     medUtilitiesITK::updateMetadata<ImageType>(outputData);
 }
 
+/**
+ * Change the x, y, z sizes of the current output data
+ */
 void medResliceViewer::applyResamplingPix()
 {
     resampleProcess *resamplePr = new resampleProcess();

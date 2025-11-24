@@ -1,0 +1,25 @@
+From 6f9cd9d9fe538c3481ea54fa627f2b45ab15918a Mon Sep 17 00:00:00 2001
+From: Mathilde Merle <mathilde.merle@ihu-liryc.fr>
+Date: Mon, 17 Nov 2025 15:19:38 +0100
+Subject: [PATCH] VTK
+
+---
+ Filters/Core/vtkPolyDataPlaneCutter.cxx | 2 --
+ 1 file changed, 2 deletions(-)
+
+diff --git a/Filters/Core/vtkPolyDataPlaneCutter.cxx b/Filters/Core/vtkPolyDataPlaneCutter.cxx
+index fae02a1d39..e9558c2532 100644
+--- a/Filters/Core/vtkPolyDataPlaneCutter.cxx
++++ b/Filters/Core/vtkPolyDataPlaneCutter.cxx
+@@ -586,8 +586,6 @@ vtkMTimeType vtkPolyDataPlaneCutter::GetMTime()
+ int vtkPolyDataPlaneCutter::RequestData(vtkInformation* vtkNotUsed(request),
+   vtkInformationVector** inputVector, vtkInformationVector* outputVector)
+ {
+-  vtkLog(INFO, "Executing vtkPolyData plane cutter");
+-
+   // Get the input and output
+   vtkInformation* inInfo = inputVector[0]->GetInformationObject(0);
+   vtkInformation* outInfo = outputVector->GetInformationObject(0);
+-- 
+2.43.0
+

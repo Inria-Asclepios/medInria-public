@@ -1688,7 +1688,6 @@ void vtkImageView2D::SetInputCommon(vtkAlgorithmOutput* pi_poVtkAlgoOutput, int 
 void vtkImageView2D::SetInput (vtkActor *actor, int layer, vtkMatrix4x4 *matrix, const int imageSize[],
                                const double imageSpacing[], const double imageOrigin[])
 {
-    std::cout<<"### vtkImageView2D::SetInput -- Actor"<<std::endl;
     this->AddLayer(layer);
 
     vtkRenderer *renderer = this->GetRendererForLayer(layer);
