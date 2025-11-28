@@ -155,7 +155,7 @@ medResliceViewer::medResliceViewer(medAbstractView *view, QWidget *parent): medA
     vtkViewData = vtkSmartPointer<vtkImageData>::New();
     vtkViewData->DeepCopy(view3d->GetInputAlgorithm(view3d->GetCurrentLayer())->GetOutput());
 
-    // TODO Set matrice to identity for VTK since 9.3.
+    // Set matrice to identity for VTK since 9.3.
     // Otherwise the data transformations in the views are incorrect.
     vtkViewData->GetDirectionMatrix()->Identity();
 
@@ -696,7 +696,7 @@ void medResliceViewer::makePlaneOrthogonalToOtherPlanes(vtkPlane* targetPlane, v
 }
 
 /**
- * Method to generate an image output reslice to the orientation, spacing and dimension asked by the user.
+ * Generate an image output resliced to the needed orientation, spacing and dimension.
  */
 template <typename DATA_TYPE>
 void medResliceViewer::generateOutput(vtkImageReslice* reslicer, QString destType)

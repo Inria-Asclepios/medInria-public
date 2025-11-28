@@ -399,7 +399,6 @@ the CornerAnnotation are modified.
 */
 void vtkImageView2D::UpdateOrientation()
 {
-  std::cout<<"### vtkImageView2D::UpdateOrientation"<<std::endl;
   // Store zoom and pan
   double zoom = this->GetZoom();
   double pan[2];
@@ -503,27 +502,26 @@ void vtkImageView2D::SetClippingNeeded(bool clipping)
  */
 void vtkImageView2D::SetClippingRange()
 {
-    //std::cout<<"### vtkImageView2D::SetClippingRange"<<std::endl;
     if (this->GetRenderer())
     {
         vtkCamera *cam = this->GetRenderer()->GetActiveCamera();
         if (cam)
         {
-          double pos[3] = {.0,.0,.0};
-          this->GetWorldCoordinatesForSlice (this->GetSlice(), pos);
+            double pos[3] = {.0,.0,.0};
+            this->GetWorldCoordinatesForSlice (this->GetSlice(), pos);
 
-          double vn[3] = {.0,.0,.0}, position[3] = {.0,.0,.0};
-          cam->GetViewPlaneNormal(vn);
-          cam->GetPosition(position);
+            double vn[3] = {.0,.0,.0}, position[3] = {.0,.0,.0};
+            cam->GetViewPlaneNormal(vn);
+            cam->GetPosition(position);
 
-          double distance = 0.0;
-          for (int i=0; i<3; i++)
-          {
-              distance += (pos[i]-position[i]) * -vn[i];
-          }
+            double distance = 0.0;
+            for (int i=0; i<3; i++)
+            {
+                distance += (pos[i]-position[i]) * -vn[i];
+            }
 
-          double avg_spacing = this->GetMedVtkImageInfo()->spacing[this->ViewOrientation] * 0.5;
-          cam->SetClippingRange(distance - avg_spacing, distance + avg_spacing);
+            double avg_spacing = this->GetMedVtkImageInfo()->spacing[this->ViewOrientation] * 0.5;
+            cam->SetClippingRange(distance - avg_spacing, distance + avg_spacing);
         }
     }
 }
@@ -1710,16 +1708,6 @@ void vtkImageView2D::SetInput (vtkActor *actor, int layer, vtkMatrix4x4 *matrix,
     UpdateBounds(bounds, layer, matrix, imageSize, imageSpacing, imageOrigin);
 
     this->SetCurrentLayer(layer);
-
-    //TODO check if needed
-    // this->Slice = this->GetSliceForWorldCoordinates (this->CurrentPoint);
-    // this->UpdateDisplayExtent();
-    // this->UpdateSlicePlane();
-    // this->InvokeEvent (vtkImageView2D::SliceChangedEvent);
-
-    // unsigned int numberOfLayers = GetNumberOfLayers();
-    // if ((numberOfLayers == 0) && matrix)
-    //     this->SetOrientationMatrix(matrix);
 }
 
 void vtkImageView2D::RemoveLayerActor(vtkActor *actor, int layer)
