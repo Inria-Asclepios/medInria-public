@@ -47,13 +47,6 @@ set(git_tag dcmtk3.6.8)
 ## Add specific cmake arguments for configuration step of the project
 ## #############################################################################
 
-# set compilation flags
-if (WIN32)
-  set(BUILD_SHARED_LIBS_${ep} OFF)
-else()
-  set(BUILD_SHARED_LIBS_${ep} ${BUILD_SHARED_LIBS})
-endif()
-
 if (UNIX)
   set(${ep}_c_flags "${${ep}_c_flags} -Wall")
   set(${ep}_cxx_flags "${${ep}_cxx_flags} -Wall")
@@ -73,8 +66,8 @@ set(cmake_args
   -DCMAKE_CXX_FLAGS=${${ep}_cxx_flags}
   -DCMAKE_SHARED_LINKER_FLAGS=${${ep}_shared_linker_flags}  
   -DCMAKE_INSTALL_PREFIX=<INSTALL_DIR>
-  -DBUILD_SHARED_LIBS=${BUILD_SHARED_LIBS_${ep}}
-  -DCMAKE_MSVC_RUNTIME_LIBRARY=${CMAKE_MSVC_RUNTIME_LIBRARY}
+  -DBUILD_SHARED_LIBS:BOOL=${BUILD_SHARED_LIBS_${ep}}
+  -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded$<$<CONFIG:Debug>:Debug>DLL 
   -DDCMTK_SOURCE_DIR=${EP_PATH_SOURCE}/DCMTK
   -DQt5_DIR:FILEPATH=${Qt5_DIR}
   -DITK_ROOT:FILEPATH=${ITK_ROOT}

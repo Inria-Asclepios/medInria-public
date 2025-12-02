@@ -52,10 +52,8 @@ ep_GeneratePatchCommand(${ep} ${ep}_PATCH_COMMAND DCMTK.patch)
 ## #############################################################################
 
 if (WIN32)
-  set(BUILD_SHARED_LIBS_${ep} OFF)
   set(DCMTK_WIDE_CHAR_FILE_IO_FUNCTIONS ON)
 else()
-  set(BUILD_SHARED_LIBS_${ep} ${BUILD_SHARED_LIBS})
   set(DCMTK_WIDE_CHAR_FILE_IO_FUNCTIONS OFF)
 endif()
 
@@ -63,10 +61,10 @@ endif()
 if (UNIX)
   set(${ep}_c_flags "${${ep}_c_flags} -w")
   set(${ep}_cxx_flags "${${ep}_cxx_flags} -w")
-else()
-  if (WIN32)
-    set(${ep}_cxx_flags "${${ep}_cxx_flags} /Zc:__cplusplus") 
-  endif()
+endif()
+
+if (MSVC)
+    add_compile_options(/Zc:__cplusplus)
 endif()
 
 set(cmake_args
@@ -76,11 +74,12 @@ set(cmake_args
   -DCMAKE_CXX_FLAGS=${${ep}_cxx_flags}
   -DCMAKE_SHARED_LINKER_FLAGS:=${${ep}_shared_linker_flags}  
   -DCMAKE_INSTALL_PREFIX:=<INSTALL_DIR>
-  -DBUILD_SHARED_LIBS=${BUILD_SHARED_LIBS_${ep}}
-  -DCMAKE_MSVC_RUNTIME_LIBRARY=${CMAKE_MSVC_RUNTIME_LIBRARY}
-  -DDCMTK_FORCE_STATIC_RUNTIME:BOOL=OFF
-  -DCMAKE_CXX_EXTENSIONS=OFF
-  -DDCMTK_OVERWRITE_WIN32_COMPILER_FLAGS:BOOL=OFF
+  -DBUILD_SHARED_LIBS:BOOL=${BUILD_SHARED_LIBS_${ep}}
+  -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded$<$<CONFIG:Debug>:Debug>DLL  
+  -DDCMTK_OVERWRITE_WIN32_COMPILER_FLAGS:BOOL=ON  
+  -DDCMTK_COMPILE_WIN32_MULTITHREADED_DLL:BOOL=ON  
+  -DDCMTK_FORCE_STATIC_RUNTIME:BOOL=OFF  
+  -DCMAKE_CXX_EXTENSIONS=OFF  
   -DDCMTK_ENABLE_STL:BOOL=ON
   -DBUILD_APPS:BOOL=OFF
   -DDCMTK_ENABLE_PRIVATE_TAGS:BOOL=ON
