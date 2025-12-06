@@ -28,6 +28,10 @@ set(git_tag v5.8.1)
 ## Add specific cmake arguments for configuration step of the project
 ## #############################################################################
 
+if (UNIX)
+    set(${ep}_cxx_flags "${${ep}_cxx_flags} -w") # remove warnings
+endif()
+
 set(cmake_args
   ${ep_common_cache_args}
   -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE_externals_projects}

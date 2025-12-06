@@ -29,7 +29,7 @@ list(APPEND ${ep}_dependencies
 EP_Initialisation(${ep}  
   USE_SYSTEM OFF 
   BUILD_SHARED_LIBS ON
-  REQUIRED_FOR_PLUGINS OFF
+  REQUIRED_FOR_PLUGINS ON
   )
 
 if (NOT USE_SYSTEM_${ep})
@@ -57,14 +57,12 @@ else()
   set(DCMTK_WIDE_CHAR_FILE_IO_FUNCTIONS OFF)
 endif()
 
-# set compilation flags
 if (UNIX)
-  set(${ep}_c_flags "${${ep}_c_flags} -w")
-  set(${ep}_cxx_flags "${${ep}_cxx_flags} -w")
+    set(${ep}_cxx_flags "${${ep}_cxx_flags} -w") # remove warnings
 endif()
 
 if (MSVC)
-    add_compile_options(/Zc:__cplusplus)
+    set(${ep}_cxx_flags "${${ep}_cxx_flags} /Zc:__cplusplus")
 endif()
 
 set(cmake_args

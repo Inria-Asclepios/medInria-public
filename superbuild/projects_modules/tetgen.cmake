@@ -34,10 +34,8 @@ set(git_tag master)
 ## Add specific cmake arguments for configuration step of the project
 ## #############################################################################
 
-# set compilation flags
-if (UNIX OR APPLE)
-  set(${ep}_c_flags "${${ep}_c_flags}")
-  set(${ep}_cxx_flags "${${ep}_cxx_flags}")
+if (UNIX)
+    set(${ep}_cxx_flags "${${ep}_cxx_flags} -w") # remove warnings
 endif()
 
 set(cmake_args

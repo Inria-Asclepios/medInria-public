@@ -38,9 +38,12 @@ set(git_tag 3.3.8)
 ep_GeneratePatchCommand(${ep} ${ep}_PATCH_COMMAND eigen-3.3.8.patch)
 
 ## #############################################################################
-## Add external-project
+## Add specific cmake arguments for configuration step of the project
 ## #############################################################################
-epComputPath(${ep})
+
+if (UNIX)
+    set(${ep}_cxx_flags "${${ep}_cxx_flags} -w") # remove warnings
+endif()
 
 set(cmake_args
     ${ep_common_cache_args}
@@ -49,6 +52,12 @@ set(cmake_args
     -DCMAKE_SHARED_LINKER_FLAGS:STRING=${${ep}_shared_linker_flags}
     -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
   )
+
+## #############################################################################
+## Add external-project
+## #############################################################################
+
+epComputPath(${ep})
 
 ExternalProject_Add(${ep}
   PREFIX ${EP_PATH_SOURCE}

@@ -17,12 +17,24 @@ function(ZLIB_project)
         set(git_url ${GITHUB_PREFIX}madler/zlib.git)
         set(git_tag v1.2.11)
 
+## #############################################################################
+## Add specific cmake arguments for configuration step of the project
+## #############################################################################
+
+        if (UNIX)
+            set(${ep}_cxx_flags "${${ep}_cxx_flags} -w") # remove warnings
+        endif()
+
         set(cmake_args
             ${ep_common_cache_args}
             -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE_externals_projects}
             -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
             -DBUILD_SHARED_LIBS:BOOL=${BUILD_SHARED_LIBS_${external_project}}
             )
+
+## #############################################################################
+## Add external-project
+## #############################################################################
 
         epComputPath(${external_project})
 

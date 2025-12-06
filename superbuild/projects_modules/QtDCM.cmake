@@ -48,13 +48,13 @@ set(git_tag dcmtk3.6.8)
 ## #############################################################################
 
 if (UNIX)
-  set(${ep}_c_flags "${${ep}_c_flags} -Wall")
-  set(${ep}_cxx_flags "${${ep}_cxx_flags} -Wall")
-else()
-  if (WIN32)
-    set(${ep}_cxx_flags "${${ep}_cxx_flags} /Zc:__cplusplus")
-  endif()
+    set(${ep}_cxx_flags "${${ep}_cxx_flags} -Wall")
 endif()
+
+if (MSVC)
+    set(${ep}_cxx_flags "${${ep}_cxx_flags} /Zc:__cplusplus")
+endif()
+
 if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     set(${ep}_cxx_flags "${${ep}_cxx_flags} -Wno-inconsistent-missing-override")
 endif()

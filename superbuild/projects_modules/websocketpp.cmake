@@ -43,20 +43,31 @@ set(git_url ${GITHUB_PREFIX}zaphoyd/websocketpp.git)
 set(git_tag 0.8.2)
 
 ## #############################################################################
-## Add external-project
+## Add specific cmake arguments for configuration step of the project
 ## #############################################################################
-epComputPath(${ep})
+
+if (UNIX)
+    set(${ep}_cxx_flags "${${ep}_cxx_flags} -w") # remove warnings
+endif()
 
 set(cmake_args
   ${ep_common_cache_args}
+  -DCMAKE_C_FLAGS:STRING=${${ep}_c_flags}
+  -DCMAKE_CXX_FLAGS:STRING=${${ep}_cxx_flags}
   -DCMAKE_MACOSX_RPATH:BOOL=OFF
-  -DCMAKE_INSTALL_PREFIX=${build_path}
+  -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
 )
+
+## #############################################################################
+## Add external-project
+## #############################################################################
+epComputPath(${ep})
 
 ExternalProject_Add(${ep}
   PREFIX ${EP_PATH_SOURCE}
   SOURCE_DIR ${EP_PATH_SOURCE}/${ep}
   BINARY_DIR ${build_path}
+  INSTALL_DIR ${build_path}/install
   TMP_DIR ${tmp_path}
   STAMP_DIR ${stamp_path}
   
@@ -72,7 +83,7 @@ ExternalProject_Add(${ep}
 ## Set variable to provide infos about the project
 ## #############################################################################
 
-set(${ep}_ROOT ${build_path} PARENT_SCOPE)
+set(${ep}_ROOT ${build_path}/install PARENT_SCOPE)
 
 ## #############################################################################
 ## Add custom targets

@@ -47,10 +47,8 @@ set(git_tag update)
 ## Add specific cmake arguments for configuration step of the project
 ## #############################################################################
 
-# set compilation flags
 if (UNIX)
-  set(${ep}_c_flags "${${ep}_c_flags} -Wall")
-  set(${ep}_cxx_flags "${${ep}_cxx_flags} -Wall")
+    set(${ep}_cxx_flags "${${ep}_cxx_flags} -Wall")
 endif()
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
