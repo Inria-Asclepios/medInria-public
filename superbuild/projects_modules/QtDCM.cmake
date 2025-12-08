@@ -40,8 +40,8 @@ if (NOT USE_SYSTEM_${ep})
 ## Set up versioning control
 ## #############################################################################
 
-set(git_url ${GITHUB_PREFIX}mathildemerle/qtdcm.git)
-set(git_tag dcmtk3.6.8)
+set(git_url ${GITHUB_PREFIX}medInria/qtdcm.git)
+set(git_tag DCMTK-3.6.9)
 
 ## #############################################################################
 ## Add specific cmake arguments for configuration step of the project
