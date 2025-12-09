@@ -1045,11 +1045,11 @@ QString medAbstractDatabaseImporter::generateUniqueVolumeId ( const medAbstractD
 
 //-----------------------------------------------------------------------------------------------------------
 /**
-* Look for dicom extension in file name
-* @param fileName - name of the file that we try to import
+* Check if we are opening DICOMs
+* @param readerName - name of the reader of the first file that we try to import
 * @return  true if dicom file, false otherwise
 **/
 bool medAbstractDatabaseImporter::isDicomReaderUsed(const QString & readerName)
 {
-    return (readerName == "itkDCMTKDataImageReader") || (readerName == "itkGDCMDataImageReader");
+    return (readerName == "itkGDCMDataImageReader");
 }

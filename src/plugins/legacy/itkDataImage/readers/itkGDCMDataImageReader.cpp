@@ -411,7 +411,7 @@ bool itkGDCMDataImageReader::readInformation(const QStringList &paths)
 
         if (d->io->GetPixelType() != itk::IOPixelEnum::SCALAR)
         {
-            qDebug() << "GDCM: unsupported pixel type";
+            qDebug() << "GDCM: unsupported non scalar pixel type";
             return false;
         }
 
@@ -458,7 +458,7 @@ bool itkGDCMDataImageReader::readInformation(const QStringList &paths)
                 imagetypestring << "Double";
             break;
         default:
-            qDebug() << "GDCM: unrecognized component type:\t " << static_cast<int>(d->io->GetComponentType());
+            std::cout<<"Unrecognized component type in GDCM reader: "<<d->io->GetComponentTypeAsString(d->io->GetComponentType())<<std::endl;
             return false;
         }
 
@@ -477,8 +477,6 @@ bool itkGDCMDataImageReader::readInformation(const QStringList &paths)
 
     if (medData)
     {
-        //todo ajouter toutes les autres medMetaDataKeys
-
         // PATIENT
         setMetaData(medMetaDataKeys::PatientName.key(), medData, firstfilename, 0x0010, 0x0010);
         setMetaData(medMetaDataKeys::Age.key(),         medData, firstfilename, 0x0010, 0x1010);
