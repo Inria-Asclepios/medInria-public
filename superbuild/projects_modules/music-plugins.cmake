@@ -44,9 +44,19 @@ function(music_plugins_project)
         set(git_url ${GITHUB_PREFIX}Inria-Asclepios/music.git)
         set(git_tag 4.1)
 
+## #############################################################################
+## Add specific cmake arguments for configuration step of the project
+## #############################################################################
+
+        if (MSVC)
+            set(${ep}_cxx_flags "${${ep}_cxx_flags} /Zc:__cplusplus")
+        endif()
+
         set(cmake_args
             ${ep_common_cache_args}
             -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE_medInria}
+            -DCMAKE_C_FLAGS=${${ep}_c_flags}
+            -DCMAKE_CXX_FLAGS=${${ep}_cxx_flags}
             -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
             -DBUILD_SHARED_LIBS:BOOL=${BUILD_SHARED_LIBS_${external_project}}
             -DQt5_ROOT=${Qt5_DIR}
@@ -85,6 +95,10 @@ function(music_plugins_project)
                 )
         endif()
 
+## #############################################################################
+## Add external-project
+## #############################################################################
+    
         epComputPath(${external_project})
         ExternalProject_Add(${external_project}
             PREFIX ${EP_PATH_SOURCE}
