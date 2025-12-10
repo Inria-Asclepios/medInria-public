@@ -52,14 +52,6 @@ function(music_plugins_project)
             set(${ep}_cxx_flags "${${ep}_cxx_flags} /Zc:__cplusplus")
         endif()
 
-## #############################################################################
-## Add specific cmake arguments for configuration step of the project
-## #############################################################################
-
-        if (MSVC)
-            set(${ep}_cxx_flags "${${ep}_cxx_flags} /Zc:__cplusplus")
-        endif()
-
         set(cmake_args
             ${ep_common_cache_args}
             -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE_medInria}
