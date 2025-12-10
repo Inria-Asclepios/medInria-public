@@ -41,8 +41,8 @@ function(music_plugins_project)
 
     if (NOT USE_SYSTEM_${external_project})
 
-        set(git_url ${GITHUB_PREFIX}Inria-Asclepios/music.git)
-        set(git_tag 4.1)
+        set(git_url ${GITHUB_PREFIX}mathildemerle/music.git)
+        set(git_tag windows32or64)
 
 ## #############################################################################
 ## Add specific cmake arguments for configuration step of the project
@@ -59,19 +59,12 @@ function(music_plugins_project)
             -DCMAKE_CXX_FLAGS=${${ep}_cxx_flags}
             -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
             -DBUILD_SHARED_LIBS:BOOL=${BUILD_SHARED_LIBS_${external_project}}
+            -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded$<$<CONFIG:Debug>:Debug>DLL 
             -DQt5_ROOT=${Qt5_DIR}
             -Ddtk_ROOT:FILEPATH=${dtk_ROOT}
             -DITK_ROOT:FILEPATH=${ITK_ROOT}
             -DVTK_ROOT:FILEPATH=${VTK_ROOT}
-            -DDCMTK_ROOT:FILEPATH=${DCMTK_ROOT}
             -DmedInria_ROOT:FILEPATH=${medInria_ROOT}
-            -DBoost_INCLUDE_DIR=${Boost_INCLUDE_DIR}
-            -Djsoncons_ROOT:FILEPATH=${jsoncons_ROOT}
-            -Dasio_ROOT:FILEPATH=${asio_ROOT}
-            -Dwebsocketpp_ROOT:FILEPATH=${websocketpp_ROOT}
-            -Dopenssl_ROOT:FILEPATH=${openssl_ROOT}
-            -DOPENSSL_ROOT_DIR:FILEPATH=${OPENSSL_ROOT_DIR} 
-            -DOPENSSL_BUILD:FILEPATH=${OPENSSL_BUILD}
             -DEigen3_ROOT:PATH=${eigen_ROOT}
             -Dmmg_ROOT:PATH=${mmg_ROOT}
             -DQWT_INCLUDE_DIR:PATH=${qwt_INCLUDE_DIR}
@@ -92,6 +85,17 @@ function(music_plugins_project)
         if (OpenMP_ROOT)
             list(APPEND cmake_args
                 -DOpenMP_ROOT:PATH=${OpenMP_ROOT}
+                )
+        endif()
+
+        if (${USE_RealTimeWorkspace})
+            list(APPEND cmake_args
+                -Djsoncons_ROOT:FILEPATH=${jsoncons_ROOT}
+                -Dasio_ROOT:FILEPATH=${asio_ROOT}
+                -Dwebsocketpp_ROOT:FILEPATH=${websocketpp_ROOT}
+                -Dopenssl_ROOT:FILEPATH=${openssl_ROOT}
+                -DOPENSSL_ROOT_DIR:FILEPATH=${OPENSSL_ROOT_DIR}
+                -DOPENSSL_BUILD:FILEPATH=${OPENSSL_BUILD}
                 )
         endif()
 

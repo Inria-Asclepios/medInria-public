@@ -1,0 +1,69 @@
+From 9d7c3278c8238f71ae47e688d45ea6020d28dd78 Mon Sep 17 00:00:00 2001
+From: Mathilde Merle <mathilde.merle@ihu-liryc.fr>
+Date: Wed, 10 Dec 2025 14:43:13 +0100
+Subject: [PATCH] qwt
+
+---
+ qwtconfig.pri | 12 ++++++------
+ 1 file changed, 6 insertions(+), 6 deletions(-)
+
+diff --git a/qwtconfig.pri b/qwtconfig.pri
+index b8f534f..da76ed9 100644
+--- a/qwtconfig.pri
++++ b/qwtconfig.pri
+@@ -72,7 +72,7 @@ QWT_INSTALL_FEATURES  = $${QWT_INSTALL_PREFIX}/features
+ # it will be a static library.
+ ######################################################################
+ 
+-QWT_CONFIG           += QwtDll
++QWT_CONFIG           -= QwtDll
+ 
+ ######################################################################
+ # QwtPlot enables all classes, that are needed to use the QwtPlot
+@@ -100,7 +100,7 @@ QWT_CONFIG     += QwtWidgets
+ # export a plot to a SVG document
+ ######################################################################
+ 
+-QWT_CONFIG     += QwtSvg
++QWT_CONFIG     -= QwtSvg
+ 
+ ######################################################################
+ # If you want to use a OpenGL plot canvas
+@@ -114,7 +114,7 @@ QWT_CONFIG     += QwtOpenGL
+ # Otherwise you have to build it from the designer directory.
+ ######################################################################
+ 
+-QWT_CONFIG     += QwtDesigner
++QWT_CONFIG     -= QwtDesigner
+ 
+ ######################################################################
+ # Compile all Qwt classes into the designer plugin instead
+@@ -137,7 +137,7 @@ win32 {
+ # Otherwise you have to build them from the examples directory.
+ ######################################################################
+ 
+-QWT_CONFIG     += QwtExamples
++QWT_CONFIG     -= QwtExamples
+ 
+ ######################################################################
+ # The playground is primarily intended for the Qwt development
+@@ -148,14 +148,14 @@ QWT_CONFIG     += QwtExamples
+ # Otherwise you have to build them from the playground directory.
+ ######################################################################
+ 
+-QWT_CONFIG     += QwtPlayground
++QWT_CONFIG     -= QwtPlayground
+ 
+ ######################################################################
+ # If you want to auto build the tests, enable the line below
+ # Otherwise you have to build them from the tests directory.
+ ######################################################################
+ 
+-QWT_CONFIG     += QwtTests
++QWT_CONFIG     -= QwtTests
+ 
+ ######################################################################
+ # When Qt has been built as framework qmake wants
+-- 
+2.43.0
+

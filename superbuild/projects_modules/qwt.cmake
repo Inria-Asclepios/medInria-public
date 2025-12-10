@@ -25,8 +25,8 @@ if (NOT USE_SYSTEM_${ep})
 ## Define repository where get the sources
 ## #############################################################################
 
-set(git_url ${GITHUB_PREFIX}Inria-Asclepios/qwt.git)
-set(git_tag music3) 
+set(git_url https://git.code.sf.net/p/qwt/git)
+set(git_tag v6.3.0)
 
 ## #############################################################################
 ## Add specific cmake arguments for configuration step of the project
@@ -44,6 +44,7 @@ set(cmake_args
   -DCMAKE_SHARED_LINKER_FLAGS:STRING=${${ep}_shared_linker_flags}
   -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
   -DQT_QMAKE_EXECUTABLE:FILEPATH=${QT_QMAKE_EXECUTABLE}
+  -DCMAKE_MSVC_RUNTIME_LIBRARY=MultiThreaded$<$<CONFIG:Debug>:Debug>DLL 
 )
 
 ## #############################################################################
