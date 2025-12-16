@@ -12,7 +12,7 @@
 
 =========================================================================*/
 
-#ifdef WIN32
+#if defined(_WIN32)
     #ifdef medRemeshingPlugin_EXPORTS
         #define MEDREMESHINGPLUGIN_EXPORT __declspec(dllexport)
     #else

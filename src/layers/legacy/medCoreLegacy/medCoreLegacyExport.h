@@ -12,7 +12,7 @@
 
 =========================================================================*/
 
-#ifdef WIN32
+#if defined(_WIN32)
     #ifdef medCoreLegacy_EXPORTS
         #define MEDCORELEGACY_EXPORT __declspec(dllexport)
     #else

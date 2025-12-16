@@ -12,7 +12,7 @@
 
 =========================================================================*/
 
-#ifdef WIN32
+#if defined(_WIN32)
     #ifdef medN4BiasCorrectionPlugin_EXPORTS
         #define MEDN4BIASCORRECTIONPLUGIN_EXPORT __declspec(dllexport)
     #else

@@ -12,7 +12,7 @@ PURPOSE.
 
 =========================================================================*/
 
-#ifdef WIN32
+#if defined(_WIN32)
     #ifdef undoRedoRegistrationPlugin_EXPORTS
         #define UNDOREDOREGISTRATIONPLUGIN_EXPORT __declspec(dllexport) 
     #else

@@ -31,13 +31,13 @@
 #include <vtkStreamingDemandDrivenPipeline.h>
 
 // Compute spherical associated Legendre function
-#if (defined __APPLE__ || defined WIN32 || defined CLANG)
+#if (defined __APPLE__ || defined _WIN32 || defined CLANG)
 #include <boost/math/special_functions/legendre.hpp>
 #else
 #include <tr1/cmath>
 #endif //WIN32
 
-#if (defined __APPLE__ || defined WIN32 || defined CLANG)
+#if (defined __APPLE__ || defined _WIN32 || defined CLANG)
 double sphLegendre(const int l,const int m,const double theta) {
     const unsigned lmm = l-m;
     const unsigned lpm = l+m;

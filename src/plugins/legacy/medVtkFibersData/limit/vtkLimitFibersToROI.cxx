@@ -27,7 +27,7 @@
 
 #include <algorithm>
 
-#ifdef WIN32
+#if defined(_WIN32)
 #define snprintf sprintf_s
 #endif
 

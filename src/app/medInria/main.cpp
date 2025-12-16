@@ -15,7 +15,7 @@
 #include <QtOpenGL>
 #include <QSurfaceFormat>
 
-#ifdef WIN32
+#if defined(_WIN32)
 #include <QtPlatformHeaders/QWindowsWindowFunctions>
 #endif
 
@@ -276,7 +276,7 @@ int main(int argc,char* argv[])
     }
 
     mainwindow->setFullScreen(fullScreen);
-#ifdef WIN32
+#if defined(_WIN32)
     QWindowsWindowFunctions::setHasBorderInFullScreen(mainwindow->windowHandle(), true);
 #endif
 

@@ -12,7 +12,7 @@
 
 =========================================================================*/
 
-#ifdef WIN32
+#if defined(_WIN32)
  #if defined (medVtkInria_EXPORTS)
   #define MEDVTKINRIA_EXPORT __declspec( dllexport )
  #else

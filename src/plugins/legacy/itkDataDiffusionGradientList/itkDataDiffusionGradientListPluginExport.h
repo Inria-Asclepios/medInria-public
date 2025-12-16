@@ -12,7 +12,7 @@
 
 =========================================================================*/
 
-#ifdef WIN32
+#if defined(_WIN32)
     #ifdef itkDataDiffusionGradientListPlugin_EXPORTS
         #define ITKDATADIFFUSIONGRADIENTLISTPLUGIN_EXPORT __declspec(dllexport) 
     #else

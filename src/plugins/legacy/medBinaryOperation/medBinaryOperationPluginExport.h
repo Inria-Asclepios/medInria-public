@@ -12,7 +12,7 @@
 
 =========================================================================*/
 
-#ifdef WIN32
+#if defined(_WIN32)
     #ifdef medBinaryOperationPlugin_EXPORTS
         #define MEDBINARYOPERATIONPLUGIN_EXPORT __declspec(dllexport) 
     #else

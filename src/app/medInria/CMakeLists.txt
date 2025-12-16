@@ -89,12 +89,11 @@ if(WIN32)
     )
 endif()
 
-
 if (APPLE)
   set(DEPLOYMENT_SYSTEM MACOSX_BUNDLE)
 endif()
-if (WIN32)
 
+if (WIN32)
   if(NOT ${MED_SHOW_CONSOLE} )
     set(DEPLOYMENT_SYSTEM WIN32)
   endif()

@@ -12,7 +12,7 @@ PURPOSE.
 
 =========================================================================*/
 
-#ifdef WIN32
+#if defined(_WIN32)
     #ifdef qtdcmDataSourcePlugin_EXPORTS
         #define QTDCMDATASOURCEPLUGIN_EXPORT __declspec(dllexport) 
     #else

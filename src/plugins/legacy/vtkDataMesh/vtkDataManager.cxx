@@ -30,7 +30,7 @@
 #include <sstream>
 #include <time.h>
 
-#ifdef WIN32
+#if defined(_WIN32)
 #define snprintf sprintf_s
 #endif
 
@@ -465,7 +465,7 @@ void vtkDataManager::ScanDirectory (const char *dirname)
     std::string::size_type slashpos;
 
     // check slash position
-#ifdef WIN32
+#if defined(_WIN32)
     slashpos = directoryname.rfind ("\\"); // last occurence of "/"
     if (slashpos != directoryname.size()-1)
         directoryname+="\\";
