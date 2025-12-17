@@ -14,10 +14,10 @@
 
 #include <medVtkInriaExport.h>
 
+#include <vtkBoxWidget.h>
 #include <vtkImageView.h>
 #include <vtkImageView3DCroppingBoxCallback.h>
 #include <vtkOrientationMarkerWidget.h>
-#include <vtkOrientedBoxWidget.h>
 #include <vtkPlaneWidget.h>
 #include <vtkVolumeProperty.h>
 
@@ -72,7 +72,7 @@ public:
     vtkGetObjectMacro (VolumeActor, vtkVolume);
     vtkGetObjectMacro (VolumeProperty, vtkVolumeProperty);
     vtkGetObjectMacro (PlaneWidget, vtkPlaneWidget);
-    vtkGetObjectMacro (BoxWidget, vtkOrientedBoxWidget);
+    vtkGetObjectMacro (BoxWidget, vtkBoxWidget);
     vtkGetObjectMacro (ActorX, vtkImageActor);
     vtkGetObjectMacro (ActorY, vtkImageActor);
     vtkGetObjectMacro (ActorZ, vtkImageActor);
@@ -145,8 +145,6 @@ public:
     static vtkSmartPointer<vtkActor> DataSetToActor(vtkPointSet* arg, vtkProperty* prop = nullptr);
     virtual void SetInputLayer (vtkAlgorithmOutput* pi_poVtkAlgoOutput, vtkMatrix4x4 *matrix = nullptr, int layer = 0);
     void SetFirstLayer(vtkAlgorithmOutput *pi_poInputAlgoImg, vtkMatrix4x4 *matrix= nullptr, int layer = 0);
-
-    void SetOrientationMatrix (vtkMatrix4x4* matrix) override;
 
     using vtkImageView::SetColorWindow;
     void SetColorWindow(double s,int layer) override;
@@ -237,14 +235,10 @@ protected:
 
     vtkVolumeProperty* VolumeProperty;
     vtkVolume* VolumeActor;
-
     vtkSmartVolumeMapper* VolumeMapper;
-
     vtkImageView3DCroppingBoxCallback* Callback;
-
-    vtkOrientedBoxWidget* BoxWidget;
+    vtkBoxWidget* BoxWidget;
     vtkPlaneWidget* PlaneWidget;
-
     vtkAnnotatedCubeActor* Cube;
     vtkOrientationMarkerWidget* Marker;
 

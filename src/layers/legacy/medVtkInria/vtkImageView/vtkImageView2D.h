@@ -229,7 +229,8 @@ public:
     virtual void SetCurrentPoint (double pos[3]);
 
     virtual void UpdateDisplayExtent();
-
+    void SetClippingNeeded(bool clipping);
+    void SetClippingRange();
 
     virtual int GetSliceMin() const;
     virtual int GetSliceMax() const;
@@ -388,10 +389,8 @@ protected:
     void ApplyColorTransferFunction(vtkScalarsToColors * colors, int layer) override;
 
     virtual void UpdateSlicePlane();
-    virtual void UpdateCenter();
     virtual void UpdateOrientation();
 
-    virtual void SetSlicePlaneFromOrientation();
     virtual int GetViewOrientationFromSliceOrientation(int sliceorientation, double* cam_pos = 0, double* cam_focus = 0);
 
     virtual int  SetCameraFromOrientation();
@@ -458,6 +457,7 @@ protected:
     int ShowDistanceWidget;
     int ShowAngleWidget;
     int ShowImageAxis;
+    bool ClippingNeeded;
 
     unsigned int AnnotationStyle;
 

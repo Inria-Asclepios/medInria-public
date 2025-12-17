@@ -85,13 +85,13 @@ void vtkVectorManager::SetRenderWindowInteractor (vtkRenderWindowInteractor* rwi
         }
     }
 
+    // Renderer is the renderer of the 3D view
     if (ren)
     {
         this->Renderer = ren;
     }
     else if (this->RenderWindowInteractor)
     {
-
         this->RenderWindowInteractor->GetRenderWindow()->GetRenderers()->InitTraversal();
         vtkRenderer* first_renderer = this->RenderWindowInteractor->GetRenderWindow()->GetRenderers()->GetNextItem();
 
@@ -214,9 +214,10 @@ void vtkVectorManager::Update()
     Z = Z>(dims[2]-1)?(dims[2]-1):Z;
 
     // set the data
-    this->VectorVisuManagerAxial->SetInput    (this->Input, this->DirectionMatrix);
-    this->VectorVisuManagerSagittal->SetInput (this->Input, this->DirectionMatrix);
-    this->VectorVisuManagerCoronal->SetInput  (this->Input, this->DirectionMatrix);
+    vtkMatrix4x4 *resetMatrice = vtkMatrix4x4::New();
+    this->VectorVisuManagerAxial->SetInput    (this->Input, resetMatrice);
+    this->VectorVisuManagerSagittal->SetInput (this->Input, resetMatrice);
+    this->VectorVisuManagerCoronal->SetInput  (this->Input, resetMatrice);
 
     // synchronize with VOI
     this->VectorVisuManagerSagittal->SetVOI (X, X, 0, dims[1]-1, 0, dims[2]-1);
@@ -236,7 +237,6 @@ void vtkVectorManager::SetDirectionMatrix(vtkMatrix4x4 *mat)
     if (mat)
     {
         vtkSetObjectBodyMacro(DirectionMatrix, vtkMatrix4x4, mat);
-
         vtkMatrix4x4::Invert(this->DirectionMatrix, this->PhysicalToVoxelCoordinatesTransformMatrix);
     }
 }

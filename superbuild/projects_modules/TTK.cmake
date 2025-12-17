@@ -47,10 +47,8 @@ set(git_tag ITK5.4rc04+VTK9)
 ## Add specific cmake arguments for configuration step of the project
 ## #############################################################################
 
-# set compilation flags
 if (UNIX)
-  set(${ep}_c_flags "${${ep}_c_flags} -Wall")
-  set(${ep}_cxx_flags "${${ep}_cxx_flags} -Wall")
+    set(${ep}_cxx_flags "${${ep}_cxx_flags} -Wall")
 endif()
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
@@ -72,7 +70,6 @@ set(cmake_cache_args
   -DVTK_ROOT:FILEPATH=${VTK_ROOT}
   -DITK_ROOT:FILEPATH=${ITK_ROOT}
   )
-
 
 ## #############################################################################
 ## Add external-project

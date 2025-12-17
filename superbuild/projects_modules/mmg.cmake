@@ -25,20 +25,14 @@ if (NOT USE_SYSTEM_${ep})
 ## #############################################################################
 
 set(git_url ${GITHUB_PREFIX}MmgTools/mmg.git)
-set(git_tag v5.5.1)
+set(git_tag v5.8.0)
 
 ## #############################################################################
 ## Add specific cmake arguments for configuration step of the project
 ## #############################################################################
 
-# set compilation flags
-if (UNIX OR APPLE)
-  if (CMAKE_COMPILER_IS_GNUCC AND CMAKE_C_COMPILER_VERSION VERSION_LESS 5.4)
-    set(${ep}_c_flags "${${ep}_c_flags} -std=c99")
-  else()
-    set(${ep}_c_flags "${${ep}_c_flags}")
-  endif()
-  set(${ep}_cxx_flags "${${ep}_cxx_flags}")
+if (UNIX)
+    set(${ep}_cxx_flags "${${ep}_cxx_flags} -w") # remove warnings
 endif()
 
 set(cmake_args
@@ -59,7 +53,7 @@ set(cmake_args
 ## Add external-project
 ## #############################################################################
 
-ep_GeneratePatchCommand(${ep} ${ep}_PATCH_COMMAND mmg.patch)
+#ep_GeneratePatchCommand(${ep} ${ep}_PATCH_COMMAND mmg.patch)
 
 epComputPath(${ep})
 
@@ -67,7 +61,7 @@ ExternalProject_Add(${ep}
   PREFIX ${EP_PATH_SOURCE}
   SOURCE_DIR ${EP_PATH_SOURCE}/${ep}
   BINARY_DIR ${build_path}
-  INSTALL_DIR ${build_path}
+  INSTALL_DIR ${build_path}/install
   TMP_DIR ${tmp_path}
   STAMP_DIR ${stamp_path}
   GIT_REPOSITORY ${git_url}
@@ -89,7 +83,7 @@ ExternalProject_Add_Step(${ep} post_install
 ## Set variable to provide infos about the project
 ## #############################################################################
 
-set(${ep}_ROOT ${build_path} PARENT_SCOPE)
+set(${ep}_ROOT ${build_path}/install PARENT_SCOPE)
 
 endif() #NOT USE_SYSTEM_ep
 

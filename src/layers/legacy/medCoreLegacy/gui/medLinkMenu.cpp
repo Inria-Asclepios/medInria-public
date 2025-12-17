@@ -869,7 +869,8 @@ medGroupWidget::medGroupWidget(QString groupName, QWidget * parent): medListItem
 
     medLeftArrow *arrow = new medLeftArrow(this);
 
-    m_color = QColor::fromHsv(qrand()%360, 255, 210);
+    int hue = QRandomGenerator::global()->bounded(360);
+    m_color = QColor::fromHsv(hue, 255, 210);
 
     m_labelColorWidget = new QPushButton();
     m_labelColorWidget->setToolTip(tr("Current group color"));
