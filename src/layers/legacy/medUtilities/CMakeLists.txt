@@ -27,10 +27,6 @@ find_package(VTK REQUIRED COMPONENTS InteractionWidgets)
 find_package(ITK REQUIRED COMPONENTS ITKCommon ITKGDCM ITKIOGDCM ITKThresholding)
 include(${ITK_USE_FILE})
 
-if (ITK_USE_SYSTEM_GDCM)
-  add_definitions(-DITK_USE_SYSTEM_GDCM)
-endif()
-
 ## #############################################################################
 ## List sources
 ## #############################################################################
