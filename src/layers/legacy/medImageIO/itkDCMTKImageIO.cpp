@@ -367,7 +367,7 @@ void DCMTKImageIO::DetermineNumberOfPixelComponents()
 
 void DCMTKImageIO::DeterminePixelType()
 {
-    OFFilename dcmFileName(m_FileName, OFTrue);
+    OFFilename dcmFileName(OFString(m_FileName.c_str()), OFTrue);
     DcmFileFormat dicomFile;
     OFCondition condition = dicomFile.loadFile(dcmFileName);
     
@@ -748,7 +748,7 @@ void DCMTKImageIO::InternalRead (void* buffer, int slice, unsigned long pixelCou
     std::string filename;
     filename = m_OrderedFileNames[slice];
 
-    OFFilename dcmFileName(filename, OFTrue);
+    OFFilename dcmFileName(OFString(filename.c_str()), OFTrue);
     DcmFileFormat dicomFile;
 
     OFCondition cond = dicomFile.loadFile(dcmFileName, EXS_Unknown, EGL_noChange, DCM_MaxReadLength, ERM_autoDetect);
@@ -1083,7 +1083,7 @@ DCMTKImageIO
 
 void DCMTKImageIO::ReadHeader(const std::string& name, const int& fileIndex, const int& fileCount )
 {
-    OFFilename dcmFileName(name, OFTrue);
+    OFFilename dcmFileName(OFString(name.c_str()), OFTrue);
     DcmFileFormat dicomFile;
     OFCondition condition = dicomFile.loadFile(dcmFileName);
 

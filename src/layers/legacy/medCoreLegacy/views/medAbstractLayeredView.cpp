@@ -575,7 +575,7 @@ void medAbstractLayeredView::restoreState(QDomElement *element)
         }
         else
         {
-            qWarning() << "Failed to reload a navigator: attempted to load navigator " 
+            qWarning().noquote()<<"Failed to reload a navigator: attempted to load navigator " 
                         << currentNavigator.attributeNode("name").value() 
                         << "v" << currentNavigator.attributeNode("version").value() 
                         << "in navigator " 
@@ -601,7 +601,7 @@ void medAbstractLayeredView::restoreState(QDomElement *element)
         }
         else
         {
-            qWarning() << "Failed to reload an interactor: " << currentInteractor.attributeNode("name").value() 
+            qWarning().noquote() << "Failed to reload an interactor: " << currentInteractor.attributeNode("name").value() 
                         << "v" 
                         << currentInteractor.attributeNode("version").value() 
                         << "in interactor " 

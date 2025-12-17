@@ -1,37 +1,25 @@
-From a21198bdda6685ae4dbc44e2b03e9bfd432e2e57 Mon Sep 17 00:00:00 2001
-From: kunhe9 <kun.he@u-bordeaux.fr>
-Date: Fri, 28 Mar 2025 13:31:39 +0100
+From 6f9cd9d9fe538c3481ea54fa627f2b45ab15918a Mon Sep 17 00:00:00 2001
+From: Mathilde Merle <mathilde.merle@ihu-liryc.fr>
+Date: Mon, 17 Nov 2025 15:19:38 +0100
 Subject: [PATCH] VTK
 
 ---
- IO/Image/vtkSEPReader.h                                          | 1 +
- ThirdParty/libproj/vtklibproj/src/proj_json_streaming_writer.hpp | 1 +
- 2 files changed, 2 insertions(+)
+ Filters/Core/vtkPolyDataPlaneCutter.cxx | 2 --
+ 1 file changed, 2 deletions(-)
 
-diff --git a/IO/Image/vtkSEPReader.h b/IO/Image/vtkSEPReader.h
-index 83d127a41e..203021b848 100644
---- a/IO/Image/vtkSEPReader.h
-+++ b/IO/Image/vtkSEPReader.h
-@@ -27,6 +27,7 @@
- 
- #include <array>  // for std::array
- #include <string> // for std::string
-+#include <cstdint> // for std::uint8_t and std::uint32_t
- 
- namespace details
+diff --git a/Filters/Core/vtkPolyDataPlaneCutter.cxx b/Filters/Core/vtkPolyDataPlaneCutter.cxx
+index fae02a1d39..e9558c2532 100644
+--- a/Filters/Core/vtkPolyDataPlaneCutter.cxx
++++ b/Filters/Core/vtkPolyDataPlaneCutter.cxx
+@@ -586,8 +586,6 @@ vtkMTimeType vtkPolyDataPlaneCutter::GetMTime()
+ int vtkPolyDataPlaneCutter::RequestData(vtkInformation* vtkNotUsed(request),
+   vtkInformationVector** inputVector, vtkInformationVector* outputVector)
  {
-diff --git a/ThirdParty/libproj/vtklibproj/src/proj_json_streaming_writer.hpp b/ThirdParty/libproj/vtklibproj/src/proj_json_streaming_writer.hpp
-index 6267684218..163da4309a 100644
---- a/ThirdParty/libproj/vtklibproj/src/proj_json_streaming_writer.hpp
-+++ b/ThirdParty/libproj/vtklibproj/src/proj_json_streaming_writer.hpp
-@@ -33,6 +33,7 @@
- 
- #include <vector>
- #include <string>
-+#include <cstdint>
- 
- #define CPL_DLL
- 
+-  vtkLog(INFO, "Executing vtkPolyData plane cutter");
+-
+   // Get the input and output
+   vtkInformation* inInfo = inputVector[0]->GetInformationObject(0);
+   vtkInformation* outInfo = outputVector->GetInformationObject(0);
 -- 
 2.43.0
 

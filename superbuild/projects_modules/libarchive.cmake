@@ -32,6 +32,10 @@ set(release_url https://github.com/libarchive/libarchive/releases/download/v3.8.
 ## Add specific cmake arguments for configuration step of the project
 ## #############################################################################
 
+if (UNIX)
+    set(${ep}_cxx_flags "${${ep}_cxx_flags} -w") # remove warnings
+endif()
+
 set(LZMA_INCLUDE_DIR "${xz_ROOT}/include")
 
 find_library(LZMA_LIBRARY

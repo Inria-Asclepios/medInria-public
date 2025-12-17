@@ -54,6 +54,7 @@ vtkVectorVisuManager::vtkVectorVisuManager()
     this->Glyph->OrientOn();
     this->Glyph->ScalingOn();
     this->Glyph->SetScaleFactor(1.0);
+    this->Glyph->Update();
 
     this->Normals = vtkPolyDataNormals::New();
     this->Normals->SetInputConnection( this->Glyph->GetOutputPort() );
@@ -97,15 +98,9 @@ void vtkVectorVisuManager::SetInput(vtkImageData* data, vtkMatrix4x4 *matrix)
 
     this->Input = data;
 
-    if(matrix)
-    {
-        this->Actor->SetUserMatrix(matrix);
-    }
-
     this->VOI->SetInputData ( this->Input );
     this->Orienter->SetOrientationMatrix(matrix);
     this->NormalsOrienter->SetOrientationMatrix(matrix);
-
 }
 
 void vtkVectorVisuManager::SetVOI(const int& imin, const int& imax,

@@ -205,7 +205,6 @@ void vtkIsosurfaceManager::GenerateData()
             {
                 ImageToIsosurfaceFilter->ReverseNormals();
             }
-            ImageToIsosurfaceFilter->GetActor()->SetUserMatrix (this->DirectionMatrix);
         }
 
         if( renderer )

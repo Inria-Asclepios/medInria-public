@@ -90,6 +90,7 @@ vtkImageView2D::vtkImageView2D()
   this->ShowAngleWidget      = 0;
   this->AnnotationStyle      = AnnotationStyle1;
   this->CursorFollowMouse    = 0;
+  this->ClippingNeeded = false;
 
   this->SetViewConvention (vtkImageView2D::VIEW_CONVENTION_RADIOLOGICAL);
 
@@ -329,10 +330,8 @@ void vtkImageView2D::SetSlice(int slice)
     slice = std::min (slice, range[1]);
   }
 
-  // Verify slice is actually changing.
-  int old_slice = this->GetSlice();
-
   // Estimate the displacement
+  int old_slice = this->GetSlice();
   double displacement[4] = {0,0,0,0};
   double* spacing = this->GetMedVtkImageInfo()->spacing;
   displacement[this->SliceOrientation] = (slice - old_slice) * spacing[this->SliceOrientation];
@@ -415,7 +414,7 @@ void vtkImageView2D::UpdateOrientation()
   this->SetAnnotationsFromOrientation();
 
   // Change axes colors according to orientation
-  this->SetSlicePlaneFromOrientation();
+  this->UpdateSlicePlane();
 
   // fix some internal camera settings, do not comment
   this->ResetCamera();
@@ -430,15 +429,11 @@ void vtkImageView2D::UpdateOrientation()
 
 //----------------------------------------------------------------------------
 /** Update the display extent manually so that the proper slice for the
- given orientation is displayed. It will also try to set a
- reasonable camera clipping range.
+ given orientation is displayed.
  This method is called automatically when the Input is changed, but
  most of the time the input of this class is likely to remain the same,
- i.e. connected to the output of a filter, or an image reader. When the
- input of this filter or reader itself is changed, an error message might
- be displayed since the current display extent is probably outside
- the new whole extent. Calling this method will ensure that the display
- extent is reset properly.
+ i.e. connected to the output of a filter, or an image reader.
+ Calling this method will ensure that the display extent is reset properly.
  */
 void vtkImageView2D::UpdateDisplayExtent()
 {
@@ -450,7 +445,6 @@ void vtkImageView2D::UpdateDisplayExtent()
     return;
   }
 
-
   int* w_ext = this->GetMedVtkImageInfo()->extent;
 
   int slice = this->Slice;
@@ -459,11 +453,6 @@ void vtkImageView2D::UpdateDisplayExtent()
   {
     slice = std::max (slice, range[0]);
     slice = std::min (slice, range[1]);
-  }
-
-  if (slice != this->Slice)
-  {
-    // vtkWarningMacro (<<"WARNING: asking to display an out of bound extent"<<endl);
   }
 
   for (LayerInfoVecType::iterator it = this->LayerInfoVec.begin(); it != this->LayerInfoVec.end(); it++)
@@ -490,34 +479,51 @@ void vtkImageView2D::UpdateDisplayExtent()
         break;
     }
 
-  }
-
-  // Figure out the correct clipping range
-  if (this->GetRenderer())
-  {
-      // the clipping range is adjusted so that it englobles the slice +/- 0.5 * spacing in the
-      // direction given by ViewOrientation. It allows to automatically clip polygonal datasets
-      // without having to use a time consuming vtkCutter. In case of oblique slices (i.e., when
-      // a non-identity OrientationTransform is used, a large margin is used
-      // resulting in a too large clipping range. To be futher investigated.
-      vtkCamera *cam = this->GetRenderer()->GetActiveCamera();
-      if (cam)
-      {
-        double pos[3] = {.0,.0,.0};
-        this->GetWorldCoordinatesForSlice (this->GetSlice(), pos);
-
-        double vn[3] = {.0,.0,.0}, position[3] = {.0,.0,.0};
-        cam->GetViewPlaneNormal(vn);
-        cam->GetPosition(position);
-
-        double distance = 0.0;
-        for (int i=0; i<3; i++)
-            distance += (pos[i]-position[i]) * -vn[i];
-
-        double avg_spacing = this->GetMedVtkImageInfo()->spacing[this->ViewOrientation] * 0.5;
-        cam->SetClippingRange(distance - avg_spacing, distance + avg_spacing);
+    // Needed for fibers data mostly
+    if (this->ClippingNeeded)
+    {
+        SetClippingRange();
     }
   }
+}
+
+void vtkImageView2D::SetClippingNeeded(bool clipping)
+{
+    this->ClippingNeeded = clipping;
+}
+
+/**
+ * Figure out the correct clipping range needed for some format.
+ * The clipping range is adjusted so that it englobles the slice +/- 0.5 * spacing in the
+ * direction given by ViewOrientation. It allows to automatically clip polygonal datasets
+ * without having to use a time consuming vtkCutter. In case of oblique slices (i.e., when
+ * a non-identity OrientationTransform is used, a large margin is used
+ * resulting in a too large clipping range.
+ */
+void vtkImageView2D::SetClippingRange()
+{
+    if (this->GetRenderer())
+    {
+        vtkCamera *cam = this->GetRenderer()->GetActiveCamera();
+        if (cam)
+        {
+            double pos[3] = {.0,.0,.0};
+            this->GetWorldCoordinatesForSlice (this->GetSlice(), pos);
+
+            double vn[3] = {.0,.0,.0}, position[3] = {.0,.0,.0};
+            cam->GetViewPlaneNormal(vn);
+            cam->GetPosition(position);
+
+            double distance = 0.0;
+            for (int i=0; i<3; i++)
+            {
+                distance += (pos[i]-position[i]) * -vn[i];
+            }
+
+            double avg_spacing = this->GetMedVtkImageInfo()->spacing[this->ViewOrientation] * 0.5;
+            cam->SetClippingRange(distance - avg_spacing, distance + avg_spacing);
+        }
+    }
 }
 
 //----------------------------------------------------------------------------
@@ -578,13 +584,13 @@ void vtkImageView2D::SetViewOrientation(int orientation)
      their is NO slice-orientation corresponding to the desired
      view-orientation (redundant view-orientation for 2 slice-orientations)
 
-     We are not doomed though, the hack is to give priority to the native
+     We are not doomed though, we give priority to the native
      acquisition plane (xy) and derive the other orientations from it.
   */
   double dot = 0;
   double projection, p1, p2;
 
-  /// Proiority to the xy plane :
+  // Priority to the xy plane :
   int viewtoslice[3] = {-1,-1,-1};
 
   for (unsigned int i=0; i<3; i++)
@@ -608,60 +614,19 @@ void vtkImageView2D::SetViewOrientation(int orientation)
 
   slice_orientation = viewtoslice[orientation];
 
-
-
-#if 0 // comment code above and replace it by the one below if you
-      // want to test the behavior of this function as it was
-      // previous to the fix...
-
-  /**
-     but normally we should be able to use this bit of code,
-     it works and is stable for most cases, when acquisition is
-     not too oblique.
-  */
-  int view_orientation = -1;
-  for (unsigned int i=0; i<3; i++)
+  vtkRenderer* ren = this->GetRenderer();
+  if (ren)
   {
-    view_orientation = this->GetViewOrientationFromSliceOrientation(i);
-    if (view_orientation == orientation)
-    {
-      slice_orientation = i;
-      break;
-    }
-  }
-
-  if (slice_orientation == -1)
-  {
-    vtkErrorMacro("Error - No slice-orientation corresponding to the required view-orientation "<< orientation
-          <<"\n Please consider switch ON vtkINRIA3D_HACK_OBLIQUE_ORIENTATION ");
-    slice_orientation = orientation;
-  }
-
-#endif //
-
-  this->SetSliceOrientation (slice_orientation);
+      this->SetSliceOrientation (slice_orientation);
+  }  
 }
 
 //----------------------------------------------------------------------------
 void vtkImageView2D::SetOrientationMatrix (vtkMatrix4x4* matrix)
 {
-  this->Superclass::SetOrientationMatrix (matrix);
-  if(this->GetImage2DDisplayForLayer(GetFirstLayer()))
-  {
-        this->GetImage2DDisplayForLayer(GetFirstLayer())->GetImageActor()->SetUserMatrix (this->OrientationMatrix);
-  }
-  this->UpdateOrientation();
-
-  // The slice might have changed in the process
-  if (this->m_poInternalImageFromInput)
-  {
-    this->Slice = this->GetSliceForWorldCoordinates (this->CurrentPoint);
-    this->UpdateDisplayExtent();
-    this->UpdateSlicePlane();
-    this->InvokeEvent (vtkImageView2D::SliceChangedEvent);
-  }
-
-  this->InvokeEvent (vtkImageView2D::OrientationChangedEvent);
+    this->Superclass::SetOrientationMatrix (matrix);
+    this->UpdateOrientation();
+    this->InvokeEvent (vtkImageView2D::OrientationChangedEvent);
 }
 
 //----------------------------------------------------------------------------
@@ -712,8 +677,6 @@ void vtkImageView2D::InitializeSlicePlane()
 
 //----------------------------------------------------------------------------
 /**
-The wolrd is not always what we think it is ...
-
 Use this method to move the viewer slice such that the position
 (in world coordinates) given by the arguments is contained by
 the slice plane. If the given position is outside the bounds
@@ -748,8 +711,6 @@ void vtkImageView2D::SetCurrentPoint(double pos[3])
       this->InvokeEvent (vtkImageView2D::SliceChangedEvent);
   }
 }
-
-
 
 //----------------------------------------------------------------------------
 /**
@@ -920,7 +881,7 @@ int vtkImageView2D::SetCameraFromOrientation()
     for (unsigned int i=0; i<3; i++)
       position[i] -= 2*focaltoposition[i];
 
-  // finally set the camera with all iinformation.
+  // finally set the camera with all information.
   cam->SetPosition(position[0], position[1], position[2]);
   cam->SetFocalPoint(focalpoint[0], focalpoint[1], focalpoint[2]);
   cam->SetViewUp(viewup[0], viewup[1], viewup[2]);
@@ -1086,34 +1047,6 @@ void vtkImageView2D::SetAnnotationsFromOrientation()
     }
 }
 
-//----------------------------------------------------------------------------
-/**
-After the orientation has changed, it is crucial to adapt
-a couple of things according to new orientation.
-In UpdateOrientation() the SlicePlane, the Camera settings,
-the CornerAnnotation are modified.
-*/
-void vtkImageView2D::SetSlicePlaneFromOrientation()
-{
-  if (this->ViewOrientation < VIEW_ORIENTATION_SAGITTAL || this->ViewOrientation > VIEW_ORIENTATION_AXIAL)
-    return;
-  /**
-   These lines tell the slice plane which color it should be
-   ///\todo We should allow more colors...
-   */
-  unsigned char vals[3] = {0,0,0};
-  vals[this->ViewOrientation] = 255;
-  vtkUnsignedCharArray* array = vtkUnsignedCharArray::SafeDownCast (this->SlicePlane->GetPointData()->GetScalars());
-  if (!array)
-    return;
-  array->SetTypedTuple (0, vals);
-  array->SetTypedTuple (1, vals);
-  array->SetTypedTuple (2, vals);
-  array->SetTypedTuple (3, vals);
-
-  this->UpdateSlicePlane();
-
-}
 
 //----------------------------------------------------------------------------
 /**
@@ -1149,34 +1082,6 @@ void vtkImageView2D::UpdateSlicePlane()
   this->SlicePlane->SetPoints (points);
   oldpoints->Delete();
   points->Delete();
-}
-
-//----------------------------------------------------------------------------
-/**
-The ViewCenter instance follows the center of the view
-in world coordinates. It is updated UpdateCenter() each
-time the slice or the orientation changes.
-
-CAUTION: for the moment it is de-activated to speed up the
-visualization. (The ViewCenter is not used anywhere else).
-*/
-void vtkImageView2D::UpdateCenter()
-{
-  if (!this->GetMedVtkImageInfo() || !this->GetMedVtkImageInfo()->initialized)
-    return;
-  vtkCamera *cam = this->GetRenderer() ? this->GetRenderer()->GetActiveCamera() : nullptr;
-  if (!cam)
-    return;
-  int* dimensions = this->GetMedVtkImageInfo()->dimensions;
-
-  int indices[3] = {0,0,0};
-  for (unsigned int i=0; i<3; i++)
-  {
-    indices[i] = (int)((double)dimensions[i] / 2.0);
-  }
-  indices[this->SliceOrientation] = this->GetSlice();
-
-  this->GetWorldCoordinatesFromImageCoordinates (indices, this->ViewCenter);
 }
 
 //----------------------------------------------------------------------------
@@ -1219,7 +1124,7 @@ void vtkImageView2D::SetPan (double* arg)
     return;
   }
 
-  double focaldepth, focalpoint[4], position[4], motion[4];
+  double focaldepth, focalpoint[4], position[4];
   double bounds[6];
   double center[3];
 
@@ -1243,19 +1148,6 @@ void vtkImageView2D::SetPan (double* arg)
 
   this->GetRenderer()->SetDisplayPoint (center[0], center[1], focaldepth);
   this->GetRenderer()->DisplayToWorld();
-
-  // Camera motion is reversed
-  motion[0] = focalpoint[0] - this->GetRenderer()->GetWorldPoint()[0];
-  motion[1] = focalpoint[1] - this->GetRenderer()->GetWorldPoint()[1];
-  motion[2] = focalpoint[2] - this->GetRenderer()->GetWorldPoint()[2];
-
-  camera->SetFocalPoint(this->GetRenderer()->GetWorldPoint()[0],
-                        this->GetRenderer()->GetWorldPoint()[1],
-                        this->GetRenderer()->GetWorldPoint()[2]);
-
-  camera->SetPosition(- motion[0] + position[0],
-                      - motion[1] + position[1],
-                      - motion[2] + position[2]);
 
   if (this->Interactor && this->Interactor->GetLightFollowCamera())
   {
@@ -1311,10 +1203,7 @@ Reset the camera in a nice way for the 2D view
 */
 void vtkImageView2D::ResetCamera()
 {
-  this->Superclass::ResetCamera();
-
-  this->Pan[0] = this->Pan[1] = 0.0;
-  this->SetPan (this->Pan); // not sure this is needed
+    this->Superclass::ResetCamera();
 }
 
 //----------------------------------------------------------------------------
@@ -1759,7 +1648,7 @@ void vtkImageView2D::SetInputLayer(vtkAlgorithmOutput* pi_poVtkAlgoOutput, vtkMa
     {
         imageDisplay->SetInputProducer(pi_poVtkAlgoOutput);
         imageDisplay->SetInputData(static_cast<vtkImageAlgorithm*>(pi_poVtkAlgoOutput->GetProducer())->GetOutput());
-        imageDisplay->GetImageActor()->SetUserMatrix (this->OrientationMatrix);
+
         if(imageDisplay->GetMedVtkImageInfo())
         {
             this->SetColorRange(imageDisplay->GetMedVtkImageInfo()->scalarRange, layer);
@@ -1794,13 +1683,12 @@ void vtkImageView2D::SetInputCommon(vtkAlgorithmOutput* pi_poVtkAlgoOutput, int 
     }
 }
 
-void vtkImageView2D::SetInput (vtkActor *actor, int layer, vtkMatrix4x4 *matrix, const int imageSize[], const double imageSpacing[], const double imageOrigin[])
+void vtkImageView2D::SetInput (vtkActor *actor, int layer, vtkMatrix4x4 *matrix, const int imageSize[],
+                               const double imageSpacing[], const double imageOrigin[])
 {
-    vtkRenderer *renderer = 0;
-
     this->AddLayer(layer);
 
-    renderer = this->GetRendererForLayer(layer);
+    vtkRenderer *renderer = this->GetRendererForLayer(layer);
     if (!renderer)
       return;
 
@@ -1808,7 +1696,6 @@ void vtkImageView2D::SetInput (vtkActor *actor, int layer, vtkMatrix4x4 *matrix,
 
     double bounds[6];
     actor->GetBounds(bounds);
-
     // these bounds are used by vtkImageFromBoundsSource to generate a background image in case there is none
     // vtkImageFromBoundsSource output image size is actually [boundsXMax-boundXMin]...,
     // so we need to increase bounds by +1 to have the correct image size
@@ -1818,18 +1705,9 @@ void vtkImageView2D::SetInput (vtkActor *actor, int layer, vtkMatrix4x4 *matrix,
     bounds[3] = floor(bounds[3]+0.5)+1;
     bounds[4] = floor(bounds[4]+0.5);
     bounds[5] = floor(bounds[5]+0.5)+1;
-
-    unsigned int numberOfLayers = GetNumberOfLayers();
     UpdateBounds(bounds, layer, matrix, imageSize, imageSpacing, imageOrigin);
 
     this->SetCurrentLayer(layer);
-    this->Slice = this->GetSliceForWorldCoordinates (this->CurrentPoint);
-    this->UpdateDisplayExtent();
-    this->UpdateSlicePlane();
-    this->InvokeEvent (vtkImageView2D::SliceChangedEvent);
-
-    if ((numberOfLayers == 0) && matrix)
-        this->SetOrientationMatrix(matrix);
 }
 
 void vtkImageView2D::RemoveLayerActor(vtkActor *actor, int layer)
@@ -2166,7 +2044,6 @@ void vtkImageView2D::RemoveLayer(int layer)
     {
         // ////////////////////////////////////////////////////////////////////////
         // Save image informations of layer 0
-        double  bounds[6];
         vtkMatrix4x4 *matrix  = nullptr;
         int    *imageSize     = nullptr;
         double *imageSpacing  = nullptr;
@@ -2174,7 +2051,6 @@ void vtkImageView2D::RemoveLayer(int layer)
     
         medVtkImageInfo   sImgInfo;
         medVtkImageInfo* psImgInfo  = GetMedVtkImageInfo();
-        GetInputBounds(bounds);
   
         if (psImgInfo)
         {
@@ -2185,7 +2061,6 @@ void vtkImageView2D::RemoveLayer(int layer)
             imageSpacing = sImgInfo.spacing;
             imageOrigin = sImgInfo.origin;
         }
-
 
         // ////////////////////////////////////////////////////////////////////////
         // Remove layer

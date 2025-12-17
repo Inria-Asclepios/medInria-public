@@ -32,10 +32,9 @@ set(git_tag music3)
 ## Add specific cmake arguments for configuration step of the project
 ## #############################################################################
 
-# set compilation flags
-# Compile using c++11 standard
-set(${ep}_cxx_flags "${${ep}_cxx_flags} -Wall -std=c++11")
-set(${ep}_c_flags "${${ep}_c_flags} -Wall")
+if (UNIX)
+    set(${ep}_cxx_flags "${${ep}_cxx_flags} -Wall")
+endif()
 
 set(cmake_args
   ${ep_common_cache_args}

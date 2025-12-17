@@ -178,8 +178,6 @@ public slots:
 
     virtual void clearRoi();
 
-    virtual void moveToSlice  (int slice);
-
     virtual void setUpViewForThumbnail();
 
 protected slots:

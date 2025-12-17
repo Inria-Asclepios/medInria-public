@@ -28,6 +28,10 @@ set(git_tag v5.8.1)
 ## Add specific cmake arguments for configuration step of the project
 ## #############################################################################
 
+if (UNIX)
+    set(${ep}_cxx_flags "${${ep}_cxx_flags} -w") # remove warnings
+endif()
+
 set(cmake_args
   ${ep_common_cache_args}
   -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE_externals_projects}
@@ -69,7 +73,7 @@ ExternalProject_Add(${ep}
 ## #############################################################################
 
 ExternalProject_Get_Property(${ep} install_dir)
-set(${ep}_ROOT ${install_dir} PARENT_SCOPE)
+set(${ep}_ROOT ${build_path}/install PARENT_SCOPE)
 
 endif() #NOT USE_SYSTEM_ep
 

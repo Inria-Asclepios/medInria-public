@@ -15,7 +15,6 @@
 
 set(TARGET_NAME medImageIO)
 
-
 ## #############################################################################
 ## find requireds
 ## #############################################################################
@@ -25,8 +24,7 @@ include(${ITK_USE_FILE})
 
 #WARNING USE VTK through ITKVtkGlue and medLog
 
-find_package(DCMTK REQUIRED NO_MODULE)
-
+find_package(DCMTK CONFIG REQUIRED ofstd dcmdata dcmnet dcmimgle dcmimage dcmjpeg dcmjpls dcmiod)
 
 ## #############################################################################
 ## List Sources
@@ -57,11 +55,9 @@ target_include_directories(${TARGET_NAME}
   PRIVATE ${DCMTK_INCLUDE_DIRS}
   )
 
-
 ## #############################################################################
 ## Link
 ## #############################################################################
-
 
 target_link_libraries(${TARGET_NAME}
   Qt5::Core
@@ -95,7 +91,14 @@ target_link_libraries(${TARGET_NAME}
   ITKVTK
   VTK::IOImage
   ${ITKIOPhilipsREC_LIBRARIES}
-  ${DCMTK_LIBRARIES}
+  DCMTK::ofstd
+  DCMTK::dcmdata
+  DCMTK::dcmnet
+  DCMTK::dcmimgle
+  DCMTK::dcmimage
+  DCMTK::dcmjpeg
+  DCMTK::dcmjpls
+  DCMTK::dcmiod
   )
 
 ## #############################################################################
