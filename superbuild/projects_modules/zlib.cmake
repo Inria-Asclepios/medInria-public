@@ -25,9 +25,15 @@ function(ZLIB_project)
             set(${ep}_cxx_flags "${${ep}_cxx_flags} -w") # remove warnings
         endif()
 
+        if (MSVC)
+            set(${ep}_cxx_flags "${${ep}_cxx_flags} /Zc:__cplusplus")
+        endif()
+
         set(cmake_args
             ${ep_common_cache_args}
             -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE_externals_projects}
+            -DCMAKE_C_FLAGS=${${ep}_c_flags}
+            -DCMAKE_CXX_FLAGS=${${ep}_cxx_flags}
             -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
             -DBUILD_SHARED_LIBS:BOOL=${BUILD_SHARED_LIBS_${external_project}}
             )
