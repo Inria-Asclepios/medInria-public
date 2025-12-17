@@ -58,10 +58,6 @@ include(${ITK_USE_FILE})
 
 #WARNING USE VTK through ITKIOVTK and medLog, medVtkInria
 
-if (ITK_USE_SYSTEM_GDCM)
-  add_definitions(-DITK_USE_SYSTEM_GDCM)
-endif()
-
 if (USE_OSPRay)
   add_definitions(-DMED_USE_OSPRAY_4_VR_BY_CPU)
 endif()
