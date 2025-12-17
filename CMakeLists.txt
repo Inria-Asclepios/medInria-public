@@ -18,6 +18,7 @@ if(POLICY CMP0020)
 endif()
 
 cmake_policy(SET CMP0074 NEW)
+cmake_policy(SET CMP0135 NEW) # timestamps for URL downloads
 
 if(NOT DEFINED ${MEDINRIA_SUPERBUILD_VERSION})
     set(MEDINRIA_SUPERBUILD_VERSION 4.1.0)

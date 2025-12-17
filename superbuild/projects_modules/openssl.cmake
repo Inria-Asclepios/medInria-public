@@ -47,11 +47,8 @@ set(git_tag OpenSSL_1_1_1b)
 ## Add specific cmake arguments for configuration step of the project
 ## #############################################################################
 
-# set compilation flags
-if (UNIX OR APPLE)
-  if (CMAKE_COMPILER_IS_GNUCC AND CMAKE_C_COMPILER_VERSION VERSION_LESS 5.4)
-    set(${ep}_c_flags "${${ep}_c_flags} -std=c99")
-  endif()
+if (UNIX)
+    set(${ep}_cxx_flags "${${ep}_cxx_flags} -w") # remove warnings
 endif()
 
 set(cmake_args

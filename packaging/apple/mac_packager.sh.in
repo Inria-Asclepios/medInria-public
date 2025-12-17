@@ -1,73 +1,142 @@
 #!/bin/bash
 
-# Usage:
-# - mac_packager.sh path_to_plugins1 path_to_plugins2...
+check_certificate()
+{
+    local certificate_name="$1"
+    local identities=$(security find-identity -v -p codesigning 2>/dev/null) || return 1 # either the identity succeeds or we return an error code
+    printf '%s\n' "$identities" | grep -F -q "$certificate_name" # certificate found we send grep output
+}
 
-# To build a stand-alone mac version of the application, do the following:
+# Cleaning step
+echo "# Clean previous dmg in build"
+dmgs_found=$(find . -maxdepth 1 -type f -name "*.dmg")
+if [[ -n "$dmgs_found" ]]; then
+    # We only remove .dmg files
+    find . -maxdepth 1 -type f -name "*.dmg" -exec rm -f {} +
+fi
 
-# 1. build medInria
-# 2. build medInria-plugins as well as your desired own plugins
-# 3. chmod u+x mac_pacakger.sh
-# 4. run mac_pacakger.sh with each argument being a script to package your plugins, e.g. : ./mac_packager.sh ${Plugins_Build_Dir}/mac_visages_plugins_packager.sh
-
-# The bundle medInria.app will contain all plugins and will be standalone, packaged into MedINRIA.dmg in the install dir
+# Preparation of the new bundle in TmpInstall
+echo "# Prepare the bundle"
+BUNDLE="MUSICardio"
+APP_EXE="${BUNDLE}.app/Contents/MacOS/${BUNDLE}"
+PLUGIN_DIR="${BUNDLE}.app/Contents/PlugIns"
+FRAMEWORK_DIR="${BUNDLE}.app/Contents/Frameworks"
 
 cd @PROJECT_BINARY_DIR@
-
-\rm -fr TmpInstall
-mkdir -p TmpInstall/MUSICardio.app/Contents/Resources
-cp -r @medInria_ROOT@/bin/MUSICardio.app/Contents/MacOS TmpInstall/MUSICardio.app/Contents
-cp @medInria_ROOT@/bin/MUSICardio.app/Contents/Info.plist TmpInstall/MUSICardio.app/Contents
-cp @medInria_ROOT@/bin/MUSICardio.app/Contents/Resources/MUSICardio.icns TmpInstall/MUSICardio.app/Contents/Resources
-
+rm -fr TmpInstall
+mkdir -p TmpInstall/${BUNDLE}.app/Contents/{MacOS,Resources}
 cd TmpInstall
 
-@Qt5_DIR@/../../../bin/macdeployqt MUSICardio.app -appstore-compliant
+@CMAKE_COMMAND@ -E copy \
+    "@medInria_ROOT@/bin/${BUNDLE}.app/Contents/MacOS/${BUNDLE}" \
+    "${BUNDLE}.app/Contents/MacOS/"
 
-#Run sub-packagers
+@CMAKE_COMMAND@ -E copy \
+    "@medInria_ROOT@/bin/${BUNDLE}.app/Contents/Info.plist" \
+    "${BUNDLE}.app/Contents"
+
+@CMAKE_COMMAND@ -E copy \
+    "@medInria_ROOT@/bin/${BUNDLE}.app/Contents/Resources/${BUNDLE}.icns" \
+    "${BUNDLE}.app/Contents/Resources"
+
+# Deploy Qt libraries using their tool
+echo "# Deploy Qt libs"
+@Qt5_DIR@/../../../bin/macdeployqt ${BUNDLE}.app -appstore-compliant
+
+# Run sub-packagers
+echo "# Run sub-packager"
 injectDirs=''
 for i in $*; do
-        echo $i
-        injectDirs="$injectDirs -inject-dir=$i"
+    echo $i
+    injectDirs="$injectDirs -inject-dir=$i"
 done
 
-mkdir python_plugins
+mkdir -p python_plugins
 injectDirs="$injectDirs -inject-dir=@PROJECT_BINARY_DIR@/TmpInstall/python_plugins"
 
 python_libs=''
 for python_lib in @medInria_ROOT@/bin/python_plugins/*; do
     lib=${python_lib##*/}
     libname=${lib%.so}
-    cp $python_lib python_plugins/$libname.dylib
+    @CMAKE_COMMAND@ -E copy "$python_lib" "python_plugins/${libname}.dylib"
     python_libs="$python_libs $libname"
 done
 
-@dtk_ROOT@/bin/dtkDeploy MUSICardio.app $injectDirs &>/dev/null
+# Deploy libs with dtk tool
+echo "# DTK Deploy"
+@dtk_ROOT@/bin/dtkDeploy ${BUNDLE}.app $injectDirs &>/dev/null
 
-mkdir MUSICardio.app/Contents/Plugins/python
+# Correct library paths, it's needed to load plugins and also for the signature
+echo "# Correct library paths for plugins"
+OLD_PREFIX="@medInria_ROOT@/bin/plugins_legacy" # absolute path before
+NEW_PREFIX='@executable_path/../PlugIns'        # new relative path
+candidate_libs=($(ls /usr/lib/libz*.dylib 2>/dev/null)) # There are some path errors with libz which is a system lib
+SYSTEM_Z=${candidate_libs[0]}
+
+find "$PLUGIN_DIR" -type f -name "*.dylib" | while read -r lib; do
+    otool -L "$lib" 2>/dev/null | tail -n +2 | while read -r line; do
+        dep=$(echo "$line" | awk '{print $1}')
+
+        # Solving libz wrong paths
+        if [[ "$dep" == *"/libz."*".dylib" ]] || [[ "$dep" == *"/libz.dylib" ]]; then
+            install_name_tool -change "$dep" "$SYSTEM_Z" "$lib"
+            continue
+        fi
+
+        # Solving absolute paths in plugins
+        if [[ "$dep" == "$OLD_PREFIX"* ]]; then
+            new_path="${NEW_PREFIX}/$(basename "$dep")"
+            install_name_tool -change "$dep" "$new_path" "$lib"
+        fi
+    done
+done
+
+# Python libs preparation
+echo "# Installation of Python libraries"
+mkdir -p ${BUNDLE}.app/Contents/PlugIns/python
 if [ -n "${python_libs}" ]
 then
     for python_lib in $python_libs; do
-        mv MUSICardio.app/Contents/Plugins/$python_lib.dylib MUSICardio.app/Contents/Plugins/python/$python_lib.so
+        mv ${BUNDLE}.app/Contents/PlugIns/$python_lib.dylib ${BUNDLE}.app/Contents/PlugIns/python/$python_lib.so
     done
 fi
 
-@CMAKE_COMMAND@ --install @pyncpp_ROOT@ --prefix . --component Runtime
-mkdir MUSICardio.app/Contents/Resources/lib
-mv lib/python@PYTHON_VERSION_MAJOR@.@PYTHON_VERSION_MINOR@ MUSICardio.app/Contents/Resources/lib
+@CMAKE_COMMAND@ --install @pyncpp_ROOT@ --prefix . --component Runtime &>/dev/null
 
-#Run fancy packaging apple script
+mkdir -p ${BUNDLE}.app/Contents/Resources/lib
+mv lib/python@PYTHON_VERSION_MAJOR@.@PYTHON_VERSION_MINOR@ ${BUNDLE}.app/Contents/Resources/lib
 
-\cp -f @medInria_SOURCE_DIR@/utils/osx_packaging/BaseMedinriaPackage.sparseimage.gz @PROJECT_BINARY_DIR@/MedinriaPackage.sparseimage.gz
-cd @PROJECT_BINARY_DIR@
-gunzip -f MedinriaPackage.sparseimage.gz
+# Sign the app
+CERT_NAME="MDS-certificate"
+if check_certificate "$CERT_NAME"; then
+    echo "# Sign the app"
 
-devName=`hdiutil attach -readwrite -noverify -noautoopen MedinriaPackage.sparseimage | egrep '^/dev/' | sed 1q | awk '{print $1}'`
-diskutil rename "medInria base" "MUSICardio @MEDINRIA_SUPERBUILD_VERSION@"
-\cp -rf @PROJECT_BINARY_DIR@/TmpInstall/MUSICardio.app /Volumes/"MUSICardio @MEDINRIA_SUPERBUILD_VERSION@"/
+    find "$FRAMEWORK_DIR" -type f -name "*.dylib" -exec \
+        codesign --force --timestamp --sign "$CERT_NAME" {} \;
+    find "$PLUGIN_DIR" -type f -name "*.dylib" -exec \
+        codesign --force --timestamp --sign "$CERT_NAME" {} \;
+    find "$PLUGIN_DIR/python" -type f -name "*.so" -exec \
+        codesign --force --timestamp --sign "$CERT_NAME" {} \;
+    codesign --force --timestamp --sign "$CERT_NAME" "$APP_EXE"
+    codesign --force --deep --timestamp --sign "$CERT_NAME" "${BUNDLE}.app"
 
-sync
-hdiutil detach $devName
-hdiutil convert MedinriaPackage.sparseimage -format UDZO -imagekey zlib-level=9 -o "MUSICardio-@MEDINRIA_SUPERBUILD_VERSION@.dmg" 1>/dev/null 2>/dev/null
-\rm -fr MedinriaPackage.sparseimage @PROJECT_BINARY_DIR@/TmpInstall
-\mv MUSICardio-@MEDINRIA_SUPERBUILD_VERSION@.dmg @CMAKE_BINARY_DIR@
+    # Check
+    codesign --verify --deep --strict --verbose=2 "${BUNDLE}.app"
+    spctl -a -vv "${BUNDLE}.app"
+else
+    echo "# No certificate found for the application, we do not sign it"
+fi
+
+# Create the DMG
+echo "# Create the DMG"
+DMG_NAME="${BUNDLE}-@MEDINRIA_SUPERBUILD_VERSION@.dmg"
+/usr/bin/python3 -m dmgbuild \
+    -s "../../../packaging/apple/settings.json" \
+    "${BUNDLE}" \
+    "${DMG_NAME}"
+
+# Sign the DMG
+echo "# Sign the DMG"
+codesign --sign "${CERT_NAME}" --timestamp --options runtime "${DMG_NAME}"
+
+mv "${DMG_NAME}" @CMAKE_BINARY_DIR@/

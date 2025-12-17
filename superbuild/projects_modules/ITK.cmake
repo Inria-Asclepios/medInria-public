@@ -38,19 +38,15 @@ if (NOT USE_SYSTEM_${ep})
 ## Set up versioning control
 ## #############################################################################
 
-
 set(git_url ${GITHUB_PREFIX}InsightSoftwareConsortium/ITK.git)
-set(git_tag v5.4rc04)
-
+set(git_tag v5.4.5)
 
 ## #############################################################################
 ## Add specific cmake arguments for configuration step of the project
 ## #############################################################################
 
-# set compilation flags
 if (UNIX)
-  set(${ep}_c_flags "${${ep}_c_flags} -w")
-  set(${ep}_cxx_flags "${${ep}_cxx_flags} -w -fpermissive")
+    set(${ep}_cxx_flags "${${ep}_cxx_flags} -w") # remove warnings
 endif()
 
 set(cmake_args

@@ -34,10 +34,8 @@ set(git_tag master)
 ## Add specific cmake arguments for configuration step of the project
 ## #############################################################################
 
-# set compilation flags
-if (UNIX OR APPLE)
-  set(${ep}_c_flags "${${ep}_c_flags}")
-  set(${ep}_cxx_flags "${${ep}_cxx_flags}")
+if (UNIX)
+    set(${ep}_cxx_flags "${${ep}_cxx_flags} -w") # remove warnings
 endif()
 
 set(cmake_args
@@ -57,7 +55,7 @@ ExternalProject_Add(${ep}
   PREFIX ${EP_PATH_SOURCE}
   SOURCE_DIR ${EP_PATH_SOURCE}/${ep}
   BINARY_DIR ${build_path}
-  INSTALL_DIR ${build_path}
+  INSTALL_DIR ${build_path}/install
   TMP_DIR ${tmp_path}
   STAMP_DIR ${stamp_path}
   GIT_REPOSITORY ${git_url}
@@ -71,7 +69,7 @@ ExternalProject_Add(${ep}
 ## Set variable to provide infos about the project
 ## #############################################################################
 
-set(${ep}_ROOT ${build_path} PARENT_SCOPE)
+set(${ep}_ROOT ${build_path}/install PARENT_SCOPE)
 
 endif() #NOT USE_SYSTEM_ep
 

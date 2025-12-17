@@ -181,12 +181,12 @@ void medVtkViewItkVectorFieldInteractor::setInputData(medAbstractData *data)
     }
     else if( identifier.compare("itkDataImageVectorDouble3") == 0 )
     {
-        typedef    itk::Vector< double, 3 >    InputPixelType;
+        typedef itk::Vector< double, 3 >    InputPixelType;
         typedef itk::Image< InputPixelType,  ImageDimension >   ImageType;
 
         d->doubleData = static_cast<ImageType* >(data->data());
-
         d->doubleData->UpdateOutputInformation();
+
         ImageType::DirectionType direction = d->doubleData->GetDirection();
         ImageType::PointType i_origin =  d->doubleData->GetOrigin();
 
@@ -199,9 +199,9 @@ void medVtkViewItkVectorFieldInteractor::setInputData(medAbstractData *data)
           v_origin[i] = i_origin[i];
         v_origin[3] = 1.0;
         mat->MultiplyPoint (v_origin, v_origin2);
+
         for (int i=0; i<3; i++)
           mat->SetElement (i, 3, v_origin[i]-v_origin2[i]);
-
 
         for (int i=0; i<3; i++)
             v_spacing[i] = d->doubleData->GetSpacing()[i];
@@ -214,17 +214,20 @@ void medVtkViewItkVectorFieldInteractor::setInputData(medAbstractData *data)
         vtkImageData *vtkImage = d->doubleFilter->GetOutput();
         d->manager->SetInput(vtkImage);
     }
-
-    else return;
+    else
+    {
+        return;
+    }
     d->manager->SetDirectionMatrix(mat);
     d->manager->ResetPosition();
     d->manager->Update();
     int *dim;
     dim = d->manager->GetInput()->GetDimensions();
 
-    d->view2d->SetInput(d->manager->GetVectorVisuManagerAxial()->GetActor(), d->view->layer(data), mat, dim, v_spacing, v_origin);
+    d->view2d->SetInput(d->manager->GetVectorVisuManagerAxial()->GetActor(),    d->view->layer(data), mat, dim, v_spacing, v_origin);
     d->view2d->SetInput(d->manager->GetVectorVisuManagerSagittal()->GetActor(), d->view->layer(data), mat, dim, v_spacing, v_origin);
-    d->view2d->SetInput(d->manager->GetVectorVisuManagerCoronal()->GetActor(), d->view->layer(data), mat, dim, v_spacing, v_origin);
+    d->view2d->SetInput(d->manager->GetVectorVisuManagerCoronal()->GetActor(),  d->view->layer(data), mat, dim, v_spacing, v_origin);
+    d->view2d->SetClippingNeeded(true);
 
     d->actorProperty = medVtkViewItkVectorFieldInteractorPrivate::PropertySmartPointer::New();
     d->manager->GetVectorVisuManagerAxial()->GetActor()->SetProperty( d->actorProperty );

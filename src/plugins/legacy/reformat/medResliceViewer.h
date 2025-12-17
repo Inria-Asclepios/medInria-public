@@ -25,6 +25,7 @@ PURPOSE.
 #include <QVTKOpenGLNativeWidget.h>
 
 #include <vtkImagePlaneWidget.h>
+#include <vtkMatrix3x3.h>
 #include <vtkResliceImageViewer.h>
 #include <vtkSmartPointer.h>
 
@@ -52,8 +53,6 @@ public:
     virtual QWidget *mouseInteractionWidget();
 
 public slots:
-
-    virtual void thickMode(int);
     virtual void reset();
     virtual void resetViews();
     virtual void render();

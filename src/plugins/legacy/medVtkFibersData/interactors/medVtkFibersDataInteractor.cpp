@@ -418,7 +418,6 @@ medVtkFibersDataInteractor::medVtkFibersDataInteractor(medAbstractView *parent):
     }
 
     d->slicingParameter = new medIntParameterL("Slicing", this);
-    connect(d->slicingParameter, SIGNAL(valueChanged(int)), this, SLOT(moveToSlice(int)));
     connect(d->view->positionBeingViewedParameter(), SIGNAL(valueChanged(QVector3D)), this, SLOT(updateSlicingParam()));
 }
 
@@ -528,9 +527,9 @@ void medVtkFibersDataInteractor::setInputData(medAbstractData *data)
         d->data = data;
 
         d->view2d->SetInput(d->actor, d->view->layer(d->data));
-
-        //TODO - harmonise all of this setInput method in vtkImageView.
+        d->view2d->SetClippingNeeded(true);
         d->view3d->GetRenderer()->AddActor(d->actor);
+
         this->updateWidgets();
     }
 
@@ -1150,7 +1149,8 @@ void medVtkFibersDataInteractor::validateBundling()
         text = tr("Fiber bundle #") + QString::number(bundleNumber);
     }
     
-    QColor color = QColor::fromHsv(qrand()%360, 255, 210);
+    int hue = QRandomGenerator::global()->bounded(360);
+    QColor color = QColor::fromHsv(hue, 255, 210);
     this->validateSelection(text, color);
     this->addBundle(text, color);
 }
@@ -1162,7 +1162,7 @@ void medVtkFibersDataInteractor::addBundle (const QString &name, const QColor &c
 
     QStandardItem *item = new QStandardItem (name);
     item->setCheckable(true);
-    item->setTristate(false);
+    item->setAutoTristate(false);
     item->setEditable(true);
     item->setCheckState(Qt::Checked);
 
@@ -1364,18 +1364,6 @@ void medVtkFibersDataInteractor::setVisible(bool visible)
 void medVtkFibersDataInteractor::setWindowLevel (QHash<QString,QVariant>)
 {
 
-}
-
-
-void medVtkFibersDataInteractor::moveToSlice (int slice)
-{
-    //TODO find a way to get woorldCoordinate for slice from vtkInria.
-    // instead of moving to the slice corresponding on the first layer dropped.
-    if(d->view->is2D() && slice != d->view2d->GetSlice())
-    {
-        d->view2d->SetSlice(slice);
-        d->view2d->Render();
-    }
 }
 
 void medVtkFibersDataInteractor::removeData()

@@ -48,10 +48,8 @@ set(git_tag 1.7.1)
 ## Add specific cmake arguments for configuration step of the project
 ## #############################################################################
 
-# set compilation flags
- if (UNIX)
-  set(${ep}_c_flags "${${ep}_c_flags} -Wall")
-  set(${ep}_cxx_flags "${${ep}_cxx_flags} -Wall")
+if (UNIX)
+    set(${ep}_cxx_flags "${${ep}_cxx_flags} -w") # remove warnings
 endif()
 
 if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
@@ -88,7 +86,7 @@ set(cmake_cache_args
 ## Add external-project
 ## #############################################################################
 
-ep_GeneratePatchCommand(${ep} DTK_PATCH_COMMAND dtk-1.7.1.patch)
+ep_GeneratePatchCommand(${ep} DTK_PATCH_COMMAND dtk.patch)
 
 epComputPath(${ep})
 

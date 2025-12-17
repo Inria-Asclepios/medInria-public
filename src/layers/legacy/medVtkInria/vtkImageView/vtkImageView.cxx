@@ -111,17 +111,22 @@ vtkImageView::vtkImageView()
     this->CornerAnnotation->PickableOff();
     this->CornerAnnotation->SetText (3, "<patient>\n<study>\n<series>");
 
-    this->ScalarBar->SetLabelFormat ("%.3E");
-    this->ScalarBar->SetNumberOfLabels (3);
+    // As for VTK 9.2 SetFontSize is not working since vtkScalarBarActor scales
+    // the font size on the widget on which it's attached (the renderer).
+    // Changing the size of the view/app scales font size.
+    // Using SetUnconstrainedFontSize for instance does not help neither.
+    this->ScalarBar->SetLabelFormat("%g");
+    this->ScalarBar->SetNumberOfLabels(5);
+    this->ScalarBar->SetTextPad(4);
     this->ScalarBar->GetPositionCoordinate()->SetCoordinateSystemToNormalizedViewport();
     this->ScalarBar->SetLabelTextProperty (this->TextProperty);
     this->ScalarBar->GetLabelTextProperty()->SetFontSize (1);
     this->ScalarBar->GetLabelTextProperty()->BoldOff();
     this->ScalarBar->GetLabelTextProperty()->ShadowOff();
     this->ScalarBar->GetLabelTextProperty()->ItalicOff();
-    this->ScalarBar->SetWidth (0.1);
+    this->ScalarBar->SetWidth(0.07);
     this->ScalarBar->SetHeight (0.5);
-    this->ScalarBar->SetPosition (0.9,0.3);
+    this->ScalarBar->SetPosition(0.92, 0.3);
     this->ScalarBar->PickableOff();
     this->ScalarBar->VisibilityOn();
 
@@ -1543,35 +1548,22 @@ vtkDataSet* vtkImageView::FindActorDataSet (vtkProp3D* arg)
     return vtkDataSet::SafeDownCast (this->DataSetCollection->GetItemAsObject (id-1));
 }
 
-/////////////////////////////////////////////////////////////////////
-///////////////// One comment on the origin handling ////////////////
-/////////////////////////////////////////////////////////////////////
-
-/// The 4th column of the OrientationMatrix instance is intensively
-/// used in this class in order to estimate world coordinate position
-/// and other conversions. The fact that vtkImageData class does not
-/// handle any orientation matrix makes this class weak, compared to
-/// ITK version. Therefore I think that ALL orientation AND origin
-/// information should be stored in the same instance, i.e. a vtkMatrix4x4.
-/// Thus impliing that the origin in a vtkImageData should be forced to 0.
-/// If we mix the information between vtkImageData "origin" and the
-/// vtkMatrix4x4 instances, it will be VERY confusing. and it will
-/// introduce misbehaviours in the position evaluation in this class.
-
-
 /**
-*  Get the bounding box of the input image
+*  Get the bounding box of the input image in image coordinates
 */
 void vtkImageView::GetInputBounds ( double * bounds )
 {
-    const int* wholeExtent = this->GetMedVtkImageInfo()->extent ;
-    const double * spacing = this->GetMedVtkImageInfo()->spacing;
-    const double * origin = this->GetMedVtkImageInfo ()->origin ;
-
-    for ( int i(0); i < 3; ++i )
+    if (GetMedVtkImageInfo())
     {
-        bounds[ 2*i     ] = spacing [ i ]*wholeExtent [ 2*i     ] + origin [ i ];
-        bounds[ 2*i + 1 ] = spacing [ i ]*wholeExtent [ 2*i + 1 ] + origin [ i ];
+        const int *wholeExtent = this->GetMedVtkImageInfo()->extent;
+        const double *spacing  = this->GetMedVtkImageInfo()->spacing;
+        const double *origin   = this->GetMedVtkImageInfo()->origin;
+
+        for ( int i(0); i < 3; ++i )
+        {
+            bounds[ 2*i     ] = spacing [ i ]*wholeExtent [ 2*i     ] + origin [ i ];
+            bounds[ 2*i + 1 ] = spacing [ i ]*wholeExtent [ 2*i + 1 ] + origin [ i ];
+        }
     }
 }
 

@@ -1,3 +1,15 @@
+From d9e3821d7064b3b4da0897f418c8b07d8263c7d0 Mon Sep 17 00:00:00 2001
+From: Mathilde Merle <mathilde.merle@ihu-liryc.fr>
+Date: Mon, 28 Jul 2025 16:38:52 +0200
+Subject: [PATCH] dtk
+
+---
+ src/dtkCoreSupport/dtkAbstractData.cpp        |  2 +-
+ src/dtkCoreSupport/dtkAbstractDataFactory.cpp | 32 +++++++++++++------
+ src/dtkCoreSupport/dtkCpuid.cpp               |  7 +++-
+ .../dtkDistributedServerManagerSsh.cpp        |  5 +++
+ 4 files changed, 34 insertions(+), 12 deletions(-)
+
 diff --git a/src/dtkCoreSupport/dtkAbstractData.cpp b/src/dtkCoreSupport/dtkAbstractData.cpp
 index 55a9b2e7..80200afa 100644
 --- a/src/dtkCoreSupport/dtkAbstractData.cpp
@@ -56,3 +68,43 @@ index 5ab31e44..206c66ac 100644
  }
  
  QList<QString> dtkAbstractDataFactory::converters(void) const
+diff --git a/src/dtkCoreSupport/dtkCpuid.cpp b/src/dtkCoreSupport/dtkCpuid.cpp
+index e3d5b3dd..317a0e70 100644
+--- a/src/dtkCoreSupport/dtkCpuid.cpp
++++ b/src/dtkCoreSupport/dtkCpuid.cpp
+@@ -54,10 +54,15 @@ void dtkCpuid::load(unsigned i)
+ {
+ #if defined(Q_OS_WIN) && defined(Q_CC_MSVC)
+     __cpuid((int *)d->regs, (int)i);
+-#elif defined(DTK_BUILD_64)
++#elif defined(DTK_BUILD_64) && defined(__x86_64__)
+     asm volatile
+     ("cpuid" : "=a" (d->regs[0]), "=b" (d->regs[1]), "=c" (d->regs[2]), "=d" (d->regs[3])
+      : "a" (i), "c" (0));
++#else
++    d->regs[0] = 0; // non used
++    d->regs[1] = *reinterpret_cast<const uint32_t*>("Appl");
++    d->regs[3] = *reinterpret_cast<const uint32_t*>("eARM");
++    d->regs[2] = 0; // non used
+ #endif
+ }
+ 
+diff --git a/src/dtkDistributedSupport/dtkDistributedServerManagerSsh.cpp b/src/dtkDistributedSupport/dtkDistributedServerManagerSsh.cpp
+index 01f1754e..e241e645 100644
+--- a/src/dtkDistributedSupport/dtkDistributedServerManagerSsh.cpp
++++ b/src/dtkDistributedSupport/dtkDistributedServerManagerSsh.cpp
+@@ -97,6 +97,11 @@ QByteArray  dtkDistributedServerManagerSsh::status(void)
+         props.insert("cpu_model", "opteron");
+         props.insert("cpu_arch", "x86_64");
+     }
++    else if (vendor == "AppleARM")
++    {
++        props.insert("cpu_model", "apple_silicon");
++        props.insert("cpu_arch", "aarch64");
++    }
+ 
+     props.insert("ethernet", "1G");
+ 
+-- 
+2.39.5 (Apple Git-154)
+
