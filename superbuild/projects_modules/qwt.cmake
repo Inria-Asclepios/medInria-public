@@ -14,7 +14,7 @@ list(APPEND ${ep}_dependencies "")
 
 EP_Initialisation(${ep}
   USE_SYSTEM OFF 
-  BUILD_SHARED_LIBS OFF
+  BUILD_SHARED_LIBS ON
   REQUIRED_FOR_PLUGINS ON
   NO_CMAKE_PACKAGE
 )
@@ -33,7 +33,7 @@ set(git_tag v6.3.0)
 ## #############################################################################
 
 if (UNIX)
-    set(${ep}_cxx_flags "${${ep}_cxx_flags} -Wall")
+    set(${ep}_cxx_flags "${${ep}_cxx_flags} -w") # remove warnings
 endif()
 
 set(cmake_args

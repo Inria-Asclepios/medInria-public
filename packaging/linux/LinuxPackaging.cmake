@@ -82,17 +82,27 @@ install(FILES ${CURRENT_BIN_DIR}/medInria.desktop
 # save the medinria-packaging install target to add it last
 set(backup_CPACK_INSTALL_CMAKE_PROJECTS ${CPACK_INSTALL_CMAKE_PROJECTS})
 
-#clear it
+# Add libraries to package directory
 set(CPACK_INSTALL_CMAKE_PROJECTS "")
 foreach(external_project ${external_projects})
-    if(NOT USE_SYSTEM_${external_project}
-            AND BUILD_SHARED_LIBS_${external_project}
-            AND DEFINED ${external_project}_ROOT)
-        install(CODE "
-            execute_process(
-                COMMAND ${CMAKE_COMMAND} --install ${${external_project}_ROOT} --prefix \"\${CMAKE_INSTALL_PREFIX}\"
-                )
-            ")
+    if(NOT USE_SYSTEM_${external_project} AND DEFINED ${external_project}_ROOT)
+
+        # Special case for non CMake external projects
+        if(${external_project} STREQUAL "qwt")
+            install(DIRECTORY ${${external_project}_ROOT}/lib/
+                    DESTINATION lib
+                    FILES_MATCHING PATTERN "*.so*")
+        else()
+            # CMake projects
+            if(BUILD_SHARED_LIBS_${external_project})
+                install(CODE "
+                    execute_process(
+                        COMMAND ${CMAKE_COMMAND} --install ${${external_project}_ROOT} --prefix \"\${CMAKE_INSTALL_PREFIX}\"
+                        OUTPUT_QUIET
+                    )
+                ")
+            endif()
+        endif()
     endif()
 endforeach()
 
