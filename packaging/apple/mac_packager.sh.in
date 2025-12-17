@@ -24,7 +24,7 @@ FRAMEWORK_DIR="${BUNDLE}.app/Contents/Frameworks"
 
 cd @PROJECT_BINARY_DIR@
 rm -fr TmpInstall
-mkdir -p TmpInstall/${BUNDLE}.app/Contents/{MacOS,Resources}
+mkdir -p TmpInstall/${BUNDLE}.app/Contents/{MacOS,Resources,Frameworks}
 cd TmpInstall
 
 @CMAKE_COMMAND@ -E copy \
@@ -38,6 +38,21 @@ cd TmpInstall
 @CMAKE_COMMAND@ -E copy \
     "@medInria_ROOT@/bin/${BUNDLE}.app/Contents/Resources/${BUNDLE}.icns" \
     "${BUNDLE}.app/Contents/Resources"
+
+# Copy non-CMake libraries from external projects
+echo "# Copy QWT framework"
+QWT_DIR="${FRAMEWORK_DIR}/qwt.framework"
+mkdir -p "${QWT_DIR}"
+@CMAKE_COMMAND@ -E copy_directory \
+    "@qwt_ROOT@/lib/qwt.framework" \
+    "${QWT_DIR}"
+# Qwt bundle format is ambiguous we need to clarify it for signature
+rm -fr ${QWT_DIR}/Headers
+rm -fr ${QWT_DIR}/Resources
+rm ${QWT_DIR}/qwt
+@CMAKE_COMMAND@ -E create_symlink "Versions/Current/Headers" "${QWT_DIR}/Headers"
+@CMAKE_COMMAND@ -E create_symlink "Versions/Current/Resources" "${QWT_DIR}/Resources"
+@CMAKE_COMMAND@ -E create_symlink "Versions/Current/qwt" "${QWT_DIR}/qwt"
 
 # Deploy Qt libraries using their tool
 echo "# Deploy Qt libs"
@@ -111,6 +126,7 @@ CERT_NAME="MDS-certificate"
 if check_certificate "$CERT_NAME"; then
     echo "# Sign the app"
 
+    codesign --force --timestamp --sign "$CERT_NAME" "${FRAMEWORK_DIR}/qwt.framework/Versions/Current/qwt"
     find "$FRAMEWORK_DIR" -type f -name "*.dylib" -exec \
         codesign --force --timestamp --sign "$CERT_NAME" {} \;
     find "$PLUGIN_DIR" -type f -name "*.dylib" -exec \
