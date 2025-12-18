@@ -12,7 +12,7 @@ PURPOSE.
 
 =========================================================================*/
 
-#ifdef WIN32
+#if defined(_WIN32)
     #ifdef medVtkFibersDataPlugin_EXPORTS
         #define MEDVTKFIBERSDATAPLUGIN_EXPORT __declspec(dllexport)
     #else

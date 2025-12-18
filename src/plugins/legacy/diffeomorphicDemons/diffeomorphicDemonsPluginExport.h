@@ -12,7 +12,7 @@
 
 =========================================================================*/
 
-#ifdef WIN32
+#if defined(_WIN32)
     #ifdef diffeomorphicDemonsPlugin_EXPORTS
         #define DIFFEOMORPHICDEMONSPLUGIN_EXPORT __declspec(dllexport)
     #else

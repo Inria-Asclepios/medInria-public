@@ -12,7 +12,7 @@
 
 =========================================================================*/
 
-#ifdef WIN32
+#if defined(_WIN32)
     #ifdef itkDataTensorImagePlugin_EXPORTS
         #define ITKDATATENSORIMAGEPLUGIN_EXPORT __declspec(dllexport) 
     #else

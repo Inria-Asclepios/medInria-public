@@ -12,7 +12,7 @@
 
 =========================================================================*/
 
-#ifdef WIN32
+#if defined(_WIN32)
     #ifdef medSegmentationPlugin_EXPORTS
         #define MEDVIEWSEGMENTATIONPLUGIN_EXPORT __declspec(dllexport) 
     #else

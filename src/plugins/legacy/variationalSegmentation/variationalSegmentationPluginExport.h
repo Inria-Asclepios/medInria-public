@@ -12,7 +12,7 @@ PURPOSE.
 
 =========================================================================*/
 
-#ifdef WIN32
+#if defined(_WIN32)
     #ifdef variationalSegmentationPlugin_EXPORTS
         #define VARIATIONALSEGMENTATIONPLUGIN_EXPORT __declspec(dllexport) 
     #else
