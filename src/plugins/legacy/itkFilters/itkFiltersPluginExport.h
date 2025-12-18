@@ -12,7 +12,7 @@
 
 =========================================================================*/
 
-#ifdef WIN32
+#if defined(_WIN32)
     #ifdef itkFiltersPlugin_EXPORTS
         #define ITKFILTERSPLUGIN_EXPORT __declspec(dllexport)
     #else

@@ -12,7 +12,7 @@ PURPOSE.
 
 =========================================================================*/
 
-#ifdef WIN32
+#if defined(_WIN32)
     #ifdef polygonRoiPlugin_EXPORTS
         #define POLYGONROIPLUGIN_EXPORT __declspec(dllexport) 
     #else

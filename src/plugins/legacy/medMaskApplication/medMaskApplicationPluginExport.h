@@ -12,7 +12,7 @@
 
 =========================================================================*/
 
-#ifdef WIN32
+#if defined(_WIN32)
     #ifdef medMaskApplicationPlugin_EXPORTS
         #define MEDMASKAPPLICATIONPLUGIN_EXPORT __declspec(dllexport) 
     #else

@@ -13,7 +13,7 @@
 
 #pragma once
 
-#ifdef WIN32
+#if defined(_WIN32)
     #ifdef medCompositeDataSetsPlugin_EXPORTS
         #define MEDCOMPOSITEDATASETSPLUGIN_EXPORT __declspec(dllexport) 
     #else

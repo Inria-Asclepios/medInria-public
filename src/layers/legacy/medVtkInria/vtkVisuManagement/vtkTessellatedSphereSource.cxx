@@ -30,7 +30,7 @@
 #include <sstream>
 
 #include <vtkPointLocator.h>
-#ifdef WIN32
+#if defined(_WIN32)
 #pragma warning(disable:4661)
 #endif
 

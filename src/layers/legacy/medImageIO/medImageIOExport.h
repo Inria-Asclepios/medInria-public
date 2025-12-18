@@ -12,7 +12,7 @@
 
 =========================================================================*/
 
-#ifdef WIN32
+#if defined(_WIN32)
     #ifdef medImageIO_EXPORTS
         #define MEDIMAGEIO_EXPORT __declspec(dllexport)
     #else

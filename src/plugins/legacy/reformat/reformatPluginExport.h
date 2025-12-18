@@ -12,7 +12,7 @@ PURPOSE.
 
 =========================================================================*/
 
-#ifdef WIN32
+#if defined(_WIN32)
     #ifdef reformatPlugin_EXPORTS
         #define REFORMATPLUGIN_EXPORT __declspec(dllexport) 
     #else

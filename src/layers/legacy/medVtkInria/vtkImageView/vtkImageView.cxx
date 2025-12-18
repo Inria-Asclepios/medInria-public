@@ -50,7 +50,7 @@
 #include <vtkBoundingBox.h>
 #include <vtkRendererCollection.h>
 
-#ifdef WIN32
+#if defined(_WIN32)
 #define snprintf _snprintf_s
 #endif
 

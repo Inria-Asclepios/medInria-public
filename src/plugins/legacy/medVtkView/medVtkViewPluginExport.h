@@ -12,7 +12,7 @@ PURPOSE.
 
 =========================================================================*/
 
-#ifdef WIN32
+#if defined(_WIN32)
     #ifdef medVtkViewPlugin_EXPORTS
         #define MEDVTKVIEWPLUGIN_EXPORT __declspec(dllexport)
     #else
