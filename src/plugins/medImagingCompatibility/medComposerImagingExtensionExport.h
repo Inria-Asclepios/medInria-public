@@ -11,7 +11,7 @@
 
 =========================================================================*/
 
-#ifdef WIN32
+#if defined(_WIN32)
     #ifdef medComposerImagingExtension_EXPORTS
         #define MEDCOMPOSERIMAGINGEXTENSION_EXPORT __declspec(dllexport)
     #else

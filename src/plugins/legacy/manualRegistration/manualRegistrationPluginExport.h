@@ -12,7 +12,7 @@
 
 =========================================================================*/
 
-#ifdef WIN32
+#if defined(_WIN32)
     #ifdef manualRegistrationPlugin_EXPORTS
         #define MANUALREGISTRATIONPLUGIN_EXPORT __declspec(dllexport) 
     #else

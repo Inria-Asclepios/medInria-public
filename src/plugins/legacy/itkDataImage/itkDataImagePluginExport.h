@@ -12,7 +12,7 @@
 
 =========================================================================*/
 
-#ifdef WIN32
+#if defined(_WIN32)
     #ifdef itkDataImagePlugin_EXPORTS
         #define ITKDATAIMAGEPLUGIN_EXPORT __declspec(dllexport) 
     #else

@@ -24,7 +24,7 @@
 #include <vtkWindow.h>
 
 #include <cmath>
-#ifdef WIN32
+#if defined(_WIN32)
 #include <algorithm>
 # endif
 

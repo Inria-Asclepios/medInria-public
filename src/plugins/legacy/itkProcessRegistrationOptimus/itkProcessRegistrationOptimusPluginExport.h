@@ -15,7 +15,7 @@
 #ifndef ITKPROCESSREGISTRATIONOPTIMUSPLUGINEXPORT_H
 #define ITKPROCESSREGISTRATIONOPTIMUSPLUGINEXPORT_H
 
-#ifdef WIN32
+#if defined(_WIN32)
     #ifdef itkProcessRegistrationOptimusPlugin_EXPORTS
         #define ITKPROCESSREGISTRATIONOPTIMUSPLUGIN_EXPORT __declspec(dllexport) 
     #else

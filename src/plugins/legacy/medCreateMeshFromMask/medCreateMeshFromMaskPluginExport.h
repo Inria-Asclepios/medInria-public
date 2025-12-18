@@ -12,7 +12,7 @@
 
 =========================================================================*/
 
-#ifdef WIN32
+#if defined(_WIN32)
     #ifdef medCreateMeshFromMaskPlugin_EXPORTS
         #define MEDCREATEMESHFROMMASKPLUGIN_EXPORT __declspec(dllexport)
     #else

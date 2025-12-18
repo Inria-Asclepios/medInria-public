@@ -12,7 +12,7 @@ PURPOSE.
 
 =========================================================================*/
 
-#ifdef WIN32
+#if defined(_WIN32)
    #ifdef voiCutterPlugin_EXPORTS
        #define VOICUTTERPLUGIN_EXPORT __declspec(dllexport)
    #else

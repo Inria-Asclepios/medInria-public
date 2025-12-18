@@ -12,7 +12,7 @@
 
 =========================================================================*/
 
-#ifdef WIN32
+#if defined(_WIN32)
     #ifdef medVtkDataMeshBase_EXPORTS
         #define MEDVTKDATAMESHBASE_EXPORT __declspec(dllexport) 
     #else

@@ -1,6 +1,6 @@
 #pragma once
 
-#ifdef WIN32
+#if defined(_WIN32)
     #ifdef ExportVideoPlugin_EXPORTS
         #define EXPORTVIDEOPLUGIN_EXPORT __declspec(dllexport)
     #else

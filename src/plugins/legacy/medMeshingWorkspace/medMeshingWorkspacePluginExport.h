@@ -12,7 +12,7 @@
 
 =========================================================================*/
 
-#ifdef WIN32
+#if defined(_WIN32)
     #ifdef medMeshingWorkspacePlugin_EXPORTS
         #define MEDMESHINGWORKSPACEPLUGIN_EXPORT __declspec(dllexport) 
     #else

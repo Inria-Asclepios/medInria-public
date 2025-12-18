@@ -12,7 +12,7 @@
 
 =========================================================================*/
 
-#ifdef WIN32
+#if defined(_WIN32)
    #ifdef medAlgorithmPaint_EXPORTS
        #define MEDALGORITMPAINT_EXPORT __declspec(dllexport)
    #else

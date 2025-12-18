@@ -15,7 +15,7 @@
 #include <iostream>
 #include <string>
 
-#if defined(WIN32)
+#if defined(_WIN32)
 std::wstring convertUTF8toLocalUtfString(char const * pi_pchStringToConvert)
 {
     std::wstring wsRes;

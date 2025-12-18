@@ -12,7 +12,7 @@
 
 =========================================================================*/
 
-#ifdef WIN32
+#if defined(_WIN32)
     #ifdef iterativeClosestPointPlugin_EXPORTS
         #define ITERATIVECLOSESTPOINTPLUGIN_EXPORT __declspec(dllexport) 
     #else
