@@ -42,7 +42,7 @@ function(music_plugins_project)
     if (NOT USE_SYSTEM_${external_project})
 
         set(git_url ${GITHUB_PREFIX}mathildemerle/music.git)
-        set(git_tag windows32or64)
+        set(git_tag swigRevert)
 
 ## #############################################################################
 ## Add specific cmake arguments for configuration step of the project
