@@ -48,7 +48,7 @@ void Read4DImage(medAbstractData* medData, itk::GDCMImageIO::Pointer io, itkGDCM
     bool metadatacopied = false;
     IteratorType itOut;
 
-    std::cout << "Building volume containing\t " << map.size() << "\t subvolumes..." << std::flush;
+    qDebug()<<"Building volume containing " << map.size() << " subvolumes...";
 
     for (itkGDCMDataImageReader::FileListMapType::iterator it=map.begin();it!=map.end();++it) {
         typename SeriesReaderType::Pointer seriesreader = SeriesReaderType::New();
@@ -115,7 +115,7 @@ void Read4DImage(medAbstractData* medData, itk::GDCMImageIO::Pointer io, itkGDCM
             ++itOut;
         }
     }
-    std::cout << "done" << std::endl;
+    qDebug()<<"Building done";
     medData->setData(image);
 }
 
@@ -162,7 +162,6 @@ itkGDCMDataImageReaderPrivate::~itkGDCMDataImageReaderPrivate()
     QMutex *m_ptr = mutex.fetchAndStoreOrdered(nullptr);
     if (m_ptr)
     {
-        m_ptr->unlock();
         delete m_ptr;
     }
 }
@@ -402,7 +401,7 @@ bool itkGDCMDataImageReader::readInformation(const QStringList &paths)
 
         if (map.size() > 1)
         {
-            std::cout<<"GDCM: 4th dimension encountered"<<std::endl;
+            qDebug()<<"GDCM: 4th dimension encountered";
             imagedimension = 4;
         }
 
@@ -411,7 +410,7 @@ bool itkGDCMDataImageReader::readInformation(const QStringList &paths)
 
         if (d->io->GetPixelType() != itk::IOPixelEnum::SCALAR)
         {
-            qDebug() << "GDCM: unsupported non scalar pixel type";
+            qDebug().noquote()<<"GDCM: unsupported non scalar pixel type: "<<QString::fromStdString(d->io->GetPixelTypeAsString(d->io->GetPixelType()));
             return false;
         }
 
@@ -453,19 +452,24 @@ bool itkGDCMDataImageReader::readInformation(const QStringList &paths)
       which is WRONG.
    */
             if (imagedimension == 4)
+            {
+                qDebug()<<"GDCM: beware, downcast 4D DICOM pixel type from double to short";
                 imagetypestring << "Short";
+            }
             else
+            {
                 imagetypestring << "Double";
+            }
             break;
         default:
-            std::cout<<"Unrecognized component type in GDCM reader: "<<d->io->GetComponentTypeAsString(d->io->GetComponentType())<<std::endl;
+            qDebug().noquote()<<"Unrecognized component type in GDCM reader: "<<QString::fromStdString(d->io->GetComponentTypeAsString(d->io->GetComponentType()));
             return false;
         }
 
         imagetypestring << imagedimension;
         if (imagedimension == 4)
         {
-            qDebug() << "GDCM: image type given :\t" << imagetypestring.str().c_str();
+            qDebug()<<"GDCM: image type given:"<<imagetypestring.str().c_str();
         }
 
         medData = medAbstractDataFactory::instance()->create(imagetypestring.str().c_str());
@@ -609,8 +613,8 @@ bool itkGDCMDataImageReader::read (const QStringList &paths)
             filelist.push_back(qfilelist[i].toUtf8().constData());
         }
 
-        std::cout << "GDCM: reading : "    << medData->identifier().toUtf8().constData() << std::endl;
-        std::cout << "GDCM: containing : " << map.size() << " volumes" << std::endl;
+        qDebug()<<"GDCM: reading "    << medData->identifier().toUtf8().constData();
+        qDebug()<<"GDCM: containing " << map.size() << " volumes";
 
         try {
             if      (medData->identifier()=="itkDataImageUChar3")  { Read3DImage<unsigned char>(medData,d->io,filelist);  }
@@ -702,10 +706,16 @@ itkGDCMDataImageReader::FileListMapType itkGDCMDataImageReader::sort (FileList f
     const gdcm::Tag orientationtag(0x20,0x37);
 
     gdcm::Scanner::ValuesType orientations = this->m_Scanner.GetValues(orientationtag);
-    if (orientations.size() != 1)
+    if (orientations.size() == 0)
     {
-        qDebug() <<"GDCM: more than one Orientation in filenames (or no Orientation)";
-        return ret;
+        qDebug()<<"GDCM: no Orientation in filenames";
+    }
+    else
+    {
+        if (orientations.size() > 1)
+        {
+            qDebug()<<"GDCM: more than one Orientation in filenames";
+        }
     }
 
     gdcm::Scanner::TagToValue const &t2v = this->m_Scanner.GetMapping(reference);
