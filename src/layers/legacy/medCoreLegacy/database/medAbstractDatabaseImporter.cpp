@@ -215,7 +215,7 @@ void medAbstractDatabaseImporter::importFile ( void )
             {
                 if (!atLeastOneImportError)
                 {
-                    qWarning() << "Reader was unable to read at least: " << fileInfo.filePath();
+                    qWarning().noquote()<< "Reader was unable to read at least: " << fileInfo.filePath();
                     atLeastOneImportError = true;
                 }
                 continue;
