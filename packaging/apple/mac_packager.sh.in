@@ -146,10 +146,7 @@ fi
 # Create the DMG
 echo "# Create the DMG"
 DMG_NAME="${BUNDLE}-@MEDINRIA_SUPERBUILD_VERSION@.dmg"
-/usr/bin/python3 -m dmgbuild \
-    -s "../../../packaging/apple/settings.json" \
-    "${BUNDLE}" \
-    "${DMG_NAME}"
+dmgbuild -s "../../../packaging/apple/settings.json" "${BUNDLE}" "${DMG_NAME}"
 
 # Sign the DMG
 echo "# Sign the DMG"
