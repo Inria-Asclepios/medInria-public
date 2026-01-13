@@ -42,7 +42,7 @@ function(music_plugins_project)
     if (NOT USE_SYSTEM_${external_project})
 
         set(git_url ${GITHUB_PREFIX}mathildemerle/music.git)
-        set(git_tag swigRevert)
+        set(git_tag qwtPlot)
 
 ## #############################################################################
 ## Add specific cmake arguments for configuration step of the project
@@ -67,7 +67,7 @@ function(music_plugins_project)
             -DmedInria_ROOT:FILEPATH=${medInria_ROOT}
             -DEigen3_ROOT:PATH=${eigen_ROOT}
             -Dmmg_ROOT:PATH=${mmg_ROOT}
-            -DQWT_INCLUDE_DIR:PATH=${qwt_INCLUDE_DIR}
+            -Dqwt_INCLUDE_DIR:PATH=${qwt_INCLUDE_DIR}
             -Dqwt_ROOT:PATH=${qwt_ROOT}
             -Dtetgen_ROOT:PATH=${tetgen_ROOT}
             -DZLIB_ROOT:PATH=${ZLIB_ROOT}
