@@ -80,12 +80,12 @@ jobs:
         cd ${{github.workspace}}/build
         cpack -C $BUILD_TYPE
 
-    - name: Prepare DMG and update design
+    - name: Get DMG name
       run: |
         cd ${{github.workspace}}/build
-        dmg=$(ls *.dmg)
-        echo "DMG_NAME=${{dmg | first}}" >> $GITHUB_ENV
-        echo "The current package: $DMG_NAME"
+        dmg=$(ls *.dmg | head -n 1)
+        echo "DMG_NAME=$dmg" >> $GITHUB_ENV
+        echo "The current package: $dmg"
       
     - name: Upload binaries to release
       uses: svenstaro/upload-release-action@v2
