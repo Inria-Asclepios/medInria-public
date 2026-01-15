@@ -149,7 +149,10 @@ DMG_NAME="${BUNDLE}-@MEDINRIA_SUPERBUILD_VERSION@.dmg"
 dmgbuild -s "../../../packaging/apple/settings.json" "${BUNDLE}" "${DMG_NAME}"
 
 # Sign the DMG
-echo "# Sign the DMG"
-codesign --sign "${CERT_NAME}" --timestamp --options runtime "${DMG_NAME}"
+CERT_NAME="MDS-certificate"
+if check_certificate "$CERT_NAME"; then
+    echo "# Sign the DMG"
+    codesign --sign "${CERT_NAME}" --timestamp --options runtime "${DMG_NAME}"
+fi
 
 mv "${DMG_NAME}" @CMAKE_BINARY_DIR@/
