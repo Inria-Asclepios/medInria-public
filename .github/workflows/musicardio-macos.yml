@@ -4,7 +4,7 @@ name: MUSICardio on macOS
 
 on:
   push:
-    branches: [ "4.1" ]
+    branches: [ "gaPrerequisites" ]
   #pull_request:
   #  branches: [ "4.1" ]
   workflow_dispatch:
@@ -19,7 +19,7 @@ on:
 
 env:
   BUILD_TYPE: Release
-  QT5_DIR: "/usr/local/opt/qt@5/lib/cmake/Qt5"
+  QT5_DIR: "/opt/homebrew/opt/qt@5/lib/cmake/Qt5"
   MSC_SSH_PLUGINS: ${{ secrets.MSC_SSH_PLUGINS }}
   MSC_TOKEN: ${{ secrets.MSC_TOKEN }}
 
@@ -32,7 +32,7 @@ jobs:
     - name: Checkout repository
       uses: actions/checkout@v4
       with:
-          ref: 4.1
+          ref: gaPrerequisites
 
     - name: Set up SSH
       run: |
@@ -44,12 +44,27 @@ jobs:
     - name: Install dependencies
       run: |
         brew install qt@5
+        echo 'export PATH="/opt/homebrew/opt/qt@5/bin:$PATH"' >> /Users/runner/.bash_profile
+        brew link --force qt@5
+        sudo ln -s /usr/local/Cellar/qt@5/5.15.18/mkspecs /usr/local/mkspecs
+        sudo ln -s /usr/local/Cellar/qt@5/5.15.18/plugins /usr/local/plugins
         brew install boost
         brew install swig
         brew install libomp
         echo "OpenMP_ROOT=$(brew --prefix libomp)" >> $GITHUB_ENV
-        pip3 install dmgbuild
-        # brew info cmake
+        #brew install pipx
+        pipx install dmgbuild
+        pipx ensurepath
+        #brew info cmake
+        brew uninstall --ignore-dependencies cmake
+        pipx install cmake==3.31.10
+
+    - name: Test dependencies
+      run: |
+        pipx --version
+        which dmgbuild
+        cmake --version
+        ls $QT5_DIR
 
     - name: Set default EXPIRATION_TIME if not provided (with non manual workflow)
       run: echo "EXPIRATION_TIME=${{ inputs.EXPIRATION_TIME || '24' }}" >> $GITHUB_ENV
@@ -65,7 +80,7 @@ jobs:
           -DEP_CHECKBOX_SIDE_BY_SIDE:BOOL=OFF \
           -DQt5_DIR=$QT5_DIR \
           -DOpenMP_ROOT=$OpenMP_ROOT \
-          -DUSE_FFmpeg=ON \
+          -DUSE_FFmpeg=OFF \
           -DEXPIRATION_TIME:STRING=$EXPIRATION_TIME \
           -DUSE_RealTimeWorkspace=OFF
           

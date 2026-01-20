@@ -19,6 +19,8 @@ function(pyncpp_project)
 
     set(ep pyncpp)
 
+    # list(APPEND ${ep}_dependencies xz)
+
     EP_Initialisation(${ep}
         USE_SYSTEM OFF
         BUILD_SHARED_LIBS ON
