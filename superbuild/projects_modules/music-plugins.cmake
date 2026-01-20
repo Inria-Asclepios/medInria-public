@@ -130,24 +130,25 @@ function(music_plugins_project)
 
     endif()
 
-if (WIN32)
-    get_property(GENERATOR_MULTI_CONFIG GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
-    if(${GENERATOR_MULTI_CONFIG})
-        file(TO_NATIVE_PATH ${ZLIB_ROOT} ZLIB_BIN_BASE)
-        set(CONFIG_MODE $<$<CONFIG:debug>:Debug>$<$<CONFIG:release>:Release>$<$<CONFIG:MinSizeRel>:MinSizeRel>$<$<CONFIG:RelWithDebInfo>:RelWithDebInfo>)  
-        set(MED_BIN_BASE ${MED_BIN_BASE}\\${CONFIG_MODE}\\bin)  
-  
-        if(USE_SYSTEM_${external_project})
-            add_custom_target(create_${external_project}_links ALL
-                COMMAND for %%I in ( ${ZLIB_BIN_BASE}\\bin\\${CONFIG_MODE}\\*.dll ) do (if EXIST ${MED_BIN_BASE}\\%%~nxI (del /S ${MED_BIN_BASE}\\%%~nxI & mklink /H ${MED_BIN_BASE}\\%%~nxI %%~fI) else mklink /H ${MED_BIN_BASE}\\%%~nxI %%~fI)
-                )
-        else()
-            add_custom_command(TARGET ${external_project}
-                POST_BUILD
-                COMMAND for %%I in ( ${ZLIB_BIN_BASE}\\bin\\${CONFIG_MODE}\\*.dll ) do (if EXIST ${MED_BIN_BASE}\\%%~nxI (del /S ${MED_BIN_BASE}\\%%~nxI & mklink /H ${MED_BIN_BASE}\\%%~nxI %%~fI) else mklink /H ${MED_BIN_BASE}\\%%~nxI %%~fI)
-                )
+if (NOT USE_SYSTEM_ZLIB)
+    if (WIN32)
+        get_property(GENERATOR_MULTI_CONFIG GLOBAL PROPERTY GENERATOR_IS_MULTI_CONFIG)
+        if(${GENERATOR_MULTI_CONFIG})
+            file(TO_NATIVE_PATH ${ZLIB_ROOT} ZLIB_BIN_BASE)
+            set(CONFIG_MODE $<$<CONFIG:debug>:Debug>$<$<CONFIG:release>:Release>$<$<CONFIG:MinSizeRel>:MinSizeRel>$<$<CONFIG:RelWithDebInfo>:RelWithDebInfo>)  
+            set(MED_BIN_BASE ${MED_BIN_BASE}\\${CONFIG_MODE}\\bin)  
+    
+            if(USE_SYSTEM_${external_project})
+                add_custom_target(create_${external_project}_links ALL
+                    COMMAND for %%I in ( ${ZLIB_BIN_BASE}\\bin\\${CONFIG_MODE}\\*.dll ) do (if EXIST ${MED_BIN_BASE}\\%%~nxI (del /S ${MED_BIN_BASE}\\%%~nxI & mklink /H ${MED_BIN_BASE}\\%%~nxI %%~fI) else mklink /H ${MED_BIN_BASE}\\%%~nxI %%~fI)
+                    )
+            else()
+                add_custom_command(TARGET ${external_project}
+                    POST_BUILD
+                    COMMAND for %%I in ( ${ZLIB_BIN_BASE}\\bin\\${CONFIG_MODE}\\*.dll ) do (if EXIST ${MED_BIN_BASE}\\%%~nxI (del /S ${MED_BIN_BASE}\\%%~nxI & mklink /H ${MED_BIN_BASE}\\%%~nxI %%~fI) else mklink /H ${MED_BIN_BASE}\\%%~nxI %%~fI)
+                    )
+            endif()
         endif()
     endif()
 endif()
-
 endfunction()
