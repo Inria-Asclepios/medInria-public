@@ -572,35 +572,32 @@ void medMainWindow::switchToHomepageArea()
 
 void medMainWindow::switchToBrowserArea()
 {
-    if(d->currentArea != d->browserArea)
+    if (d->browserArea == nullptr)
     {
-        if (d->browserArea == nullptr)
-        {
-            d->browserArea = new medBrowserArea(this);
-            d->browserArea->setObjectName("medBrowserArea");
-            d->stack->addWidget(d->browserArea);
-        }
-
-        d->currentArea = d->browserArea;
-
-        d->shortcutAccessWidget->updateSelected("Browser");
-        d->quickAccessWidget->updateSelected("Browser");
-
-        d->quickAccessButton->setText(tr("Workspace: Browser"));
-        d->quickAccessButton->setMinimumWidth(170);
-        if (d->quickAccessWidget->isVisible())
-        {
-            this->hideQuickAccess();
-        }
-        if (d->shortcutAccessVisible)
-        {
-            this->hideShortcutAccess();
-        }
-        d->screenshotButton->setEnabled(false);
-        d->movieButton->setEnabled(false);
-        d->adjustSizeButton->setEnabled(false);
-        d->stack->setCurrentWidget(d->browserArea);
+        d->browserArea = new medBrowserArea(this);
+        d->browserArea->setObjectName("medBrowserArea");
+        d->stack->addWidget(d->browserArea);
     }
+
+    d->currentArea = d->browserArea;
+
+    d->shortcutAccessWidget->updateSelected("Browser");
+    d->quickAccessWidget->updateSelected("Browser");
+
+    d->quickAccessButton->setText(tr("Workspace: Browser"));
+    d->quickAccessButton->setMinimumWidth(170);
+    if (d->quickAccessWidget->isVisible())
+    {
+        this->hideQuickAccess();
+    }
+    if (d->shortcutAccessVisible)
+    {
+        this->hideShortcutAccess();
+    }
+    d->screenshotButton->setEnabled(false);
+    d->movieButton->setEnabled(false);
+    d->adjustSizeButton->setEnabled(false);
+    d->stack->setCurrentWidget(d->browserArea);
 }
 
 void medMainWindow::switchToSearchArea()
@@ -690,34 +687,31 @@ void medMainWindow::switchToWorkspaceArea()
 
 void medMainWindow::switchToComposerArea()
 {
-    if(d->currentArea != d->composerArea)
+    if (d->composerArea == nullptr)
     {
-        if (d->composerArea == nullptr)
-        {
-            d->composerArea = new medComposerArea(this);
-            d->composerArea->setObjectName("medComposerArea");
-            d->stack->addWidget(d->composerArea);
-        }
-
-        d->currentArea = d->composerArea;
-
-        d->shortcutAccessWidget->updateSelected("Composer");
-        d->quickAccessWidget->updateSelected("Composer");
-
-        d->quickAccessButton->setText(tr("Workspace: Composer"));
-        d->quickAccessButton->setMinimumWidth(170);
-        if (d->quickAccessWidget->isVisible())
-        {
-            this->hideQuickAccess();
-        }
-        if (d->shortcutAccessVisible)
-        {
-            this->hideShortcutAccess();
-        }
-        d->screenshotButton->setEnabled(false);
-        d->adjustSizeButton->setEnabled(false);
-        d->stack->setCurrentWidget(d->composerArea);
+        d->composerArea = new medComposerArea(this);
+        d->composerArea->setObjectName("medComposerArea");
+        d->stack->addWidget(d->composerArea);
     }
+
+    d->currentArea = d->composerArea;
+
+    d->shortcutAccessWidget->updateSelected("Composer");
+    d->quickAccessWidget->updateSelected("Composer");
+
+    d->quickAccessButton->setText(tr("Workspace: Composer"));
+    d->quickAccessButton->setMinimumWidth(170);
+    if (d->quickAccessWidget->isVisible())
+    {
+        this->hideQuickAccess();
+    }
+    if (d->shortcutAccessVisible)
+    {
+        this->hideShortcutAccess();
+    }
+    d->screenshotButton->setEnabled(false);
+    d->adjustSizeButton->setEnabled(false);
+    d->stack->setCurrentWidget(d->composerArea);
 }
 
 void medMainWindow::showWorkspace(QString workspace)
