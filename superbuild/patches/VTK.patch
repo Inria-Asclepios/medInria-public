@@ -1,12 +1,13 @@
-From a043441342a9e67567b6a5ad1313c7b110d41df2 Mon Sep 17 00:00:00 2001
+From 3684f3fbd6999e836a5c998b9368b7279deeeb71 Mon Sep 17 00:00:00 2001
 From: Mathilde Merle <mathilde.merle@ihu-liryc.fr>
-Date: Mon, 26 Jan 2026 17:05:14 +0100
+Date: Tue, 3 Feb 2026 17:28:18 +0100
 Subject: [PATCH] VTK
 
 ---
- Filters/Core/vtkPolyDataPlaneCutter.cxx | 2 --
- Utilities/octree/octree/octree_node.txx | 2 +-
- 2 files changed, 1 insertion(+), 3 deletions(-)
+ Filters/Core/vtkPolyDataPlaneCutter.cxx |  2 --
+ ThirdParty/png/vtkpng/pngpriv.h         | 14 ++------------
+ Utilities/octree/octree/octree_node.txx |  2 +-
+ 3 files changed, 3 insertions(+), 15 deletions(-)
 
 diff --git a/Filters/Core/vtkPolyDataPlaneCutter.cxx b/Filters/Core/vtkPolyDataPlaneCutter.cxx
 index fae02a1d39..e9558c2532 100644
@@ -21,6 +22,31 @@ index fae02a1d39..e9558c2532 100644
    // Get the input and output
    vtkInformation* inInfo = inputVector[0]->GetInformationObject(0);
    vtkInformation* outInfo = outputVector->GetInformationObject(0);
+diff --git a/ThirdParty/png/vtkpng/pngpriv.h b/ThirdParty/png/vtkpng/pngpriv.h
+index aecf625c8b..6470104da6 100644
+--- a/ThirdParty/png/vtkpng/pngpriv.h
++++ b/ThirdParty/png/vtkpng/pngpriv.h
+@@ -522,18 +522,8 @@
+     */
+ #  include <float.h>
+ 
+-#  if (defined(__MWERKS__) && defined(macintosh)) || defined(applec) || \
+-    defined(THINK_C) || defined(__SC__) || defined(TARGET_OS_MAC)
+-   /* We need to check that <math.h> hasn't already been included earlier
+-    * as it seems it doesn't agree with <fp.h>, yet we should really use
+-    * <fp.h> if possible.
+-    */
+-#    if !defined(__MATH_H__) && !defined(__MATH_H) && !defined(__cmath__)
+-#      include <fp.h>
+-#    endif
+-#  else
+-#    include <math.h>
+-#  endif
++#  include <math.h>
++
+ #  if defined(_AMIGA) && defined(__SASC) && defined(_M68881)
+    /* Amiga SAS/C: We must include builtin FPU functions when compiling using
+     * MATH=68881
 diff --git a/Utilities/octree/octree/octree_node.txx b/Utilities/octree/octree/octree_node.txx
 index 6971c7c119..5f12bb7de7 100644
 --- a/Utilities/octree/octree/octree_node.txx
