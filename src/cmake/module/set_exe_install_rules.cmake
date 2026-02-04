@@ -56,6 +56,7 @@ if (APPLE)
   set(MACOSX_BUNDLE_LONG_VERSION_STRING
     "Version ${${target}_VERSION}"
     )
+  set(MACOSX_BUNDLE_GUI_IDENTIFIER "org.liryc.${target}.macos")
 
   install(CODE "
   execute_process(COMMAND
