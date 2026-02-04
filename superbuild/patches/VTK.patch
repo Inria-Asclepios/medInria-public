@@ -1,11 +1,13 @@
-From 6f9cd9d9fe538c3481ea54fa627f2b45ab15918a Mon Sep 17 00:00:00 2001
+From 3684f3fbd6999e836a5c998b9368b7279deeeb71 Mon Sep 17 00:00:00 2001
 From: Mathilde Merle <mathilde.merle@ihu-liryc.fr>
-Date: Mon, 17 Nov 2025 15:19:38 +0100
+Date: Tue, 3 Feb 2026 17:28:18 +0100
 Subject: [PATCH] VTK
 
 ---
- Filters/Core/vtkPolyDataPlaneCutter.cxx | 2 --
- 1 file changed, 2 deletions(-)
+ Filters/Core/vtkPolyDataPlaneCutter.cxx |  2 --
+ ThirdParty/png/vtkpng/pngpriv.h         | 14 ++------------
+ Utilities/octree/octree/octree_node.txx |  2 +-
+ 3 files changed, 3 insertions(+), 15 deletions(-)
 
 diff --git a/Filters/Core/vtkPolyDataPlaneCutter.cxx b/Filters/Core/vtkPolyDataPlaneCutter.cxx
 index fae02a1d39..e9558c2532 100644
@@ -20,6 +22,44 @@ index fae02a1d39..e9558c2532 100644
    // Get the input and output
    vtkInformation* inInfo = inputVector[0]->GetInformationObject(0);
    vtkInformation* outInfo = outputVector->GetInformationObject(0);
+diff --git a/ThirdParty/png/vtkpng/pngpriv.h b/ThirdParty/png/vtkpng/pngpriv.h
+index aecf625c8b..6470104da6 100644
+--- a/ThirdParty/png/vtkpng/pngpriv.h
++++ b/ThirdParty/png/vtkpng/pngpriv.h
+@@ -522,18 +522,8 @@
+     */
+ #  include <float.h>
+ 
+-#  if (defined(__MWERKS__) && defined(macintosh)) || defined(applec) || \
+-    defined(THINK_C) || defined(__SC__) || defined(TARGET_OS_MAC)
+-   /* We need to check that <math.h> hasn't already been included earlier
+-    * as it seems it doesn't agree with <fp.h>, yet we should really use
+-    * <fp.h> if possible.
+-    */
+-#    if !defined(__MATH_H__) && !defined(__MATH_H) && !defined(__cmath__)
+-#      include <fp.h>
+-#    endif
+-#  else
+-#    include <math.h>
+-#  endif
++#  include <math.h>
++
+ #  if defined(_AMIGA) && defined(__SASC) && defined(_M68881)
+    /* Amiga SAS/C: We must include builtin FPU functions when compiling using
+     * MATH=68881
+diff --git a/Utilities/octree/octree/octree_node.txx b/Utilities/octree/octree/octree_node.txx
+index 6971c7c119..5f12bb7de7 100644
+--- a/Utilities/octree/octree/octree_node.txx
++++ b/Utilities/octree/octree/octree_node.txx
+@@ -210,7 +210,7 @@ const octree_node<T_, d_, A_>& octree_node<T_, d_, A_>::operator[](int child) co
+   {
+     throw std::domain_error("Attempt to access children of an octree leaf node.");
+   }
+-  return this->_M_chilren[child];
++  return this->m_children[child];
+ }
+ 
+ /**\brief Return a reference to a child node.
 -- 
 2.43.0
 

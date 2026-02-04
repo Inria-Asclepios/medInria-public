@@ -30,7 +30,6 @@ find_package(Boost REQUIRED)
 list_source_files(${TARGET_NAME}
   ${CMAKE_CURRENT_SOURCE_DIR}
   areas/browser
-  areas/composer
   areas/homepage
   areas/workspaces
   areas/workspaces/diffusion
@@ -139,10 +138,7 @@ target_link_libraries(${TARGET_NAME}
   Qt5::OpenGL
   dtkCoreSupport
   dtkGuiSupport
-  dtkVrSupport
-  dtkComposer
   medCore
-  medComposer
   medWidgets
   medCoreLegacy
   medPacs
