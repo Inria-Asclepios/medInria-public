@@ -375,20 +375,6 @@ void medHomepageArea::initPage()
     workspaceButtonsLayoutBasic->addSpacing(10);
     QObject::connect ( browserButton, SIGNAL ( clicked() ),this, SLOT ( onShowBrowser() ) );
 
-    medHomepageButton * composerButton = new medHomepageButton ( this );
-    composerButton->setText ("Composer");
-    composerButton->setFocusPolicy ( Qt::NoFocus );
-    composerButton->setToolButtonStyle(Qt::ToolButtonTextUnderIcon);
-    composerButton->setIcon(QIcon(":/icons/composer.png"));
-    composerButton->setMinimumHeight ( 40 );
-    composerButton->setMaximumWidth ( 250 );
-    composerButton->setMinimumWidth ( 250 );
-    composerButton->setToolTip("Opens the composer workspace");
-    composerButton->setIdentifier("composer");
-    workspaceButtonsLayoutBasic->addWidget ( composerButton );
-    workspaceButtonsLayoutBasic->addSpacing(10);
-    QObject::connect ( composerButton, SIGNAL ( clicked ( QString ) ),this, SLOT ( onShowComposer() ) );
-
     QVBoxLayout * workspaceButtonsLayoutMethodology = new QVBoxLayout;
     workspaceButtonsLayoutMethodology->setSpacing ( 10 );
     QLabel * workspaceLabelMethodology = new QLabel ( "<b>Methodology</b>" );
@@ -547,11 +533,6 @@ void medHomepageArea::onShowSettings()
     d->stackedWidget->setCurrentWidget(d->settingsWidget);
 
     d->settingsWidget->setFocus();
-}
-
-void medHomepageArea::onShowComposer()
-{
-    emit showComposer();
 }
 
 void medHomepageArea::openLogDirectory()

@@ -64,18 +64,19 @@ set(cmake_args
   -DCMAKE_SHARED_LINKER_FLAGS:STRING=${${ep}_shared_linker_flags}  
   -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
   -DBUILD_SHARED_LIBS:BOOL=${BUILD_SHARED_LIBS_${ep}}
-  -DDTK_BUILD_COMPOSER=ON                                                                                                                                                                                                                                                                                        
-  -DDTK_BUILD_DISTRIBUTED=ON                                                                                                                                                                                                                                                                                        
-  -DDTK_BUILD_SCRIPT=OFF                                                                                                                                                                                                                                                                                       
-  -DDTK_BUILD_SUPPORT_COMPOSER=OFF                                                                                                                                                                                                                                                                                       
-  -DDTK_BUILD_SUPPORT_CONTAINER=OFF                                                                                                                                                                                                                                                                                       
-  -DDTK_BUILD_SUPPORT_CORE=ON                                                                                                                                                                                                                                                                                        
-  -DDTK_BUILD_SUPPORT_DISTRIBUTED=OFF                                                                                                                                                                                                                                                                                       
-  -DDTK_BUILD_SUPPORT_GUI=ON                                                                                                                                                                                                                                                                                        
-  -DDTK_BUILD_SUPPORT_MATH=ON                                                                                                                                                                                                                                                                                        
-  -DDTK_BUILD_SUPPORT_PLOT=OFF                                                                                                                                                                                                                                                                                       
-  -DDTK_BUILD_SUPPORT_VR=ON                                                                                                                                                                                                                                                                                        
+  -DDTK_BUILD_COMPOSER=OFF
+  -DDTK_BUILD_DISTRIBUTED=OFF
+  -DDTK_BUILD_SCRIPT=OFF
+  -DDTK_BUILD_SUPPORT_COMPOSER=OFF
+  -DDTK_BUILD_SUPPORT_CONTAINER=OFF
+  -DDTK_BUILD_SUPPORT_CORE=ON
+  -DDTK_BUILD_SUPPORT_DISTRIBUTED=OFF
+  -DDTK_BUILD_SUPPORT_GUI=ON
+  -DDTK_BUILD_SUPPORT_MATH=ON
+  -DDTK_BUILD_SUPPORT_PLOT=OFF
+  -DDTK_BUILD_SUPPORT_VR=OFF
   -DDTK_BUILD_WRAPPERS=OFF
+  -DDTK_BUILD_WIDGETS=OFF
   )
   
 set(cmake_cache_args
