@@ -43,7 +43,6 @@ medStartupSettingsWidget::medStartupSettingsWidget(QWidget *parent) : medSetting
     d->defaultStartingArea->setItemData(0, 0, Qt::UserRole - 1); // Search is disabled
     d->defaultStartingArea->addItem(tr("Homepage"));
     d->defaultStartingArea->addItem(tr("Browser"));
-    d->defaultStartingArea->addItem(tr("Composer"));
     for(medWorkspaceFactory::Details* detail : workspaceDetails)
     {
         d->defaultStartingArea->addItem(detail->name);

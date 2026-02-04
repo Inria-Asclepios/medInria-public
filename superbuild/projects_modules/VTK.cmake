@@ -77,6 +77,7 @@ set(cmake_args
   -DVTK_MODULE_ENABLE_VTK_GUISupportQt=YES
   -DVTK_MODULE_ENABLE_VTK_RenderingQt=YES
   -DVTK_USE_OGGTHEORA_ENCODER:BOOL=ON
+  -DVTK_MODULE_USE_EXTERNAL_VTK_zlib:BOOL=ON
   )
   
 set(cmake_cache_args
