@@ -26,7 +26,7 @@ if (NOT USE_SYSTEM_${ep})
 ## Define repository where get the sources
 ## #############################################################################
 
-set(release_url https://github.com/libarchive/libarchive/releases/download/v3.8.0/libarchive-3.8.0.tar.xz)
+set(release_url https://github.com/libarchive/libarchive/releases/download/v3.8.5/libarchive-3.8.5.tar.xz)
 
 ## #############################################################################
 ## Add specific cmake arguments for configuration step of the project
@@ -59,15 +59,16 @@ set(cmake_args
   -DLIBLZMA_LIBRARY_DEBUG=${LZMA_LIBRARY}
   -DLIBLZMA_LIBRARY_RELEASE=${LZMA_LIBRARY}
   -DLIBLZMA_INCLUDE_DIR=${LZMA_INCLUDE_DIR}
-  -DENABLE_LZMA=ON
-  -DENABLE_LZ4=OFF
-  -DENABLE_ZSTD=OFF
-  -DENABLE_BZip2=OFF
-  -DENABLE_LIBXML2=OFF
-  -DENABLE_WIN32_XMLLITE=OFF
-  -DENABLE_XAR=OFF
-  -DENABLE_EXPAT=OFF
-  -DENABLE_ICONV=OFF
+  -DENABLE_LZMA:BOOL=ON
+  -DENABLE_LZ4:BOOL=OFF
+  -DENABLE_ZSTD:BOOL=OFF
+  -DENABLE_BZip2:BOOL=OFF
+  -DENABLE_LIBXML2:BOOL=OFF
+  -DENABLE_WIN32_XMLLITE:BOOL=OFF
+  -DENABLE_XAR:BOOL=OFF
+  -DENABLE_EXPAT:BOOL=OFF
+  -DENABLE_ICONV:BOOL=OFF
+  -DENABLE_LIBB2:BOOL=OFF
 )
 # LZMA is compiled through XZ
 
@@ -85,14 +86,14 @@ ExternalProject_Add(${ep}
   TMP_DIR ${tmp_path}
   STAMP_DIR ${stamp_path}
   URL ${release_url}
-  URL_HASH SHA256=67bfac3798a778143f4b1cadcdb3792b4269486f8e1b70ca5c0ee5841398bfdf
+  URL_HASH SHA256=d68068e74beee3a0ec0dd04aee9037d5757fcc651591a6dcf1b6d542fb15a703
   CMAKE_GENERATOR ${gen}
   CMAKE_GENERATOR_PLATFORM ${CMAKE_GENERATOR_PLATFORM}
   CMAKE_ARGS ${cmake_args}
   DEPENDS ${${ep}_dependencies}
   UPDATE_COMMAND ""
 )
-# URL_HASH found with 'sha256sum libarchive-3.8.0.tar.xz'
+# URL_HASH found with 'sha256sum libarchive-3.x.y.tar.xz' or on github in release section
 
 ## #############################################################################
 ## Set variable to provide infos about the project
