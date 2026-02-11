@@ -40,41 +40,6 @@ cd TmpInstall
     "@medInria_ROOT@/bin/${BUNDLE}.app/Contents/Resources/${BUNDLE}.icns" \
     "${BUNDLE}.app/Contents/Resources"
 
-# Copy non-CMake libraries from external projects
-echo "# Copy QWT framework"
-QWT_DIR="${FRAMEWORK_DIR}/qwt.framework"
-mkdir -p "${QWT_DIR}"
-@CMAKE_COMMAND@ -E copy_directory "@qwt_ROOT@/lib/qwt.framework" "${QWT_DIR}"
-
-# Qwt bundle format is ambiguous we need to clarify it for signature
-rm -fr ${QWT_DIR}/Headers
-rm -fr ${QWT_DIR}/Resources
-rm -fr ${QWT_DIR}/Versions/Current
-rm ${QWT_DIR}/qwt
-@CMAKE_COMMAND@ -E create_symlink "Versions/6/Headers"   "${QWT_DIR}/Headers"
-@CMAKE_COMMAND@ -E create_symlink "Versions/6/Resources" "${QWT_DIR}/Resources"
-@CMAKE_COMMAND@ -E create_symlink "6"                    "${QWT_DIR}/Versions/Current"
-@CMAKE_COMMAND@ -E create_symlink "Versions/6/qwt"       "${QWT_DIR}/qwt"
-find "${QWT_DIR}" -name '.*' -type f -exec rm -f {} \; # remove hidden files
-chmod -R 755 "${QWT_DIR}/Versions/6"
-chmod 755 "${QWT_DIR}"
-
-# Correct Qwt framework dependencies
-QT_BASE_PATH=$(dirname "$(dirname "@Qt5_DIR@")")
-QWT_BINARY="${QWT_DIR}/Versions/6/qwt"
-echo "Qt5_DIR = @Qt5_DIR@"
-echo "QT_BASE_PATH = $QT_BASE_PATH"
-echo "QWT_BINARY = $QWT_BINARY"
-for qt_lib in QtCore QtGui QtWidgets QtPrintSupport QtSvg QtOpenGL QtConcurrent; do
-    OLD_PATH="${QT_BASE_PATH}/${qt_lib}.framework/Versions/5/${qt_lib}"
-    NEW_PATH="@executable_path/../Frameworks/${qt_lib}.framework/Versions/5/${qt_lib}"
-
-    if otool -L "$QWT_BINARY" | grep -q "$OLD_PATH"; then
-        echo "Changing $OLD_PATH to $NEW_PATH"
-        install_name_tool -change "$OLD_PATH" "$NEW_PATH" "$QWT_BINARY"
-    fi
-done
-
 # Deploy Qt libraries using their tool
 echo "# Deploy Qt libs"
 @Qt5_DIR@/../../../bin/macdeployqt ${BUNDLE}.app -appstore-compliant
@@ -145,12 +110,6 @@ mv lib/python@PYTHON_VERSION_MAJOR@.@PYTHON_VERSION_MINOR@ ${BUNDLE}.app/Content
 # Sign the app
 if check_certificate "$CERT_NAME"; then
     echo "# Sign the app"
-
-    codesign --force --timestamp --sign "$CERT_NAME" --options runtime "${QWT_DIR}/Versions/6/qwt"
-    codesign --force --timestamp --sign "$CERT_NAME" "${QWT_DIR}/Versions/6"
-    codesign --force --timestamp --sign "$CERT_NAME" "${QWT_DIR}"
-    codesign --verify --deep --strict --verbose=2 "${QWT_DIR}"
-    spctl -a -vv "${QWT_DIR}"
 
     find "$FRAMEWORK_DIR" -type f -name "*.dylib" -exec \
         codesign --force --timestamp --sign "$CERT_NAME" {} \;
