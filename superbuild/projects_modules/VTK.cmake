@@ -18,6 +18,8 @@ set(ep VTK)
 ## List the dependencies of the project
 ## #############################################################################
 
+list(APPEND ${ep}_dependencies ZLIB)
+
 if(${USE_FFmpeg})
   list(APPEND ${ep}_dependencies ffmpeg)
 endif()
@@ -79,10 +81,16 @@ set(cmake_args
   -DVTK_USE_OGGTHEORA_ENCODER:BOOL=ON
   -DVTK_MODULE_USE_EXTERNAL_VTK_zlib:BOOL=ON
   )
-  
+
 set(cmake_cache_args
   -DQt5_DIR:FILEPATH=${Qt5_DIR}
   )
+
+if(NOT USE_SYSTEM_ZLIB)
+    list(APPEND cmake_args -DZLIB_INCLUDE_DIR:FILEPATH=${ZLIB_ROOT}/include)
+    list(APPEND cmake_args -DZLIB_LIBRARY_RELEASE:FILEPATH=${ZLIB_ROOT}/lib/libz.dylib)
+    list(APPEND cmake_args -DZLIB_LIBRARY_DEBUG:FILEPATH=${ZLIB_ROOT}/lib/libz.dylib)
+endif()
 
 if(USE_OSPRay)
     list(APPEND cmake_args

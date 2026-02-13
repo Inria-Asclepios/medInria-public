@@ -87,8 +87,7 @@ jobs:
           -DOpenMP_ROOT=$OpenMP_ROOT \
           -DUSE_FFmpeg=OFF \
           -DEXPIRATION_TIME:STRING=$EXPIRATION_TIME \
-          -DUSE_RealTimeWorkspace=OFF \
-          -DUSE_SYSTEM_ZLIB:BOOL=TRUE #to remove when zlib removal will be done in MSC
+          -DUSE_RealTimeWorkspace=OFF
           
     - name: Build
       run: | 
