@@ -94,6 +94,7 @@ if (USE_Python)
 endif()
 
 list(APPEND external_projects
+  ZLIB
   VTK
   ITK
   RPI
@@ -110,7 +111,6 @@ if(USE_MUSIC_PLUGINS)
         qwt
         mmg
         tetgen
-        ZLIB
         xz
         libarchive
         )
