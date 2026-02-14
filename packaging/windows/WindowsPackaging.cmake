@@ -107,7 +107,8 @@ list(APPEND
   ${TTK_ROOT}/bin
   ${dtk_ROOT}/bin/Release
   ${RPI_ROOT}/bin/Release
-  ${ZLIB_ROOT}/Release
+  ${ZLIB_ROOT}/bin
+  ${qwt_ROOT}/lib
   )
 
 set(CPACK_INSTALL_CMAKE_PROJECTS
