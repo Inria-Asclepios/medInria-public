@@ -1,18 +1,18 @@
 function(ZLIB_project)
 
-    set(external_project ZLIB)
+    set(ep ZLIB)
 
-    list(APPEND ${external_project}_dependencies
+    list(APPEND ${ep}_dependencies
         )
 
-    EP_Initialisation(${external_project}
+    EP_Initialisation(${ep}
         USE_SYSTEM OFF
         BUILD_SHARED_LIBS ON
         REQUIRED_FOR_PLUGINS OFF
         NO_CMAKE_PACKAGE
         )
 
-    if (NOT USE_SYSTEM_${external_project})
+    if (NOT USE_SYSTEM_${ep})
 
         set(git_url ${GITHUB_PREFIX}madler/zlib.git)
         set(git_tag v1.3.1.2)
@@ -35,18 +35,18 @@ function(ZLIB_project)
             -DCMAKE_C_FLAGS=${${ep}_c_flags}
             -DCMAKE_CXX_FLAGS=${${ep}_cxx_flags}
             -DCMAKE_INSTALL_PREFIX:PATH=<INSTALL_DIR>
-            -DBUILD_SHARED_LIBS:BOOL=${BUILD_SHARED_LIBS_${external_project}}
+            -DBUILD_SHARED_LIBS:BOOL=${BUILD_SHARED_LIBS_${ep}}
             )
 
 ## #############################################################################
 ## Add external-project
 ## #############################################################################
 
-        epComputPath(${external_project})
+        epComputPath(${ep})
 
-        ExternalProject_Add(${external_project}
+        ExternalProject_Add(${ep}
             PREFIX ${EP_PATH_SOURCE}
-            SOURCE_DIR ${EP_PATH_SOURCE}/${external_project}
+            SOURCE_DIR ${EP_PATH_SOURCE}/${ep}
             BINARY_DIR ${build_path}
             INSTALL_DIR ${build_path}
             TMP_DIR ${tmp_path}
@@ -57,11 +57,16 @@ function(ZLIB_project)
             CMAKE_GENERATOR ${gen}
             CMAKE_GENERATOR_PLATFORM ${CMAKE_GENERATOR_PLATFORM}
             CMAKE_ARGS ${cmake_args}
-            DEPENDS ${${external_project}_dependencies}
+            DEPENDS ${${ep}_dependencies}
             UPDATE_COMMAND ""
             )
 
-        set(${external_project}_ROOT ${build_path} PARENT_SCOPE)
+## #############################################################################
+## Set variable to provide infos about the project
+## #############################################################################
+
+        ExternalProject_Get_Property(${ep} binary_dir)
+        set(${ep}_ROOT ${binary_dir} PARENT_SCOPE)
 
     endif()
 

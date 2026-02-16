@@ -58,11 +58,6 @@ jobs:
         #brew info cmake
         brew uninstall --ignore-dependencies cmake
         pipx install cmake==3.31.10
-        brew install zlib
-        echo "LDFLAGS=-L/opt/homebrew/opt/zlib/lib" >> $GITHUB_ENV
-        echo "CPPFLAGS=-I/opt/homebrew/opt/zlib/include" >> $GITHUB_ENV
-        echo "PKG_CONFIG_PATH=/opt/homebrew/opt/zlib/lib/pkgconfig" >> $GITHUB_ENV
-        sudo xcode-select -switch /Applications/Xcode_16.4.app/Contents/Developer
 
     - name: Test dependencies
       run: |

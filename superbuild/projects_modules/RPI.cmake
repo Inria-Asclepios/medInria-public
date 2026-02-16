@@ -100,7 +100,6 @@ ExternalProject_Add(${ep}
 ExternalProject_Get_Property(${ep} binary_dir)
 set(${ep}_ROOT ${binary_dir} PARENT_SCOPE)
 
-
 endif() #NOT USE_SYSTEM_ep
 
 endfunction()
