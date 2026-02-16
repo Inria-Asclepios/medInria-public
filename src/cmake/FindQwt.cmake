@@ -44,7 +44,8 @@ else()
     find_path(qwt_INCLUDE_DIR_SYSTEM
         NAMES qwt.h
         PATHS /opt/homebrew/lib/qwt.framework/Versions/Current/Headers # mac
-              /usr/include                                             # linux
+              /usr/include/qwt                                         # ubuntu
+              /usr/include/qt5/qwt                                     # fedora
               ${CMAKE_PREFIX_PATH}/include                             # windows
               ${VCPKG_INSTALLED_DIR}/include                           # windows
               ${VCPKG_ROOT}/installed/${VCPKG_TARGET_TRIPLET}/include  # windows
@@ -52,7 +53,8 @@ else()
     find_library(qwt_LIBRARIES
         NAMES qwt qwt-qt6 libqwt-qt5.so
         PATHS /opt/homebrew/lib                                    # mac
-              /usr/lib                                             # linux
+              /usr/lib                                             # ubuntu
+              /usr/lib64                                           # fedora
               ${CMAKE_PREFIX_PATH}/lib                             # windows
               ${VCPKG_INSTALLED_DIR}/lib                           # windows
               ${VCPKG_ROOT}/installed/${VCPKG_TARGET_TRIPLET}/lib  # windows
