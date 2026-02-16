@@ -86,7 +86,7 @@ set(cmake_cache_args
   -DQt5_DIR:FILEPATH=${Qt5_DIR}
   )
 
-if(NOT USE_SYSTEM_ZLIB)
+if(NOT USE_SYSTEM_ZLIB AND APPLE)
     list(APPEND cmake_args -DZLIB_INCLUDE_DIR:FILEPATH=${ZLIB_ROOT}/include)
     list(APPEND cmake_args -DZLIB_LIBRARY_RELEASE:FILEPATH=${ZLIB_ROOT}/lib/libz.dylib)
     list(APPEND cmake_args -DZLIB_LIBRARY_DEBUG:FILEPATH=${ZLIB_ROOT}/lib/libz.dylib)
