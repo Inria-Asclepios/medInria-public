@@ -79,17 +79,20 @@ set(cmake_args
   -DVTK_MODULE_ENABLE_VTK_GUISupportQt=YES
   -DVTK_MODULE_ENABLE_VTK_RenderingQt=YES
   -DVTK_USE_OGGTHEORA_ENCODER:BOOL=ON
-  -DVTK_MODULE_USE_EXTERNAL_VTK_zlib:BOOL=ON
   )
 
 set(cmake_cache_args
   -DQt5_DIR:FILEPATH=${Qt5_DIR}
   )
 
+# VTK (v9.3.1 at least) internal zlib is outdated to compile with modern clang on some macos
 if(NOT USE_SYSTEM_ZLIB AND APPLE)
-    list(APPEND cmake_args -DZLIB_INCLUDE_DIR:FILEPATH=${ZLIB_ROOT}/include)
-    list(APPEND cmake_args -DZLIB_LIBRARY_RELEASE:FILEPATH=${ZLIB_ROOT}/lib/libz.dylib)
-    list(APPEND cmake_args -DZLIB_LIBRARY_DEBUG:FILEPATH=${ZLIB_ROOT}/lib/libz.dylib)
+    list(APPEND cmake_args
+        -DVTK_MODULE_USE_EXTERNAL_VTK_zlib:BOOL=ON
+        -DZLIB_INCLUDE_DIR:FILEPATH=${ZLIB_ROOT}/include
+        -DZLIB_LIBRARY_RELEASE:FILEPATH=${ZLIB_ROOT}/lib/libz.dylib
+        -DZLIB_LIBRARY_DEBUG:FILEPATH=${ZLIB_ROOT}/lib/libz.dylib}
+    )
 endif()
 
 if(USE_OSPRay)
