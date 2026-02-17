@@ -233,9 +233,9 @@ public:
 
         if ((m_cb->paintState() == PaintState::Stroke || m_cb->paintState() == PaintState::DeleteStroke) && (event->modifiers()==Qt::ControlModifier))
         {
-            int numDegrees = event->delta() / 8;
+            int numDegrees = event->angleDelta().y() / 8;
             int numSteps = numDegrees / 15;
-            if (event->orientation() == Qt::Horizontal)
+            if (event->angleDelta().x() != 0) // horizontal movement
             {
                 m_cb->addBrushSize(-numSteps);
             }
@@ -641,7 +641,7 @@ void AlgorithmPaintToolBox::activateCustomedCursor()
     painter.setBackgroundMode(Qt::TransparentMode);
     painter.setBackground(QColor(255,255,255,255));
 
-    QPen pen(QColor(255, 255, 0));
+    QPen pen(QColor(255, 140, 0, 255)); // orange
     pen.setWidth(2);
     painter.setPen(pen);
 
