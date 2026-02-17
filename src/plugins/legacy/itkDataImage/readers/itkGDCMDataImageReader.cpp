@@ -157,12 +157,15 @@ itkGDCMDataImageReaderPrivate::itkGDCMDataImageReaderPrivate()
 
 itkGDCMDataImageReaderPrivate::~itkGDCMDataImageReaderPrivate()
 {
-    threadDone(io);
-
-    QMutex *m_ptr = mutex.fetchAndStoreOrdered(nullptr);
-    if (m_ptr)
+    if (io && ioThreads)
     {
-        delete m_ptr;
+        threadDone(io);
+
+        QMutex *m_ptr = mutex.fetchAndStoreOrdered(nullptr);
+        if (m_ptr)
+        {
+            delete m_ptr;
+        }
     }
 }
 
