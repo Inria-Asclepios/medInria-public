@@ -67,7 +67,7 @@ if(USE_MUSIC_PLUGINS)
 endif()
 
 ## #############################################################################
-## Add exteral projects
+## Add external projects
 ## #############################################################################
 
 # There are three possibilities:
