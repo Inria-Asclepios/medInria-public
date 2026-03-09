@@ -91,7 +91,7 @@ if(NOT USE_SYSTEM_ZLIB AND APPLE)
         -DVTK_MODULE_USE_EXTERNAL_VTK_zlib:BOOL=ON
         -DZLIB_INCLUDE_DIR:FILEPATH=${ZLIB_ROOT}/include
         -DZLIB_LIBRARY_RELEASE:FILEPATH=${ZLIB_ROOT}/lib/libz.dylib
-        -DZLIB_LIBRARY_DEBUG:FILEPATH=${ZLIB_ROOT}/lib/libz.dylib}
+        -DZLIB_LIBRARY_DEBUG:FILEPATH=${ZLIB_ROOT}/lib/libz.dylib
     )
 endif()
 

@@ -22,6 +22,7 @@ APP_EXE="${BUNDLE}.app/Contents/MacOS/${BUNDLE}"
 PLUGIN_DIR="${BUNDLE}.app/Contents/PlugIns"
 FRAMEWORK_DIR="${BUNDLE}.app/Contents/Frameworks"
 CERT_NAME="MDS-certificate"
+QT_VERSION="5"
 
 cd @PROJECT_BINARY_DIR@
 rm -fr TmpInstall
@@ -40,9 +41,48 @@ cd TmpInstall
     "@medInria_ROOT@/bin/${BUNDLE}.app/Contents/Resources/${BUNDLE}.icns" \
     "${BUNDLE}.app/Contents/Resources"
 
+# echo "# Configuration of RPATH"
+install_name_tool -add_rpath "@executable_path/../Frameworks" "$APP_EXE"
+install_name_tool -add_rpath "@executable_path/../PlugIns" "$APP_EXE"
+
+echo "# Copy ZLIB library"
+# No need to correct lib id and dependence with rsync. Copy real files and symbolic links correctly
+rsync -av --links --no-relative \
+        --include="libz*.dylib" \
+        --exclude="*" \
+        "@ZLIB_ROOT@/lib/" "${FRAMEWORK_DIR}/" 2>/dev/null
+
+echo "# Copy DCMTK libraries"
+rsync -av --links --no-relative "@DCMTK_ROOT@/lib/" "${FRAMEWORK_DIR}/" 2>/dev/null
+
+# Copy QWT non-CMake library
+echo "# Copy QWT framework"
+rsync -av --links --no-relative "@qwt_ROOT@/lib/qwt.framework/" "${FRAMEWORK_DIR}/qwt.framework/" 2>/dev/null
+
 # Deploy Qt libraries using their tool
 echo "# Deploy Qt libs"
 @Qt5_DIR@/../../../bin/macdeployqt ${BUNDLE}.app -appstore-compliant
+
+# Correction needed for Qt5 installed via homebrew, macdeployqt fails to fix Qt plugin dependencies
+echo "# Correct Qt plugin dependencies"
+find "${BUNDLE}.app/Contents/PlugIns" -name "*.dylib" | while read plugin; do
+    old_id=$(otool -D "$plugin" 2>/dev/null | tail -n +2)
+
+    plugin_dir=$(basename $(dirname "$plugin"))
+    plugin_name=$(basename "$plugin")
+    new_id="@executable_path/../PlugIns/$plugin_dir/$plugin_name"
+    
+    if [[ "$old_id" == "/usr/local/opt/"* ]] || [[ "$old_id" == *"qt@5"* ]]; then
+        echo "Correcting ID: $old_id -> $new_id"
+        install_name_tool -id "$new_id" "$plugin"
+    fi
+done
+
+# Qwt needs QtConcurrent.framework module initially not in the core application
+echo "# Copy QtConcurrent.framework for Qwt"
+QT_CONCURRENT_SOURCE="@Qt5_DIR@/../../../lib/QtConcurrent.framework"
+QT_CONCURRENT_DIR="${FRAMEWORK_DIR}/QtConcurrent.framework"
+rsync -av --links --no-relative "$QT_CONCURRENT_SOURCE/" "$QT_CONCURRENT_DIR/" 2>/dev/null
 
 # Run sub-packagers
 echo "# Run sub-packager"
@@ -71,23 +111,44 @@ echo "# DTK Deploy"
 echo "# Correct library paths for plugins"
 OLD_PREFIX="@medInria_ROOT@/bin/plugins_legacy" # absolute path before
 NEW_PREFIX='@executable_path/../PlugIns'        # new relative path
-candidate_libs=($(ls /usr/lib/libz*.dylib 2>/dev/null)) # There are some path errors with libz which is a system lib
-SYSTEM_Z=${candidate_libs[0]}
-
 find "$PLUGIN_DIR" -type f -name "*.dylib" | while read -r lib; do
     otool -L "$lib" 2>/dev/null | tail -n +2 | while read -r line; do
         dep=$(echo "$line" | awk '{print $1}')
 
         # Solving libz wrong paths
         if [[ "$dep" == *"/libz."*".dylib" ]] || [[ "$dep" == *"/libz.dylib" ]]; then
-            install_name_tool -change "$dep" "$SYSTEM_Z" "$lib"
-            continue
+            basename_dep=$(basename "$dep")
+            new_path="@executable_path/../Frameworks/${basename_dep}"
+            install_name_tool -change "$dep" "$new_path" "$lib"
         fi
 
         # Solving absolute paths in plugins
         if [[ "$dep" == "$OLD_PREFIX"* ]]; then
             new_path="${NEW_PREFIX}/$(basename "$dep")"
             install_name_tool -change "$dep" "$new_path" "$lib"
+        fi
+    done
+done
+
+echo "# Correct libs for zlib dependencies"
+ZLIB_FILE=$(find "${FRAMEWORK_DIR}" -name "libz*.dylib" -type f | head -1)
+ZLIB_NAME=$(basename "$ZLIB_FILE")
+OUR_ZLIB="@executable_path/../Frameworks/${ZLIB_NAME}"
+cd "${FRAMEWORK_DIR}"
+ln -sf "$ZLIB_NAME" "libz.1.dylib"
+cd @PROJECT_BINARY_DIR@/TmpInstall
+
+# Search all libs finishing with dylib, or begining by Qt but not finishing with dylib (as for Qt bundles) 
+find "$FRAMEWORK_DIR" -type f \( -name "*.dylib" -o -name "Qt*" ! -name "*.dylib" \) | while read -r dylib; do
+    if [[ "$(basename "$dylib")" == libz* ]]; then
+        continue
+    fi
+    # Searching all lines in current lib with "libz" in it
+    otool -L "$dylib" 2>/dev/null | grep libz | while read -r line; do
+        bad_path=$(echo "$line" | awk '{print $1}')
+        if [[ "$bad_path" != "$OUR_ZLIB" ]] && [[ "$bad_path" != "@executable_path"* ]]; then
+            echo "Correcting: $bad_path -> $OUR_ZLIB"
+            install_name_tool -change "$bad_path" "$OUR_ZLIB" "$dylib" 2>/dev/null || true
         fi
     done
 done
@@ -111,16 +172,46 @@ mv lib/python@PYTHON_VERSION_MAJOR@.@PYTHON_VERSION_MINOR@ ${BUNDLE}.app/Content
 if check_certificate "$CERT_NAME"; then
     echo "# Sign the app"
 
+    # Sign framework libs
     find "$FRAMEWORK_DIR" -type f -name "*.dylib" -exec \
+        codesign --force --timestamp --sign "$CERT_NAME" --options runtime {} \;
+
+    # Sign Qwt framework
+    codesign --force --timestamp --sign "$CERT_NAME" --options runtime --verbose "${QWT_DIR}/Versions/6/qwt"
+    codesign --force --timestamp --sign "$CERT_NAME" --verbose "${QWT_DIR}/Versions/$QWT_VERSION"
+    codesign --force --timestamp --sign "$CERT_NAME" --options runtime --verbose "${QWT_DIR}"
+    codesign --verify --deep --strict --verbose=2 "${QWT_DIR}"
+    spctl -a -vv "${QWT_DIR}"
+
+    # Sign Qt frameworks
+    find "$FRAMEWORK_DIR" -name "*.framework" -type d | while read -r framework; do
+        echo "Signing $(basename "$framework")"
+
+        # binary
+        framework_binary="${framework}/$(basename "$framework" .framework)"
+        if [[ -f "$framework_binary" ]]; then
+            codesign --force --timestamp --sign "$CERT_NAME" --options runtime --verbose "$framework_binary"
+        fi
+
+        # versions
+        find "$framework/Versions" -type f -name "$(basename "$framework" .framework)" 2>/dev/null | while read -r version_binary; do
+            codesign --force --timestamp --sign "$CERT_NAME" --options runtime --verbose "$version_binary"
+        done
+
+        # sign the framework
+        codesign --force --timestamp --sign "$CERT_NAME" --verbose "$framework"
+    done
+
+    # Sign plugins
+    find "$PLUGIN_DIR" -type f \( -name "*.dylib" -o -name "*.so" \) -exec \
         codesign --force --timestamp --sign "$CERT_NAME" {} \;
-    find "$PLUGIN_DIR" -type f -name "*.dylib" -exec \
-        codesign --force --timestamp --sign "$CERT_NAME" {} \;
-    find "$PLUGIN_DIR/python" -type f -name "*.so" -exec \
-        codesign --force --timestamp --sign "$CERT_NAME" {} \;
+
+    # Sign the executable and the full application
     codesign --force --timestamp --sign "$CERT_NAME" "$APP_EXE"
     codesign --force --deep --timestamp --sign "$CERT_NAME" "${BUNDLE}.app"
 
     # Check
+    echo "# Check the signature"
     codesign --verify --deep --strict --verbose=2 "${BUNDLE}.app"
     spctl -a -vv "${BUNDLE}.app"
 else
