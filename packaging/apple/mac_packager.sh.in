@@ -46,22 +46,7 @@ install_name_tool -add_rpath "@executable_path/../Frameworks" "$APP_EXE"
 install_name_tool -add_rpath "@executable_path/../PlugIns" "$APP_EXE"
 
 echo "# Copy ZLIB library"
-# find "@ZLIB_ROOT@/lib" -type f -name "libz*.dylib" -exec @CMAKE_COMMAND@ -E copy {} "${FRAMEWORK_DIR}" \;
-# ZLIB_LIBS=$(find "${FRAMEWORK_DIR}" -name "libz*.dylib" -type f)
-# for zlib_lib in $ZLIB_LIBS; do
-#     # Correct id
-#     install_name_tool -id "@executable_path/../Frameworks/$(basename "$zlib_lib")" "$zlib_lib"
-    
-#     # Correct internal dependencies
-#     otool -L "$zlib_lib" | tail -n +2 | while read -r line; do
-#         dep=$(echo "$line" | awk '{print $1}')
-#         if [[ "$dep" == "@rpath/libz."* ]]; then
-#             new_name="@executable_path/../Frameworks/$(basename "$dep")"
-#             install_name_tool -change "$dep" "$new_name" "$zlib_lib"
-#         fi
-#     done
-# done
-# No need to correct lib id and dependence with rsync. Copy real files and symbolic links
+# No need to correct lib id and dependence with rsync. Copy real files and symbolic links correctly
 rsync -av --links --no-relative \
         --include="libz*.dylib" \
         --exclude="*" \
@@ -73,42 +58,6 @@ rsync -av --links --no-relative "@DCMTK_ROOT@/lib/" "${FRAMEWORK_DIR}/" 2>/dev/n
 # Copy QWT non-CMake library
 echo "# Copy QWT framework"
 rsync -av --links --no-relative "@qwt_ROOT@/lib/qwt.framework/" "${FRAMEWORK_DIR}/qwt.framework/" 2>/dev/null
-
-# QWT_DIR="${FRAMEWORK_DIR}/qwt.framework"
-# QWT_VERSION="6"
-# mkdir -p "${QWT_DIR}"
-# @CMAKE_COMMAND@ -E copy_directory "@qwt_ROOT@/lib/qwt.framework" "${QWT_DIR}"
-# # Qwt bundle format is ambiguous we need to clarify it for signature
-# rm -fr ${QWT_DIR}/Headers
-# rm -fr ${QWT_DIR}/Resources
-# rm -fr ${QWT_DIR}/Versions/Current
-# rm ${QWT_DIR}/qwt
-
-# @CMAKE_COMMAND@ -E create_symlink "Versions/$QWT_VERSION/Headers"   "${QWT_DIR}/Headers"
-# @CMAKE_COMMAND@ -E create_symlink "Versions/$QWT_VERSION/Resources" "${QWT_DIR}/Resources"
-# #@CMAKE_COMMAND@ -E create_symlink "$QWT_VERSION"                    "${QWT_DIR}/Versions/Current"
-# ln -sfh "$QWT_VERSION" "${QWT_DIR}/Versions/Current" # error sometimes Current is a directory with the cmake command
-# @CMAKE_COMMAND@ -E create_symlink "Versions/$QWT_VERSION/qwt"       "${QWT_DIR}/qwt"
-
-# find "${QWT_DIR}" -name '.*' -type f -exec rm -f {} \; # remove hidden files
-# chmod -R 755 "${QWT_DIR}/Versions/$QWT_VERSION"
-# chmod 755 "${QWT_DIR}"
-
-# Correct Qwt framework dependencies
-# QT_BASE_PATH=$(dirname "$(dirname "@Qt5_DIR@")")
-# QWT_BINARY="${QWT_DIR}/Versions/$QWT_VERSION/qwt"
-# echo "Qt5_DIR = @Qt5_DIR@"
-# echo "QT_BASE_PATH = $QT_BASE_PATH"
-# echo "QWT_BINARY = $QWT_BINARY"
-# for qt_lib in QtCore QtGui QtWidgets QtPrintSupport QtSvg QtOpenGL QtConcurrent; do
-#     OLD_PATH="${QT_BASE_PATH}/${qt_lib}.framework/Versions/$QT_VERSION/${qt_lib}"
-#     NEW_PATH="@executable_path/../Frameworks/${qt_lib}.framework/Versions/$QT_VERSION/${qt_lib}"
-
-#     if otool -L "$QWT_BINARY" | grep -q "$OLD_PATH"; then
-#         echo "Changing: $OLD_PATH -> $NEW_PATH"
-#         install_name_tool -change "$OLD_PATH" "$NEW_PATH" "$QWT_BINARY"
-#     fi
-# done
 
 # Deploy Qt libraries using their tool
 echo "# Deploy Qt libs"
@@ -133,36 +82,7 @@ done
 echo "# Copy QtConcurrent.framework for Qwt"
 QT_CONCURRENT_SOURCE="@Qt5_DIR@/../../../lib/QtConcurrent.framework"
 QT_CONCURRENT_DIR="${FRAMEWORK_DIR}/QtConcurrent.framework"
-#QT_CONCURRENT_BINARY="${QT_CONCURRENT_DIR}/Versions/$QT_VERSION/QtConcurrent"
 rsync -av --links --no-relative "$QT_CONCURRENT_SOURCE/" "$QT_CONCURRENT_DIR/" 2>/dev/null
-
-# mkdir -p "${QT_CONCURRENT_DIR}"
-# @CMAKE_COMMAND@ -E copy_directory "$QT_CONCURRENT_SOURCE" "${QT_CONCURRENT_DIR}"
-
-# # QtConcurrent.framework bundle format is ambiguous we need to clarify it for signature
-# rm -fr ${QT_CONCURRENT_DIR}/Headers
-# rm -fr ${QT_CONCURRENT_DIR}/Resources
-# rm -fr ${QT_CONCURRENT_DIR}/Versions/Current
-# rm ${QT_CONCURRENT_DIR}/QtConcurrent
-# @CMAKE_COMMAND@ -E create_symlink "Versions/$QT_VERSION/Headers"      "${QT_CONCURRENT_DIR}/Headers"
-# @CMAKE_COMMAND@ -E create_symlink "Versions/$QT_VERSION/Resources"    "${QT_CONCURRENT_DIR}/Resources"
-# @CMAKE_COMMAND@ -E create_symlink "$QT_VERSION"                       "${QT_CONCURRENT_DIR}/Versions/Current"
-# @CMAKE_COMMAND@ -E create_symlink "Versions/$QT_VERSION/QtConcurrent" "${QT_CONCURRENT_DIR}/QtConcurrent"
-# find "${QT_CONCURRENT_DIR}" -name '.*' -type f -exec rm -f {} \; # remove hidden files
-# chmod -R 755 "${QT_CONCURRENT_DIR}/Versions/$QT_VERSION"
-# chmod 755 "${QT_CONCURRENT_DIR}"
-
-# echo "Changing id to $QT_CONCURRENT_BINARY"
-# install_name_tool -id "@executable_path/../Frameworks/QtConcurrent.framework/Versions/$QT_VERSION/QtConcurrent" "$QT_CONCURRENT_BINARY"
-
-# otool -L "$QT_CONCURRENT_BINARY" | grep QtCore | while read -r line; do
-#     dep=$(echo "$line" | awk '{print $1}')
-#     if [[ "$dep" != "@rpath"* ]]; then
-#         new_dep="@executable_path/../Frameworks/QtCore.framework/Versions/$QT_VERSION/QtCore"
-#         echo "Changing: $dep -> $new_dep"
-#         install_name_tool -change "$dep" "$new_dep" "$QT_CONCURRENT_BINARY"
-#     fi
-# done
 
 # Run sub-packagers
 echo "# Run sub-packager"
