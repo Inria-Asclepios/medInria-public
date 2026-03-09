@@ -2,14 +2,10 @@ function(ZLIB_project)
 
     set(ep ZLIB)
 
-    list(APPEND ${ep}_dependencies
-        )
-
     EP_Initialisation(${ep}
         USE_SYSTEM OFF
         BUILD_SHARED_LIBS ON
         REQUIRED_FOR_PLUGINS OFF
-        NO_CMAKE_PACKAGE
         )
 
     if (NOT USE_SYSTEM_${ep})
@@ -64,9 +60,7 @@ function(ZLIB_project)
 ## #############################################################################
 ## Set variable to provide infos about the project
 ## #############################################################################
-
-        ExternalProject_Get_Property(${ep} binary_dir)
-        set(${ep}_ROOT ${binary_dir} PARENT_SCOPE)
+        set(${ep}_ROOT ${build_path} PARENT_SCOPE)
 
     endif()
 
