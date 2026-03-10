@@ -41,23 +41,42 @@ cd TmpInstall
     "@medInria_ROOT@/bin/${BUNDLE}.app/Contents/Resources/${BUNDLE}.icns" \
     "${BUNDLE}.app/Contents/Resources"
 
-# echo "# Configuration of RPATH"
+echo "# Configuration of RPATH"
 install_name_tool -add_rpath "@executable_path/../Frameworks" "$APP_EXE"
 install_name_tool -add_rpath "@executable_path/../PlugIns" "$APP_EXE"
 
-echo "# Copy ZLIB library"
-# No need to correct lib id and dependence with rsync. Copy real files and symbolic links correctly
-rsync -av --links --no-relative \
-        --include="libz*.dylib" \
-        --exclude="*" \
-        "@ZLIB_ROOT@/lib/" "${FRAMEWORK_DIR}/" 2>/dev/null
+if [[ "@USE_SYSTEM_ZLIB@" == "OFF" ]]; then
+    echo "# Copy ZLIB library"
+    # Copy real files and symbolic links correctly
+    rsync -av --links --no-relative \
+            --include="libz*.dylib" \
+            --exclude="*" \
+            "@ZLIB_ROOT@/lib/" "${FRAMEWORK_DIR}/" 2>/dev/null
+fi
 
 echo "# Copy DCMTK libraries"
 rsync -av --links --no-relative "@DCMTK_ROOT@/lib/" "${FRAMEWORK_DIR}/" 2>/dev/null
 
-# Copy QWT non-CMake library
-echo "# Copy QWT framework"
+echo "# Copy QWT framework" # non-CMake library
 rsync -av --links --no-relative "@qwt_ROOT@/lib/qwt.framework/" "${FRAMEWORK_DIR}/qwt.framework/" 2>/dev/null
+
+# Correct Qwt framework dependencies to Qt, due to Qt installed via homebrew
+QWT_DIR="${FRAMEWORK_DIR}/qwt.framework"
+QWT_VERSION="6"
+QT_BASE_PATH=$(dirname "$(dirname "@Qt5_DIR@")")
+QWT_BINARY="${QWT_DIR}/Versions/$QWT_VERSION/qwt"
+echo "Qt5_DIR = @Qt5_DIR@"
+echo "QT_BASE_PATH = $QT_BASE_PATH"
+echo "QWT_BINARY = $QWT_BINARY"
+for qt_lib in QtCore QtGui QtWidgets QtPrintSupport QtSvg QtOpenGL QtConcurrent; do
+    OLD_PATH="${QT_BASE_PATH}/${qt_lib}.framework/Versions/$QT_VERSION/${qt_lib}"
+    NEW_PATH="@executable_path/../Frameworks/${qt_lib}.framework/Versions/$QT_VERSION/${qt_lib}"
+
+    if otool -L "$QWT_BINARY" | grep -q "$OLD_PATH"; then
+        echo "Changing: $OLD_PATH -> $NEW_PATH"
+        install_name_tool -change "$OLD_PATH" "$NEW_PATH" "$QWT_BINARY"
+    fi
+done
 
 # Deploy Qt libraries using their tool
 echo "# Deploy Qt libs"
@@ -83,6 +102,21 @@ echo "# Copy QtConcurrent.framework for Qwt"
 QT_CONCURRENT_SOURCE="@Qt5_DIR@/../../../lib/QtConcurrent.framework"
 QT_CONCURRENT_DIR="${FRAMEWORK_DIR}/QtConcurrent.framework"
 rsync -av --links --no-relative "$QT_CONCURRENT_SOURCE/" "$QT_CONCURRENT_DIR/" 2>/dev/null
+chmod -R 755 "${QT_CONCURRENT_DIR}/Versions/$QT_VERSION"
+chmod 755 "${QT_CONCURRENT_DIR}"
+
+# Due to Qt installed by homebrew, update QtConcurrent Qt dependencies
+QT_CONCURRENT_BINARY="${QT_CONCURRENT_DIR}/Versions/$QT_VERSION/QtConcurrent"
+install_name_tool -id "@executable_path/../Frameworks/QtConcurrent.framework/Versions/$QT_VERSION/QtConcurrent" "$QT_CONCURRENT_BINARY"
+otool -L "$QT_CONCURRENT_BINARY" | tail -n +2 | while read -r line; do
+    dep=$(echo "$line" | awk '{print $1}')
+    if [[ "$dep" == "/usr/local/opt/"* ]] || [[ "$dep" == *"qt@5"* ]]; then
+        dep_name=$(basename "$dep")
+        new_path="@executable_path/../Frameworks/${dep_name}.framework/Versions/$QT_VERSION/${dep_name}"
+        echo "Changing: $dep -> $new_path"
+        install_name_tool -change "$dep" "$new_path" "$QT_CONCURRENT_BINARY"
+    fi
+done
 
 # Run sub-packagers
 echo "# Run sub-packager"
@@ -115,11 +149,13 @@ find "$PLUGIN_DIR" -type f -name "*.dylib" | while read -r lib; do
     otool -L "$lib" 2>/dev/null | tail -n +2 | while read -r line; do
         dep=$(echo "$line" | awk '{print $1}')
 
-        # Solving libz wrong paths
-        if [[ "$dep" == *"/libz."*".dylib" ]] || [[ "$dep" == *"/libz.dylib" ]]; then
-            basename_dep=$(basename "$dep")
-            new_path="@executable_path/../Frameworks/${basename_dep}"
-            install_name_tool -change "$dep" "$new_path" "$lib"
+        if [[ "@USE_SYSTEM_ZLIB@" == "OFF" ]]; then
+            # Solving libz wrong paths
+            if [[ "$dep" =~ ^/ ]] && ( [[ "$dep" == *"/libz."*".dylib" ]] || [[ "$dep" == *"/libz.dylib" ]] ); then
+                basename_dep=$(basename "$dep")
+                new_path="@executable_path/../Frameworks/${basename_dep}"
+                install_name_tool -change "$dep" "$new_path" "$lib"
+            fi
         fi
 
         # Solving absolute paths in plugins
@@ -130,28 +166,24 @@ find "$PLUGIN_DIR" -type f -name "*.dylib" | while read -r lib; do
     done
 done
 
-echo "# Correct libs for zlib dependencies"
-ZLIB_FILE=$(find "${FRAMEWORK_DIR}" -name "libz*.dylib" -type f | head -1)
-ZLIB_NAME=$(basename "$ZLIB_FILE")
-OUR_ZLIB="@executable_path/../Frameworks/${ZLIB_NAME}"
-cd "${FRAMEWORK_DIR}"
-ln -sf "$ZLIB_NAME" "libz.1.dylib"
-cd @PROJECT_BINARY_DIR@/TmpInstall
-
-# Search all libs finishing with dylib, or begining by Qt but not finishing with dylib (as for Qt bundles) 
-find "$FRAMEWORK_DIR" -type f \( -name "*.dylib" -o -name "Qt*" ! -name "*.dylib" \) | while read -r dylib; do
-    if [[ "$(basename "$dylib")" == libz* ]]; then
-        continue
-    fi
-    # Searching all lines in current lib with "libz" in it
-    otool -L "$dylib" 2>/dev/null | grep libz | while read -r line; do
-        bad_path=$(echo "$line" | awk '{print $1}')
-        if [[ "$bad_path" != "$OUR_ZLIB" ]] && [[ "$bad_path" != "@executable_path"* ]]; then
-            echo "Correcting: $bad_path -> $OUR_ZLIB"
-            install_name_tool -change "$bad_path" "$OUR_ZLIB" "$dylib" 2>/dev/null || true
+if [[ "@USE_SYSTEM_ZLIB@" == "OFF" ]]; then
+    echo "# Correct libs for zlib dependencies"
+    # Search all libs finishing with dylib, or beginning by Qt but not finishing with dylib (as for Qt bundles)
+    find "$FRAMEWORK_DIR" -type f \( -name "*.dylib" -o -name "Qt*" ! -name "*.dylib" \) | while read -r dylib; do
+        if [[ "$(basename "$dylib")" == libz* ]]; then
+            continue
         fi
+        # Searching all lines in current lib with "libz" in it
+        otool -L "$dylib" 2>/dev/null | grep libz | while read -r line; do
+            bad_path=$(echo "$line" | awk '{print $1}')
+            if [[ "$bad_path" =~ ^/ ]]; then
+                basename_dep=$(basename "$bad_path")
+                new_path="@executable_path/../Frameworks/${basename_dep}"
+                install_name_tool -change "$bad_path" "$new_path" "$dylib" 2>/dev/null || true
+            fi
+        done
     done
-done
+fi
 
 # Python libs preparation
 echo "# Installation of Python libraries"
