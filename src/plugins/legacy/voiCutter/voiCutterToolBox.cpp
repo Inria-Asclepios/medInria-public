@@ -545,16 +545,15 @@ void voiCutterToolBox::definePolygonsImage(std::vector<vtkVector2i> polygonPoint
     }
     vtkImageView3D *view3D =  static_cast<medVtkViewBackend*>(d->currentView->backend())->view3D;
     vtkSmartPointer<vtkPoints> points = vtkPoints::New();
-    vtkIdType ids[100];
-    QList<vtkPolygon*> *RoiList = new QList<vtkPolygon*>();
-    QList<vtkPoints*> *RoiPointList = new QList<vtkPoints*>();
+    //vtkIdType ids[100];
 
-    vtkMatrix4x4 *ActorMatrix;
-    vtkVolume *volume = view3D->GetVolumeActor();
-    ActorMatrix = volume->GetUserMatrix();
-    vtkTransform *Transform = vtkTransform::New();
-    Transform->SetMatrix(ActorMatrix);
-    Transform->Push();
+    // vtkMatrix4x4 *ActorMatrix;
+    //vtkVolume *volume = view3D->GetVolumeActor();
+    //ActorMatrix = volume->GetUserMatrix();
+    //vtkTransform *Transform = vtkTransform::New();
+    //Transform->SetMatrix(ActorMatrix); //# ActorMatrix empty with > VTK 9.2
+    //Transform->Push();
+
 
     vtkCamera *aCamera = view3D->GetRenderer()->GetActiveCamera();
     double cameraProj[3], xyz[3];
@@ -571,7 +570,7 @@ void voiCutterToolBox::definePolygonsImage(std::vector<vtkVector2i> polygonPoint
         points->InsertNextPoint(polygonPoints[i].GetX(),
                                 polygonPoints[i].GetY(),
                                 0);
-        ids[i] = i;
+        //ids[i] = i;
     }
 
     double vector[9];
@@ -610,13 +609,19 @@ void voiCutterToolBox::definePolygonsImage(std::vector<vtkVector2i> polygonPoint
         case 1: stackMax = dim[1]; break;
         case 2: stackMax = dim[2]; break;
     }
+    std::cout<<"### voiCutterToolBox::definePolygonsImage stackOrientation & stackMax: "<<stackOrientation<<" / "<<stackMax<<std::endl;
 
+    // QList<vtkPolygon*> *RoiList = new QList<vtkPolygon*>();
+    // QList<vtkPoints*> *RoiPointList = new QList<vtkPoints*>();
+    QList<vtkSmartPointer<vtkPolygon>> RoiList;
+    QList<vtkSmartPointer<vtkPoints>> RoiPointList;
     for( int i = 0 ; i < stackMax ; i++)
     {
-        RoiList->append(vtkPolygon::New());
-        RoiPointList->append(vtkPoints::New());
+        RoiList.append(vtkPolygon::New());
+        RoiPointList.append(vtkPoints::New());
     }
     double *ImageSpacing  = view3D->GetMedVtkImageInfo()->spacing;
+
     for(long tt = 0; tt < points->GetNumberOfPoints(); tt++)
     {
         float point1[ 3], point2[ 3];
@@ -709,7 +714,7 @@ void voiCutterToolBox::definePolygonsImage(std::vector<vtkVector2i> polygonPoint
             point[ 1] += vPos[ 1];
             point[ 2] += vPos[ 2];
 
-            Transform->TransformPoint(point, point);
+            //Transform->TransformPoint(point, point);
 
             if( intersect3D_SegmentPlane(point2, point1, planeVector, point, resultPt))
             {
@@ -727,18 +732,36 @@ void voiCutterToolBox::definePolygonsImage(std::vector<vtkVector2i> polygonPoint
 
                 if( roiID >= 0 && roiID < stackMax)
                 {
-                    RoiPointList->at(roiID)->InsertNextPoint(ptInt[0], ptInt[1], ptInt[2]);
+                    RoiPointList.at(roiID)->InsertNextPoint(ptInt[0], ptInt[1], ptInt[2]);
                 }
             }
         }
     }
-    Transform->Delete();
+    //Transform->Delete();
 
-    for(int i= 0; i<RoiList->size(); i++)
+    for(int i=0; i<RoiList.size(); i++)
     {
-        RoiList->at(i)->Initialize(RoiPointList->at(i)->GetNumberOfPoints(),
-                                   ids,
-                                   RoiPointList->at(i));
+        vtkIdType nbPoints = RoiPointList.at(i)->GetNumberOfPoints();
+        if (nbPoints >= 3)
+        {
+            std::vector<vtkIdType> polygonIds(nbPoints);
+            for (vtkIdType j = 0; j < nbPoints; j++)
+            {
+                polygonIds[j] = j;
+            }
+            
+            RoiList.at(i)->Initialize(nbPoints, polygonIds.data(), RoiPointList.at(i));
+        }
+        else
+        {
+            // we enter a lot here
+            //std::cout<<"### voiCutterToolBox::definePolygonsImage not enough points"<<std::endl;
+        }
+
+        // ## OLD crash if current RoiPointList empty
+        // RoiList.at(i)->Initialize(RoiPointList.at(i)->GetNumberOfPoints(),
+        //                            ids,
+        //                            RoiPointList.at(i));
     }
 
     if (d->input->identifier() == "itkDataImageChar3")
@@ -781,10 +804,15 @@ void voiCutterToolBox::definePolygonsImage(std::vector<vtkVector2i> polygonPoint
     {
         cutThroughImage<itk::Image<double,3> >(RoiList,RoiPointList,stackMax,stackOrientation,m);
     }
+
+    // Clear
+    RoiList.clear();
+    RoiPointList.clear();
 }
 
 template <typename IMAGE>
-void voiCutterToolBox::cutThroughImage(QList<vtkPolygon*>*RoiList, QList<vtkPoints*>*RoiPointList,
+void voiCutterToolBox::cutThroughImage(QList<vtkSmartPointer<vtkPolygon>> RoiList,
+                                       QList<vtkSmartPointer<vtkPoints>> RoiPointList,
                                        long stackMax, unsigned int stackOrientation, MODE m)
 {
     int valOfOutside = medUtilitiesITK::minimumValue(d->input);
@@ -837,9 +865,26 @@ void voiCutterToolBox::cutThroughImage(QList<vtkPolygon*>*RoiList, QList<vtkPoin
 
     for(int stack = 0; stack<stackMax; stack++)
     {
-        double *boundsPoints;
-        int nbPoints = RoiList->at(stack)->GetNumberOfPoints();
-        boundsPoints = RoiPointList->at(stack)->GetBounds(); //(xmin,xmax, ymin,ymax, zmin,zmax)
+        // # NEW in case lists are empty, mostly RoiPointList
+        vtkPoints* currentPoints = RoiPointList.at(stack);
+        vtkPolygon* currentPolygon = RoiList.at(stack);
+        if (!currentPoints || currentPoints->GetNumberOfPoints() == 0)
+        {
+            //std::cout<<"### voiCutterToolBox::cutThroughImage not enough number of points"<<std::endl;
+            continue;
+        }        
+        if (!currentPolygon || currentPolygon->GetNumberOfPoints() == 0)
+        {
+            //std::cout<<"### voiCutterToolBox::cutThroughImage not enough number of polygons"<<std::endl;
+            continue;
+        }
+        double *boundsPoints = currentPoints->GetBounds();
+        int nbPoints = currentPolygon->GetNumberOfPoints();
+
+        // # OLD
+        // double *boundsPoints;
+        // int nbPoints = RoiList.at(stack)->GetNumberOfPoints();
+        // boundsPoints = RoiPointList.at(stack)->GetBounds(); //(xmin,xmax, ymin,ymax, zmin,zmax)
 
         int i, end_i, j, end_j, start_i, start_j;
 
@@ -880,7 +925,7 @@ void voiCutterToolBox::cutThroughImage(QList<vtkPolygon*>*RoiList, QList<vtkPoin
         }
 
         // Qt rasterization
-        vtkPoints *pointsArray = RoiList->at(stack)->GetPoints();
+        vtkPoints *pointsArray = RoiList.at(stack)->GetPoints();
         
         QPolygonF polygon;
         for(int i=0; i<nbPoints; i++)

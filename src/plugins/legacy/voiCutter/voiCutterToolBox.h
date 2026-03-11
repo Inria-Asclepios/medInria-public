@@ -63,7 +63,8 @@ protected:
                                  double* resultPt);
 
     template <typename IMAGE>
-    void cutThroughImage(QList<vtkPolygon*>*RoiList, QList<vtkPoints*>*RoiPointList,
+    void cutThroughImage(QList<vtkSmartPointer<vtkPolygon>> RoiList,
+                         QList<vtkSmartPointer<vtkPoints>> RoiPointList,
                          long stackMax, unsigned int stackOrientation, MODE m);
 
     template <typename IMAGE>
