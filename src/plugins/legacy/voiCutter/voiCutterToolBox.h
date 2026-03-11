@@ -15,8 +15,10 @@ PURPOSE.
 #include <medAbstractSelectableToolBox.h>
 
 #include <voiCutterPluginExport.h>
-#include <vtkVector.h>
+
+#include <vtkMatrix4x4.h>
 #include <vtkPolygon.h>
+#include <vtkVector.h>
 
 class vtkCutterObserver;
 class voiCutterToolBoxPrivate;
@@ -59,12 +61,15 @@ public slots:
 
 protected:
     void definePolygonsImage(std::vector<vtkVector2i>, MODE);
-    int intersect3D_SegmentPlane(float *P0, float *P1, float *Pnormal, float *Ppoint,
+    int intersect3D_SegmentPlane(float *P0, float *P1, double *Pnormal, double *Ppoint,
                                  double* resultPt);
 
     template <typename IMAGE>
-    void cutThroughImage(QList<vtkPolygon*>*RoiList, QList<vtkPoints*>*RoiPointList,
+    void cutThroughImage(QList<vtkSmartPointer<vtkPolygon>> RoiList,
+                         QList<vtkSmartPointer<vtkPoints>> RoiPointList,
                          long stackMax, unsigned int stackOrientation, MODE m);
+
+    unsigned int getStackOrientation(vtkMatrix4x4 *orientationMatrix, double cameraProj[3]);
 
     template <typename IMAGE>
     void fillPolygon(IMAGE *img, int nbPoints, int *polyX,int *polyY,

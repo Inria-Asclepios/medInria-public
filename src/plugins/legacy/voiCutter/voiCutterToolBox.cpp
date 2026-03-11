@@ -35,7 +35,6 @@
 #include <vtkPoints.h>
 #include <vtkRenderer.h>
 #include <vtkRenderWindowInteractor.h>
-#include <vtkTransform.h>
 
 #include <itkImageDuplicator.h>
 
@@ -496,7 +495,7 @@ void voiCutterToolBox::applyRenderingParameters()
 #define SMALL_NUM  0.00000001 // anything that avoids division overflow
 #define DOT(v1,v2) (v1[0]*v2[0]+v1[1]*v2[1]+v1[2]*v2[2])
 
-int voiCutterToolBox::intersect3D_SegmentPlane(float *P0, float *P1, float *Pnormal, float *Ppoint, double* resultPt)
+int voiCutterToolBox::intersect3D_SegmentPlane(float *P0, float *P1, double *Pnormal, double *Ppoint, double* resultPt)
 {
     float u[ 3];
     float w[ 3];
@@ -544,65 +543,26 @@ void voiCutterToolBox::definePolygonsImage(std::vector<vtkVector2i> polygonPoint
         return;
     }
     vtkImageView3D *view3D =  static_cast<medVtkViewBackend*>(d->currentView->backend())->view3D;
+
+    // Create a convenient list of vtk points
     vtkSmartPointer<vtkPoints> points = vtkPoints::New();
-    vtkIdType ids[100];
-    QList<vtkPolygon*> *RoiList = new QList<vtkPolygon*>();
-    QList<vtkPoints*> *RoiPointList = new QList<vtkPoints*>();
-
-    vtkMatrix4x4 *ActorMatrix;
-    vtkVolume *volume = view3D->GetVolumeActor();
-    ActorMatrix = volume->GetUserMatrix();
-    vtkTransform *Transform = vtkTransform::New();
-    Transform->SetMatrix(ActorMatrix);
-    Transform->Push();
-
-    vtkCamera *aCamera = view3D->GetRenderer()->GetActiveCamera();
-    double cameraProj[3], xyz[3];
-    aCamera->GetViewPlaneNormal(cameraProj);
-    aCamera->GetPosition(xyz);
-
-    int *dim = view3D->GetMedVtkImageInfo()->dimensions;
-    vtkMatrix4x4 *orientationMatrix = view3D->GetOrientationMatrix();
-
-    double *vPos = view3D->GetMedVtkImageInfo()->origin;
-
     for( int i = 0; i<static_cast<int>(polygonPoints.size()); i++)
     {
         points->InsertNextPoint(polygonPoints[i].GetX(),
                                 polygonPoints[i].GetY(),
                                 0);
-        ids[i] = i;
     }
 
-    double vector[9];
+    vtkCamera *aCamera = view3D->GetRenderer()->GetActiveCamera();
+    double cameraProj[3];
+    aCamera->GetViewPlaneNormal(cameraProj);
 
-    for (int i = 0; i<3; i++)
-    {
-        for (int j = 0; j<3; j++)
-        {
-            vector[j*3+i] = orientationMatrix->GetElement(i,j);
-        }
-    }
+    vtkMatrix4x4 *orientationMatrix = view3D->GetOrientationMatrix();
 
-    unsigned int stackOrientation;
-    double cameraProjObj[3];
-    cameraProjObj[ 0] = cameraProj[ 0] * vector[ 0] + cameraProj[ 1] * vector[ 1] + cameraProj[ 2] * vector[ 2];
-    cameraProjObj[ 1] = cameraProj[ 0] * vector[ 3] + cameraProj[ 1] * vector[ 4] + cameraProj[ 2] * vector[ 5];
-    cameraProjObj[ 2] = cameraProj[ 0] * vector[ 6] + cameraProj[ 1] * vector[ 7] + cameraProj[ 2] * vector[ 8];
+    auto stackOrientation = getStackOrientation(orientationMatrix, cameraProj);
 
-    if( fabs( cameraProjObj[ 0]) > fabs(cameraProjObj[ 1]) && fabs(cameraProjObj[ 0]) > fabs(cameraProjObj[ 2]))
-    {
-        stackOrientation = 0;
-    }
-    else if( fabs(cameraProjObj[ 1]) > fabs(cameraProjObj[ 0]) && fabs(cameraProjObj[ 1]) > fabs(cameraProjObj[ 2]))
-    {
-        stackOrientation = 1;
-    }
-    else
-    {
-        stackOrientation = 2;
-    }
-
+    // Get dimension max
+    int *dim = view3D->GetMedVtkImageInfo()->dimensions;
     long stackMax;
     switch( stackOrientation)
     {
@@ -611,12 +571,16 @@ void voiCutterToolBox::definePolygonsImage(std::vector<vtkVector2i> polygonPoint
         case 2: stackMax = dim[2]; break;
     }
 
+    // Create convenient lists of points and polygon
+    QList<vtkSmartPointer<vtkPolygon>> RoiList;
+    QList<vtkSmartPointer<vtkPoints>> RoiPointList;
     for( int i = 0 ; i < stackMax ; i++)
     {
-        RoiList->append(vtkPolygon::New());
-        RoiPointList->append(vtkPoints::New());
+        RoiList.append(vtkPolygon::New());
+        RoiPointList.append(vtkPoints::New());
     }
-    double *ImageSpacing  = view3D->GetMedVtkImageInfo()->spacing;
+
+    double xyz[3];
     for(long tt = 0; tt < points->GetNumberOfPoints(); tt++)
     {
         float point1[ 3], point2[ 3];
@@ -664,54 +628,21 @@ void voiCutterToolBox::definePolygonsImage(std::vector<vtkVector2i> polygonPoint
         // Intersection between this line and planes in Z direction
         for(x = 0; x < stackMax; x++)
         {
-            float planeVector[ 3];
-            float point[ 3];
             double resultPt[ 3];
 
-            switch(stackOrientation)
-            {
-                case 0:
-                {
-                    point[ 0] = x * ImageSpacing[0];
-                    point[ 1] = 0;
-                    point[ 2] = 0;
+            int indexPoint[3] = {0, 0, 0};
+            indexPoint[stackOrientation] = x;
 
-                    planeVector[ 0] =  vector[ 0];
-                    planeVector[ 1] =  vector[ 1];
-                    planeVector[ 2] =  vector[ 2];
-                    break;
-                }
-                case 1:
-                {
-                    point[ 0] = 0;
-                    point[ 1] = x * ImageSpacing[1];
-                    point[ 2] = 0;
+            double worldPlanePoint[3];
+            view3D->GetWorldCoordinatesFromImageCoordinates(indexPoint, worldPlanePoint);
 
-                    planeVector[ 0] =  vector[ 3];
-                    planeVector[ 1] =  vector[ 4];
-                    planeVector[ 2] =  vector[ 5];
-                    break;
-                }
-                case 2:
-                {
-                    point[ 0] = 0;
-                    point[ 1] = 0;
-                    point[ 2] = x * ImageSpacing[2];
+            double planeVector[3] = {
+                orientationMatrix->GetElement(0, stackOrientation),
+                orientationMatrix->GetElement(1, stackOrientation),
+                orientationMatrix->GetElement(2, stackOrientation)
+            };
 
-                    planeVector[ 0] =  vector[ 6];
-                    planeVector[ 1] =  vector[ 7];
-                    planeVector[ 2] =  vector[ 8];
-                    break;
-                }
-            }
-
-            point[ 0] += vPos[ 0];
-            point[ 1] += vPos[ 1];
-            point[ 2] += vPos[ 2];
-
-            Transform->TransformPoint(point, point);
-
-            if( intersect3D_SegmentPlane(point2, point1, planeVector, point, resultPt))
+            if(intersect3D_SegmentPlane(point2, point1, planeVector, worldPlanePoint, resultPt))
             {
                 int ptInt[ 3];
                 long roiID;
@@ -727,18 +658,25 @@ void voiCutterToolBox::definePolygonsImage(std::vector<vtkVector2i> polygonPoint
 
                 if( roiID >= 0 && roiID < stackMax)
                 {
-                    RoiPointList->at(roiID)->InsertNextPoint(ptInt[0], ptInt[1], ptInt[2]);
+                    RoiPointList.at(roiID)->InsertNextPoint(ptInt[0], ptInt[1], ptInt[2]);
                 }
             }
         }
     }
-    Transform->Delete();
 
-    for(int i= 0; i<RoiList->size(); i++)
+    for(int i=0; i<RoiList.size(); i++)
     {
-        RoiList->at(i)->Initialize(RoiPointList->at(i)->GetNumberOfPoints(),
-                                   ids,
-                                   RoiPointList->at(i));
+        vtkIdType nbPoints = RoiPointList.at(i)->GetNumberOfPoints();
+        if (nbPoints >= 3)
+        {
+            std::vector<vtkIdType> polygonIds(nbPoints);
+            for (vtkIdType j = 0; j < nbPoints; j++)
+            {
+                polygonIds[j] = j;
+            }
+            
+            RoiList.at(i)->Initialize(nbPoints, polygonIds.data(), RoiPointList.at(i));
+        }
     }
 
     if (d->input->identifier() == "itkDataImageChar3")
@@ -781,10 +719,15 @@ void voiCutterToolBox::definePolygonsImage(std::vector<vtkVector2i> polygonPoint
     {
         cutThroughImage<itk::Image<double,3> >(RoiList,RoiPointList,stackMax,stackOrientation,m);
     }
+
+    // Clear
+    RoiList.clear();
+    RoiPointList.clear();
 }
 
 template <typename IMAGE>
-void voiCutterToolBox::cutThroughImage(QList<vtkPolygon*>*RoiList, QList<vtkPoints*>*RoiPointList,
+void voiCutterToolBox::cutThroughImage(QList<vtkSmartPointer<vtkPolygon>> RoiList,
+                                       QList<vtkSmartPointer<vtkPoints>> RoiPointList,
                                        long stackMax, unsigned int stackOrientation, MODE m)
 {
     int valOfOutside = medUtilitiesITK::minimumValue(d->input);
@@ -837,9 +780,18 @@ void voiCutterToolBox::cutThroughImage(QList<vtkPolygon*>*RoiList, QList<vtkPoin
 
     for(int stack = 0; stack<stackMax; stack++)
     {
-        double *boundsPoints;
-        int nbPoints = RoiList->at(stack)->GetNumberOfPoints();
-        boundsPoints = RoiPointList->at(stack)->GetBounds(); //(xmin,xmax, ymin,ymax, zmin,zmax)
+        vtkPoints* currentPoints = RoiPointList.at(stack);
+        vtkPolygon* currentPolygon = RoiList.at(stack);
+        if (!currentPoints || currentPoints->GetNumberOfPoints() == 0)
+        {
+            continue;
+        }        
+        if (!currentPolygon || currentPolygon->GetNumberOfPoints() == 0)
+        {
+            continue;
+        }
+        double *boundsPoints = currentPoints->GetBounds();
+        int nbPoints = currentPolygon->GetNumberOfPoints();
 
         int i, end_i, j, end_j, start_i, start_j;
 
@@ -880,7 +832,7 @@ void voiCutterToolBox::cutThroughImage(QList<vtkPolygon*>*RoiList, QList<vtkPoin
         }
 
         // Qt rasterization
-        vtkPoints *pointsArray = RoiList->at(stack)->GetPoints();
+        vtkPoints *pointsArray = RoiList.at(stack)->GetPoints();
         
         QPolygonF polygon;
         for(int i=0; i<nbPoints; i++)
@@ -973,4 +925,38 @@ void voiCutterToolBox::cutThroughImage(QList<vtkPolygon*>*RoiList, QList<vtkPoin
 void voiCutterToolBox::fillOutputMetaData()
 {
     medUtilities::setDerivedMetaData(d->resultData, d->currentView->layerData(d->currentView->currentLayer()), "voiCutting");
+}
+
+unsigned int voiCutterToolBox::getStackOrientation(vtkMatrix4x4 *orientationMatrix, double cameraProj[3])
+{
+    unsigned int stackOrientation;
+
+    double vector[9];
+    for (int i = 0; i<3; i++)
+    {
+        for (int j = 0; j<3; j++)
+        {
+            vector[j*3+i] = orientationMatrix->GetElement(i,j);
+        }
+    }
+
+    double cameraProjObj[3];
+    cameraProjObj[ 0] = cameraProj[ 0] * vector[ 0] + cameraProj[ 1] * vector[ 1] + cameraProj[ 2] * vector[ 2];
+    cameraProjObj[ 1] = cameraProj[ 0] * vector[ 3] + cameraProj[ 1] * vector[ 4] + cameraProj[ 2] * vector[ 5];
+    cameraProjObj[ 2] = cameraProj[ 0] * vector[ 6] + cameraProj[ 1] * vector[ 7] + cameraProj[ 2] * vector[ 8];
+
+    if( fabs( cameraProjObj[ 0]) > fabs(cameraProjObj[ 1]) && fabs(cameraProjObj[ 0]) > fabs(cameraProjObj[ 2]))
+    {
+        stackOrientation = 0;
+    }
+    else if( fabs(cameraProjObj[ 1]) > fabs(cameraProjObj[ 0]) && fabs(cameraProjObj[ 1]) > fabs(cameraProjObj[ 2]))
+    {
+        stackOrientation = 1;
+    }
+    else
+    {
+        stackOrientation = 2;
+    }
+
+    return stackOrientation;
 }
