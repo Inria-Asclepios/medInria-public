@@ -35,7 +35,6 @@
 #include <vtkPoints.h>
 #include <vtkRenderer.h>
 #include <vtkRenderWindowInteractor.h>
-#include <vtkTransform.h>
 
 #include <itkImageDuplicator.h>
 
@@ -496,7 +495,7 @@ void voiCutterToolBox::applyRenderingParameters()
 #define SMALL_NUM  0.00000001 // anything that avoids division overflow
 #define DOT(v1,v2) (v1[0]*v2[0]+v1[1]*v2[1]+v1[2]*v2[2])
 
-int voiCutterToolBox::intersect3D_SegmentPlane(float *P0, float *P1, float *Pnormal, float *Ppoint, double* resultPt)
+int voiCutterToolBox::intersect3D_SegmentPlane(float *P0, float *P1, double *Pnormal, double *Ppoint, double* resultPt)
 {
     float u[ 3];
     float w[ 3];
@@ -554,40 +553,15 @@ void voiCutterToolBox::definePolygonsImage(std::vector<vtkVector2i> polygonPoint
                                 0);
     }
 
-    // Compute stack orientation and max dimension
     vtkCamera *aCamera = view3D->GetRenderer()->GetActiveCamera();
     double cameraProj[3];
     aCamera->GetViewPlaneNormal(cameraProj);
 
     vtkMatrix4x4 *orientationMatrix = view3D->GetOrientationMatrix();
-    double vector[9];
-    for (int i = 0; i<3; i++)
-    {
-        for (int j = 0; j<3; j++)
-        {
-            vector[j*3+i] = orientationMatrix->GetElement(i,j);
-        }
-    }
 
-    unsigned int stackOrientation;
-    double cameraProjObj[3];
-    cameraProjObj[ 0] = cameraProj[ 0] * vector[ 0] + cameraProj[ 1] * vector[ 1] + cameraProj[ 2] * vector[ 2];
-    cameraProjObj[ 1] = cameraProj[ 0] * vector[ 3] + cameraProj[ 1] * vector[ 4] + cameraProj[ 2] * vector[ 5];
-    cameraProjObj[ 2] = cameraProj[ 0] * vector[ 6] + cameraProj[ 1] * vector[ 7] + cameraProj[ 2] * vector[ 8];
+    auto stackOrientation = getStackOrientation(orientationMatrix, cameraProj);
 
-    if( fabs( cameraProjObj[ 0]) > fabs(cameraProjObj[ 1]) && fabs(cameraProjObj[ 0]) > fabs(cameraProjObj[ 2]))
-    {
-        stackOrientation = 0;
-    }
-    else if( fabs(cameraProjObj[ 1]) > fabs(cameraProjObj[ 0]) && fabs(cameraProjObj[ 1]) > fabs(cameraProjObj[ 2]))
-    {
-        stackOrientation = 1;
-    }
-    else
-    {
-        stackOrientation = 2;
-    }
-
+    // Get dimension max
     int *dim = view3D->GetMedVtkImageInfo()->dimensions;
     long stackMax;
     switch( stackOrientation)
@@ -662,19 +636,13 @@ void voiCutterToolBox::definePolygonsImage(std::vector<vtkVector2i> polygonPoint
             double worldPlanePoint[3];
             view3D->GetWorldCoordinatesFromImageCoordinates(indexPoint, worldPlanePoint);
 
-            float planeVector[3] = {
-                static_cast<float>(orientationMatrix->GetElement(0, stackOrientation)),
-                static_cast<float>(orientationMatrix->GetElement(1, stackOrientation)),
-                static_cast<float>(orientationMatrix->GetElement(2, stackOrientation))
+            double planeVector[3] = {
+                orientationMatrix->GetElement(0, stackOrientation),
+                orientationMatrix->GetElement(1, stackOrientation),
+                orientationMatrix->GetElement(2, stackOrientation)
             };
 
-            float planePointFloat[3] = {
-                static_cast<float>(worldPlanePoint[0]),
-                static_cast<float>(worldPlanePoint[1]),
-                static_cast<float>(worldPlanePoint[2])
-            };
-
-            if( intersect3D_SegmentPlane(point2, point1, planeVector, planePointFloat, resultPt))
+            if(intersect3D_SegmentPlane(point2, point1, planeVector, worldPlanePoint, resultPt))
             {
                 int ptInt[ 3];
                 long roiID;
@@ -957,4 +925,38 @@ void voiCutterToolBox::cutThroughImage(QList<vtkSmartPointer<vtkPolygon>> RoiLis
 void voiCutterToolBox::fillOutputMetaData()
 {
     medUtilities::setDerivedMetaData(d->resultData, d->currentView->layerData(d->currentView->currentLayer()), "voiCutting");
+}
+
+unsigned int voiCutterToolBox::getStackOrientation(vtkMatrix4x4 *orientationMatrix, double cameraProj[3])
+{
+    unsigned int stackOrientation;
+
+    double vector[9];
+    for (int i = 0; i<3; i++)
+    {
+        for (int j = 0; j<3; j++)
+        {
+            vector[j*3+i] = orientationMatrix->GetElement(i,j);
+        }
+    }
+
+    double cameraProjObj[3];
+    cameraProjObj[ 0] = cameraProj[ 0] * vector[ 0] + cameraProj[ 1] * vector[ 1] + cameraProj[ 2] * vector[ 2];
+    cameraProjObj[ 1] = cameraProj[ 0] * vector[ 3] + cameraProj[ 1] * vector[ 4] + cameraProj[ 2] * vector[ 5];
+    cameraProjObj[ 2] = cameraProj[ 0] * vector[ 6] + cameraProj[ 1] * vector[ 7] + cameraProj[ 2] * vector[ 8];
+
+    if( fabs( cameraProjObj[ 0]) > fabs(cameraProjObj[ 1]) && fabs(cameraProjObj[ 0]) > fabs(cameraProjObj[ 2]))
+    {
+        stackOrientation = 0;
+    }
+    else if( fabs(cameraProjObj[ 1]) > fabs(cameraProjObj[ 0]) && fabs(cameraProjObj[ 1]) > fabs(cameraProjObj[ 2]))
+    {
+        stackOrientation = 1;
+    }
+    else
+    {
+        stackOrientation = 2;
+    }
+
+    return stackOrientation;
 }
