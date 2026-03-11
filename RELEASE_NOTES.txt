@@ -1,5 +1,17 @@
 MUSICardio 4.1:
-- Switch to VTK 9.2.6, ITK 5.4rc04.
+- Switch to VTK "v9.3.1", ITK "v5.4.5", Qt "5.15", libarchive "v3.8.5", xz "v5.8.1", RPI "V2.0.0", DCMTK "DCMTK-3.6.9", QtDCM "DCMTK-3.6.9", mmg "v5.8.0", qwt "v6.3.0", ZLIB "v1.3.1.2"
+- Compatibility with Ubuntu 24, macOS 14 and 15 (Intel or Apple chip), Fedora 37 and still Windows 10.
+- macOS DMGs are locally signed.
+- Update the default expiration duration of binary from 12 to 24 months.
+- DICOM reader has been updated to be more robust.
+- CreateMeshFromMask: clean memory management to avoid some crashs.
+- Paint: enhance drawing cursor.
+- PolygonROI: enhance cursor to handle landmarks.
+- Scenes: fix a bug if the user cancels export.
+- Fix a bug with "starting workspace" setting.
+- Remove Composer workspace.
+- Pipelines: add a script version number to pipelines.
+- Histogram Analysis: fix problems/crashs with the Ventricle Max algo and its popup.
 
 MUSICardio 4.0.7:
 - PolygonROI:
