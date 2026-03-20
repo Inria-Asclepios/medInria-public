@@ -12,6 +12,7 @@ MUSICardio 4.1:
 - Remove Composer workspace.
 - Pipelines: add a script version number to pipelines.
 - Histogram Analysis: fix problems/crashs with the Ventricle Max algo and its popup.
+- New documentation website: https://mds-data.ihu-liryc.fr/tools/musicardio
 
 MUSICardio 4.0.7:
 - PolygonROI:
