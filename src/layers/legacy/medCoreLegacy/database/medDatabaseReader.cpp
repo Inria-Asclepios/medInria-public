@@ -179,7 +179,7 @@ medAbstractData* medDatabaseReader::run()
     query.finish();
     mutexLocker.unlock();
 
-    QStringList filePaths = seriesPath.split(';', QString::SkipEmptyParts);
+    QStringList filePaths = seriesPath.split(';', Qt::SkipEmptyParts);
     for(int i = 0 ; i < filePaths.size(); i++)
     {
         // Non-indexed file paths are relative to the DB directory
