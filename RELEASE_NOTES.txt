@@ -13,6 +13,8 @@ MUSICardio 4.1:
 - Pipelines: add a script version number to pipelines.
 - Histogram Analysis: fix problems/crashs with the Ventricle Max algo and its popup.
 - New documentation website: https://mds-data.ihu-liryc.fr/tools/musicardio
+- Save last current paths in some dialog widget to open or export data.
+- Add new workspace to view and export EP maps.
 
 MUSICardio 4.0.7:
 - PolygonROI:
