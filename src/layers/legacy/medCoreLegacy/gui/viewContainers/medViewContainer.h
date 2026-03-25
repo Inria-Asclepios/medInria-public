@@ -115,6 +115,9 @@ public slots:
     QString saveScene();
     void loadScene();
 
+    QString getDefaultImportFolder();
+    void setDefaultImportFolder(QString path);
+
 signals:
     void maximized(QUuid uuid, bool maximized);
     void maximized(bool maximized);

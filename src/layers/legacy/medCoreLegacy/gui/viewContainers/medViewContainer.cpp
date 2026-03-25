@@ -334,7 +334,9 @@ void medViewContainer::createdDefaultWidget()
     d->defaultWidget->setObjectName("defaultWidget");
     QLabel *defaultLabel = new QLabel(tr("Drag'n drop series/study here from the left panel or:"));
     QPushButton *openButton  = new QPushButton(tr("Open a file from your system"));
+    openButton->setObjectName("openButton");
     QPushButton *sceneButton = new QPushButton(tr("Open a scene from your system"));
+    sceneButton->setObjectName("sceneButton");
     QVBoxLayout *defaultLayout = new QVBoxLayout(d->defaultWidget);
     defaultLayout->addWidget(defaultLabel);
     defaultLayout->addWidget(openButton);
@@ -974,23 +976,16 @@ void medViewContainer::closeEvent(QCloseEvent * /*event*/)
 
 void medViewContainer::openFromSystem()
 {
-    //  get last directory opened in settings.
-    QString path;
-    QFileDialog dialog(this);
+    QString fileName = QFileDialog::getOpenFileName(this,
+                                                    tr("Open File"),
+                                                    getDefaultImportFolder());
 
-    dialog.setFileMode(QFileDialog::ExistingFile);
-    dialog.setViewMode(QFileDialog::Detail);
-    dialog.restoreState(medSettingsManager::instance().value("state", "openFromSystem").toByteArray());
-    dialog.restoreGeometry(medSettingsManager::instance().value("geometry", "openFromSystem").toByteArray());
-    if(dialog.exec())
-        path = dialog.selectedFiles().first();
-
-    medSettingsManager::instance().setValue("state", "openFromSystem", dialog.saveState());
-    medSettingsManager::instance().setValue("geometry", "openFromSystem", dialog.saveGeometry());
-
-    if (!path.isEmpty())
+    QFile file(fileName);
+    QFileInfo fileInfo(file);
+    if(file.open(QIODevice::ReadOnly))
     {
-        open(path);
+        setDefaultImportFolder(fileInfo.absoluteDir().absolutePath());
+        open(fileName);
     }
 }
 
@@ -1004,9 +999,6 @@ void medViewContainer::open(const QString & path)
     QEventLoop loop;
     connect(this, SIGNAL(importFinished()), &loop, SLOT(quit()), Qt::UniqueConnection);
     loop.exec();
-
-    //  save last directory opened in settings.
-    medSettingsManager::instance().setValue("path", "medViewContainer", path);
 }
 
 void medViewContainer::open_waitForImportedSignal(medDataIndex index, QUuid uuid)
@@ -1195,14 +1187,16 @@ QString medViewContainer::saveScene()
 {
     QString dirPath = QFileDialog::getExistingDirectory(this, 
                                                         tr("Open Directory"),
-                                                        QDir::homePath(),
+                                                        getDefaultImportFolder(),
                                                         QFileDialog::ShowDirsOnly | QFileDialog::DontResolveSymlinks);
     
     if (dirPath.isEmpty())
     {
         return QString();
     }
-    
+
+    setDefaultImportFolder(dirPath);
+
     QDir workingDir(dirPath);
     QDomDocument doc("xml");
     QDomElement root = doc.createElement("scene");
@@ -1265,14 +1259,16 @@ void medViewContainer::loadScene()
 {
     // Parsing the XML file describing the scene
     QString fileName = QFileDialog::getOpenFileName(this, 
-                                                    tr("Open File"),
-                                                    QDir::homePath(),
+                                                    tr("Open Scene"),
+                                                    getDefaultImportFolder(),
                                                     tr("XML files (*.xml)"));
     QFile file(fileName);
     QFileInfo fileInfo(file);
     QDir workingDir = fileInfo.dir();
     if(file.open(QIODevice::ReadOnly))
     {
+        setDefaultImportFolder(fileInfo.absoluteDir().absolutePath());
+
         QDomDocument doc("xml");
         if(doc.setContent(&file))
         {
@@ -1317,19 +1313,19 @@ void medViewContainer::loadScene()
                 }
                 else
                 {
-                     displayMessageError("Failed to parse " + fileName);
-                     return;
+                    displayMessageError("Failed to parse " + fileName);
+                    return;
                 }
             }
         }
         else
         {
-             displayMessageError("Failed to parse " + fileName);
+            displayMessageError("Failed to parse " + fileName);
         }
     }
     else
     {
-         displayMessageError("Failed to open file " + fileName);
+        displayMessageError("Failed to open file " + fileName);
     }
 }
 
@@ -1342,4 +1338,27 @@ void medViewContainer::displayMessageError(QString message)
 {
     printInConsole(message);
     medMessageController::instance().showError(message, 3000);
+}
+
+/**
+ * Get the last saved QFileDialog location to open or save data, chosen by users
+ */
+QString medViewContainer::getDefaultImportFolder()
+{
+    QString defaultPath = medSettingsManager::instance().value("medViewContainer", "default_import_path").toString();
+
+    if (defaultPath.isEmpty())
+    {
+        defaultPath = QStandardPaths::writableLocation(QStandardPaths::HomeLocation);
+    }
+
+    return defaultPath;
+}
+
+/**
+ * Save the QFileDialog location. The location stays even after an application reboot
+ */
+void medViewContainer::setDefaultImportFolder(QString path)
+{
+    medSettingsManager::instance().setValue("medViewContainer", "default_import_path", path);
 }
