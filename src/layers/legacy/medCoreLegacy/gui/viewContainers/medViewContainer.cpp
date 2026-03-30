@@ -334,9 +334,9 @@ void medViewContainer::createdDefaultWidget()
     d->defaultWidget->setObjectName("defaultWidget");
     QLabel *defaultLabel = new QLabel(tr("Drag'n drop series/study here from the left panel or:"));
     defaultLabel->setObjectName("defaultLabel");
-    QPushButton *openButton  = new QPushButton(tr("Open a file from your system"));
+    QPushButton *openButton  = new QPushButton(tr(" Open a file from your system "));
     openButton->setObjectName("openButton");
-    QPushButton *sceneButton = new QPushButton(tr("Open a scene from your system"));
+    QPushButton *sceneButton = new QPushButton(tr(" Open a scene from your system "));
     sceneButton->setObjectName("sceneButton");
     QVBoxLayout *defaultLayout = new QVBoxLayout(d->defaultWidget);
     defaultLayout->addWidget(defaultLabel);
