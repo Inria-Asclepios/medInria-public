@@ -21,7 +21,7 @@ option(USE_OSPRay "Use OSPRay for CPU VR" OFF )
 
 option(USE_Python "Build with Python support" ON)
 
-option(USE_MUSIC_PLUGINS "Build MUSIC plugins" ON)
+option(USE_MUSIC_PLUGINS "Build MUSICardio plugins" ON)
 
 option(USE_RealTimeWorkspace "Build the real time workspace and linked externals libraries" OFF)
 
@@ -50,12 +50,16 @@ find_package(Boost REQUIRED)
 
 if(USE_Python AND UNIX)
     if(APPLE)
-        set(default_root_dir "/usr/local/opt/openssl")
+        if(CMAKE_SYSTEM_PROCESSOR STREQUAL "arm64")
+            set(default_root_dir "/opt/homebrew/opt/openssl") # macOS Apple ship (M1/M2/M3...)
+        else()
+            set(default_root_dir "/usr/local/opt/openssl") # macOS Intel
+        endif()
     else()
         set(default_root_dir)
     endif()
     set(OPENSSL_ROOT_DIR ${default_root_dir} CACHE PATH "Root directory of OpenSSL.")
-    find_package(OpenSSL COMPONENTS SSL)
+    find_package(OpenSSL COMPONENTS SSL REQUIRED)
 endif()
 
 if(USE_MUSIC_PLUGINS)
@@ -94,16 +98,16 @@ if (USE_Python)
 endif()
 
 list(APPEND external_projects
-  ZLIB
-  VTK
-  ITK
-  RPI
-  TTK
-  DCMTK
-  QtDCM
-  dtk
-  LogDemons
-  )
+    ZLIB
+    VTK
+    ITK
+    RPI
+    TTK
+    DCMTK
+    QtDCM
+    dtk
+    LogDemons
+    )
 
 if(USE_MUSIC_PLUGINS)
     list(APPEND external_projects

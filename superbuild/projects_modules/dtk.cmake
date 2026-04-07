@@ -43,7 +43,6 @@ if (NOT USE_SYSTEM_${ep})
 set(git_url ${GITLAB_INRIA_PREFIX}dtk/dtk.git)
 set(git_tag 1.7.1)
 
-
 ## #############################################################################
 ## Add specific cmake arguments for configuration step of the project
 ## #############################################################################
@@ -100,6 +99,9 @@ ExternalProject_Add(${ep}
   
   GIT_REPOSITORY ${git_url}
   GIT_TAG ${git_tag}
+  GIT_SHALLOW True
+  GIT_PROGRESS True
+
   CMAKE_GENERATOR ${gen}
   CMAKE_GENERATOR_PLATFORM ${CMAKE_GENERATOR_PLATFORM}
   CMAKE_ARGS ${cmake_args}
