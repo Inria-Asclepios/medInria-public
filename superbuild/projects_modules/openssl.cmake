@@ -24,6 +24,7 @@ set(ep openssl)
 list(APPEND ${ep}_dependencies
   ""
   )
+
 ## #############################################################################
 ## Prepare the project
 ## ############################################################################# 
@@ -74,7 +75,7 @@ if (WIN32)
 ExternalProject_Add(${ep}
     PREFIX ${EP_PATH_SOURCE}
     SOURCE_DIR ${EP_PATH_SOURCE}/${ep}
-    BINARY_DIR ${build_path}/realBuild
+    BINARY_DIR ${build_path}
     TMP_DIR ${tmp_path}
     STAMP_DIR ${stamp_path}
 
@@ -91,7 +92,7 @@ else()
   ExternalProject_Add(${ep}
     PREFIX ${EP_PATH_SOURCE}
     SOURCE_DIR ${EP_PATH_SOURCE}/${ep}
-    BINARY_DIR ${build_path}/realBuild
+    BINARY_DIR ${build_path}
     TMP_DIR ${tmp_path}
     STAMP_DIR ${stamp_path}
 
@@ -100,7 +101,7 @@ else()
     CMAKE_ARGS ${cmake_args}
     UPDATE_COMMAND ""
     DEPENDS ${${ep}_dependencies}
-    CONFIGURE_COMMAND ${EP_PATH_SOURCE}/${ep}/config no-zlib no-tests no-shared --prefix=${build_path} --openssldir=${build_path} 
+    CONFIGURE_COMMAND ${EP_PATH_SOURCE}/${ep}/config no-zlib no-tests no-shared --prefix=${build_path} --openssldir=${build_path}
     BUILD_COMMAND ${CMAKE_MAKE_PROGRAM} install_sw
     INSTALL_COMMAND ""
   )

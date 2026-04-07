@@ -11,9 +11,9 @@
 #
 ################################################################################
 
-set(PYTHON_VERSION_MAJOR 3 CACHE STRING "Python major version")
-set(PYTHON_VERSION_MINOR 10 CACHE STRING "Python minor version")
-set(PYTHON_VERSION_PATCH 10 CACHE STRING "Python patch version")
+set(PYTHON_VERSION_MAJOR 3  CACHE STRING "Python major version")
+set(PYTHON_VERSION_MINOR 14 CACHE STRING "Python minor version")
+set(PYTHON_VERSION_PATCH 3  CACHE STRING "Python patch version")
 
 function(pyncpp_project)
 
@@ -29,12 +29,8 @@ function(pyncpp_project)
 
         epComputPath(${ep})
 
-        set(project_args
-            GIT_REPOSITORY ${GITHUB_PREFIX}LIRYC-IHU/pyncpp.git
-            GIT_TAG working
-            GIT_SHALLOW True
-            GIT_PROGRESS True
-            )
+        set(git_url ${GITHUB_PREFIX}LIRYC-IHU/pyncpp.git)
+        set(git_tag working)
 
         set(cmake_args
             ${ep_common_cache_args}
@@ -61,10 +57,15 @@ function(pyncpp_project)
             BINARY_DIR ${build_path}
             TMP_DIR ${tmp_path}
             STAMP_DIR ${stamp_path}
+
+            GIT_REPOSITORY ${git_url}
+            GIT_TAG ${git_tag}
+            GIT_SHALLOW True
+            GIT_PROGRESS True
+
             DEPENDS ${${ep}_dependencies}
             CMAKE_ARGS ${cmake_args}
             INSTALL_COMMAND ""
-            "${project_args}"
             )
 
         ## #####################################################################

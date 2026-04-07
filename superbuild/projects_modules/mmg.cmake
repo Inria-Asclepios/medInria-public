@@ -64,13 +64,17 @@ ExternalProject_Add(${ep}
   INSTALL_DIR ${build_path}/install
   TMP_DIR ${tmp_path}
   STAMP_DIR ${stamp_path}
+
   GIT_REPOSITORY ${git_url}
   GIT_TAG ${git_tag}
+  GIT_SHALLOW True
+  GIT_PROGRESS True
+  PATCH_COMMAND ${${ep}_PATCH_COMMAND}
+
   CMAKE_GENERATOR ${gen}
   CMAKE_GENERATOR_PLATFORM ${CMAKE_GENERATOR_PLATFORM}
   CMAKE_ARGS ${cmake_args}
   DEPENDS ${${ep}_dependencies}
-  PATCH_COMMAND ${${ep}_PATCH_COMMAND}
   UPDATE_COMMAND ""
   )
 
