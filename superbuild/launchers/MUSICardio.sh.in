@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/usr/bin/env bash
 
 usage() {
     local ret="$1"
@@ -20,7 +20,11 @@ if [ "$1" == "--prefix" ]; then
 fi
 
 if [ "$1" == "--debug" ]; then
-    med_prefix="gdb --args"
+    case "$OSTYPE" in
+        linux*)   med_prefix="gdb --args" ;;
+        darwin*)  med_prefix="lldb" ;;
+        *)        echo "unknown: $OSTYPE" ;;
+    esac
 fi
 
 #   Locate the directory containing this script.

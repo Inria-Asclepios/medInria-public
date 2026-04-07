@@ -74,11 +74,10 @@ set(cmake_args
   -DVTK_BUILD_TESTING=OFF
   -DVTK_BUILD_DOCUMENTATION=OFF
   -DVTK_BUILD_EXAMPLES=OFF
-  -DVTK_RENDERING_BACKEND=OpenGL2
   -DVTK_QT_VERSION=5
   -DVTK_MODULE_ENABLE_VTK_GUISupportQt=YES
   -DVTK_MODULE_ENABLE_VTK_RenderingQt=YES
-  -DVTK_USE_OGGTHEORA_ENCODER:BOOL=ON
+  -DVTK_MODULE_ENABLE_VTK_IOOggTheora:BOOL=YES
   )
 
 set(cmake_cache_args
@@ -129,24 +128,25 @@ endif()
 
 if(USE_Python)
     if(UNIX)
-        set(python_version "${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}")
+        set(python_version    "${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}")
+        set(python_root       "${pyncpp_ROOT}/lib/python${python_version}")
         set(python_executable "${pyncpp_ROOT}/lib/python${python_version}/bin/python${python_version}")
-        set(python_include "${pyncpp_ROOT}/lib/python${python_version}/include/python${python_version}")
-        set(python_library "${pyncpp_ROOT}/lib/python${python_version}/lib/libpython${python_version}${CMAKE_SHARED_LIBRARY_SUFFIX}")
+        set(python_include    "${pyncpp_ROOT}/lib/python${python_version}/include/python${python_version}")
+        set(python_library    "${pyncpp_ROOT}/lib/python${python_version}/lib/libpython${python_version}${CMAKE_SHARED_LIBRARY_SUFFIX}")
     else()
-        set(python_version "${PYTHON_VERSION_MAJOR}${PYTHON_VERSION_MINOR}")
+        set(python_version    "${PYTHON_VERSION_MAJOR}${PYTHON_VERSION_MINOR}")
+        set(python_root       "${pyncpp_ROOT}/python${python_version}")
         set(python_executable "${pyncpp_ROOT}/python${python_version}/pythonw$<$<CONFIG:Debug>:_d>.exe")
-        set(python_include "${pyncpp_ROOT}/python${python_version}/include")
-        set(python_library "${pyncpp_ROOT}/python${python_version}/libs/python${python_version}$<$<CONFIG:Debug>:_d>.lib")
+        set(python_include    "${pyncpp_ROOT}/python${python_version}/include")
+        set(python_library    "${pyncpp_ROOT}/python${python_version}/libs/python${python_version}$<$<CONFIG:Debug>:_d>.lib")
     endif()
     list(APPEND cmake_args
         -DVTK_WRAP_PYTHON:BOOL=ON
-        -DModule_vtkPython:BOOL=ON
-        -DModule_vtkWrappingTools:BOOL=ON
         -DVTK_PYTHON_VERSION:STRING=${PYTHON_VERSION_MAJOR}
-        -DPYTHON_EXECUTABLE:PATH=${python_executable}
-        -DPYTHON_INCLUDE_DIR:PATH=${python_include}
-        -DPYTHON_LIBRARY:PATH=${python_library}
+        -DPython3_EXECUTABLE:PATH=${python_executable}
+        -DPython3_INCLUDE_DIR:PATH=${python_include}
+        -DPython3_LIBRARY:PATH=${python_library}
+        -DPython3_ROOT_DIR:PATH=${python_root}
         )
 endif()
 
@@ -171,7 +171,10 @@ ExternalProject_Add(${ep}
   
   GIT_REPOSITORY ${git_url}
   GIT_TAG ${git_tag}
+  GIT_SHALLOW True
+  GIT_PROGRESS True
   PATCH_COMMAND ${${ep}_PATCH_COMMAND}
+
   CMAKE_GENERATOR ${gen}
   CMAKE_GENERATOR_PLATFORM ${CMAKE_GENERATOR_PLATFORM}
   CMAKE_ARGS ${cmake_args}
