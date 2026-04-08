@@ -142,7 +142,6 @@ if(USE_Python)
     endif()
     list(APPEND cmake_args
         -DVTK_WRAP_PYTHON:BOOL=ON
-        -DVTK_PYTHON_VERSION:STRING=${PYTHON_VERSION_MAJOR}
         -DPython3_EXECUTABLE:PATH=${python_executable}
         -DPython3_INCLUDE_DIR:PATH=${python_include}
         -DPython3_LIBRARY:PATH=${python_library}
