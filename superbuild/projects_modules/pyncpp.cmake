@@ -68,6 +68,20 @@ function(pyncpp_project)
             INSTALL_COMMAND ""
             )
 
+        # Install setuptools needed for Python > 3.12
+        if(WIN32)
+            ExternalProject_Get_Property(${ep} BINARY_DIR)
+
+            set(PYTHON_EXE "${BINARY_DIR}/python${PYTHON_VERSION_MAJOR}${PYTHON_VERSION_MINOR}/python.exe")
+
+            ExternalProject_Add_Step(${ep} install_setuptools
+                COMMAND ${PYTHON_EXE} -m ensurepip --upgrade
+                COMMAND ${PYTHON_EXE} -m pip install --upgrade pip setuptools wheel
+                DEPENDEES install
+                COMMENT "Installing setuptools for Python ${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}"
+            )
+        endif()
+
         ## #####################################################################
         ## Export variables
         ## #####################################################################
