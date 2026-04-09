@@ -28,7 +28,6 @@ if [ "$1" == "--debug" ]; then
 fi
 
 #   Locate the directory containing this script.
-
 MEDINRIA_DIR="@MEDINRIA_DIR@"
 MEDINRIA_BIN="@MEDINRIA_BIN@"
 
@@ -38,5 +37,4 @@ export MEDINRIA_PLUGINS_DIR_LEGACY="@MEDINRIA_PLUGINS_LEGACY_DIRS@"
 export LD_LIBRARY_PATH=${MEDINRIA_DIR}/lib:${MEDINRIA_DIR}/lib64:${MEDINRIA_DIR}/plugins_legacy:$LD_LIBRARY_PATH
 
 #   Call medInria
-
 exec ${med_prefix} "${MEDINRIA_BIN}" $*
