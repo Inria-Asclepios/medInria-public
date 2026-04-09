@@ -32,54 +32,41 @@ execute_process(COMMAND arch
 set(CPACK_PACKAGE_FILE_NAME 
     "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-${DISTRIBUTOR_ID}_${RELEASE}-${ARCH}")
  
-# Set the right package generator
-
-set(CPACK_GENERATOR DEB)
-if(${DISTRIBUTOR_ID} MATCHES fc|fedora|Fedora|Centos|centos|SUSE|Suse|suse)
-    set(CPACK_GENERATOR RPM)
-endif()
-
-# For the 3.0 release, disable RPM/DEB as we're too far behind Ubuntu/Fedora
-# releases on the build farm, will re-enable if we ever manage to get up to date
-
 set(CPACK_GENERATOR "ZIP")
 
 # Remember the linux packaging source dir
-
 set(CURRENT_SRC_DIR ${PROJECT_SOURCE_DIR}/linux)
 set(CURRENT_BIN_DIR ${PROJECT_BINARY_DIR}/linux)
 
 # Generate CPACK_PROJECT_CONFIG_FILE
-
 configure_file(${CURRENT_SRC_DIR}/GeneratorConfig.cmake.in
                ${CURRENT_BIN_DIR}/GeneratorConfig.cmake
                @ONLY)
 set(CPACK_PROJECT_CONFIG_FILE ${CURRENT_BIN_DIR}/GeneratorConfig.cmake)
 
-# Set directory where the package will be installed
-
-set (CPACK_PACKAGING_INSTALL_PREFIX /usr/local/MUSICardio CACHE STRING "Prefix where the package will be installed")
-mark_as_advanced(CPACK_PACKAGING_INSTALL_PREFIX) 
-
 # Add postinst and prerm script
- 
 configure_file(${CURRENT_SRC_DIR}/postinst.in ${CURRENT_BIN_DIR}/postinst)
 configure_file(${CURRENT_SRC_DIR}/prerm.in    ${CURRENT_BIN_DIR}/prerm)
 
-# include settings specific to DEB and RPM
+# Generate desktop file
+configure_file(${CURRENT_SRC_DIR}/MUSICardio.desktop.in ${CURRENT_BIN_DIR}/MUSICardio.desktop @ONLY)
+install(FILES ${CURRENT_BIN_DIR}/MUSICardio.desktop DESTINATION .)
 
-include(${CURRENT_SRC_DIR}/RPM.cmake)
-include(${CURRENT_SRC_DIR}/DEB.cmake)
+# Add application icon
+set(ICON_SOURCE ${PROJECT_SOURCE_DIR}/../src/app/medInria/resources/MUSICardio_logo_small_light.png)
+install(FILES ${ICON_SOURCE} DESTINATION . RENAME musicardio.png)
 
-# Generate desktop file.
+# Create a small README for the package
+file(WRITE ${CURRENT_BIN_DIR}/README.txt "MUSICardio
 
-configure_file(${CURRENT_SRC_DIR}/medInria.desktop.in ${CURRENT_BIN_DIR}/medInria.desktop @ONLY)
-install(FILES ${CURRENT_BIN_DIR}/medInria.desktop
-        DESTINATION share/applications)
+How to run:
+  ./bin/MUSICardio.sh
 
-# Add project to package
+More info on https://mds-data.ihu-liryc.fr/tools/musicardio
+")
+install(FILES ${CURRENT_BIN_DIR}/README.txt DESTINATION .)
 
-# save the medinria-packaging install target to add it last
+# Save the medinria-packaging install target to add it last
 set(backup_CPACK_INSTALL_CMAKE_PROJECTS ${CPACK_INSTALL_CMAKE_PROJECTS})
 
 # Add libraries to package directory
