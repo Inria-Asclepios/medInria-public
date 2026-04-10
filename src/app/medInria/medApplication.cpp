@@ -135,7 +135,12 @@ medApplication::medApplication(int & argc, char**argv) :
         qssFile = ":/music_light.qss";
         break;
     }
-    this->setWindowIcon(QIcon(":MUSICardio_logo_small_light.png"));
+    #ifdef Q_OS_MAC
+        this->setWindowIcon(QIcon(":/MUSICardio.icns"));
+    #else
+        this->setWindowIcon(QIcon(":MUSICardio_logo_small_light.png"));
+    #endif
+
     medStyleSheetParser parser(dtkReadFile(qssFile));
     this->setStyleSheet(parser.result());
 
