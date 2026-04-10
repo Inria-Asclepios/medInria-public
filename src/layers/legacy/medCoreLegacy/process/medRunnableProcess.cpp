@@ -31,6 +31,10 @@ medRunnableProcess::medRunnableProcess(void): medJobItemL(), d (new medRunnableP
 
 medRunnableProcess::~medRunnableProcess()
 {
+    blockSignals(true);
+    this->disconnect();
+    QCoreApplication::removePostedEvents(this);
+
     delete d;
     d = nullptr;
 }
@@ -87,10 +91,13 @@ void medRunnableProcess::onFailure()
     emit failure (this);
 }
 
-void medRunnableProcess::onProgressed (int value)
+void medRunnableProcess::onProgressed(int value)
 {
-    emit activate (this, false);
-    emit progress (this, value);
+    if (signalsBlocked())
+    {
+        emit activate(this, false);
+        emit progress(this, value);
+    }
 }
 
 /**
