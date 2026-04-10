@@ -15,12 +15,15 @@
 
 medJobItemL::medJobItemL() : QRunnable()
 {
-    connect(this, SIGNAL(progress(QObject*, int)), this, SLOT(onProgress(QObject*, int)));
+    connect(this, SIGNAL(progress(QObject*, int)),
+            this, SLOT(onProgress(QObject*, int)));
 }
 
 medJobItemL::~medJobItemL()
 {
-
+    blockSignals(true);
+    this->disconnect();
+    QCoreApplication::removePostedEvents(this);
 }
 
 void medJobItemL::run()
@@ -56,7 +59,9 @@ void medJobItemL::onCancel( QObject* )
 
 void medJobItemL::onProgress( QObject* sender, int prog )
 {
-    Q_UNUSED(sender);
-    emit progressed(prog);
+    if (sender)
+    {
+        emit progressed(prog);
+    }
 }
 
