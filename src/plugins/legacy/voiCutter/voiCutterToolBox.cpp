@@ -239,11 +239,12 @@ void voiCutterToolBox::updateView()
         }
 
         // Automatic display of mask in 3D
-        if (!d->orientation3DParam->value()) // data on 2D mode
+        if (!d->orientation3DParam->value() ||
+            (d->mode3DParam->value() != "VR" )) // data on 2D mode or 3D non-VR
         {
-            activateButtons(true);
             switchToVR(true); // adjust the data view.
         }
+        activateButtons(true);
 
         connect(view, SIGNAL(closed()), this, SLOT(onViewClosed()), Qt::UniqueConnection);
         connect(d->currentView, SIGNAL(orientationChanged()), this, SLOT(adaptWidgetsToOrientationChange()), Qt::UniqueConnection);
