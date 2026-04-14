@@ -254,5 +254,10 @@ template <class ImageType, class ImageType2> int medBinaryOperatorBase::runProce
 
 medAbstractData * medBinaryOperatorBase::output()
 {
-    return m_output;
+    if (m_output)
+    {
+        m_output->retain();
+        return m_output;
+    }
+    return nullptr;
 }

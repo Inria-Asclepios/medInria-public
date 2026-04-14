@@ -267,7 +267,12 @@ int medCreateMeshFromMask::update()
 
 medAbstractData * medCreateMeshFromMask::output()
 {
-    return d->output;
+    if (d->output)
+    {
+        d->output->retain();
+        return d->output;
+    }
+    return nullptr;
 }
 
 int medCreateMeshFromMask::getNumberOfTriangles()
