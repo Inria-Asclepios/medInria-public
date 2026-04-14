@@ -1,6 +1,6 @@
 MUSICardio 4.1:
 - Switch to VTK "v9.3.1", ITK "v5.4.5", Qt "5.15", libarchive "v3.8.5", xz "v5.8.1", RPI "V2.0.0", DCMTK "DCMTK-3.6.9", QtDCM "DCMTK-3.6.9", mmg "v5.8.0", qwt "v6.3.0", ZLIB "v1.3.1.2"
-- Compatibility with Ubuntu 24, macOS 14 and 15 (Intel or Apple chip), Fedora 37 and still Windows 10.
+- Compatibility with Ubuntu 24, macOS 15 and 26 (Intel or Apple chip), Fedora 40 and still Windows 10.
 - macOS DMGs are locally signed.
 - Update the default expiration duration of binary from 12 to 24 months.
 - DICOM reader has been updated to be more robust.
@@ -15,6 +15,7 @@ MUSICardio 4.1:
 - New documentation website: https://mds-data.ihu-liryc.fr/tools/musicardio
 - Save last current paths in some dialog widget to open or export data.
 - Add new workspace to view and export EP maps.
+- Fix memory errors with outputs from processes in Pipelines
 
 MUSICardio 4.0.7:
 - PolygonROI:
