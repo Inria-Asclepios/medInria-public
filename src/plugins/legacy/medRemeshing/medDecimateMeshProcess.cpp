@@ -193,7 +193,12 @@ int medDecimateMeshProcess::update()
 
 medAbstractData * medDecimateMeshProcess::output()
 {
-    return d->output;
+    if (d->output)
+    {
+        d->output->retain();
+        return d->output;
+    }
+    return nullptr;
 }
 
 // /////////////////////////////////////////////////////////////////
