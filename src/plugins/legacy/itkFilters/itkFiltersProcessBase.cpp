@@ -59,8 +59,13 @@ void itkFiltersProcessBase::setInput(medAbstractData *data, int channel)
 }
 
 medAbstractData * itkFiltersProcessBase::output()
-{   
-    return d->outputData;
+{
+    if (d->outputData)
+    {
+        d->outputData->retain();
+        return d->outputData;
+    }
+    return nullptr;
 }
 
 int itkFiltersProcessBase::update()

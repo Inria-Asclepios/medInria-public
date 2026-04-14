@@ -23,10 +23,25 @@
 #include <vtkPointData.h>
 #include <vtkPolyData.h>
 
-medAbstractData* medUtilitiesVTK::changeMaxNumberOfMeshTriangles(medAbstractData *mesh, int maxNumber)
+medAbstractData *medUtilitiesVTK::changeMaxNumberOfMeshTriangles(medAbstractData *mesh, int maxNumber)
 {
-    vtkMetaDataSet * dataset = reinterpret_cast<vtkMetaDataSet*>(mesh->data());
-    vtkPolyData * polydata = dynamic_cast<vtkPolyData*>(dataset->GetDataSet());
+    if (!mesh || !mesh->data())
+    {
+        qWarning() << "Error in changeMaxNumberOfMeshTriangles: invalid mesh input";
+        return mesh;
+    }
+    vtkMetaDataSet* dataset = reinterpret_cast<vtkMetaDataSet*>(mesh->data());
+    if (!dataset)
+    {
+        qWarning() << "Error in changeMaxNumberOfMeshTriangles: invalid dataset";
+        return mesh;
+    }
+    vtkPolyData* polydata = dynamic_cast<vtkPolyData*>(dataset->GetDataSet());
+    if (!polydata)
+    {
+        qWarning() << "Error in changeMaxNumberOfMeshTriangles: not a vtkPolyData";
+        return mesh;
+    }
 
     int initialNumber = polydata->GetNumberOfPolys();
 
@@ -34,11 +49,11 @@ medAbstractData* medUtilitiesVTK::changeMaxNumberOfMeshTriangles(medAbstractData
     {
         double decimateValue = 1.0 - (double)maxNumber/(double)initialNumber;
 
-        dtkSmartPointer<medAbstractProcessLegacy> process = dtkAbstractProcessFactory::instance()->createSmartPointer("medDecimateMeshProcess");
+        dtkSmartPointer<medAbstractProcessLegacy> process
+            = dtkAbstractProcessFactory::instance()->createSmartPointer("medDecimateMeshProcess");
         process->setInput(mesh);
-        process->setParameter(decimateValue);
+        process->setParameter(decimateValue, 0);
         process->update();
-
         return process->output();
     }
     return mesh;

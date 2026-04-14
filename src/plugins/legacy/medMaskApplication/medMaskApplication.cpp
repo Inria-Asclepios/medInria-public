@@ -260,7 +260,12 @@ int medMaskApplication::updateMaskType()
 
 medAbstractData * medMaskApplication::output()
 {
-    return d->output;
+    if (d->output)
+    {
+        d->output->retain();
+        return d->output;
+    }
+    return nullptr;
 }
 
 // /////////////////////////////////////////////////////////////////

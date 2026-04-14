@@ -35,8 +35,8 @@ public:
     {
         parent = p;
     }
-    medAbstractData* input;
-    medAbstractData* output;
+    dtkSmartPointer <medAbstractData> input;
+    dtkSmartPointer <medAbstractData> output;
     int interpolator;
     int dimX, dimY, dimZ;
     double spacingX, spacingY, spacingZ;
@@ -184,7 +184,12 @@ int resampleProcess::resample(medAbstractData* inputData)
 
 medAbstractData * resampleProcess::output ( void )
 {
-    return d->output;
+    if (d->output)
+    {
+        d->output->retain();
+        return d->output;
+    }
+    return nullptr;
 }
 
 // /////////////////////////////////////////////////////////////////
