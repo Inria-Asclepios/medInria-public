@@ -56,13 +56,21 @@ public:
         {
             case vtkResliceCursorWidget::ResliceAxesChangedEvent:
             {
+                // Called when the user moves manually the axes
                 reformatViewer->ensureOrthogonalPlanes();
                 break;
             }
             case vtkResliceCursorWidget::ResetCursorEvent:
             {
+                // Called with 'o' to reset axes
                 reformatViewer->resetViews();
                 reformatViewer->applyRadiologicalConvention();
+                break;
+            }
+            case vtkCommand::ResetWindowLevelEvent:
+            {
+                // Called with 'r' to reset windowing
+                reformatViewer->resetViews();
                 break;
             }
         }
@@ -267,9 +275,9 @@ medResliceViewer::medResliceViewer(medAbstractView *view, QWidget *parent): medA
         cbk->RCW[i] = riw[i]->GetResliceCursorWidget();
 
         riw[i]->GetResliceCursorWidget()->AddObserver(vtkResliceCursorWidget::ResliceAxesChangedEvent, cbk);
-        riw[i]->GetResliceCursorWidget()->AddObserver(vtkResliceCursorWidget::WindowLevelEvent, cbk);
-        riw[i]->GetResliceCursorWidget()->AddObserver(vtkResliceCursorWidget::ResetCursorEvent, cbk);
-        riw[i]->GetInteractorStyle()->AddObserver(vtkCommand::WindowLevelEvent, cbk);
+        riw[i]->GetResliceCursorWidget()->AddObserver(vtkResliceCursorWidget::WindowLevelEvent, cbk); // update other view when changing windowing
+        riw[i]->GetResliceCursorWidget()->AddObserver(vtkResliceCursorWidget::ResetCursorEvent, cbk); // key 'o' reset axes
+        riw[i]->GetInteractorStyle()->AddObserver(vtkCommand::ResetWindowLevelEvent, cbk); // key 'r' reset windowing
         riw[i]->AddObserver(vtkResliceImageViewer::SliceChangedEvent, cbk);
 
         // Make them all share the same color map.
@@ -466,6 +474,9 @@ void medResliceViewer::extentChanged(int val)
     }
 }
 
+/**
+ * Display the selected view with a colored background
+ */
 bool medResliceViewer::eventFilter(QObject *object, QEvent *event)
 {
     if (!qobject_cast<QVTKOpenGLNativeWidget*>(object))
@@ -473,7 +484,7 @@ bool medResliceViewer::eventFilter(QObject *object, QEvent *event)
         return true;
     }
 
-    if (event->type() == QEvent::FocusIn)
+    if (event->type() == QEvent::MouseButtonRelease)
     {
         for(int i=0; i<3; i++)
         {
@@ -482,8 +493,10 @@ bool medResliceViewer::eventFilter(QObject *object, QEvent *event)
             {
                 selectedView = i;
             }
+            riw[i]->GetInteractor()->GetRenderWindow()->Render();
         }
         riw[selectedView]->GetRenderer()->SetBackground(0.3,0,0);
+        riw[selectedView]->GetInteractor()->GetRenderWindow()->Render();
     }
     
     return false;
