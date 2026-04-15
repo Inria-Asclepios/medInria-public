@@ -114,10 +114,11 @@ resliceToolBox::resliceToolBox (QWidget *parent) : medAbstractSelectableToolBox 
     d->helpBegin->setStyleSheet("font: italic");
     resliceToolBoxLayout->addWidget(d->helpBegin);
 
-    QLabel *help1 = new QLabel("To change the windowing left click on a 2D view.\n"
-                               "To reset axes in a view press 'o'.\n"
-                               "To reset windowing in a view press 'r'.\n"
-                                );
+    QLabel *help1 = new QLabel("Change the selected view: left click on a 2D view.\n"
+                               "Change the windowing: hold left click on a 2D view.\n"
+                               "Reset windowing in a view: press 'r'.\n"
+                               "Reset axes in a view: press 'o'."
+                              );
     help1->setStyleSheet("font: italic");
 
     d->reformatOptions = new QWidget();
