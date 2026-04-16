@@ -61,8 +61,9 @@ file(WRITE ${CURRENT_BIN_DIR}/README.txt "MUSICardio
 
 How to run:
   ./bin/MUSICardio.sh
+  or right-click 'Run as a program' on MUSICardio.sh.
 
-More info on https://mds-data.ihu-liryc.fr/tools/musicardio
+More info on https://mds.ihu-liryc.fr/musicardio
 ")
 install(FILES ${CURRENT_BIN_DIR}/README.txt DESTINATION .)
 
