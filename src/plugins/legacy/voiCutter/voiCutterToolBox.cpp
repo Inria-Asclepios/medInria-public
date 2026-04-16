@@ -48,6 +48,7 @@ public:
     medAbstractImageView *currentView;
     bool scissorOn;
     vtkCutterObserver *observer;
+    dtkSmartPointer<medAbstractData> originalData;
     dtkSmartPointer<medAbstractData> resultData;
     medAbstractData *input;
     unsigned int layerInput;
@@ -144,6 +145,7 @@ voiCutterToolBox::voiCutterToolBox(QWidget *parent) :
 
     d->scissorOn = false;
     d->currentView = nullptr;
+    d->originalData = nullptr;
     d->resultData = nullptr;
     d->input = nullptr;
     d->layerInput = 0;
@@ -271,6 +273,7 @@ void voiCutterToolBox::onViewClosed()
         d->scissorButton->click(); // Deactivate cut volume tool
     }
 
+    d->originalData = nullptr;
     d->resultData = nullptr;
     activateButtons(false);
 }
@@ -293,7 +296,9 @@ medAbstractData *voiCutterToolBox::processOutput()
     }
     else if (d->currentView)
     {
-        return d->currentView->layerData(d->currentView->currentLayer());
+        // Needed to keep the original data even after the closing of the view, after processOutput()
+        d->originalData = d->currentView->layerData(d->currentView->currentLayer())->clone();
+        return d->originalData;
     }
     return nullptr;
 }
