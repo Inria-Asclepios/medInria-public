@@ -522,7 +522,7 @@ void medHomepageArea::onShowInfo()
 
 void medHomepageArea::onShowHelp()
 {
-    QDesktopServices::openUrl(QUrl("https://mds-data.ihu-liryc.fr/tools/musicardio"));
+    QDesktopServices::openUrl(QUrl("https://mds.ihu-liryc.fr/musicardio"));
 }
 
 void medHomepageArea::onShowSettings()
