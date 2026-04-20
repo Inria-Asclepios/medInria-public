@@ -416,6 +416,7 @@ QWidget* medAbstractView::navigatorWidget()
         {
             navigatorLayout->addWidget(navigator->toolBoxWidget());
         }
+        navigatorLayout->setContentsMargins(10, 10, 10, 0);
     }
 
     return d->navigatorWidget;

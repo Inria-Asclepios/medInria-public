@@ -113,7 +113,6 @@ medVtkViewNavigator::medVtkViewNavigator(medAbstractView *parent) :
 
     d->orientationParameter = new medBoolGroupParameterL("Orientation", this);
     d->orientationParameter->setPushButtonDirection(QBoxLayout::LeftToRight);
-    d->orientationParameter->getLabel()->hide();
 
     d->oAxialParameter = new medBoolParameterL("axial", this);
     d->oAxialParameter->setIcon(QIcon(":/icons/AxialIcon.png"));
@@ -418,6 +417,9 @@ QWidget* medVtkViewNavigator::buildToolBoxWidget()
 {
     QWidget *toolBoxWidget = new QWidget;
 
+    auto orientationButtons = d->orientationParameter->getPushButtonGroup();
+    orientationButtons->layout()->setContentsMargins(0, 0, 0, 0);
+
     d->showOptionsWidget = new QWidget;
     QHBoxLayout* showOptionsLayout = new QHBoxLayout(d->showOptionsWidget);
     showOptionsLayout->addWidget(d->showAxesParameter->getCheckBox());
@@ -427,11 +429,13 @@ QWidget* medVtkViewNavigator::buildToolBoxWidget()
     showOptionsLayout->addWidget(d->showAnnotatedCubeParameter->getCheckBox());
     showOptionsLayout->setContentsMargins(0, 0, 0, 10);
 
+    auto timeButtons = timeLineParameter()->getWidget();
+    timeButtons->layout()->setContentsMargins(0, 0, 0, 0);
+
     QVBoxLayout* layout = new QVBoxLayout(toolBoxWidget);
-    layout->addWidget(d->orientationParameter->getLabel());
-    layout->addWidget(d->orientationParameter->getPushButtonGroup());
+    layout->addWidget(orientationButtons);
     layout->addWidget(d->showOptionsWidget);
-    layout->addWidget(this->timeLineParameter()->getWidget());
+    layout->addWidget(timeButtons);
     layout->setContentsMargins(0, 0, 0, 0);
 
     return toolBoxWidget;
