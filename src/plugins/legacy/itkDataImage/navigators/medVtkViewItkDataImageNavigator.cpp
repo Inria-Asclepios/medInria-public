@@ -350,6 +350,7 @@ QWidget *medVtkViewItkDataImageNavigator::buildToolBoxWidget()
         layout->addRow(parameter->getLabel(), parameter->getWidget());
     }
     toolBoxWidget->hide();
+    layout->setContentsMargins(0, 0, 0, 0);
     return toolBoxWidget;
 }
 
