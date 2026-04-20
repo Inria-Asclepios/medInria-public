@@ -672,7 +672,6 @@ bool medAbstractWorkspaceLegacy::isUserLayerClosable() const
     return d->userLayerClosable;
 }
 
-
 QWidget* medAbstractWorkspaceLegacy::buildViewLinkMenu()
 {
     QWidget *linkWidget = new QWidget;
