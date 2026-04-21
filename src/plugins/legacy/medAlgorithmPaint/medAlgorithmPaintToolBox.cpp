@@ -61,7 +61,6 @@ public:
     {
         m_paintState = m_cb->paintState();
         m_cb->m_applyButton->setDisabled(false);
-        m_cb->m_interpolateButton->setEnabled(true);
         m_cb->m_addButton->setEnabled(true);
         m_cb->m_eraseButton->setEnabled(true);
 
@@ -270,27 +269,54 @@ AlgorithmPaintToolBox::AlgorithmPaintToolBox(QWidget *parent ) :
 
     QVBoxLayout *layout = new QVBoxLayout(displayWidget);
 
-    m_strokeButton = new QPushButton( tr("Paint / Erase") );
-    m_strokeButton->setToolTip(tr("Left-click: Start painting with specified label.\nRight-click: Erase painted voxels."));
-    m_strokeButton->setCheckable(true);
-    m_strokeButton->setObjectName("paintButton");
+    // Tabs
+    tabWidget = new QTabWidget(displayWidget);
+    tabWidget->setObjectName("tabWidget");
+    tabWidget->setStyleSheet("QTabWidget {border: 2px solid #333333;}");
+    tabWidget->tabBar()->setStyleSheet("QTabBar::tab {border: 2px solid #333333; padding: 5px;}");
+    layout->addWidget(tabWidget);
 
-    m_interpolateButton = new QPushButton( tr("Interpolate") );
-    m_interpolateButton->setObjectName("Interpolate");
+    QWidget *tabHome = new QWidget();
+    tabWidget->addTab(tabHome, "Home");
+    QVBoxLayout *layoutHome  = new QVBoxLayout(tabHome);
 
-    m_magicWandButton = new QPushButton(tr("Magic Wand"));
-    m_magicWandButton->setObjectName("Magic Wand");
-    QPixmap pixmap(":medSegmentation/pixmaps/magic_wand.png");
-    QIcon buttonIcon(pixmap);
-    m_magicWandButton->setIcon(buttonIcon);
-    m_magicWandButton->setToolTip(tr("Magic wand to automatically paint similar voxels."));
-    m_magicWandButton->setCheckable(true);
+    QWidget *tabPaint = new QWidget();
+    tabWidget->addTab(tabPaint, "Paint/Erase");
+    QVBoxLayout *layoutPaint = new QVBoxLayout(tabPaint);
 
-    QHBoxLayout *ButtonLayout = new QHBoxLayout();
-    ButtonLayout->addWidget( m_strokeButton );
-    ButtonLayout->addWidget( m_magicWandButton );
-    ButtonLayout->addWidget( m_interpolateButton );
-    layout->addLayout( ButtonLayout );
+    QWidget *tabWand  = new QWidget();
+    tabWidget->addTab(tabWand,  "Magic Wand");
+    QVBoxLayout *layoutWand  = new QVBoxLayout(tabWand);
+
+    tabWidget->tabBar()->setTabEnabled(1, false);
+    tabWidget->tabBar()->setTabEnabled(2, false);
+
+    connect(tabWidget, &QTabWidget::currentChanged, this, [this](int index) {
+        if (index == 0)
+        {
+            activateStroke(false);
+        }
+        else if (index == 1)
+        {
+            activateStroke(true);
+        }
+        else if (index == 2)
+        {
+            activateMagicWand(true);
+        }
+    });
+
+    // Home tab
+    auto homeLabel = new QLabel(
+            tr("Add a data in the view then choose the painting mode.<br><br>"
+            "<b>Paint/Erase:</b><br>"
+            "&nbsp;&nbsp;&nbsp;- Left-click to paint with labels<br>"
+            "&nbsp;&nbsp;&nbsp;- Right-click to erase<br><br>"
+            "<b>Magic Wand:</b> segment with region growing.")
+        );
+    homeLabel->setWordWrap(true);
+    homeLabel->setTextFormat(Qt::RichText);
+    layoutHome->addWidget(homeLabel);
 
     // Brush radius label/slider/spinbox
     QHBoxLayout *brushSizeLayout = new QHBoxLayout();
@@ -300,7 +326,6 @@ AlgorithmPaintToolBox::AlgorithmPaintToolBox(QWidget *parent ) :
     m_brushSizeSlider->setRange(1, 30);
     m_brushSizeSlider->getSlider()->setPageStep(1);
     m_brushSizeSlider->getSlider()->setOrientation(Qt::Horizontal);
-    m_brushSizeSlider->hide();
 
     connect(m_brushSizeSlider->getSpinBox(),
             SIGNAL(valueChanged(int)),m_brushSizeSlider->getSlider(), SLOT(setValue(int)) );
@@ -315,7 +340,7 @@ AlgorithmPaintToolBox::AlgorithmPaintToolBox(QWidget *parent ) :
     brushSizeLayout->addWidget( m_brushSizeSlider->getSlider() );
     brushSizeLayout->addWidget( m_brushSizeSlider->getSpinBox() );
 
-    layout->addLayout( brushSizeLayout );
+    layoutPaint->addLayout(brushSizeLayout);
 
     // Magic wand's widgets
     m_wandUpperThresholdSlider = new medDoubleParameterL("Upper Threshold", this);
@@ -327,7 +352,6 @@ AlgorithmPaintToolBox::AlgorithmPaintToolBox(QWidget *parent ) :
     m_wandUpperThresholdSlider->getSlider()->setOrientation(Qt::Horizontal);
     m_wandUpperThresholdSlider->getSpinBox()->setKeyboardTracking(false); //prevents undesired emissions of valueChanged()
     m_wandUpperThresholdSlider->getSpinBox()->setSingleStep(1);
-    m_wandUpperThresholdSlider->hide();
 
     m_wandLowerThresholdSlider = new medDoubleParameterL("Lower Threshold", this);
     m_wandLowerThresholdSlider->setObjectName("Lower Threshold");
@@ -338,7 +362,6 @@ AlgorithmPaintToolBox::AlgorithmPaintToolBox(QWidget *parent ) :
     m_wandLowerThresholdSlider->getSlider()->setOrientation(Qt::Horizontal);
     m_wandLowerThresholdSlider->getSpinBox()->setKeyboardTracking(false);
     m_wandLowerThresholdSlider->getSpinBox()->setSingleStep(1);
-    m_wandLowerThresholdSlider->hide();
 
     // Sliders connects are in updateMagicWandComputationSpeed() and depend on realTime parameter
     connect(m_wandUpperThresholdSlider->getSpinBox(),SIGNAL(valueChanged(double)),this,SLOT(updateMagicWandComputation()),Qt::UniqueConnection);
@@ -346,25 +369,19 @@ AlgorithmPaintToolBox::AlgorithmPaintToolBox(QWidget *parent ) :
 
     // Remove seed button
     m_removeSeedButton = new QPushButton("Remove seed");
-    m_removeSeedButton->hide();
     seedPlanted = false;
-
     connect(m_removeSeedButton,SIGNAL(clicked()),this,SLOT(removeSeed()));
 
     m_wand3DCheckbox = new QCheckBox (tr("Activate 3D mode"));
     m_wand3DCheckbox->setObjectName("Activate 3D mode");
     m_wand3DCheckbox->setCheckState(Qt::Unchecked);
-    m_wand3DCheckbox->hide();
 
     m_wand3DRealTime = new QCheckBox (tr("RealTime Computation"));
     m_wand3DRealTime->setCheckState(Qt::Unchecked);
-    m_wand3DRealTime->hide();
-
     connect(m_wand3DRealTime,SIGNAL(stateChanged(int)),this,SLOT(updateMagicWandComputationSpeed()));
     updateMagicWandComputationSpeed();
 
-    m_wandInfo = new QLabel("Select a pixel in the image to plant the seed");
-    m_wandInfo->hide();
+    m_wandInfo = new QLabel("Select a pixel in the image to plant the seed:\n");
 
     QHBoxLayout *magicWandCheckboxes = new QHBoxLayout();
     magicWandCheckboxes->addWidget(m_wand3DCheckbox);
@@ -387,59 +404,95 @@ AlgorithmPaintToolBox::AlgorithmPaintToolBox(QWidget *parent ) :
     magicWandLayout->addRow(magicWandLayout2);
     magicWandLayout->addRow(magicWandLayout3);
 
-    layout->addLayout(magicWandLayout);
+    layoutWand->addLayout(magicWandLayout);
 
     this->generateLabelColorMap(24);
 
-    QHBoxLayout *labelSelectionLayout = new QHBoxLayout();
+    // Interpolation group
+    QHBoxLayout *interpolationLayout = new QHBoxLayout();
+    layoutPaint->addLayout(interpolationLayout);
 
+    m_interpolateButton = new QPushButton(tr("Interpolate"));
+    m_interpolateButton->setObjectName("Interpolate");
+    interpolationLayout->addWidget(m_interpolateButton);
+    connect (m_interpolateButton, SIGNAL(clicked()), this, SLOT(interpolate()));
+
+    m_validateROIButton = new QPushButton(tr("Validate interpolation"));
+    m_validateROIButton->setObjectName("validateROIButton");
+    m_validateROIButton->setToolTip(tr("Useful to paint with an other label"));
+    interpolationLayout->addWidget(m_validateROIButton);
+    connect(m_validateROIButton, &QPushButton::clicked, this, &AlgorithmPaintToolBox::allROItoMasterROI);
+
+    // Label widget group
+    QHBoxLayout *labelSelectionLayout = new QHBoxLayout();
+    labelSelectionLayout->addStretch();
+    layoutPaint->addLayout(labelSelectionLayout);
     int defaultLabelValue = 1;
+
+    m_colorLabel = new QLabel(tr("Label:"));
+    labelSelectionLayout->addWidget(m_colorLabel);
+
+    m_labelColorWidget = new QPushButton();
+    m_labelColorWidget->setStyleSheet("background-color: rgb(255, 0, 0);border:0;border-radius: 0px;width:20px;height:20px;");
+    m_labelColorWidget->setCheckable(false);
+    m_labelColorWidget->setText("");
+    connect(m_labelColorWidget, SIGNAL(clicked()), this, SLOT(setLabelColor()));
+    setLabel(defaultLabelValue);
+    labelSelectionLayout->addWidget(m_labelColorWidget);
+
     m_strokeLabelSpinBox = new QSpinBox();
     m_strokeLabelSpinBox->setToolTip(tr("Changes the painted label."));
     m_strokeLabelSpinBox->setValue(defaultLabelValue);
     m_strokeLabelSpinBox->setMinimum(1);
-    m_strokeLabelSpinBox->setMaximum(23);
-    m_strokeLabelSpinBox->hide();
+    m_strokeLabelSpinBox->setMaximum(25);
     connect (m_strokeLabelSpinBox, SIGNAL(valueChanged(int)), this, SLOT(setLabel(int)));
+    labelSelectionLayout->addWidget(m_strokeLabelSpinBox);
 
-    m_labelColorWidget = new QPushButton();
-    m_labelColorWidget->setToolTip(tr("Current label color"));
-    m_labelColorWidget->setStyleSheet("background-color: rgb(255, 0, 0);border:0;border-radius: 0px;width:20px;height:20px;");
-    m_labelColorWidget->setCheckable(false);
-    m_labelColorWidget->setText("");
-    m_labelColorWidget->hide();
-    connect(m_labelColorWidget, SIGNAL(clicked()), this, SLOT(setLabelColor()));
-    setLabel(defaultLabelValue);
+    auto helpButton = new QPushButton("?");
+    helpButton->setFixedSize(20, 20);
+    helpButton->setToolTip(tr("Label info"));
+    helpButton->setStyleSheet("QPushButton {font-weight: bold; border-radius: 10px;}");
+    connect(helpButton, &QPushButton::clicked, this, [this]() {
+        QMessageBox msgBox(this);
+        msgBox.setWindowTitle(tr("Changing labels"));
 
-    m_colorLabel = new QLabel(tr("Label:"));
-    m_colorLabel->hide();
+        QString text = tr(
+            "You can choose a different label from the default palette using the spinboxes, no need to reset the mask.<br><br>"
+            "If you want to customize the label palette:<br>"
+            "&nbsp;&nbsp;&nbsp;&nbsp;1. Click the color button to choose a new color.<br>"
+            "&nbsp;&nbsp;&nbsp;&nbsp;2. You must <b>reset the mask</b> for the new color to be applied to existing data."
+        );
 
-    labelSelectionLayout->addStretch();
-    labelSelectionLayout->addWidget(m_colorLabel );
-    labelSelectionLayout->addWidget( m_labelColorWidget );
-    labelSelectionLayout->addWidget( m_strokeLabelSpinBox );
+        msgBox.setText(text);
+        msgBox.setTextFormat(Qt::RichText);
+        msgBox.exec();
+    });
+    labelSelectionLayout->addWidget(helpButton);
 
-    layout->addLayout( labelSelectionLayout );
-
+    // Actions buttons: hidden by default
     m_addButton = new QPushButton( tr("Add") );
     m_addButton->setToolTip(tr("Append mask to existing mask."));
     m_addButton->setObjectName("addButton");
     m_addButton->setDisabled(true);
     m_addButton->hide();
+
     m_eraseButton = new QPushButton( tr("Erase") );
     m_eraseButton->setToolTip(tr("Delete mask from existing mask."));
     m_eraseButton->setObjectName("eraseButton");
     m_eraseButton->setDisabled(true);
     m_eraseButton->hide();
+
     QHBoxLayout * operationsButtonsLayout = new QHBoxLayout();
     operationsButtonsLayout->addWidget(m_addButton);
     operationsButtonsLayout->addWidget(m_eraseButton);
     layout->addLayout(operationsButtonsLayout);
 
+    // Buttons seen from all tabs
     m_applyButton = new QPushButton( tr("Save") );
     m_applyButton->setToolTip(tr("Save result to the Database"));
     m_applyButton->setObjectName("saveButton");
     m_applyButton->setDisabled(true);
+    connect (m_applyButton, SIGNAL(pressed()),this, SLOT(import()));
 
     m_clearMaskButton = new QPushButton( tr("Clear Mask") );
     m_clearMaskButton->setToolTip(tr("Resets the mask."));
@@ -448,18 +501,13 @@ AlgorithmPaintToolBox::AlgorithmPaintToolBox(QWidget *parent ) :
     dataButtonsLayout->addWidget(m_applyButton);
     dataButtonsLayout->addWidget(m_clearMaskButton);
     layout->addLayout(dataButtonsLayout);
-
-    connect (m_strokeButton,    SIGNAL(toggled(bool)), this, SLOT(activateStroke(bool)));
-    connect (m_magicWandButton, SIGNAL(toggled(bool)), this, SLOT(activateMagicWand(bool)));
     connect (m_clearMaskButton, SIGNAL(pressed()), this, SLOT(clear()));
-    connect (m_applyButton, SIGNAL(pressed()),this, SLOT(import()));
 
     if (this->selectorToolBox())
     {
         connect(this->selectorToolBox(), SIGNAL(inputChanged()),
                 this, SLOT(updateMouseInteraction()));
     }
-    connect (m_interpolateButton, SIGNAL(clicked()), this, SLOT(interpolate()));
 
     showButtons(false);
 
@@ -552,26 +600,27 @@ void AlgorithmPaintToolBox::updateMagicWandComputation()
 
 void AlgorithmPaintToolBox::activateStroke(bool checked)
 {
-    m_wandInfo->hide();
-
     if (!checked)
     {
         deactivateCustomedCursor(); // Deactivate painting cursor
         this->m_viewFilter->removeFromAllViews();
         m_paintState = (PaintState::None);
-        updateButtons();
     }
     else
     {
-        this->m_magicWandButton->setChecked(false);
         setPaintState(PaintState::Stroke);
-        updateButtons();
         addViewEventFilter(m_viewFilter);
         addBrushSize_shortcut->setEnabled(true);
         reduceBrushSize_shortcut->setEnabled(true);
 
         setCurrentView(currentView);
 
+        if (!currentView || (currentView->layersCount()>2))
+        {
+            tabWidget->setCurrentIndex(0); // Home
+            displayMessageError("Error, please check your layers");
+            return;
+        }
         if (!m_imageData)
         {
             this->setData(currentView->layerData(0));
@@ -673,20 +722,25 @@ void AlgorithmPaintToolBox::deactivateCustomedCursor()
 
 void AlgorithmPaintToolBox::activateMagicWand(bool checked)
 {
-    if (!checked)
+    if (currentView && (currentView->layersCount()<3))
     {
-        this->m_viewFilter->removeFromAllViews();
-        m_paintState = (PaintState::None);
-        newSeed(); // accept the current growth
-        updateButtons();
+        if (!checked)
+        {
+            this->m_viewFilter->removeFromAllViews();
+            m_paintState = (PaintState::None);
+            newSeed(); // accept the current growth
+        }
+        else
+        {
+            setPaintState(PaintState::Wand);
+            addViewEventFilter(m_viewFilter);
+            deactivateCustomedCursor();
+        }
     }
     else
     {
-        this->m_strokeButton->setChecked(false);
-        setPaintState(PaintState::Wand);
-        updateButtons();
-        addViewEventFilter(m_viewFilter);
-        deactivateCustomedCursor();
+        tabWidget->setCurrentIndex(0); // Home
+        displayMessageError("Error, please check your layers");
     }
 }
 
@@ -782,7 +836,6 @@ void AlgorithmPaintToolBox::import()
 
 void AlgorithmPaintToolBox::updateView()
 {
-    setButtonsDisabled(true);
     medAbstractView *view = this->getWorkspace()->tabbedViewContainers()->getFirstSelectedContainerView();
 
     if (view)
@@ -798,11 +851,11 @@ void AlgorithmPaintToolBox::updateView()
                         || !(data->identifier().contains("itkDataImage") || data->identifier().contains("medImageMaskAnnotationData"))
                         || data->identifier().contains("itkDataImageVector")) //avoid medVtkFibersData
                 {
+                    tabWidget->setCurrentIndex(0); // Home
                     handleDisplayError(medAbstractProcessLegacy::DIMENSION_3D);
                     return;
                 }
             }
-            setButtonsDisabled(false);
             currentView = v;
             updateMouseInteraction();
 
@@ -819,7 +872,9 @@ void AlgorithmPaintToolBox::updateView()
             connect(currentView,SIGNAL(layerRemoved(unsigned int)),this,SLOT(clear()), Qt::UniqueConnection);
 
             // Update cursor to new view
-            if ( this->m_strokeButton->isChecked() )
+            tabWidget->tabBar()->setTabEnabled(1, true);
+            tabWidget->tabBar()->setTabEnabled(2, true);
+            if (tabWidget->currentIndex() == 1)
             {
                 activateCustomedCursor(); // Add circular cursor for painting
             }
@@ -849,19 +904,9 @@ void AlgorithmPaintToolBox::updateView()
     }
     else
     {
+        tabWidget->tabBar()->setTabEnabled(1, false);
+        tabWidget->tabBar()->setTabEnabled(2, false);
         showButtons(false);
-    }
-}
-
-void AlgorithmPaintToolBox::setButtonsDisabled(bool disable)
-{
-    m_strokeButton->setDisabled(disable);
-    m_magicWandButton->setDisabled(disable);
-    m_interpolateButton->setDisabled(disable);
-
-    if (disable)
-    {
-        currentView = nullptr;
     }
 }
 
@@ -871,6 +916,10 @@ void AlgorithmPaintToolBox::setLabel(int newVal)
     m_labelColorWidget->setStyleSheet("background-color: " + labelColor.name() + ";border:0;border-radius: 0px;width:20px;height:20px;");
 }
 
+/**
+ * Customize the current label index with a new color chosen by user.
+ * A "Clear Mask" needs to be done to be applied.
+ */
 void AlgorithmPaintToolBox::setLabelColor()
 {
     QColor currentColor = m_labelColorMap[m_strokeLabelSpinBox->value() - 1].second;
@@ -882,9 +931,7 @@ void AlgorithmPaintToolBox::setLabelColor()
         if (m_maskAnnotationData)
         {
             m_maskAnnotationData->setColorMap(m_labelColorMap);
-            m_maskAnnotationData->invokeModified();
         }
-
         this->setLabel(m_strokeLabelSpinBox->value());
     }
 }
@@ -1084,6 +1131,7 @@ void AlgorithmPaintToolBox::initializeMaskData( medAbstractData *imageData, medA
 
 void AlgorithmPaintToolBox::updateWandRegion(medAbstractImageView *view, QVector3D &vec)
 {
+    setToolBoxOnWaitStatusForNonRunnableProcess();
     setCurrentView(view);
 
     if ( !m_imageData && (m_maskAnnotationData != view->layerData(0)))
@@ -1094,6 +1142,7 @@ void AlgorithmPaintToolBox::updateWandRegion(medAbstractImageView *view, QVector
     if (!m_imageData)
     {
         displayMessageError("Could not set data");
+        setToolBoxOnReadyToUse();
         return;
     }
 
@@ -1103,6 +1152,7 @@ void AlgorithmPaintToolBox::updateWandRegion(medAbstractImageView *view, QVector
             (m_imageData->identifier().contains("2")))
     {
         medMessageController::instance().showError(tr("Magic wand option is only available for 3D images"),3000);
+        setToolBoxOnReadyToUse();
         return;
     }
 
@@ -1131,6 +1181,7 @@ void AlgorithmPaintToolBox::updateWandRegion(medAbstractImageView *view, QVector
         view->setCurrentLayer(0);
         getWorkspace()->updateMouseInteractionToolBox();
     }
+    setToolBoxOnReadyToUse();
 }
 
 template <typename IMAGE>
@@ -1257,11 +1308,7 @@ AlgorithmPaintToolBox::RunConnectedFilter (MaskType::IndexType &index, unsigned 
         }
     }
 
-    m_itkMask->Modified();
-    m_itkMask->GetPixelContainer()->Modified();
-    m_itkMask->SetPipelineMTime(m_itkMask->GetMTime());
-
-    m_maskAnnotationData->invokeModified();
+    refreshLayers();
 }
 
 template <typename IMAGE>
@@ -1414,17 +1461,13 @@ void AlgorithmPaintToolBox::updateStroke(ClickAndMoveEventFilter * filter, medAb
             }
         }
     }
-    m_itkMask->Modified();
-    m_itkMask->GetPixelContainer()->Modified();
-    m_itkMask->SetPipelineMTime(m_itkMask->GetMTime());
 
     if ( slicingParameter )
     {
         slicingParameter->getSlider()->addTick(currentIdSlice);
         slicingParameter->getSlider()->update();
     }
-
-    m_maskAnnotationData->invokeModified();
+    refreshLayers();
 }
 
 bool AlgorithmPaintToolBox::isMask2dOnSlice()
@@ -1484,49 +1527,6 @@ void AlgorithmPaintToolBox::showButtons( bool value )
     m_applyButton->setVisible(value && !forceHide);
 
     m_clearMaskButton->setVisible(value);
-}
-
-void AlgorithmPaintToolBox::updateButtons()
-{
-    if ( m_paintState == PaintState::None )
-    {
-        m_wandLowerThresholdSlider->hide();
-        m_wandUpperThresholdSlider->hide();
-        m_wand3DCheckbox->hide();
-        m_wand3DRealTime->hide();
-        m_wandInfo->hide();
-        m_brushSizeSlider->hide();
-        m_labelColorWidget->hide();
-        m_strokeLabelSpinBox->hide();
-        m_colorLabel->hide();
-        m_removeSeedButton->hide();
-    }
-    else
-    {
-        m_labelColorWidget->show();
-        m_strokeLabelSpinBox->show();
-        m_colorLabel->show();
-
-        if ( m_paintState == PaintState::Wand )
-        {
-            m_wandLowerThresholdSlider->show();
-            m_wandUpperThresholdSlider->show();
-            m_wand3DCheckbox->show();
-            m_wand3DRealTime->show();
-            m_wandInfo->show();
-            m_brushSizeSlider->hide();
-            m_removeSeedButton->show();
-        }
-        else if ( m_paintState == PaintState::Stroke )
-        {
-            m_brushSizeSlider->show();
-            m_wandLowerThresholdSlider->hide();
-            m_wandUpperThresholdSlider->hide();
-            m_wand3DCheckbox->hide();
-            m_wand3DRealTime->hide();
-            m_removeSeedButton->hide();
-        }
-    }
 }
 
 /** Apply the current interaction (paint, ...) to a new view */
@@ -1640,10 +1640,7 @@ void AlgorithmPaintToolBox::undo()
     PairListSlicePlaneId currentState = PairListSlicePlaneId(list,planeIndex);
     redo_stack->append(currentState);
 
-    m_itkMask->Modified();
-    m_itkMask->GetPixelContainer()->Modified();
-    m_itkMask->SetPipelineMTime(m_itkMask->GetMTime());
-    m_maskAnnotationData->invokeModified();
+    refreshLayers();
 
     // No more painted data
     if (m_undoStacks->value(currentView)->isEmpty())
@@ -1715,10 +1712,7 @@ void AlgorithmPaintToolBox::redo()
     PairListSlicePlaneId currentState = PairListSlicePlaneId(list,planeIndex);
     undo_stack->append(currentState);
 
-    m_itkMask->Modified();
-    m_itkMask->GetPixelContainer()->Modified();
-    m_itkMask->SetPipelineMTime(m_itkMask->GetMTime());
-    m_maskAnnotationData->invokeModified();
+    refreshLayers();
 }
 
 void AlgorithmPaintToolBox::addSliceToStack(medAbstractView *view, const unsigned char planeIndex, QList<unsigned int> listIdSlice, bool isMaster)
@@ -1807,6 +1801,7 @@ void AlgorithmPaintToolBox::clear()
         }
     }
     clearMask();
+    tabWidget->setCurrentIndex(0);
 }
 
 void AlgorithmPaintToolBox::clearMask()
@@ -1815,11 +1810,7 @@ void AlgorithmPaintToolBox::clearMask()
     if ( m_maskData && m_itkMask )
     {
         m_itkMask->FillBuffer( MaskPixelValues::Unset );
-        m_itkMask->Modified();
-        m_itkMask->GetPixelContainer()->Modified();
-        m_itkMask->SetPipelineMTime(m_itkMask->GetMTime());
-
-        m_maskAnnotationData->invokeModified();
+        refreshLayers();
 
         if(maskHasBeenSaved)
         {
@@ -1832,7 +1823,6 @@ void AlgorithmPaintToolBox::clearMask()
             }
         }
         m_applyButton->setDisabled(true);
-        m_interpolateButton->setDisabled(true);
     }
     m_imageData = nullptr;
 
@@ -1863,16 +1853,6 @@ void AlgorithmPaintToolBox::clearMask()
 void AlgorithmPaintToolBox::resetToolbox()
 {
     this->m_viewFilter->removeFromAllViews();
-
-    if ( this->m_strokeButton->isChecked() )
-    {
-        m_strokeButton->setChecked(false);
-    }
-    else if ( this->m_magicWandButton->isChecked() )
-    {
-        m_magicWandButton->setChecked(false);
-    }
-
     deactivateCustomedCursor();
 }
 
@@ -1924,7 +1904,6 @@ void AlgorithmPaintToolBox::setSeedPlanted(bool val, MaskType::IndexType index,
         }
 
         m_wandInfo->setText("Seed X : " + QString::number(index[direction[0]]) + " Y : " + QString::number(index[direction[1]]) + " Slice : " + QString::number(index[planeIndex]+1) + " Value : " + QString::number(value));
-        m_removeSeedButton->show();
         removeSeed_shortcut->setEnabled(true);
     }
 }
@@ -1932,8 +1911,7 @@ void AlgorithmPaintToolBox::setSeedPlanted(bool val, MaskType::IndexType index,
 void AlgorithmPaintToolBox::newSeed()
 {
     seedPlanted = false;
-    m_wandInfo->setText("Select a pixel in the image to plant the seed");
-    m_removeSeedButton->hide();
+    m_wandInfo->setText("Select a pixel in the image to plant the seed:\n");
     removeSeed_shortcut->setEnabled(false);
 }
 
@@ -2040,8 +2018,8 @@ void AlgorithmPaintToolBox::pasteSliceMask()
             pB->setMasterRoi(true);
             break;
         }
-
     }
+
     // For undo/redo purposes -------------------------
     QList<unsigned int> listIdSlice;
     listIdSlice.append(slice);
@@ -2049,10 +2027,7 @@ void AlgorithmPaintToolBox::pasteSliceMask()
     // -------------------------------------------------
     pasteSliceToMask3D(m_copy.first,planeIndex,direction,slice, true);
 
-    m_itkMask->Modified();
-    m_itkMask->GetPixelContainer()->Modified();
-    m_itkMask->SetPipelineMTime(m_itkMask->GetMTime());
-    m_maskAnnotationData->invokeModified();
+    refreshLayers();
 }
 
 char AlgorithmPaintToolBox::computePlaneIndex(const QVector3D & vec,MaskType::IndexType & index,bool & isInside)
@@ -2234,48 +2209,55 @@ void AlgorithmPaintToolBox::reduceBrushSize()
     }
 }
 
+/**
+ * Interpolation done on current master ROIs of the current label, cleaning previous non master ROI.
+ */
 void AlgorithmPaintToolBox::interpolate()
 {
     if(!m_itkMask)
     {
         return;
     }
-    this->setToolBoxOnWaitStatusForNonRunnableProcess();
+    setToolBoxOnWaitStatusForNonRunnableProcess();
 
     std::vector<std::pair<unsigned int, int>> masterRois;
+
+    currentSliceLabel = m_strokeLabelSpinBox->value();
+
     for(auto it = setOfPaintBrushRois.begin(); it != setOfPaintBrushRois.end(); )
     {
         auto& pB = *it;
-        if( pB->isMasterRoi() == false )
+        // Remove current non master ROIs from previous interpolation
+        if(pB->isMasterRoi() == false)
         {
             deleteSliceFromMask3D(pB->getIdSlice());
             it = setOfPaintBrushRois.erase(it);
         }
         else
         {
-            masterRois.push_back(std::pair<unsigned int, int>(pB->getIdSlice(), pB->getLabel()));
+            // Only keep ROI from current label for new interpolation
+            if (pB->getLabel() == m_strokeLabelSpinBox->value())
+            {
+                masterRois.push_back(std::pair<unsigned int, int>(pB->getIdSlice(), pB->getLabel()));
+            }
             ++it;
         }
     }
     if (!masterRois.empty())
     {
         unsigned int firstSlice, secondSlice;
-        int firstLabel, secondLabel;
         for (auto it = masterRois.begin(); it != masterRois.end() - 1; )
         {
             firstSlice = (*it).first;
-            firstLabel = (*it).second;
             advance(it, 1);
             secondSlice = (*it).first;
-            secondLabel = (*it).second;
-            if (firstLabel == secondLabel)
-            {
-                currentSliceLabel = firstLabel;
-                interpolateBetween2PaintBrush(firstSlice, secondSlice);
-            }
+            interpolateBetween2PaintBrush(firstSlice, secondSlice);
         }
     }
-    this->setToolBoxOnReadyToUse();
+
+    refreshLayers();
+
+    setToolBoxOnReadyToUse();
 }
 
 void AlgorithmPaintToolBox::interpolateBetween2PaintBrush(unsigned int firstSlice, unsigned int secondSlice)
@@ -2547,6 +2529,35 @@ void AlgorithmPaintToolBox::addViewEventFilter( medViewEventFilter *filter)
             filter->installOnView(container->view());
         }
     }
+}
+
+/**
+ * Update all current temporary ROI to master ROI
+ */
+void AlgorithmPaintToolBox::allROItoMasterROI()
+{
+    setToolBoxOnWaitStatusForNonRunnableProcess();
+
+    updateMaskWithMasterLabel();
+    for (auto& pB : setOfPaintBrushRois)
+    {
+        pB->setMasterRoi(true);
+    }
+
+    refreshLayers();
+
+    setToolBoxOnReadyToUse();
+}
+
+/**
+ * Render mask with ROIs
+ */
+void AlgorithmPaintToolBox::refreshLayers()
+{
+    m_itkMask->Modified();
+    m_itkMask->GetPixelContainer()->Modified();
+    m_itkMask->SetPipelineMTime(m_itkMask->GetMTime());
+    m_maskAnnotationData->invokeModified();
 }
 
 }

@@ -145,7 +145,6 @@ void medAnnIntImageMaskHelper::annotationModified( medAnnotationData * annData )
     medAbstractImageView * view = this->getView();
     medVtkViewBackend* backend = static_cast<medVtkViewBackend*>(view->backend());
 
-
     if ( !imad )
         return;
 
