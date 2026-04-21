@@ -68,8 +68,7 @@ typedef itk::ImageRegionIterator <Mask2dFloatType> Mask2dFloatIterator;
 /*! \brief Segmentation toolbox to apply manual painting of pixels.
 *
 * This toolbox has several named widgets which can be accessed in python pipelines:\n\n
-* "paintButton" : QPushButton\n
-* "Magic Wand" : QPushButton\n
+* "tabWidget" : QTabWidget\n
 * "Interpolate" : QPushButton\n
 * "Upper Threshold" : medDoubleParameter\n
 * "Lower Threshold" : medDoubleParameter\n
@@ -121,6 +120,7 @@ public:
     dtkPlugin* plugin();
 
     medAbstractData* processOutput();
+    void refreshLayers();
 
 public slots:
     void updateView();
@@ -179,8 +179,6 @@ protected:
 
     void generateLabelColorMap(unsigned int numLabels);
 
-    void updateButtons();
-
     void addBrushSize(int size);
 
     char computePlaneIndex(const QVector3D &, MaskType::IndexType &, bool& isInside);
@@ -192,11 +190,14 @@ protected:
 
     void addViewEventFilter(medViewEventFilter *filter);
 
-    void setButtonsDisabled(bool disable);
+private slots:
+    void allROItoMasterROI();
 
 private:
 
     typedef dtkSmartPointer<medSeedPointAnnotationData> SeedPoint;
+
+    QTabWidget *tabWidget;
 
     // Stroke's objects
     QPushButton *m_strokeButton;
@@ -224,6 +225,7 @@ private:
     // Common objects
     QPushButton *m_interpolateButton;
     QPushButton *m_labelColorWidget;
+    QPushButton *m_validateROIButton;
     QSpinBox *m_strokeLabelSpinBox;
     QLabel *m_colorLabel;
     QShortcut *undo_shortcut, *redo_shortcut, *copy_shortcut, *paste_shortcut;
