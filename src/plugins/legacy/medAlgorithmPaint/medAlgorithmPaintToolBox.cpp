@@ -381,7 +381,7 @@ AlgorithmPaintToolBox::AlgorithmPaintToolBox(QWidget *parent ) :
     connect(m_wand3DRealTime,SIGNAL(stateChanged(int)),this,SLOT(updateMagicWandComputationSpeed()));
     updateMagicWandComputationSpeed();
 
-    m_wandInfo = new QLabel("Select a pixel in the image to plant the seed:\n");
+    m_wandInfo = new QLabel("Select a pixel in the image to plant the seed.\n");
 
     QHBoxLayout *magicWandCheckboxes = new QHBoxLayout();
     magicWandCheckboxes->addWidget(m_wand3DCheckbox);
@@ -417,12 +417,6 @@ AlgorithmPaintToolBox::AlgorithmPaintToolBox(QWidget *parent ) :
     interpolationLayout->addWidget(m_interpolateButton);
     connect (m_interpolateButton, SIGNAL(clicked()), this, SLOT(interpolate()));
 
-    m_validateROIButton = new QPushButton(tr("Validate interpolation"));
-    m_validateROIButton->setObjectName("validateROIButton");
-    m_validateROIButton->setToolTip(tr("Useful to paint with an other label"));
-    interpolationLayout->addWidget(m_validateROIButton);
-    connect(m_validateROIButton, &QPushButton::clicked, this, &AlgorithmPaintToolBox::allROItoMasterROI);
-
     // Label widget group
     QHBoxLayout *labelSelectionLayout = new QHBoxLayout();
     labelSelectionLayout->addStretch();
@@ -448,19 +442,29 @@ AlgorithmPaintToolBox::AlgorithmPaintToolBox(QWidget *parent ) :
     connect (m_strokeLabelSpinBox, SIGNAL(valueChanged(int)), this, SLOT(setLabel(int)));
     labelSelectionLayout->addWidget(m_strokeLabelSpinBox);
 
+    m_validateROIButton = new QPushButton(tr(" Keep ROIs "));
+    m_validateROIButton->setObjectName("validateROIButton");
+    m_validateROIButton->setToolTip(tr("Save temporary interpolated ROI to paint with an other label"));
+    labelSelectionLayout->addWidget(m_validateROIButton);
+    connect(m_validateROIButton, &QPushButton::clicked, this, &AlgorithmPaintToolBox::allROItoMasterROI);
+
     auto helpButton = new QPushButton("?");
     helpButton->setFixedSize(20, 20);
     helpButton->setToolTip(tr("Label info"));
     helpButton->setStyleSheet("QPushButton {font-weight: bold; border-radius: 10px;}");
     connect(helpButton, &QPushButton::clicked, this, [this]() {
         QMessageBox msgBox(this);
-        msgBox.setWindowTitle(tr("Changing labels"));
+        msgBox.setWindowTitle(tr("Using labels"));
 
         QString text = tr(
-            "You can choose a different label from the default palette using the spinboxes, no need to reset the mask.<br><br>"
-            "If you want to customize the label palette:<br>"
+            "<b>Label Selection:</b> use spinboxes to change labels instantly (no reset needed).<br><br>"
+            "<b>Interpolation:</b><br>"
+            "&nbsp;&nbsp;&nbsp;&nbsp;1. Select a label and draw.<br>"
+            "&nbsp;&nbsp;&nbsp;&nbsp;2. Click <i>Interpolate</i>.<br>"
+            "&nbsp;&nbsp;&nbsp;&nbsp;3. To use a new label, click <i>Keep ROIs</i> to save changes.<br><br>"
+            "To <b>customize</b> the default label palette:<br>"
             "&nbsp;&nbsp;&nbsp;&nbsp;1. Click the color button to choose a new color.<br>"
-            "&nbsp;&nbsp;&nbsp;&nbsp;2. You must <b>reset the mask</b> for the new color to be applied to existing data."
+            "&nbsp;&nbsp;&nbsp;&nbsp;2. You must <em>reset the mask</em> for the new color to be applied to existing data."
         );
 
         msgBox.setText(text);
@@ -658,17 +662,32 @@ void AlgorithmPaintToolBox::activateStroke(bool checked)
     }
 }
 
+/**
+ * Adapt the cursor and tabs to the change of orientation, 3D or the others
+ */
+void AlgorithmPaintToolBox::adaptToOrientation()
+{
+    if(currentView)
+    {
+        if(currentView->orientation() == medImageView::VIEW_ORIENTATION_3D)
+        {
+            deactivateCustomedCursor();
+            tabWidget->setCurrentIndex(0); // switch to Home
+        }
+        else
+        {
+            if (tabWidget->currentIndex() == 1) // if already in Paint
+            {
+                activateCustomedCursor();
+            }
+        }
+    }
+}
+
 void AlgorithmPaintToolBox::activateCustomedCursor()
 {
     if (!currentView) // no data
     {
-        return;
-    }
-
-    if (currentView->orientation() == medImageView::VIEW_ORIENTATION_3D)
-    {
-        // 3D view
-        deactivateCustomedCursor();
         return;
     }
 
@@ -866,9 +885,7 @@ void AlgorithmPaintToolBox::updateView()
                 setData( data );
             }
 
-            // Update cursor if the orientation change
-            connect(currentView, SIGNAL(orientationChanged()), this, SLOT(activateCustomedCursor()), Qt::UniqueConnection);
-
+            connect(currentView, SIGNAL(orientationChanged()), this, SLOT(adaptToOrientation()), Qt::UniqueConnection);
             connect(currentView,SIGNAL(layerRemoved(unsigned int)),this,SLOT(clear()), Qt::UniqueConnection);
 
             // Update cursor to new view
@@ -1903,7 +1920,11 @@ void AlgorithmPaintToolBox::setSeedPlanted(bool val, MaskType::IndexType index,
             }
         }
 
-        m_wandInfo->setText("Seed X : " + QString::number(index[direction[0]]) + " Y : " + QString::number(index[direction[1]]) + " Slice : " + QString::number(index[planeIndex]+1) + " Value : " + QString::number(value));
+        m_wandInfo->setText("Seed X : " + QString::number(index[direction[0]])
+                            + " Y : " + QString::number(index[direction[1]])
+                            + " Slice : " + QString::number(index[planeIndex]+1)
+                            + " Value : " + QString::number(value)
+                            + "\n");
         removeSeed_shortcut->setEnabled(true);
     }
 }
@@ -1911,7 +1932,7 @@ void AlgorithmPaintToolBox::setSeedPlanted(bool val, MaskType::IndexType index,
 void AlgorithmPaintToolBox::newSeed()
 {
     seedPlanted = false;
-    m_wandInfo->setText("Select a pixel in the image to plant the seed:\n");
+    m_wandInfo->setText("Select a pixel in the image to plant the seed.\n");
     removeSeed_shortcut->setEnabled(false);
 }
 
