@@ -126,6 +126,7 @@ public slots:
     void updateView();
 
     void activateStroke(bool checked);
+    void adaptToOrientation();
     void activateCustomedCursor();
     void deactivateCustomedCursor();
     void activateMagicWand(bool checked);
