@@ -5,7 +5,13 @@ MUSICardio 4.1:
 - Update the default expiration duration of binary from 12 to 24 months.
 - DICOM reader has been updated to be more robust.
 - CreateMeshFromMask: clean memory management to avoid some crashs.
-- Paint: enhance drawing cursor.
+- Paint:
+    * enhance drawing cursor
+    * enhance the toolbox GUI to be clearer and avoid click problems
+    * fix errors with interpolation and multi-labels
+    * fix a crash with mesh added in the view after painting
+    * fix interactor bugs if orientation is changed after painting
+    * the current slice is refreshed after an interpolation.
 - PolygonROI: enhance cursor to handle landmarks.
 - Scenes: fix a bug if the user cancels export.
 - Fix a bug with "starting workspace" setting.
