@@ -19,7 +19,7 @@ MUSICardio 4.1:
 - PolygonROI: enhance cursor to handle landmarks.
 - Scenes: fix a bug if the user cancels export.
 - Fix a bug with "starting workspace" setting.
-- Remove Composer workspace.
+- Remove Composer workspace, remove duplicated "Filtering dtk2" workspace.
 - Pipelines: add a script version number to pipelines.
 - Histogram Analysis: fix problems/crashs with the Ventricle Max algo and its popup.
 - New documentation website: https://mds.ihu-liryc.fr/musicardio

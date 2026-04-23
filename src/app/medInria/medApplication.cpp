@@ -21,7 +21,6 @@
 #include <medDevelopmentSettingsWidget.h>
 #include <medDataManager.h>
 #include <medDiffusionWorkspace.h>
-#include <medFilteringWorkspace.h>
 #include <medLogger.h>
 #include <medMainWindow.h>
 #include <medPluginManager.h>
@@ -205,7 +204,6 @@ void medApplication::initialize()
     medWorkspaceFactory * viewerWSpaceFactory = medWorkspaceFactory::instance();
     viewerWSpaceFactory->registerWorkspace<medVisualizationWorkspace>();
     viewerWSpaceFactory->registerWorkspace<medDiffusionWorkspace>();
-    viewerWSpaceFactory->registerWorkspace<medFilteringWorkspace>();
 
     //Register settingsWidgets
     medSettingsWidgetFactory* settingsWidgetFactory = medSettingsWidgetFactory::instance();

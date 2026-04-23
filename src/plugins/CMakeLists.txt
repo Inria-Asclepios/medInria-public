@@ -76,16 +76,12 @@ set(PLUGIN_LIST
   legacy/voiCutter                                                       ON
   legacy/vtkDataMesh                                                     ON
   legacy/medExportVideo                                                  ON
-  process/arithmetic_operation                                           ON
-  process/bias_correction                                                ON
   process/dwi_basic_thresholding                                         ON
   process/itkDWIBrainMaskCalculatorProcess                               ON
   process/ttkTensorEstimationProcess                                     ON
   process/ttkTensorScalarMapsProcess                                     ON
   process/ttkTensorTractographyProcess                                   ON
   process/mask_image                                                     ON
-  process/morphomath_operation                                           ON
-  process/single_filter                                                  ON
   )
 
   if(USE_DTKIMAGING)
