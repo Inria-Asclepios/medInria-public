@@ -1,9 +1,0 @@
-{
-          "title" : "Divide filter",
-           "kind" : "process",
-           "type" : "medAbstractDivideFilterProcess",
-           "tags" : ["divide","filter", "operation"],
-    "description" : "<p>Divide filter by constant</p>",
-         "inputs" : ["scalarImage", "double"],
-        "outputs" : ["scalarImage"]
-}
