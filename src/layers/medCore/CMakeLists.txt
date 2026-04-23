@@ -23,11 +23,8 @@ list_source_files(${TARGET_NAME}
   ${CMAKE_CURRENT_SOURCE_DIR}
   data
   process
-  process/arithmetic_operation
   process/diffusion_processes
-  process/morphomath_operation
   process/mask_image
-  process/single_filter
   parameter
   job
   )

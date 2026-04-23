@@ -1,5 +1,0 @@
-<RCC>
-    <qresource prefix="/">
-        <file>medItkMorphomathOperationProcessPlugin.json</file>
-    </qresource>
-</RCC>
