@@ -27,6 +27,12 @@ defaultLabelToolBox::defaultLabelToolBox(QWidget *parent):
     layout->setContentsMargins(0, 0, 0, 0);
     widget->setLayout(layout);
 
+    QFrame *containerFrame = new QFrame();
+    containerFrame->setFrameStyle(QFrame::Box | QFrame::Plain);
+    containerFrame->setLineWidth(2);
+    auto frameLayout = new QVBoxLayout(containerFrame);
+    layout->addWidget(containerFrame);
+
     dataName = new QLabel("No Data");
     dataName->setWordWrap(true);
     dataName->setSizePolicy(QSizePolicy::Ignored, QSizePolicy::Preferred);
@@ -70,7 +76,7 @@ defaultLabelToolBox::defaultLabelToolBox(QWidget *parent):
     minusButton->setObjectName("minBttn");
 
     auto listLabelLayout = new QVBoxLayout();
-    layout->addLayout(listLabelLayout);
+    frameLayout->addLayout(listLabelLayout);
     listLabelLayout->addWidget(dataName);
     listLabelLayout->addWidget(labels);
 
