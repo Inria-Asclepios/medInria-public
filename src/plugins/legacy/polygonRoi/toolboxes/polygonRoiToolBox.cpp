@@ -53,9 +53,12 @@ polygonRoiToolBox::polygonRoiToolBox(QWidget *parent ) :
     auto *explanation = new QLabel(tr("Drop a data in the view and activate:"));
     explanation->setWordWrap(true);
     explanation->setStyleSheet("font: italic");
-    layout->addWidget(explanation );
+    layout->addWidget(explanation);
 
     // Activation button
+    auto beginLayout = new QHBoxLayout();
+    layout->addLayout(beginLayout);
+
     activateTBButton = new QPushButton(tr("Activate Toolbox"));
     activateTBButton->setToolTip(tr("Activate closed polygon mode. You should only have one view."));
     activateTBButton->setCheckable(true);
@@ -63,8 +66,17 @@ polygonRoiToolBox::polygonRoiToolBox(QWidget *parent ) :
     connect(activateTBButton,SIGNAL(toggled(bool)),this,SLOT(clickClosePolygon(bool)));
     connect(activateTBButton, &QAbstractButton::toggled, [=] (bool state) { explanation->setVisible(!state); });
     auto activateTBLayout = new QHBoxLayout();
-    layout->addLayout(activateTBLayout);
+    beginLayout->addLayout(activateTBLayout);
     activateTBLayout->addWidget(activateTBButton);
+
+    // How to use
+    helpButton = new QPushButton("?");
+    helpButton->setToolTip("User help");
+    helpButton->setFixedSize(20, 20);
+    helpButton->setObjectName("helpButton");
+    helpButton->setStyleSheet("QPushButton {font-weight: bold; border-radius: 10px;}");
+    connect(helpButton, SIGNAL(clicked()), this, SLOT(showHelp()));
+    beginLayout->addWidget(helpButton);
 
     // Add label management tool
     QString identifier = speciality.toLower() + QString("LabelToolBox");
@@ -100,39 +112,26 @@ polygonRoiToolBox::polygonRoiToolBox(QWidget *parent ) :
     contoursActionLayout->addLayout(repulsorLayout);
 
     // Export widgets
+    auto saveLayout = new QHBoxLayout();
+    layout->addLayout(saveLayout);
+
     saveLabel = new QLabel("Save segmentations as:");
     saveLabel->setObjectName("saveLabel");
-    auto saveButtonsLayout = new QHBoxLayout();
+    saveLayout->addWidget(saveLabel);
+
     saveBinaryMaskButton = new QPushButton(tr("Mask(s)"));
     saveBinaryMaskButton->setToolTip("Import the current mask to the non persistent database");
     saveBinaryMaskButton->setObjectName(generateBinaryImageButtonName);
     connect(saveBinaryMaskButton,SIGNAL(clicked()),this,SLOT(saveBinaryImage()));
-    saveButtonsLayout->addWidget(saveBinaryMaskButton);
+    saveLayout->addWidget(saveBinaryMaskButton);
 
     saveContourButton = new QPushButton("Contour(s)");
-    saveContourButton->setToolTip("Export these contours as an .ctrb file loadable only in this application.");
+    saveContourButton->setToolTip("Export these contours as an .ctrb file loadable only in this application");
     saveContourButton->setMinimumSize(150, 20);
     saveContourButton->setMaximumSize(150, 20);
     saveContourButton->setObjectName("saveContoursButton");
     connect(saveContourButton, SIGNAL(clicked()), this, SLOT(saveContours()));
-    saveButtonsLayout->addWidget(saveContourButton);
-
-    auto saveLayout = new QVBoxLayout();
-    layout->addLayout(saveLayout);
-    saveLayout->addWidget(saveLabel);
-    saveLayout->addLayout(saveButtonsLayout);
-
-    // How to use
-    auto helpLayout = new QVBoxLayout();
-    layout->addLayout(helpLayout);
-    helpLayout->setContentsMargins(0, 10, 0, 0);
-    helpButton = new QPushButton("Help");
-    helpButton->setToolTip("show help related to this toolbox.");
-    helpButton->setMinimumSize(150, 20);
-    helpButton->setMaximumSize(150, 20);
-    helpButton->setObjectName("helpButton");
-    connect(helpButton, SIGNAL(clicked()), this, SLOT(showHelp()));
-    helpLayout->addWidget(helpButton);
+    saveLayout->addWidget(saveContourButton);
 
     // buttons initialisation: view has no data
     disableButtons();
@@ -604,7 +603,6 @@ void polygonRoiToolBox::showHelp() const
 {
     QMessageBox msgBox;
     msgBox.setWindowTitle("Help");
-    msgBox.setIcon(QMessageBox::Information);
     
     QString main = QString("<h3>Main features</h3>")
         + QString("<ul>")

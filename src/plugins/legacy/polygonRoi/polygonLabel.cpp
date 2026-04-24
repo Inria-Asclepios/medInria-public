@@ -751,7 +751,7 @@ bool polygonLabel::pasteContour(QVector<QVector2D> nodes)
         roi->setOrientation(d->orientation);
         roi->pasteContour(nodes);
     }
-//    d->view->render();
+
     return true;
 }
 
@@ -1101,7 +1101,3 @@ void polygonLabel::addViewObservers()
         roi->addObservers();
     }
 }
-
-
-
-
