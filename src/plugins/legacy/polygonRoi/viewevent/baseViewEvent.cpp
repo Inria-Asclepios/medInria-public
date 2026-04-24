@@ -137,7 +137,6 @@ bool baseViewEvent::mouseReleaseEvent(medAbstractView *view, QMouseEvent *mouseE
         pToolBox->drawCross(wPos);
         vtkImageView2D *view2d = static_cast<medVtkViewBackend*>(currentView->backend())->view2D;
         view2d->SetLeftButtonInteractionStyle(globalVtkLeftButtonBehaviour);
-
     }
     else if (isRepulsorActivated )
     {
@@ -239,7 +238,7 @@ bool baseViewEvent::mousePressEvent(medAbstractView * view, QMouseEvent *mouseEv
         }
         else if (mouseEvent->modifiers()==Qt::NoModifier)
         {
-            if (!isRepulsorActivated )
+            if (!isRepulsorActivated)
             {
                 vtkImageView2D *view2d = static_cast<medVtkViewBackend*>(currentView->backend())->view2D;
                 int currentLeftButtonBehaviour = view2d->GetLeftButtonInteractionStyle();
