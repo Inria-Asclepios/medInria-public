@@ -640,7 +640,10 @@ void polygonRoiToolBox::showHelp() const
     }
     contextual += QString("</ul>");
 
-    const QString explanation = main + shortcut + contextual;
+    // Fix Qt 5.15 (at least) bug on macOS which display messagebox text in bold
+    QString explanation = "<span style='font-weight: normal;'>" + main + shortcut + contextual + "</span>";
+
+    msgBox.setTextFormat(Qt::RichText);
     msgBox.setText(explanation);
     msgBox.exec();
 }
