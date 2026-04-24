@@ -466,8 +466,10 @@ AlgorithmPaintToolBox::AlgorithmPaintToolBox(QWidget *parent ) :
             "&nbsp;&nbsp;&nbsp;&nbsp;1. Click the color button to choose a new color.<br>"
             "&nbsp;&nbsp;&nbsp;&nbsp;2. You must <em>reset the mask</em> for the new color to be applied to existing data."
         );
+        // Fix Qt 5.15 (at least) bug on macOS which display messagebox text in bold
+        QString explanation = "<span style='font-weight: normal;'>" + text + "</span>";
 
-        msgBox.setText(text);
+        msgBox.setText(explanation);
         msgBox.setTextFormat(Qt::RichText);
         msgBox.exec();
     });
