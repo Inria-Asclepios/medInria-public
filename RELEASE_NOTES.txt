@@ -16,10 +16,14 @@ MUSICardio 4.1:
     * fix a crash with mesh added in the view after painting
     * fix interactor bugs if orientation is changed after painting
     * the current slice is refreshed after an interpolation.
-- PolygonROI: enhance cursor to handle landmarks.
+- PolygonROI:
+    * enhance cursor to handle landmarks
+    * enhance GUI
+    * fix a crash with shift-click then left-click on a new polygonROI.
 - Scenes: fix a bug if the user cancels export.
 - Fix a bug with "starting workspace" setting.
-- Remove Composer workspace, remove duplicated "Filtering dtk2" workspace.
+- Remove Composer workspace.
+- Remove duplicated "Filtering dtk2" workspace.
 - Pipelines: add a script version number to pipelines.
 - Histogram Analysis: fix problems/crashs with the Ventricle Max algo and its popup.
 - New documentation website: https://mds.ihu-liryc.fr/musicardio
