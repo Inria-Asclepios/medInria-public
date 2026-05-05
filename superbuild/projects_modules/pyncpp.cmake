@@ -68,17 +68,25 @@ function(pyncpp_project)
             INSTALL_COMMAND ""
             )
 
-        # Install setuptools needed for Python > 3.12
+        ExternalProject_Get_Property(${ep} BINARY_DIR)
         if(WIN32)
-            ExternalProject_Get_Property(${ep} BINARY_DIR)
-
             set(PYTHON_EXE "${BINARY_DIR}/python${PYTHON_VERSION_MAJOR}${PYTHON_VERSION_MINOR}/python.exe")
 
-            ExternalProject_Add_Step(${ep} install_setuptools
-                COMMAND ${PYTHON_EXE} -m ensurepip --upgrade
-                COMMAND ${PYTHON_EXE} -m pip install --upgrade pip setuptools wheel
+            ExternalProject_Add_Step(${ep} install_dependencies_windows
+                # setuptools needed for Python > 3.12 on Windows
+                COMMAND ${PYTHON_EXE} -m pip install numpy vtk SimpleITK scipy setuptools
                 DEPENDEES install
-                COMMENT "Installing setuptools for Python ${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}"
+                COMMENT "Installing Python dependencies on Windows"
+                WORKING_DIRECTORY ${BINARY_DIR}
+            )
+        else()
+            set(PYTHON_EXE "${BINARY_DIR}/lib/python${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}/bin/python${PYTHON_VERSION_MAJOR}.${PYTHON_VERSION_MINOR}")
+
+            ExternalProject_Add_Step(${ep} install_dependencies_unix
+                COMMAND ${PYTHON_EXE} -m pip install numpy vtk SimpleITK scipy
+                DEPENDEES install
+                COMMENT "Installing Python dependencies on Unix"
+                WORKING_DIRECTORY ${BINARY_DIR}
             )
         endif()
 
