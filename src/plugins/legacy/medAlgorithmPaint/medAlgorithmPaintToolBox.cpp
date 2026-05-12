@@ -601,6 +601,8 @@ void AlgorithmPaintToolBox::updateMagicWandComputation()
         undo();
         updateWandRegion(currentView, m_seed);
         wandTimer.start();
+
+        m_applyButton->setDisabled(false);
     }
 }
 
@@ -1820,7 +1822,10 @@ void AlgorithmPaintToolBox::clear()
         }
     }
     clearMask();
-    tabWidget->setCurrentIndex(0);
+    if (tabWidget)
+    {
+        tabWidget->setCurrentIndex(0);
+    }
 }
 
 void AlgorithmPaintToolBox::clearMask()
