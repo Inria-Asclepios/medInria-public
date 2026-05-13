@@ -239,12 +239,13 @@ if check_certificate "$CERT_NAME"; then
         codesign --force --timestamp --sign "$CERT_NAME" {} \;
 
     # Sign the executable and the full application
-    codesign --force --timestamp --sign "$CERT_NAME" "$APP_EXE"
-    codesign --force --deep --timestamp --sign "$CERT_NAME" "${BUNDLE}.app"
+    codesign --force --timestamp --sign "$CERT_NAME" --options runtime --entitlements ../../../src/cmake/entitlements.plist "$APP_EXE"
+    codesign --force --timestamp --sign "$CERT_NAME" "${BUNDLE}.app"
 
     # Check
     echo "# Check the signature"
     codesign --verify --deep --strict --verbose=2 "${BUNDLE}.app"
+    codesign --display --entitlements - ${BUNDLE}.app
     spctl -a -vv "${BUNDLE}.app"
 else
     echo "# No certificate found for the application, we do not sign it"
