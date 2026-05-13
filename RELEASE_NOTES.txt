@@ -24,12 +24,20 @@ MUSICardio 4.1:
 - Fix a bug with "starting workspace" setting.
 - Remove Composer workspace.
 - Remove duplicated "Filtering dtk2" workspace.
-- Pipelines: add a script version number to pipelines.
+- Pipelines:
+    * fix memory errors with outputs from processes
+    * add a script version number to pipelines
+    * our Python comes with numpy vtk SimpleITK scipy modules by default.
 - Histogram Analysis: fix problems/crashs with the Ventricle Max algo and its popup.
 - New documentation website: https://mds.ihu-liryc.fr/musicardio
 - Save last current paths in some dialog widget to open or export data.
 - Add new workspace to view and export EP maps.
-- Fix memory errors with outputs from processes in Pipelines
+- Remeshing:
+    * fix a crash displaying the output mesh on some computer
+    * now display the output mesh in the view after manual mode.
+- Data Projection:
+    * fix problem if the input data were dropped before the opening of the toolbox
+    * fix problem if a non-mesh is used.
 
 MUSICardio 4.0.7:
 - PolygonROI:
