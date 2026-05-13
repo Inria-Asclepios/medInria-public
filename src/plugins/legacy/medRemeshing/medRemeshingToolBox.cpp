@@ -480,32 +480,14 @@ double medRemeshingToolBox::getNumberOfCells(dtkSmartPointer<medAbstractData> da
 
 void medRemeshingToolBox::addMeshToView()
 {
-    medRunnableProcess *process = static_cast<medRunnableProcess*>(sender());
-
-    QStringList options;
-    options << "medDecimateMeshProcess" << "medRefineMeshProcess" << "medSmoothMeshProcess";
-
-    switch (options.indexOf(process->getProcess()->description()))
+    auto newData = processOutput();
+    if (newData)
     {
-        case 0:
+        displayComputedMesh(newData);
+
+        if (d->currentProcess == REFINE)
         {
-            displayComputedMesh(d->decimateProcess->output());
-            break;
-        }
-        case 1:
-        {
-            displayComputedMesh(d->refineProcess->output());
             allowDecimate();
-            break;
-        }
-        case 2:
-        {
-            displayComputedMesh(d->smoothProcess->output());
-            break;
-        }
-        default:
-        {
-            return;
         }
     }
 }
