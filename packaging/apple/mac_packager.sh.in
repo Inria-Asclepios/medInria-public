@@ -82,21 +82,6 @@ done
 echo "# Deploy Qt libs"
 @Qt5_DIR@/../../../bin/macdeployqt ${BUNDLE}.app -appstore-compliant
 
-# Correction needed for Qt5 installed via homebrew, macdeployqt fails to fix Qt plugin dependencies
-echo "# Correct Qt plugin dependencies"
-find "${BUNDLE}.app/Contents/PlugIns" -name "*.dylib" | while read plugin; do
-    old_id=$(otool -D "$plugin" 2>/dev/null | tail -n +2)
-
-    plugin_dir=$(basename $(dirname "$plugin"))
-    plugin_name=$(basename "$plugin")
-    new_id="@executable_path/../PlugIns/$plugin_dir/$plugin_name"
-    
-    if [[ "$old_id" == "/usr/local/opt/"* ]] || [[ "$old_id" == *"qt@5"* ]]; then
-        echo "Correcting ID: $old_id -> $new_id"
-        install_name_tool -id "$new_id" "$plugin"
-    fi
-done
-
 # Qwt needs QtConcurrent.framework module initially not in the core application
 echo "# Copy QtConcurrent.framework for Qwt"
 QT_CONCURRENT_SOURCE="@Qt5_DIR@/../../../lib/QtConcurrent.framework"
@@ -166,22 +151,49 @@ find "$PLUGIN_DIR" -type f -name "*.dylib" | while read -r lib; do
     done
 done
 
+echo "# Correct identifier of plugins"
+find "$PLUGIN_DIR" -type f \( -name "*.dylib" -o -name "*.so" \) | while read -r plugin_file; do
+    current_id=$(otool -D "$plugin_file" 2>/dev/null | tail -n +2) # get the id
+    relative_path="${plugin_file#$PLUGIN_DIR/}"                    # remove PLUGIN_DIR path from plugin_file
+    expected_id="@executable_path/../PlugIns/${relative_path}"
+
+    echo "Check ID: $plugin_file"
+
+    # Solve the id (mostly absolute paths)
+    if [[ "$current_id" != "$expected_id" ]]; then
+        echo "Correcting ID: $current_id -> $expected_id"
+        if ! install_name_tool -id "$expected_id" "$plugin_file"; then
+            echo "Error fixing identifier for $plugin_file"
+        fi
+    fi
+done
+
 if [[ "@USE_SYSTEM_ZLIB@" == "OFF" ]]; then
     echo "# Correct libs for zlib dependencies"
     # Search all libs finishing with dylib, or beginning by Qt but not finishing with dylib (as for Qt bundles)
-    find "$FRAMEWORK_DIR" -type f \( -name "*.dylib" -o -name "Qt*" ! -name "*.dylib" \) | while read -r dylib; do
+    find "$FRAMEWORK_DIR" -type f \( -name "*.dylib" -o \( -name "Qt*" ! -name "*.dylib" \) \) | while read -r dylib; do
+        # don't change our own embedded zlib 
         if [[ "$(basename "$dylib")" == libz* ]]; then
             continue
         fi
-        # Searching all lines in current lib with "libz" in it
-        otool -L "$dylib" 2>/dev/null | grep libz | while read -r line; do
-            bad_path=$(echo "$line" | awk '{print $1}')
-            if [[ "$bad_path" =~ ^/ ]]; then
-                basename_dep=$(basename "$bad_path")
-                new_path="@executable_path/../Frameworks/${basename_dep}"
-                install_name_tool -change "$bad_path" "$new_path" "$dylib" 2>/dev/null || true
-            fi
-        done
+
+        system_z=$(otool -L "$dylib" 2>/dev/null | grep -F "/usr/lib/libz" || true)
+        if [[ -n "$system_z" ]]; then
+            echo "Found system zlib dependency in: $(basename "$dylib")"
+            while IFS= read -r line; do
+                bad_path=$(echo "$line" | awk '{print $1}')
+                if [[ "$bad_path" =~ ^/usr/lib/libz.*\.dylib$ ]]; then
+                    basename_dep=$(basename "$bad_path")
+                    new_path="@executable_path/../Frameworks/${basename_dep}"
+
+                    echo "Fixing: $bad_path to: $new_path"
+
+                    install_name_tool -change "$bad_path" "$new_path" "$dylib" 2>/dev/null || true
+                else
+                    echo "Skipping non-zlib path: $bad_path"
+                fi
+            done <<< "$system_z"
+        fi
     done
 fi
 
@@ -200,9 +212,9 @@ fi
 mkdir -p ${BUNDLE}.app/Contents/Resources/lib
 mv lib/python@PYTHON_VERSION_MAJOR@.@PYTHON_VERSION_MINOR@ ${BUNDLE}.app/Contents/Resources/lib
 
-# Sign the app
+# Signature if the right certificate is found
 if check_certificate "$CERT_NAME"; then
-    echo "# Sign the app"
+    echo "# Sign the libraries and plugins"
 
     # Sign framework libs
     find "$FRAMEWORK_DIR" -type f -name "*.dylib" -exec \
@@ -212,8 +224,6 @@ if check_certificate "$CERT_NAME"; then
     codesign --force --timestamp --sign "$CERT_NAME" --options runtime --verbose "${QWT_DIR}/Versions/6/qwt"
     codesign --force --timestamp --sign "$CERT_NAME" --verbose "${QWT_DIR}/Versions/$QWT_VERSION"
     codesign --force --timestamp --sign "$CERT_NAME" --options runtime --verbose "${QWT_DIR}"
-    codesign --verify --deep --strict --verbose=2 "${QWT_DIR}"
-    spctl -a -vv "${QWT_DIR}"
 
     # Sign Qt frameworks
     find "$FRAMEWORK_DIR" -name "*.framework" -type d | while read -r framework; do
@@ -235,18 +245,29 @@ if check_certificate "$CERT_NAME"; then
     done
 
     # Sign plugins
-    find "$PLUGIN_DIR" -type f \( -name "*.dylib" -o -name "*.so" \) -exec \
-        codesign --force --timestamp --sign "$CERT_NAME" {} \;
+    find "$PLUGIN_DIR" -type f \( -name "*.dylib" -o -name "*.so" \) | while read -r plugin_file; do
+        echo "Signing plugin: $(basename "$plugin_file")"
+        if ! codesign --force --timestamp --sign "$CERT_NAME" --options runtime --verbose "$plugin_file"; then
+            echo "ERROR: Failed to sign $plugin_file"
+        fi
+    done
 
-    # Sign the executable and the full application
-    codesign --force --timestamp --sign "$CERT_NAME" --options runtime --entitlements ../../../src/cmake/entitlements.plist "$APP_EXE"
+    # Sign the application
+    echo "# Sign the executable with entitlements and the full application"
     codesign --force --timestamp --sign "$CERT_NAME" "${BUNDLE}.app"
+    codesign --force --timestamp --sign "$CERT_NAME" --options runtime --entitlements ../../../src/cmake/entitlements.plist "$APP_EXE"
 
-    # Check
+    # Checking
     echo "# Check the signature"
+    codesign --verify --deep --strict --verbose=2 "${QWT_DIR}"
     codesign --verify --deep --strict --verbose=2 "${BUNDLE}.app"
+    if spctl -a -vv "${BUNDLE}.app"; then
+        echo "SUCCESS: spctl accepted."
+    else
+        echo "WARNING: spctl rejected (which is normal for self-signed certification)."
+    fi
+    echo "# Check entitlements"
     codesign --display --entitlements - ${BUNDLE}.app
-    spctl -a -vv "${BUNDLE}.app"
 else
     echo "# No certificate found for the application, we do not sign it"
 fi
