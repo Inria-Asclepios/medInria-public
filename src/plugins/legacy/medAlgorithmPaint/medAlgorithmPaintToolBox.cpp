@@ -591,7 +591,7 @@ bool AlgorithmPaintToolBox::registered()
 
 void AlgorithmPaintToolBox::updateMagicWandComputation()
 {
-    if (seedPlanted && currentView)
+    if (seedPlanted && currentView && (tabWidget->tabBar()->currentIndex()==2))
     {
         if (m_wand3DCheckbox->isChecked() && wandTimer.elapsed()<600) // 1000/24 (24 images per second)
         {
