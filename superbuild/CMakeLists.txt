@@ -48,7 +48,7 @@ find_package(Qt5 REQUIRED COMPONENTS
 
 find_package(Boost REQUIRED)
 
-if(USE_Python AND UNIX)
+if(UNIX)
     if(APPLE)
         if(CMAKE_SYSTEM_PROCESSOR STREQUAL "arm64")
             set(default_root_dir "/opt/homebrew/opt/openssl") # macOS Apple ship (M1/M2/M3...)
@@ -126,7 +126,6 @@ if (${USE_RealTimeWorkspace})
         jsoncons
         asio
         websocketpp
-        openssl
     )
 endif() 
 

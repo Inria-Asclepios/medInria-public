@@ -22,7 +22,6 @@ function(music_plugins_project)
             jsoncons
             asio
             websocketpp
-            openssl
         )
     endif()
 
@@ -93,9 +92,8 @@ function(music_plugins_project)
                 -Djsoncons_ROOT:FILEPATH=${jsoncons_ROOT}
                 -Dasio_ROOT:FILEPATH=${asio_ROOT}
                 -Dwebsocketpp_ROOT:FILEPATH=${websocketpp_ROOT}
-                -Dopenssl_ROOT:FILEPATH=${openssl_ROOT}
                 -DOPENSSL_ROOT_DIR:FILEPATH=${OPENSSL_ROOT_DIR}
-                -DOPENSSL_BUILD:FILEPATH=${OPENSSL_BUILD}
+                -DDCMTK_ROOT:PATH=${DCMTK_ROOT}
                 )
         endif()
 
