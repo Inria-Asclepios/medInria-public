@@ -1,3 +1,6 @@
+MUSICardio 4.2:
+- Removes FFMPEG to only keep OGV video export which is natively used by VTK.
+
 MUSICardio 4.1:
 - Switch to VTK "v9.3.1", ITK "v5.4.5", Qt "5.15",
         libarchive "v3.8.5", xz "v5.8.1", RPI "V2.0.0",

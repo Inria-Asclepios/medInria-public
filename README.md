@@ -1,4 +1,4 @@
 medInria-public
 ====================
 
-Here is the [Compilation tutorial](https://music.gitlabpages.inria.fr/MUSICsoftware/)
+Here is the [Compilation tutorial](https://mds.ihu-liryc.fr/musicardio/)

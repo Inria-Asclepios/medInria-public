@@ -25,10 +25,6 @@ option(USE_MUSIC_PLUGINS "Build MUSICardio plugins" ON)
 
 option(USE_RealTimeWorkspace "Build the real time workspace and linked externals libraries" OFF)
 
-if (NOT WIN32)
-  option(USE_FFmpeg "Build with FFmpeg video export support" OFF)
-endif()
-
 ## #############################################################################
 ## Add packages
 ## #############################################################################
@@ -82,12 +78,6 @@ endif()
 #     directly
 #   * otherwise use download and compile locally the package as an external 
 #     module.
-
-if (NOT WIN32)
-  if (${USE_FFmpeg})
-      list(APPEND external_projects ffmpeg)
-  endif()
-endif()
 
 set(EXPIRATION_TIME "24" CACHE STRING "After X months the copy will expire")
 
