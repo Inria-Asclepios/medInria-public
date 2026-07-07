@@ -20,10 +20,6 @@ set(ep VTK)
 
 list(APPEND ${ep}_dependencies ZLIB)
 
-if(${USE_FFmpeg})
-  list(APPEND ${ep}_dependencies ffmpeg)
-endif()
-
 if(USE_Python)
   list(APPEND ${ep}_dependencies pyncpp)
 endif()
@@ -54,13 +50,6 @@ set(git_tag v9.3.1)
 if (UNIX)
     set(${ep}_cxx_flags "${${ep}_cxx_flags} -w") # remove warnings
 endif()
-
-# library extension
-if (UNIX AND NOT APPLE)
-    set(extention so)
-elseif(APPLE)
-    set(extention dylib)
-endif() # no WIN32 use of FFmpeg
 
 set(cmake_args
   ${ep_common_cache_args}
@@ -99,30 +88,6 @@ if(USE_OSPRay)
         -DVTK_MODULE_ENABLE_VTK_RenderingOSPRay=YES
         -Dospray_DIR=${ospray_DIR}
         -DOSPRAY_INSTALL_DIR=${OSPRAY_INSTALL_DIR}
-    )
-endif()
-
-# Video Export
-if(${USE_FFmpeg})
-    list(APPEND cmake_args
-        # FFMPEG
-        -DVTK_MODULE_ENABLE_VTK_IOFFMPEG=YES
-        -DFFMPEG_ROOT:STRING=${EP_PATH_BUILD}/ffmpeg
-        -DFFMPEG_INCLUDE_DIR:STRING=${EP_PATH_BUILD}/ffmpeg/include/
-
-        -DFFMPEG_LIBAVCODEC_INCLUDE_DIRS:STRING=${EP_PATH_BUILD}/ffmpeg/include
-        -DFFMPEG_LIBAVDEVICE_INCLUDE_DIRS:STRING=${EP_PATH_BUILD}/ffmpeg/include
-        -DFFMPEG_LIBAVFORMAT_INCLUDE_DIRS:STRING=${EP_PATH_BUILD}/ffmpeg/include
-        -DFFMPEG_LIBAVUTIL_INCLUDE_DIRS:STRING=${EP_PATH_BUILD}/ffmpeg/include
-        -DFFMPEG_LIBSWRESAMPLE_INCLUDE_DIRS:STRING=${EP_PATH_BUILD}/ffmpeg/include
-        -DFFMPEG_LIBSWSCALE_INCLUDE_DIRS:STRING=${EP_PATH_BUILD}/ffmpeg/include
-
-        -DFFMPEG_LIBAVDEVICE_LIBRARIES:STRING=${EP_PATH_BUILD}/ffmpeg/lib/libavdevice.${extention}
-        -DFFMPEG_LIBAVCODEC_LIBRARIES:STRING=${EP_PATH_BUILD}/ffmpeg/lib/libavcodec.${extention}
-        -DFFMPEG_LIBAVFORMAT_LIBRARIES:STRING=${EP_PATH_BUILD}/ffmpeg/lib/libavformat.${extention}
-        -DFFMPEG_LIBAVUTIL_LIBRARIES:STRING=${EP_PATH_BUILD}/ffmpeg/lib/libavutil.${extention}
-        -DFFMPEG_LIBSWRESAMPLE_LIBRARIES:STRING=${EP_PATH_BUILD}/ffmpeg/lib/libswresample.${extention}
-        -DFFMPEG_LIBSWSCALE_LIBRARIES:STRING=${EP_PATH_BUILD}/ffmpeg/lib/libswscale.${extention}
     )
 endif()
 
