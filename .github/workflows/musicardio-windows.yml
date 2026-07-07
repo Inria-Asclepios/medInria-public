@@ -50,7 +50,6 @@ env:
   MSC_SSH_PLUGINS: ${{ secrets.MSC_SSH_PLUGINS }}
   MSC_TOKEN: ${{ secrets.MSC_TOKEN }}
   _WIN32_WINNT: 0x0A00
-  WINVER: 0x0A00
 
 jobs:
   build:

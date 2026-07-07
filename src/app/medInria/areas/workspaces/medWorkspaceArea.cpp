@@ -157,7 +157,9 @@ void medWorkspaceArea::grabVideo()
     medAbstractView *view = this->currentWorkspace()->tabbedViewContainers()->getFirstSelectedContainerView();
     if (view)
     {
-        medAbstractProcessLegacy *process = qobject_cast<medAbstractProcessLegacy*>(dtkAbstractProcessFactory::instance()->create("med::ExportVideo"));
+        medAbstractProcessLegacy *process = qobject_cast<medAbstractProcessLegacy*>(
+            dtkAbstractProcessFactory::instance()->create("med::ExportVideo"));
+
         medAbstractImageView *iview = dynamic_cast<medAbstractImageView*>(view);
         medTimeLineParameterL *timeLine = iview->timeLineParameter();
 
