@@ -27,8 +27,8 @@ public:
     typedef itk::SmartPointer<Self>        Pointer;
     typedef itk::SmartPointer<const Self>  ConstPointer;
     
-    itkTypeMacro( DataImageReaderCommand, Command )
-    itkNewMacro (Self)
+    itkTypeMacro(DataImageReaderCommand, Command);
+    itkNewMacro(Self);
     
     void Execute(Object *caller, const EventObject &event);
     void Execute(const Object *caller, const EventObject &event);

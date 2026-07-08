@@ -45,10 +45,10 @@ public:
   typedef SmartPointer<const Self>                             ConstPointer;
 
   /** Method for creation through the object factory. */
-  itkNewMacro(Self)
+  itkNewMacro(Self);
 
   /** Run-time type information (and related methods). */
-  itkTypeMacro(SphericalHarmonicITKToVTKFilter, ImageToImageFilter)
+  itkTypeMacro(SphericalHarmonicITKToVTKFilter, ImageToImageFilter);
 
   /** Return the input (no ITK filtering is performed on the input
      *  image) */

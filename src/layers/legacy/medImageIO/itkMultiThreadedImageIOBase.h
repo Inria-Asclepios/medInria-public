@@ -29,7 +29,7 @@ namespace itk
     typedef SmartPointer<Self>       Pointer;
     typedef SmartPointer<const Self> ConstPointer;
 
-    itkTypeMacro (MultiThreadedImageIOBase, ImageIOBase)
+    itkTypeMacro (MultiThreadedImageIOBase, ImageIOBase);
 
     typedef std::vector<std::string> FileNameVectorType;
     typedef ImageRegion<1>           RegionType;
