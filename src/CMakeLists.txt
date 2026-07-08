@@ -13,7 +13,7 @@
 #
 ################################################################################
 
-cmake_minimum_required(VERSION 3.19)
+cmake_minimum_required(VERSION 3.24)
 
 if(NOT DEFINED ${medInria_VERSION})
     set(medInria_VERSION 4.2.0)

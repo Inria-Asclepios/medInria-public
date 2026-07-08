@@ -29,13 +29,13 @@ if (NOT USE_SYSTEM_${ep})
 ## #############################################################################
 
 set(git_url ${GITLAB_PREFIX}libeigen/eigen)
-set(git_tag 3.3.8)
+set(git_tag 5.0.1)
 
 ## #############################################################################
 ## Check if patch has to be applied
 ## #############################################################################
 
-ep_GeneratePatchCommand(${ep} ${ep}_PATCH_COMMAND eigen-3.3.8.patch)
+#ep_GeneratePatchCommand(${ep} ${ep}_PATCH_COMMAND eigen-3.3.8.patch)
 
 ## #############################################################################
 ## Add specific cmake arguments for configuration step of the project
