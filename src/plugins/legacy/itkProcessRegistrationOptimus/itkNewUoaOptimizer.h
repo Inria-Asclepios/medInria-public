@@ -30,10 +30,10 @@ class ITK_EXPORT NewUoaOptimizer : public SingleValuedNonLinearOptimizer
   typedef SingleValuedNonLinearOptimizer::ParametersType             ParametersType;
 
   /* Method for creation through the object factory */
-  itkNewMacro(Self) ;
+  itkNewMacro(Self);
   
   /*  Run-time type information (and related methods)  */
-  itkTypeMacro( NewUoaOptimizer, SingleValuedNonLinearOptimizer);  
+  itkTypeMacro(NewUoaOptimizer, SingleValuedNonLinearOptimizer);
 
   /* Set/Get space dimension */
   itkSetMacro( SpaceDimension, unsigned int);

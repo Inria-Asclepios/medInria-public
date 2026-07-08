@@ -39,7 +39,7 @@ public:
     itkFactorylessNewMacro(Self)
 
     /** Run-time type information (and related methods). */
-    itkTypeMacro(GISImageIOFactory, ObjectFactoryBase)
+    itkTypeMacro(GISImageIOFactory, ObjectFactoryBase);
 
     /** Register one factory of this type  */
     static void RegisterOneFactory()

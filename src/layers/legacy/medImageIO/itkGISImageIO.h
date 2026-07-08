@@ -31,8 +31,8 @@ public:
     typedef SmartPointer<Self> Pointer;
     typedef SmartPointer<const Self> ConstPointer;
 
-    itkNewMacro (Self)
-    itkTypeMacro(GISImageIO, ImageIOBase)
+    itkNewMacro(Self);
+    itkTypeMacro(GISImageIO, ImageIOBase);
 
     /*-------- This part of the interfaces deals with reading data. ----- */
 
