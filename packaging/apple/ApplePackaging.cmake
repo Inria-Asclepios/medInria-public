@@ -20,7 +20,7 @@ set(CPACK_BINARY_PACKAGEMAKER OFF)
 ## #############################################################################
 
 set(CPACK_PACKAGE_FILE_NAME 
-  "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-${CMAKE_SYSTEM_PROCESSOR}"
+  "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-macOS_${CMAKE_SYSTEM_VERSION}-${CMAKE_SYSTEM_PROCESSOR}"
    )
 
 ## #############################################################################
