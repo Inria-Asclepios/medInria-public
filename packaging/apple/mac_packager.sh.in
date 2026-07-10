@@ -274,7 +274,7 @@ fi
 
 # Create the DMG
 echo "# Create the DMG"
-DMG_NAME="${BUNDLE}-@MEDINRIA_SUPERBUILD_VERSION@.dmg"
+DMG_NAME="@CPACK_PACKAGE_FILE_NAME@.dmg"
 dmgbuild -s "../../../packaging/apple/settings.json" "${BUNDLE}" "${DMG_NAME}"
 
 # Sign the DMG
