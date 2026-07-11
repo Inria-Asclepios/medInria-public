@@ -12,7 +12,6 @@
 =========================================================================*/
 
 #include "vtkDataMeshWriter.h"
-#include "vtkDataMeshHelper.h"
 
 #include <medAbstractData.h>
 #include <medAbstractDataFactory.h>
@@ -55,25 +54,23 @@ bool vtkDataMeshWriter::write(const QString& path)
         return false;
     }
     addMetaDataAsFieldData(mesh);
-    DataMeshHelper::prepareMetaDataForAsciiReadOrWrite(mesh, true);
 
-    bool success = true;
     try
     {
         setlocale(LC_NUMERIC, "C");
         QLocale::setDefault(QLocale("C"));
 
         mesh->Write(path.toLocal8Bit().constData());
+        clearMetaDataFieldData(mesh);
     }
     catch (...)
     {
         qDebug() << metaObject()->className() << ": error writing to " << path;
-        success = false;
+        clearMetaDataFieldData(mesh);
+        return false;
     }
-    clearMetaDataFieldData(mesh);
-    DataMeshHelper::prepareMetaDataForAsciiReadOrWrite(mesh, false);
 
-    return success;
+    return true;
 }
 
 QString vtkDataMeshWriter::description() const
