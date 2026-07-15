@@ -12,7 +12,6 @@
 ################################################################################
 
 # Get distribution name and architecture
-
 execute_process(COMMAND lsb_release -a
                 COMMAND grep "^Distributor ID:" 
                 COMMAND sed -e "s/Distributor ID:[ \t]*//ig"
@@ -32,7 +31,7 @@ execute_process(COMMAND arch
 set(CPACK_PACKAGE_FILE_NAME 
     "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-${DISTRIBUTOR_ID}_${RELEASE}-${ARCH}")
  
-set(CPACK_GENERATOR "ZIP")
+set(CPACK_GENERATOR "AppImage")
 
 # Remember the linux packaging source dir
 set(CURRENT_SRC_DIR ${PROJECT_SOURCE_DIR}/linux)
@@ -44,28 +43,26 @@ configure_file(${CURRENT_SRC_DIR}/GeneratorConfig.cmake.in
                @ONLY)
 set(CPACK_PROJECT_CONFIG_FILE ${CURRENT_BIN_DIR}/GeneratorConfig.cmake)
 
-# Add postinst and prerm script
-configure_file(${CURRENT_SRC_DIR}/postinst.in ${CURRENT_BIN_DIR}/postinst)
-configure_file(${CURRENT_SRC_DIR}/prerm.in    ${CURRENT_BIN_DIR}/prerm)
-
-# Generate desktop file
-configure_file(${CURRENT_SRC_DIR}/MUSICardio.desktop.in ${CURRENT_BIN_DIR}/MUSICardio.desktop @ONLY)
-install(FILES ${CURRENT_BIN_DIR}/MUSICardio.desktop DESTINATION .)
+# Install desktop file
+configure_file(${CURRENT_SRC_DIR}/fr.mds.MUSICardio.desktop.in
+               ${CURRENT_BIN_DIR}/fr.mds.MUSICardio.desktop @ONLY)
+install(FILES  ${CURRENT_BIN_DIR}/fr.mds.MUSICardio.desktop DESTINATION usr/share/applications)
 
 # Add application icon
 set(ICON_SOURCE ${PROJECT_SOURCE_DIR}/../src/app/medInria/resources/MUSICardio_logo_small_light.png)
-install(FILES ${ICON_SOURCE} DESTINATION . RENAME musicardio.png)
+set(CPACK_PACKAGE_ICON "musicardio.png")
+install(FILES ${ICON_SOURCE}
+        DESTINATION usr/share/icons/hicolor/256x256/apps
+        RENAME ${CPACK_PACKAGE_ICON})
 
-# Create a small README for the package
-file(WRITE ${CURRENT_BIN_DIR}/README.txt "MUSICardio
+# Add License
+set(CPACK_PACKAGE_LICENSE "Proprietary")
+install(FILES ${EP_PATH_SOURCE}/music-plugins/LICENSE.txt DESTINATION .)
 
-How to run:
-  ./bin/MUSICardio.sh
-  or right-click 'Run as a program' on MUSICardio.sh.
-
-More info on https://mds.ihu-liryc.fr/musicardio
-")
-install(FILES ${CURRENT_BIN_DIR}/README.txt DESTINATION .)
+# Install AppStream metadata file
+configure_file(${CURRENT_SRC_DIR}/fr.mds.MUSICardio.appdata.xml.in
+               ${CURRENT_BIN_DIR}/fr.mds.MUSICardio.appdata.xml @ONLY)
+install(FILES  ${CURRENT_BIN_DIR}/fr.mds.MUSICardio.appdata.xml DESTINATION usr/share/metainfo)
 
 # Save the medinria-packaging install target to add it last
 set(backup_CPACK_INSTALL_CMAKE_PROJECTS ${CPACK_INSTALL_CMAKE_PROJECTS})
@@ -102,9 +99,39 @@ foreach(dir ${PRIVATE_PLUGINS_LEGACY_DIRS})
     set(CPACK_INSTALL_CMAKE_PROJECTS ${CPACK_INSTALL_CMAKE_PROJECTS} ${dir} ${dir} ALL "/bin")
 endforeach()
 
-install(PROGRAMS ${CMAKE_BINARY_DIR}/superbuild/MUSICardio.sh DESTINATION bin)
+# Install custom AppRun script and application binary
+configure_file(${CURRENT_SRC_DIR}/AppRun.in
+               ${CURRENT_BIN_DIR}/AppRun @ONLY)
+install(PROGRAMS ${CURRENT_BIN_DIR}/AppRun DESTINATION .)
+
+set(PYTHON_BIN "${EP_PATH_BUILD}/pyncpp/lib/python3.12/bin/python3.12_bin")
+set(MUSICARDIO_BIN "${CMAKE_BINARY_DIR}/medInria-build/bin/MUSICardio")
+
+install(PROGRAMS ${MUSICARDIO_BIN} DESTINATION bin)
+
+# Cpack AppImage generator way to get all dependencies
+# See https://cmake.org/cmake/help/latest/cpack_gen/appimage.html
+install(CODE [[
+    file(GET_RUNTIME_DEPENDENCIES
+        EXECUTABLES ${MUSICARDIO_BIN}
+        RESOLVED_DEPENDENCIES_VAR resolved_deps
+    )
+
+    foreach(dep ${resolved_deps})
+        # copy the symlink
+        file(COPY ${dep} DESTINATION lib)
+
+        # Resolve the real path of the dependency (follows symlinks)
+        file(REAL_PATH ${dep} resolved_dep_path)
+
+        # Copy the resolved file to the destination
+        file(COPY ${resolved_dep_path} DESTINATION lib)
+    endforeach()
+]])
+
+
+# Cleaning
 install(CODE "include(${CURRENT_BIN_DIR}/PostArchiveCleanupScript.cmake)")
 
-# force the medinria-packaging install target to run last so we can use it
-# to cleanup
+# Force the medinria-packaging install target to run last so we can use it to cleanup
 set(CPACK_INSTALL_CMAKE_PROJECTS ${CPACK_INSTALL_CMAKE_PROJECTS} ${backup_CPACK_INSTALL_CMAKE_PROJECTS})
