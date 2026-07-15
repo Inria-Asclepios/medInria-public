@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<component type="desktop-application">
+  <id>fr.mds.MUSICardio</id>
+  
+  <name>@CPACK_PACKAGE_NAME@</name>
+  <summary>@CPACK_PACKAGE_DESCRIPTION_SUMMARY@</summary>
+  
+  <metadata_license>FSFAP</metadata_license>
+  <project_license>LicenseRef-proprietary</project_license>
+
+  <url type="homepage">https://mds.ihu-liryc.fr/musicardio</url>
+
+  <developer id="fr.ihu-liryc.musicardio">
+    <name>IHU Liryc, Université de Bordeaux and Inria</name>
+  </developer>
+  
+  <description>
+    <p>
+      Cardiac Medical Imaging Platform for research and clinical applications.
+      MUSICardio offers imaging algorithms for diagnosis and prognosis, and pipelines dedicated to the guidance of atrial or ventricular interventions.
+      The application is used to guide scar-related ventricular tachycardia (VT) ablation at LIRYC IHU and in the MUSIC consortium. 
+    </p>
+  </description>
+
+  <content_rating type="oars-1.0" />
+  
+  <launchable type="desktop-id">fr.mds.MUSICardio.desktop</launchable>
+
+  <screenshots>
+    <screenshot type="default">
+      <image>https://mds.ihu-liryc.fr/musicardio/images/registration/registration-workspace.png</image>
+    </screenshot>
+    <screenshot>
+      <image>https://mds.ihu-liryc.fr/musicardio/images/music/musicardio.png</image>
+    </screenshot>
+  </screenshots>
+
+</component>
