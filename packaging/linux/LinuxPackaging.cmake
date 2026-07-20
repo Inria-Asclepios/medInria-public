@@ -11,25 +11,7 @@
 #
 ################################################################################
 
-# Get distribution name and architecture
-execute_process(COMMAND lsb_release -a
-                COMMAND grep "^Distributor ID:" 
-                COMMAND sed -e "s/Distributor ID:[ \t]*//ig"
-                OUTPUT_VARIABLE DISTRIBUTOR_ID
-                OUTPUT_STRIP_TRAILING_WHITESPACE)
-  
-execute_process(COMMAND lsb_release -a
-                COMMAND grep "^Release:"
-                COMMAND sed -e "s/Release:[ \t]*//ig"
-                OUTPUT_VARIABLE RELEASE
-                OUTPUT_STRIP_TRAILING_WHITESPACE)
-
-execute_process(COMMAND arch 
-                OUTPUT_VARIABLE ARCH 
-                OUTPUT_STRIP_TRAILING_WHITESPACE)
-  
-set(CPACK_PACKAGE_FILE_NAME 
-    "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-${DISTRIBUTOR_ID}_${RELEASE}-${ARCH}")
+set(CPACK_PACKAGE_FILE_NAME "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}")
  
 set(CPACK_GENERATOR "AppImage")
 
@@ -104,9 +86,7 @@ configure_file(${CURRENT_SRC_DIR}/AppRun.in
                ${CURRENT_BIN_DIR}/AppRun @ONLY)
 install(PROGRAMS ${CURRENT_BIN_DIR}/AppRun DESTINATION .)
 
-set(PYTHON_BIN "${EP_PATH_BUILD}/pyncpp/lib/python3.12/bin/python3.12_bin")
 set(MUSICARDIO_BIN "${CMAKE_BINARY_DIR}/medInria-build/bin/MUSICardio")
-
 install(PROGRAMS ${MUSICARDIO_BIN} DESTINATION bin)
 
 # Cpack AppImage generator way to get all dependencies
