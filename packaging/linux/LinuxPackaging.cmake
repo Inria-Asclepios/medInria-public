@@ -19,6 +19,19 @@ set(CPACK_GENERATOR "AppImage")
 set(CURRENT_SRC_DIR ${PROJECT_SOURCE_DIR}/linux)
 set(CURRENT_BIN_DIR ${PROJECT_BINARY_DIR}/linux)
 
+# Download the type2-runtime (Cpack is natively on type1) to avoid prerequisites for users
+set(APPIMAGE_RUNTIME_URL "https://github.com/AppImage/type2-runtime/releases/download/continuous/runtime-x86_64")
+set(APPIMAGE_RUNTIME_FILE "${CURRENT_BIN_DIR}/runtime-x86_64")
+if(NOT EXISTS ${APPIMAGE_RUNTIME_FILE})
+    file(DOWNLOAD
+        ${APPIMAGE_RUNTIME_URL}
+        ${APPIMAGE_RUNTIME_FILE}
+        STATUS download_status
+        SHOW_PROGRESS
+    )
+endif()
+set(CPACK_APPIMAGE_RUNTIME_FILE ${APPIMAGE_RUNTIME_FILE})
+
 # Generate CPACK_PROJECT_CONFIG_FILE
 configure_file(${CURRENT_SRC_DIR}/GeneratorConfig.cmake.in
                ${CURRENT_BIN_DIR}/GeneratorConfig.cmake
