@@ -1,0 +1,204 @@
+# This starter workflow is for a CMake project running on a single platform. There is a different starter workflow if you need cross-platform coverage.
+# See: https://github.com/actions/starter-workflows/blob/main/ci/cmake-multi-platform.yml
+name: MUSICardio on Linux
+
+on:
+  push:
+    branches: [ "dev" ]
+  workflow_dispatch:
+    inputs:
+      EXPIRATION_TIME:
+        description: 'Expiration time in month'
+        required: true
+        default: '24'
+        type: string
+      REAL_TIME:
+        description: 'Compile Realtime workspace'
+        required: false
+        default: 'OFF'
+        type: choice
+        options:
+          - 'OFF'
+          - 'ON'
+      BRANCH:
+        description: 'Branch to checkout'
+        required: false
+        default: 'dev'
+        type: string
+      DOXYGEN:
+        description: 'Generate Doxygen documentation'
+        required: false
+        default: false
+        type: boolean
+      SONARQUBE:
+        description: 'Generate Sonarqube analysis'
+        required: false
+        default: false
+        type: boolean
+  workflow_call:
+    inputs:
+      REAL_TIME:
+        required: true
+        type: string
+      BRANCH:
+        required: false
+        type: string
+        default: 'dev'
+      EXPIRATION_TIME:
+        required: true
+        type: string
+      DOXYGEN:
+        required: false
+        type: boolean
+        default: false
+      SONARQUBE:
+        required: false
+        type: boolean
+        default: false
+env:
+  BUILD_TYPE: Release
+  # Token added on https://github.com/Inria-Asclepios/medInria-public/settings/secrets/actions/new and on your fork for testing purpose
+  MSC_SSH_PLUGINS: ${{ secrets.MSC_SSH_PLUGINS }}
+  MSC_TOKEN: ${{ secrets.MSC_TOKEN }}
+
+jobs:
+  build:
+    # https://docs.github.com/en/actions/using-jobs/choosing-the-runner-for-a-job#standard-github-hosted-runners-for-public-repositories
+    runs-on: ubuntu-24.04
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v7
+      with:
+          ref: ${{ inputs.BRANCH }}
+
+    - name: Set up SSH
+      run: |
+        mkdir -p ~/.ssh
+        echo "$MSC_SSH_PLUGINS" > ~/.ssh/id_rsa
+        chmod 600 ~/.ssh/id_rsa
+        ssh-keyscan github.com >> ~/.ssh/known_hosts
+
+    - name: Save in environment variable in case of automatic runs
+      run: |
+        echo "EXPIRATION_TIME=${{ inputs.EXPIRATION_TIME || '24' }}" >> $GITHUB_ENV
+        echo "REAL_TIME=${{ inputs.REAL_TIME || 'OFF' }}" >> $GITHUB_ENV
+        echo "DOXYGEN=${{ inputs.DOXYGEN || 'false' }}" >> $GITHUB_ENV
+        echo "SONARQUBE=${{ inputs.SONARQUBE || 'false' }}" >> $GITHUB_ENV
+
+    - name: Install dependencies
+      run: |
+        sudo snap install cmake --classic
+
+        sudo apt-get update
+        sudo apt install git g++
+        sudo apt install qtbase5-dev qt5-qmake qttools5-dev qttools5-dev-tools qtwebengine5-dev libqt5svg5-dev libqt5websockets5-dev libqt5x11extras5-dev
+        sudo apt install libboost-all-dev swig libxt-dev libomp-dev libssl-dev
+        sudo apt install libffi-dev
+
+        # Dependencies for AppImages
+        wget https://github.com/AppImage/AppImageKit/releases/download/continuous/appimagetool-x86_64.AppImage
+        chmod +x appimagetool-x86_64.AppImage
+        sudo mv appimagetool-x86_64.AppImage /usr/local/bin/appimagetool
+        sudo apt install patchelf libfuse2t64
+
+        if [ "${{env.REAL_TIME}}" = "ON" ]; then
+          sudo apt install perl subversion
+        fi
+
+    - name: Test dependencies
+      run: |
+        /snap/bin/cmake --version
+
+    - name: Configure CMake
+      run: |
+        /snap/bin/cmake -B ${{github.workspace}}/build \
+          -DUSE_GITHUB_SSH:BOOL=TRUE \
+          -DmedInria_BUILD_TYPE:STRING=${{env.BUILD_TYPE}} \
+          -Dmusic-plugins_BUILD_TYPE:STRING=${{env.BUILD_TYPE}} \
+          -DEP_CHECKBOX_CUSTOM_DIRS:BOOL=ON \
+          -DEP_CHECKBOX_ON_TOP_LEVEL:BOOL=OFF \
+          -DEP_CHECKBOX_SIDE_BY_SIDE:BOOL=OFF \
+          -DEXPIRATION_TIME:STRING=${{env.EXPIRATION_TIME}} \
+          -DUSE_RealTimeWorkspace=${{env.REAL_TIME}}
+
+    - name: Build
+      run: |
+        /snap/bin/cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --parallel 4
+
+    - name: Package
+      run: |
+        cd ${{github.workspace}}/build
+        /snap/bin/cpack -C ${{env.BUILD_TYPE}}
+
+    - name: Get binary and asset names
+      run: |
+        cd ${{github.workspace}}/build
+        binary=$(ls *.AppImage | head -n 1)
+        base="${binary%.AppImage}"
+        if [ "$REAL_TIME" = "true" ]; then
+          asset="${base}-rt.AppImage"
+        else
+          asset="$binary"
+        fi
+        echo "ASSET_NAME=$asset" >> $GITHUB_ENV
+        echo "BINARY_NAME=$binary" >> $GITHUB_ENV
+        echo "The current package: $binary"
+        echo "The current asset name: $asset"
+
+    - name: Upload binaries to release
+      uses: svenstaro/upload-release-action@v2
+      with:
+        repo_name: Inria-Asclepios/msc_binaries
+        # A personal access token for the GitHub repository in which the release will be created and edited.
+        # It is recommended to create the access token with the following scopes: `repo, user, admin:repo_hook`.
+        repo_token: ${{ secrets.MSC_TOKEN }}
+        file: ${{github.workspace}}/build/${{env.BINARY_NAME}}
+        asset_name: ${{ env.ASSET_NAME }}
+        tag: latest
+        overwrite: true
+        body: "MUSICardio binaries"
+
+    ### Steps for Sonarqube analysis ###
+    # https://github.com/marketplace/actions/official-sonarqube-scan
+    # 1. Check https://sonarqube.inria.fr to have an account.
+    # 2. When logged on Inria Sonarqube server, go to "My account" -> Select the Security tab -> Generate a token -> Copy it.
+    # 3. Add SONAR_TOKEN secret with this token on https://github.com/Inria-Asclepios/medInria-public/settings/secrets/actions/new and/or your fork.
+    # 4. Add SONAR_HOST_URL also to the one listed on https://github.com/Inria-Asclepios/music/wiki/Sonarqube.
+    # 3. After running this step, results will be deployed on https://sonarqube.inria.fr/sonarqube/dashboard?id=asclepios%3Amusicardio
+    - name: SonarQube analysis
+      if: env.SONARQUBE == 'true'
+      uses: SonarSource/sonarqube-scan-action@v8.2.1
+      env:
+          SONAR_TOKEN: ${{ secrets.SONAR_TOKEN }}
+          SONAR_HOST_URL: ${{ secrets.SONAR_HOST_URL }}
+      with:
+        args: >
+          "-Dsonar.projectName=MUSICardioPlugins"
+          -Dsonar.projectKey=asclepios:musicardio
+          -Dsonar.sources=ExtProjs/music-plugins
+          -Dsonar.verbose=true
+          -Dsonar.scm.disabled=true
+
+    ### Steps for Doxygen deploying ###
+    # 1. compiles
+    # 1. https://github.com/Inria-Asclepios/medInria-public/settings/pages -> Deploy from a branch, branch: gh-pages, Save.
+    # 2. for test purposes, do it also on your fork with your test branch.
+    # 3. the documentation is deployed on https://github.com/Inria-Asclepios/medInria-public/tree/gh-pages
+    # 4. the pages are deployed on https://Inria-Asclepios.github.io/medInria-public.
+    - name: Generate Doxygen documentation
+      if: env.DOXYGEN == 'true'
+      run: |
+        sudo apt install doxygen graphviz
+        cd ${{github.workspace}}
+        doxygen doxygen.conf
+
+    # https://github.com/marketplace/actions/doxygen-github-pages-deploy-action
+    - name: Deploy Doxygen to Github Pages
+      if: env.DOXYGEN == 'true'
+      uses: DenverCoder1/doxygen-github-pages-action@v2.0.0
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        branch: gh-pages
+        folder: doxygen/html
+        config_file: doxygen.conf
