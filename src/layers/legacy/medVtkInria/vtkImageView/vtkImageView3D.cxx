@@ -21,8 +21,8 @@
 #include <vtkAnnotatedCubeActor.h>
 #include <vtkColorTransferFunction.h>
 #include <vtkDataSetCollection.h>
+#include <vtkGenerateIds.h>
 #include <vtkGeometryFilter.h>
-#include <vtkIdFilter.h>
 #include <vtkImageActor.h>
 #include <vtkImageAppendComponents.h>
 #include <vtkImageCast.h>
@@ -921,7 +921,7 @@ vtkActor* vtkImageView3D::AddDataSet(vtkPointSet* arg, vtkProperty* prop)
 //----------------------------------------------------------------------------
 vtkSmartPointer<vtkActor> vtkImageView3D::DataSetToActor(vtkPointSet* arg, vtkProperty* prop)
 {
-    auto idFilter = vtkSmartPointer<vtkIdFilter>::New();
+    auto idFilter = vtkSmartPointer<vtkGenerateIds>::New();
     auto geometryextractor = vtkSmartPointer<vtkGeometryFilter>::New();
     auto normalextractor = vtkSmartPointer<vtkPolyDataNormals>::New();
     auto mapper = vtkSmartPointer<vtkPolyDataMapper>::New();

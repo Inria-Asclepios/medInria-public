@@ -14,6 +14,7 @@
 #include <vtkVectorVisuManager.h>
 
 #include <limits>
+#include <iostream>
 
 #include <vtkObjectFactory.h>
 #include <vtkPointData.h>
@@ -92,7 +93,7 @@ void vtkVectorVisuManager::SetInput(vtkImageData* data, vtkMatrix4x4 *matrix)
 {
     if( !data )
     {
-        std::cerr << "Error: null data." << std::endl;
+        std::cerr << "Error with vectors: null data." << std::endl;
         return;
     }
 
@@ -124,7 +125,7 @@ void vtkVectorVisuManager::SetGlyphScale(const float& f)
 {
     if (f <= 0.0)
     {
-        cerr << "[Glyphs::SetGlyphScale] Invalid input range" << endl;
+        std::cerr << "[Glyphs::SetGlyphScale] Invalid input range" << std::endl;
         return;
     }
 

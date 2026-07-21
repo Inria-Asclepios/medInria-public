@@ -13,6 +13,8 @@
 
 #include "vtkTensorVisuManager.h"
 
+#include <iostream>
+
 #include <vtkObjectFactory.h>
 #include <vtkPointData.h>
 #include <vtkFieldData.h>
@@ -275,7 +277,7 @@ void vtkTensorVisuManager::SetGlyphScale(const float& f)
 {
     if (f <= 0.0)
     {
-        cerr << "[Glyphs::SetGlyphScale] Invalid input range" << endl;
+        std::cerr << "[Glyphs::SetGlyphScale] Invalid input range" << std::endl;
         return;
     }
 
@@ -291,7 +293,7 @@ void vtkTensorVisuManager::SetMaxGlyphSize(const float& f)
 {
     if (f < 0.0)
     {
-        cerr << "[Glyphs::SetMaxGlyphSize] Invalid input range" << endl;
+        std::cerr << "[Glyphs::SetMaxGlyphSize] Invalid input range" << std::endl;
         return;
     }
 
