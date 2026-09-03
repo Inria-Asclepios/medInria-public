@@ -1,0 +1,140 @@
+# This starter workflow is for a CMake project running on a single platform. There is a different starter workflow if you need cross-platform coverage.
+# See: https://github.com/actions/starter-workflows/blob/main/ci/cmake-multi-platform.yml
+name: MUSICardio on Windows
+
+on:
+  push:
+    branches: [ "dev" ]
+  workflow_dispatch:
+    inputs:
+      EXPIRATION_TIME:
+        description: 'Expiration time in month'
+        required: true
+        default: '24'
+        type: string
+      REAL_TIME:
+        description: 'Compile Realtime workspace'
+        required: false
+        default: 'OFF'
+        type: choice
+        options:
+          - 'OFF'
+          - 'ON'
+      BRANCH:
+        description: 'Branch to checkout'
+        required: false
+        default: 'dev'
+        type: string
+  workflow_call:
+    inputs:
+      REAL_TIME:
+        required: true
+        type: string
+      BRANCH:
+        required: false
+        type: string
+        default: 'dev'
+      EXPIRATION_TIME:
+        required: true
+        type: string
+
+env:
+  BUILD_TYPE: Release
+  # Token added on https://github.com/Inria-Asclepios/medInria-public/settings/secrets/actions/new and on your fork for testing purpose
+  MSC_SSH_PLUGINS: ${{ secrets.MSC_SSH_PLUGINS }}
+  MSC_TOKEN: ${{ secrets.MSC_TOKEN }}
+  _WIN32_WINNT: 0x0A00
+  WINVER: 0x0A00
+
+jobs:
+  build:
+    # https://docs.github.com/en/actions/using-jobs/choosing-the-runner-for-a-job#standard-github-hosted-runners-for-public-repositories
+    runs-on: windows-2022
+
+    steps:
+    - name: Checkout repository
+      uses: actions/checkout@v7
+      with:
+          ref: ${{ inputs.BRANCH }}
+
+    # https://github.com/marketplace/actions/install-ssh-key
+    - name: Install SSH key
+      uses: shimataro/ssh-key-action@v2
+      with:
+        key: ${{ secrets.MSC_SSH_PLUGINS }}
+        known_hosts: nothing
+
+    - name: Save in environment variable in case of automatic runs
+      shell: bash
+      run: |
+        echo "EXPIRATION_TIME=${{ inputs.EXPIRATION_TIME || '24' }}" >> $GITHUB_ENV
+        echo "REAL_TIME=${{ inputs.REAL_TIME || 'OFF' }}" >> $GITHUB_ENV
+
+    # Dependencies, already on the runner: CMake 3, git, Visual Studio Enterprise, 7zip
+
+    # https://github.com/marketplace/actions/download-and-install-boost
+    - name: Install boost
+      uses: MarkusJx/install-boost@v2
+      id: install-boost
+      with:
+        # A list of supported versions can be found here:
+        # https://github.com/MarkusJx/prebuilt-boost/blob/main/versions-manifest.json
+        boost_version: 1.91.0
+        toolset: msvc
+        platform_version: 2022
+
+    # https://github.com/marketplace/actions/install-qt
+    # https://ddalcino.github.io/aqt-list-server/
+    - name: Install Qt
+      uses: jurplel/install-qt-action@v4
+      with:
+        version: '5.15.2'
+        host: 'windows'
+        target: 'desktop'
+        arch: 'win64_msvc2019_64'
+
+    - name: Test dependencies
+      run: |
+        cmake --version
+
+    - name: Configure CMake
+      run: |
+        cmake -B D:\b -G "Visual Studio 17 2022" -DCMAKE_C_FLAGS="/D_WIN32_WINNT=0x0A00" -DCMAKE_CXX_FLAGS="/D_WIN32_WINNT=0x0A00" -DUSE_GITHUB_SSH:BOOL=TRUE -DmedInria_BUILD_TYPE:STRING=${{env.BUILD_TYPE}} -Dmusic-plugins_BUILD_TYPE:STRING=${{env.BUILD_TYPE}} -DEP_CHECKBOX_CUSTOM_DIRS:BOOL=ON -DEP_CHECKBOX_ON_TOP_LEVEL:BOOL=OFF -DEP_CHECKBOX_SIDE_BY_SIDE:BOOL=OFF -DEXPIRATION_TIME:STRING=${{env.EXPIRATION_TIME}} -DUSE_RealTimeWorkspace=${{env.REAL_TIME}} -DCMAKE_GENERATOR_PLATFORM=x64 -DBOOST_ROOT=${{ steps.install-boost.outputs.BOOST_ROOT }}
+
+    - name: Build
+      run: | 
+        cmake --build D:\b --config ${{env.BUILD_TYPE}} --parallel 4
+
+    - name: Package
+      run: |
+        cd D:\b
+        cpack -C ${{env.BUILD_TYPE}}
+
+    - name: Get binary and asset names
+      shell: bash
+      run: |
+        cd D:/b
+        binary=$(ls *.exe | head -n 1)
+        base="${binary%.exe}"
+        if [ "$REAL_TIME" = "true" ]; then
+          asset="${base}-rt.exe"
+        else
+          asset="$binary"
+        fi
+        echo "ASSET_NAME=$asset" >> $GITHUB_ENV
+        echo "BINARY_NAME=$binary" >> $GITHUB_ENV
+        echo "The current package: $binary"
+        echo "The current asset name: $asset"
+      
+    - name: Upload binaries to release
+      uses: svenstaro/upload-release-action@v2
+      with:
+        repo_name: Inria-Asclepios/msc_binaries
+        # A personal access token for the GitHub repository in which the release will be created and edited.
+        # It is recommended to create the access token with the following scopes: `repo, user, admin:repo_hook`.
+        repo_token: ${{ secrets.MSC_TOKEN }}
+        file: D:\b\${{env.BINARY_NAME}}
+        asset_name: ${{ env.ASSET_NAME }}
+        tag: latest
+        overwrite: true
+        body: "MUSICardio binaries"

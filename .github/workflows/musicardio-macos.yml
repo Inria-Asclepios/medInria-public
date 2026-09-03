@@ -4,9 +4,7 @@ name: MUSICardio on macOS
 
 on:
   push:
-    branches: [ "4.1" ]
-  pull_request:
-    branches: [ "4.1" ]
+    branches: [ "dev" ]
   workflow_dispatch:
     inputs:
       EXPIRATION_TIME:
@@ -14,25 +12,53 @@ on:
         required: true
         default: '24'
         type: string
-  #schedule:
-  #  - cron: '0 0 * * 1'  # Each monday at 0h00, MIN HOUR DAY_IN_MONTH MONTH WEEK_DAY
+      REAL_TIME:
+        description: 'Compile Realtime workspace'
+        required: false
+        default: 'OFF'
+        type: choice
+        options:
+          - 'OFF'
+          - 'ON'
+      BRANCH:
+        description: 'Branch to checkout'
+        required: false
+        default: 'dev'
+        type: string
+  workflow_call:
+    inputs:
+      REAL_TIME:
+        required: true
+        type: string
+      BRANCH:
+        required: false
+        type: string
+        default: 'dev'
+      EXPIRATION_TIME:
+        required: true
+        type: string
 
 env:
   BUILD_TYPE: Release
   QT5_DIR: "/opt/homebrew/opt/qt@5/lib/cmake/Qt5"
+  # Token added on https://github.com/Inria-Asclepios/medInria-public/settings/secrets/actions/new and on your fork for testing purpose
   MSC_SSH_PLUGINS: ${{ secrets.MSC_SSH_PLUGINS }}
   MSC_TOKEN: ${{ secrets.MSC_TOKEN }}
+  BUILD_CERTIFICATE_BASE64: ${{ secrets.BUILD_CERTIFICATE_BASE64 }}
+  P12_PASSWORD: ${{ secrets.P12_PASSWORD }}
+  CERT_NAME: "MDS-certificate"
 
 jobs:
   build:
     # https://docs.github.com/en/actions/using-jobs/choosing-the-runner-for-a-job#standard-github-hosted-runners-for-public-repositories
-    runs-on: macos-15
+    # See documentation for our selfhosted runners https://github.com/Inria-Asclepios/music/wiki/Github-Action
+    runs-on: macos-latest
 
     steps:
     - name: Checkout repository
-      uses: actions/checkout@v4
+      uses: actions/checkout@v7
       with:
-          ref: 4.1
+          ref: ${{ inputs.BRANCH }}
 
     - name: Set up SSH
       run: |
@@ -41,6 +67,12 @@ jobs:
         chmod 600 ~/.ssh/id_rsa
         ssh-keyscan github.com >> ~/.ssh/known_hosts
 
+    - name: Save in environment variable in case of automatic runs
+      run: |
+        echo "EXPIRATION_TIME=${{ inputs.EXPIRATION_TIME || '24' }}" >> $GITHUB_ENV
+        echo "REAL_TIME=${{ inputs.REAL_TIME || 'OFF' }}" >> $GITHUB_ENV
+
+    # Dependencies, already on the runner: pipx, cmake
     - name: Install dependencies
       run: |
         brew install qt@5
@@ -52,12 +84,8 @@ jobs:
         brew install swig
         brew install libomp
         echo "OpenMP_ROOT=$(brew --prefix libomp)" >> $GITHUB_ENV
-        #brew install pipx
         pipx install dmgbuild
         pipx ensurepath
-        #brew info cmake
-        brew uninstall --ignore-dependencies cmake
-        pipx install cmake==3.31.10
 
     - name: Test dependencies
       run: |
@@ -66,41 +94,92 @@ jobs:
         cmake --version
         ls $QT5_DIR
 
-    - name: Set default EXPIRATION_TIME if not provided (with non manual workflow)
-      run: echo "EXPIRATION_TIME=${{ inputs.EXPIRATION_TIME || '24' }}" >> $GITHUB_ENV
+    ### Steps for macOS signing with self-signed certificate ###
+    #
+    # 1. Create a p12 certificate on a physical macOS https://github.com/Inria-Asclepios/music/wiki/Binaries-signature.
+    # 2. On the mac, copy the p12 certificate with: 'base64 -i MDS-certificate.p12 | pbcopy'.
+    # 3. On https://github.com/Inria-Asclepios/medInria-public/settings/secrets/actions/new
+    #   - add BUILD_CERTIFICATE_BASE64 with the previously encoded lines,
+    #   - add P12_PASSWORD with p12 password.
+    # 4. For test purposes you need to add the secrets also on your fork.
+    ###
+
+    # https://github.com/marketplace/actions/import-code-signing-certificates
+    - name: Install our self-signed certificate
+      id: import-certs
+      uses: apple-actions/import-codesign-certs@v7
+      with:
+        p12-file-base64: ${{ secrets.BUILD_CERTIFICATE_BASE64 }}
+        p12-password:    ${{ secrets.P12_PASSWORD }}
+
+    - name: Add the certificate to trusted list for code signing
+      shell: bash
+      run: |
+        # Extract the PEM certificate from the p12
+        echo "$BUILD_CERTIFICATE_BASE64" | base64 --decode > /tmp/cert.p12
+        openssl pkcs12 -legacy -in /tmp/cert.p12 -passin pass:"$P12_PASSWORD" -clcerts -nokeys -out /tmp/cert.pem
+
+        # Add trusted certificate to system keychain
+        sudo security add-trusted-cert -d -r trustRoot -p codeSign \
+          -k /Library/Keychains/System.keychain /tmp/cert.pem
+
+    - name: Add keychain from import-codesign-certs step to search list
+      shell: bash
+      run: |
+        security list-keychains -d user -s \
+          "$HOME/Library/Keychains/signing_temp.keychain-db" \
+          "$HOME/Library/Keychains/login.keychain-db" \
+          /Library/Keychains/System.keychain
+
+    - name: Verify certificate
+      shell: bash
+      run: |
+        # List every identities
+        security find-identity -v -p codesigning
+
+        # Search for our certificate
+        security find-identity -v -p codesigning | grep -F -q "$CERT_NAME" || {
+          echo "Error, certificate '$CERT_NAME' not found in valid identities"
+          exit 1
+        }
 
     - name: Configure CMake
       run: |
         cmake -B ${{github.workspace}}/build \
           -DUSE_GITHUB_SSH:BOOL=TRUE \
-          -DmedInria_BUILD_TYPE:STRING=$BUILD_TYPE \
-          -Dmusic-plugins_BUILD_TYPE:STRING=$BUILD_TYPE \
+          -DmedInria_BUILD_TYPE:STRING=${{env.BUILD_TYPE}} \
+          -Dmusic-plugins_BUILD_TYPE:STRING=${{env.BUILD_TYPE}} \
           -DEP_CHECKBOX_CUSTOM_DIRS:BOOL=ON \
           -DEP_CHECKBOX_ON_TOP_LEVEL:BOOL=OFF \
           -DEP_CHECKBOX_SIDE_BY_SIDE:BOOL=OFF \
+          -DEXPIRATION_TIME:STRING=${{env.EXPIRATION_TIME}} \
+          -DUSE_RealTimeWorkspace=${{env.REAL_TIME}} \
           -DQt5_DIR=$QT5_DIR \
-          -DOpenMP_ROOT=$OpenMP_ROOT \
-          -DUSE_FFmpeg=OFF \
-          -DEXPIRATION_TIME:STRING=$EXPIRATION_TIME \
-          -DUSE_RealTimeWorkspace=OFF
-          
+          -DOpenMP_ROOT=$OpenMP_ROOT
+
     - name: Build
       run: | 
-        CORES_TO_USE=$(($(sysctl -n hw.ncpu) - 1)) # Limit the number of used core otherwise the compilation crashes sometimes
-        echo "Using $CORES_TO_USE cores for the build"
-        cmake --build ${{github.workspace}}/build --config $BUILD_TYPE --parallel $CORES_TO_USE
+        cmake --build ${{github.workspace}}/build --config ${{env.BUILD_TYPE}} --parallel 4
 
     - name: Package
       run: |
         cd ${{github.workspace}}/build
-        cpack -C $BUILD_TYPE
+        cpack -C ${{env.BUILD_TYPE}}
 
-    - name: Get DMG name
+    - name: Get binary and asset names
       run: |
         cd ${{github.workspace}}/build
-        dmg=$(ls *.dmg | head -n 1)
-        echo "DMG_NAME=$dmg" >> $GITHUB_ENV
-        echo "The current package: $dmg"
+        binary=$(ls *.dmg | head -n 1)
+        base="${binary%.dmg}"
+        if [ "$REAL_TIME" = "true" ]; then
+          asset="${base}-rt.dmg"
+        else
+          asset="$binary"
+        fi
+        echo "ASSET_NAME=$asset" >> $GITHUB_ENV
+        echo "BINARY_NAME=$binary" >> $GITHUB_ENV
+        echo "The current package: $binary"
+        echo "The current asset name: $asset"
       
     - name: Upload binaries to release
       uses: svenstaro/upload-release-action@v2
@@ -109,8 +188,8 @@ jobs:
         # A personal access token for the GitHub repository in which the release will be created and edited.
         # It is recommended to create the access token with the following scopes: `repo, user, admin:repo_hook`.
         repo_token: ${{ secrets.MSC_TOKEN }}
-        file: ${{github.workspace}}/build/${{env.DMG_NAME}}
-        asset_name: ${{env.DMG_NAME}}
+        file: ${{github.workspace}}/build/${{env.BINARY_NAME}}
+        asset_name: ${{ env.ASSET_NAME }}
         tag: latest
         overwrite: true
         body: "MUSICardio binaries"
