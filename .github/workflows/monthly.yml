@@ -1,0 +1,43 @@
+# This starter workflow is for a CMake project running on a single platform. There is a different starter workflow if you need cross-platform coverage.
+# See: https://github.com/actions/starter-workflows/blob/main/ci/cmake-multi-platform.yml
+name: Monthly builds
+
+on:
+  schedule:
+    - cron: '0 3 2 * *'  # Each second day of each month at 3h00, MIN HOUR DAY_IN_MONTH MONTH WEEK_DAY
+
+  workflow_dispatch:
+    inputs:
+      BRANCH:
+        description: 'Branch to build'
+        required: false
+        default: 'master'
+        type: string
+      DOXYGEN:
+        description: 'Decide if Doxygen documentation is going to be compiled'
+        required: false
+        default: 'master'
+        type: string
+
+jobs:
+  build-linux:
+    uses: ./.github/workflows/musicardio-linux.yml
+    with:
+      BRANCH: ${{ inputs.BRANCH || 'master' }}
+      DOXYGEN: true
+
+  build-linux-realtime:
+    uses: ./.github/workflows/musicardio-linux.yml
+    with:
+      REAL_TIME: 'ON'
+      BRANCH: ${{ inputs.BRANCH || 'master' }}
+
+  build-macos:
+    uses: ./.github/workflows/musicardio-macos.yml
+    with:
+      BRANCH: ${{ inputs.BRANCH || 'master' }}
+
+  build-windows:
+    uses: ./.github/workflows/musicardio-windows.yml
+    with:
+      BRANCH: ${{ inputs.BRANCH || 'master' }}

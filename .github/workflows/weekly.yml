@@ -1,0 +1,32 @@
+# This starter workflow is for a CMake project running on a single platform. There is a different starter workflow if you need cross-platform coverage.
+# See: https://github.com/actions/starter-workflows/blob/main/ci/cmake-multi-platform.yml
+name: Weekly builds
+
+on:
+  schedule:
+    - cron: '0 2 * * 1'  # Each monday at 2h00, MIN HOUR DAY_IN_MONTH MONTH WEEK_DAY
+
+  workflow_dispatch:
+    inputs:
+      BRANCH:
+        description: 'Branch to build'
+        required: false
+        default: 'dev'
+        type: string
+
+jobs:
+  build-linux:
+    uses: ./.github/workflows/musicardio-linux.yml
+    with:
+      BRANCH: ${{ inputs.BRANCH || 'dev' }}
+      SONARQUBE: true
+
+  build-macos:
+    uses: ./.github/workflows/musicardio-macos.yml
+    with:
+      BRANCH: ${{ inputs.BRANCH || 'dev' }}
+
+  build-windows:
+    uses: ./.github/workflows/musicardio-windows.yml
+    with:
+      BRANCH: ${{ inputs.BRANCH || 'dev' }}
