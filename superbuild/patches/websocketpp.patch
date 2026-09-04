@@ -1,0 +1,25 @@
+From 5715962457090249456ecb8423a1ab1e8c7f60d5 Mon Sep 17 00:00:00 2001
+From: Mathilde Merle <mathilde.merle@ihu-liryc.fr>
+Date: Fri, 4 Sep 2026 13:34:00 +0200
+Subject: [PATCH] websocketpp
+
+---
+ CMakeLists.txt | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/CMakeLists.txt b/CMakeLists.txt
+index 4f93e24..2bb5d01 100644
+--- a/CMakeLists.txt
++++ b/CMakeLists.txt
+@@ -2,7 +2,7 @@
+ ############ Setup project and cmake
+ # Minimum cmake requirement. We should require a quite recent
+ # cmake for the dependency find macros etc. to be up to date.
+-cmake_minimum_required (VERSION 2.8.8)
++cmake_minimum_required (VERSION 3.19)
+ 
+ ############ Paths
+ 
+-- 
+2.43.0
+
