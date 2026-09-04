@@ -59,6 +59,12 @@ set(cmake_args
 )
 
 ## #############################################################################
+## Check if patch has to be applied
+## #############################################################################
+
+ep_GeneratePatchCommand(${ep} ${ep}_PATCH_COMMAND websocketpp.patch)
+
+## #############################################################################
 ## Add external-project
 ## #############################################################################
 epComputPath(${ep})
@@ -73,6 +79,10 @@ ExternalProject_Add(${ep}
   
   GIT_REPOSITORY ${git_url}
   GIT_TAG ${git_tag}
+  GIT_SHALLOW True
+  GIT_PROGRESS True
+  PATCH_COMMAND ${${ep}_PATCH_COMMAND}
+
   CMAKE_GENERATOR ${gen}
   CMAKE_GENERATOR_PLATFORM ${CMAKE_GENERATOR_PLATFORM}
   CMAKE_ARGS ${cmake_args}
