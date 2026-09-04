@@ -1,0 +1,7 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="node1" title=" " alt="" coords="5,55,121,80"/>
+<area shape="rect" id="node2" href="$da/dc1/classvtkMetaDataSet.html" title="Abstract class for vtkDataset handling." alt="" coords="169,55,297,80"/>
+<area shape="rect" id="node3" href="$d8/d65/classvtkMetaDataSetSequence.html" title="usefull class to handle a sequence (series) of vtkMetaDataSet" alt="" coords="345,5,536,31"/>
+<area shape="rect" id="node4" href="$d9/d1b/classvtkMetaSurfaceMesh.html" title="Concrete implementation of vtkMetaDataSet for surface mesh handling." alt="" coords="361,55,521,80"/>
+<area shape="rect" id="node5" href="$dd/dec/classvtkMetaVolumeMesh.html" title="Concrete implementation of vtkMetaDataSet for volumic mesh handling." alt="" coords="361,104,521,129"/>
+</map>

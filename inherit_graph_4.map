@@ -1,0 +1,9 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="node1" title=" " alt="" coords="5,129,149,155"/>
+<area shape="rect" id="node2" href="$da/d79/classmedAbstractDataSourceFactory.html" title=" " alt="" coords="197,5,424,31"/>
+<area shape="rect" id="node3" href="$d4/d47/classmedAbstractPacsFactory.html" title=" " alt="" coords="220,55,401,80"/>
+<area shape="rect" id="node4" href="$d5/d9c/classmedSettingsWidgetFactory.html" title="This factory creates Widgets that are pages in the medSettingsEditor widget." alt="" coords="212,104,409,129"/>
+<area shape="rect" id="node5" href="$d2/def/classmedToolBoxFactory.html" title="Factory for toolbox generation." alt="" coords="236,153,385,179"/>
+<area shape="rect" id="node6" href="$df/d4c/classmedViewFactory.html" title=" " alt="" coords="245,203,376,228"/>
+<area shape="rect" id="node7" href="$d9/db1/classmedWorkspaceFactory.html" title=" " alt="" coords="226,252,395,277"/>
+</map>

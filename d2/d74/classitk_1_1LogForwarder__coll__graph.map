@@ -1,0 +1,4 @@
+<map id="itk::LogForwarder" name="itk::LogForwarder">
+<area shape="rect" id="node1" title="This class forwards all itk messages (Warning, Exceptions, TextOutputs) to the dtkLogger class You on..." alt="" coords="5,79,140,104"/>
+<area shape="rect" id="node2" title=" " alt="" coords="13,5,132,31"/>
+</map>

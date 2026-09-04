@@ -1,0 +1,7 @@
+<map id="itkDataTensorImageReaderBase" name="itkDataTensorImageReaderBase">
+<area shape="rect" id="node1" title=" " alt="" coords="228,55,459,80"/>
+<area shape="rect" id="node3" href="$d0/da3/classitkMetaDataTensorImageReader.html" title=" " alt="" coords="507,5,739,31"/>
+<area shape="rect" id="node4" href="$dc/d20/classitkNiftiDataTensorImageReader.html" title=" " alt="" coords="509,55,736,80"/>
+<area shape="rect" id="node5" href="$d4/d64/classitkNrrdDataTensorImageReader.html" title=" " alt="" coords="509,104,736,129"/>
+<area shape="rect" id="node2" title=" " alt="" coords="5,55,180,80"/>
+</map>

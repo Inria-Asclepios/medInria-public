@@ -1,0 +1,158 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="node1" title=" " alt="" coords="833,176,961,201"/>
+<area shape="rect" id="node2" href="$dd/dd2/classMedInria_1_1medCompositeDataSetsBase.html" title=" " alt="" coords="1090,105,1307,145"/>
+<area shape="rect" id="node4" href="$d0/df1/classmedAbstractData.html" title=" " alt="" coords="1131,239,1267,264"/>
+<area shape="rect" id="node3" href="$db/d84/classmedDiffusionSequenceCompositeData.html" title=" " alt="" coords="1373,65,1647,91"/>
+<area shape="rect" id="node5" href="$d9/d9f/classPLUGIN__EXPORT.html" title="Registration process." alt="" coords="1445,2823,1575,2848"/>
+<area shape="rect" id="node6" href="$d5/d60/classitkDataDiffusionGradientList.html" title=" " alt="" coords="1407,115,1613,140"/>
+<area shape="rect" id="node7" href="$d0/d7d/classmedAbstractFibersData.html" title=" " alt="" coords="1423,164,1597,189"/>
+<area shape="rect" id="node9" href="$df/dbb/classmedAbstractImageData.html" title=" " alt="" coords="1421,213,1599,239"/>
+<area shape="rect" id="node20" href="$d0/d17/classmedAbstractMaskData.html" title=" " alt="" coords="1425,263,1595,288"/>
+<area shape="rect" id="node21" href="$d3/def/classmedAbstractMeshData.html" title=" " alt="" coords="1425,316,1595,341"/>
+<area shape="rect" id="node25" href="$d7/d1e/classmedAttachedData.html" title=" " alt="" coords="1440,392,1580,417"/>
+<area shape="rect" id="node8" href="$db/dd1/classmedVtkFibersData.html" title=" " alt="" coords="1761,89,1903,115"/>
+<area shape="rect" id="node10" href="$dc/d00/classmedAbstractDiffusionModelImageData.html" title=" " alt="" coords="1731,139,1933,179"/>
+<area shape="rect" id="node18" href="$d1/d91/classmedAbstractTypedImageData.html" title=" " alt="" coords="1725,203,1939,243"/>
+<area shape="rect" id="node11" href="$d6/d25/classmedAbstractTypedDiffusionModelImageData.html" title=" " alt="" coords="2020,43,2244,83"/>
+<area shape="rect" id="node14" href="$d6/d25/classmedAbstractTypedDiffusionModelImageData.html" title=" " alt="" coords="2027,107,2237,147"/>
+<area shape="rect" id="node17" href="$d6/d25/classmedAbstractTypedDiffusionModelImageData.html" title=" " alt="" coords="2029,171,2235,211"/>
+<area shape="rect" id="node12" href="$da/d61/classitkDataSHImageDouble3.html" title=" " alt="" coords="2307,5,2489,31"/>
+<area shape="rect" id="node13" href="$dd/d6b/classitkDataTensorImageDouble3.html" title=" " alt="" coords="2295,55,2501,80"/>
+<area shape="rect" id="node15" href="$d8/d0b/classitkDataSHImageFloat3.html" title=" " alt="" coords="2313,111,2483,136"/>
+<area shape="rect" id="node16" href="$dd/d34/classitkDataTensorImageFloat3.html" title=" " alt="" coords="2301,160,2495,185"/>
+<area shape="rect" id="node19" href="$dd/de6/classitkDataImage.html" title=" " alt="" coords="2054,235,2210,275"/>
+<area shape="rect" id="node22" href="$dd/de1/classmedContours.html" title="A Contour is a set of points with label." alt="" coords="1777,317,1887,343"/>
+<area shape="rect" id="node23" href="$d3/d2c/classvtkDataMesh.html" title=" " alt="" coords="1777,367,1887,392"/>
+<area shape="rect" id="node24" href="$d9/d35/classvtkDataMesh4D.html" title=" " alt="" coords="1769,268,1895,293"/>
+<area shape="rect" id="node26" href="$da/d95/classmedAnnotationData.html" title=" " alt="" coords="1755,416,1909,441"/>
+<area shape="rect" id="node27" href="$de/d8d/classmedImageMaskAnnotationData.html" title=" " alt="" coords="2017,392,2247,417"/>
+<area shape="rect" id="node28" href="$d1/d1d/classmedSeedPointAnnotationData.html" title=" " alt="" coords="2023,441,2241,467"/>
+<area shape="rect" id="node29" title=" " alt="" coords="1111,1180,1286,1205"/>
+<area shape="rect" id="node30" href="$dc/d97/classitkDataImageReaderBase.html" title=" " alt="" coords="1415,761,1605,787"/>
+<area shape="rect" id="node43" href="$da/d24/classitkDataSHImageReader.html" title=" " alt="" coords="1423,1008,1597,1033"/>
+<area shape="rect" id="node44" href="$dd/d07/classitkDataTensorImageReaderBase.html" title=" " alt="" coords="1395,1057,1625,1083"/>
+<area shape="rect" id="node48" href="$d6/d53/classitkGDCMDataImageReader.html" title=" " alt="" coords="1411,1107,1609,1132"/>
+<area shape="rect" id="node49" href="$db/d7a/classmedAbstractDataReader.html" title=" " alt="" coords="1419,1156,1601,1181"/>
+<area shape="rect" id="node50" href="$d9/d02/classmedCompositeDataSetsReader.html" title=" " alt="" coords="1397,1205,1623,1231"/>
+<area shape="rect" id="node51" href="$d9/dab/classmedContoursReader.html" title=" " alt="" coords="1433,1255,1587,1280"/>
+<area shape="rect" id="node52" href="$d1/de9/classmedVtkFibersDataReader.html" title=" " alt="" coords="1415,1304,1605,1329"/>
+<area shape="rect" id="node53" href="$d1/d20/classvtkDataMeshReaderBase.html" title=" " alt="" coords="1417,1353,1603,1379"/>
+<area shape="rect" id="node31" href="$d8/d39/classitkBMPDataImageReader.html" title=" " alt="" coords="1739,663,1925,688"/>
+<area shape="rect" id="node32" href="$d0/dd6/classitkGISDataImageReader.html" title=" " alt="" coords="1743,712,1921,737"/>
+<area shape="rect" id="node33" href="$d3/d42/classitkGiplDataImageReader.html" title=" " alt="" coords="1741,761,1923,787"/>
+<area shape="rect" id="node34" href="$d3/d72/classitkINRDataImageReader.html" title=" " alt="" coords="1742,811,1922,836"/>
+<area shape="rect" id="node35" href="$d3/d2b/classitkJPEGDataImageReader.html" title=" " alt="" coords="1739,860,1925,885"/>
+<area shape="rect" id="node36" href="$df/dbc/classitkMetaDataImageReader.html" title=" " alt="" coords="1737,909,1927,935"/>
+<area shape="rect" id="node37" href="$d2/dd9/classitkNiftiDataImageReader.html" title=" " alt="" coords="1740,959,1924,984"/>
+<area shape="rect" id="node38" href="$df/d14/classitkNrrdDataImageReader.html" title=" " alt="" coords="1739,1008,1925,1033"/>
+<area shape="rect" id="node39" href="$dc/d67/classitkPNGDataImageReader.html" title=" " alt="" coords="1739,465,1925,491"/>
+<area shape="rect" id="node40" href="$d0/ddc/classitkPhilipsRECDataImageReader.html" title=" " alt="" coords="1719,515,1945,540"/>
+<area shape="rect" id="node41" href="$dc/de4/classitkTIFFDataImageReader.html" title=" " alt="" coords="1739,564,1925,589"/>
+<area shape="rect" id="node42" href="$d2/dcd/classitkVTKDataImageReader.html" title=" " alt="" coords="1741,613,1923,639"/>
+<area shape="rect" id="node45" href="$d0/da3/classitkMetaDataTensorImageReader.html" title=" " alt="" coords="1716,1107,1948,1132"/>
+<area shape="rect" id="node46" href="$dc/d20/classitkNiftiDataTensorImageReader.html" title=" " alt="" coords="1719,1156,1945,1181"/>
+<area shape="rect" id="node47" href="$d4/d64/classitkNrrdDataTensorImageReader.html" title=" " alt="" coords="1719,1057,1945,1083"/>
+<area shape="rect" id="node54" href="$dd/de6/classvtkDataMesh4DReader.html" title="This class implements the reading process of a sequence (series) of meshes in vtk format." alt="" coords="1745,1279,1919,1304"/>
+<area shape="rect" id="node55" href="$d5/dc4/classvtkDataMeshReader.html" title=" " alt="" coords="1755,1328,1909,1353"/>
+<area shape="rect" id="node56" title=" " alt="" coords="1115,1600,1283,1625"/>
+<area shape="rect" id="node57" href="$d1/def/classitkDataImageWriterBase.html" title=" " alt="" coords="1419,1649,1601,1675"/>
+<area shape="rect" id="node67" href="$d4/d4e/classitkDataSHImageWriterBase.html" title=" " alt="" coords="1409,1756,1611,1781"/>
+<area shape="rect" id="node69" href="$d8/d9f/classitkDataTensorImageWriterBase.html" title=" " alt="" coords="1397,1863,1623,1888"/>
+<area shape="rect" id="node73" href="$d8/d9d/classmedAbstractDataWriter.html" title=" " alt="" coords="1422,1912,1598,1937"/>
+<area shape="rect" id="node74" href="$d7/dd6/classmedCompositeDataSetsWriter.html" title=" " alt="" coords="1400,1452,1620,1477"/>
+<area shape="rect" id="node75" href="$dc/de9/classmedContoursWriter.html" title=" " alt="" coords="1435,1501,1585,1527"/>
+<area shape="rect" id="node76" href="$dd/d90/classmedVtkFibersDataWriter.html" title=" " alt="" coords="1419,1551,1601,1576"/>
+<area shape="rect" id="node77" href="$d5/d49/classvtkDataMeshWriterBase.html" title=" " alt="" coords="1419,1600,1601,1625"/>
+<area shape="rect" id="node58" href="$d0/db2/classitkDicomDataImageWriter.html" title=" " alt="" coords="1735,1575,1929,1600"/>
+<area shape="rect" id="node60" href="$dc/dae/classitkGISDataImageWriter.html" title=" " alt="" coords="1745,1624,1919,1649"/>
+<area shape="rect" id="node61" href="$d8/d11/classitkGiplDataImageWriter.html" title=" " alt="" coords="1743,1673,1921,1699"/>
+<area shape="rect" id="node62" href="$d5/def/classitkINRDataImageWriter.html" title=" " alt="" coords="1745,1723,1919,1748"/>
+<area shape="rect" id="node63" href="$de/d79/classitkMetaDataImageWriter.html" title=" " alt="" coords="1740,1772,1924,1797"/>
+<area shape="rect" id="node64" href="$d7/d5f/classitkNiftiDataImageWriter.html" title=" " alt="" coords="1743,1821,1921,1847"/>
+<area shape="rect" id="node65" href="$d1/dd8/classitkNrrdDataImageWriter.html" title=" " alt="" coords="1743,1476,1921,1501"/>
+<area shape="rect" id="node66" href="$dc/d02/classitkVTKDataImageWriter.html" title=" " alt="" coords="1743,1525,1921,1551"/>
+<area shape="rect" id="node59" href="$dc/dfe/classDicomRtImageWriter.html" title=" " alt="" coords="2053,1575,2211,1600"/>
+<area shape="rect" id="node68" href="$dd/dbc/classitkMetaDataSHImageWriter.html" title=" " alt="" coords="1731,1871,1933,1896"/>
+<area shape="rect" id="node70" href="$db/d7d/classitkMetaDataTensorImageWriter.html" title=" " alt="" coords="1719,1969,1945,1995"/>
+<area shape="rect" id="node71" href="$d3/d79/classitkNiftiDataTensorImageWriter.html" title=" " alt="" coords="1722,2019,1942,2044"/>
+<area shape="rect" id="node72" href="$d0/d1d/classitkNrrdDataTensorImageWriter.html" title=" " alt="" coords="1721,1920,1943,1945"/>
+<area shape="rect" id="node78" href="$d9/d44/classvtkDataMesh4DWriter.html" title="This class implements the writing process of a sequence (series) of meshes in vtk format." alt="" coords="1749,1377,1915,1403"/>
+<area shape="rect" id="node79" href="$d5/d70/classvtkDataMeshWriter.html" title=" " alt="" coords="1757,1427,1907,1452"/>
+<area shape="rect" id="node80" title=" " alt="" coords="258,2472,405,2497"/>
+<area shape="rect" id="node81" href="$d2/d9d/classITKProcessExample.html" title=" " alt="" coords="518,2249,669,2275"/>
+<area shape="rect" id="node82" href="$d4/d76/classmedAbstractProcessLegacy.html" title=" " alt="" coords="493,2299,694,2324"/>
+<area shape="rect" id="node127" href="$d1/dcd/classvariationalSegmentation.html" title=" " alt="" coords="502,2671,685,2696"/>
+<area shape="rect" id="node83" href="$df/d17/classiterativeClosestPointProcess.html" title=" " alt="" coords="793,2019,1001,2044"/>
+<area shape="rect" id="node84" href="$d1/d90/classitkFiltersProcessBase.html" title=" " alt="" coords="817,2068,978,2093"/>
+<area shape="rect" id="node105" href="$d5/d3f/classmed_1_1ExportVideo.html" title=" " alt="" coords="828,2125,967,2151"/>
+<area shape="rect" id="node106" href="$d0/d52/classmedAbstractDiffusionProcess.html" title=" " alt="" coords="791,2175,1004,2200"/>
+<area shape="rect" id="node107" href="$d6/d26/classmedAbstractRegistrationProcess.html" title=" " alt="" coords="780,2471,1015,2496"/>
+<area shape="rect" id="node114" href="$d7/df8/classmedBinaryOperatorBase.html" title=" " alt="" coords="806,2224,989,2249"/>
+<area shape="rect" id="node119" href="$d3/d2e/classmedCreateMeshFromMask.html" title=" " alt="" coords="799,2273,996,2299"/>
+<area shape="rect" id="node120" href="$d8/d75/classmedDecimateMeshProcess.html" title=" " alt="" coords="798,2323,997,2348"/>
+<area shape="rect" id="node121" href="$da/d1e/classmedMaskApplication.html" title=" " alt="" coords="818,2372,977,2397"/>
+<area shape="rect" id="node122" href="$d7/db9/classmedN4BiasCorrection.html" title=" " alt="" coords="815,2421,979,2447"/>
+<area shape="rect" id="node123" href="$dc/db6/classmedRefineMeshProcess.html" title=" " alt="" coords="809,2520,986,2545"/>
+<area shape="rect" id="node124" href="$d7/d10/classmedSmoothMeshProcess.html" title=" " alt="" coords="804,2569,991,2595"/>
+<area shape="rect" id="node125" href="$d8/d15/classmeshMapping.html" title=" " alt="" coords="840,1920,955,1945"/>
+<area shape="rect" id="node126" href="$d9/d84/classresampleProcess.html" title=" " alt="" coords="831,1969,964,1995"/>
+<area shape="rect" id="node85" href="$de/d9e/classitkFiltersAddProcess.html" title=" " alt="" coords="1121,2257,1276,2283"/>
+<area shape="rect" id="node86" href="$dc/da8/classitkFiltersBinaryThresholdingProcess.html" title=" " alt="" coords="1096,2307,1301,2347"/>
+<area shape="rect" id="node87" href="$d3/dca/classitkFiltersComponentSizeThresholdProcess.html" title=" " alt="" coords="1076,1650,1321,1690"/>
+<area shape="rect" id="node88" href="$df/db8/classitkFiltersDivideProcess.html" title=" " alt="" coords="1113,1715,1284,1740"/>
+<area shape="rect" id="node89" href="$d7/dba/classitkFiltersGaussianProcess.html" title=" " alt="" coords="1104,1764,1293,1789"/>
+<area shape="rect" id="node90" href="$d3/d1c/classitkFiltersInvertProcess.html" title=" " alt="" coords="1115,1813,1282,1839"/>
+<area shape="rect" id="node91" href="$d7/d54/classitkFiltersMedianProcess.html" title=" " alt="" coords="1110,1863,1287,1888"/>
+<area shape="rect" id="node92" href="$d5/dfe/classitkFiltersMultiplyProcess.html" title=" " alt="" coords="1107,1912,1290,1937"/>
+<area shape="rect" id="node93" href="$d3/db6/classitkFiltersNormalizeProcess.html" title=" " alt="" coords="1101,1961,1297,1987"/>
+<area shape="rect" id="node94" href="$d8/d58/classitkFiltersShrinkProcess.html" title=" " alt="" coords="1113,2011,1284,2036"/>
+<area shape="rect" id="node95" href="$da/d43/classitkFiltersSubtractProcess.html" title=" " alt="" coords="1107,2109,1290,2135"/>
+<area shape="rect" id="node96" href="$da/df5/classitkFiltersThresholdingProcess.html" title=" " alt="" coords="1092,2159,1305,2184"/>
+<area shape="rect" id="node97" href="$d9/df2/classitkFiltersWindowingProcess.html" title=" " alt="" coords="1098,2208,1299,2233"/>
+<area shape="rect" id="node98" href="$d0/d6d/classitkMorphologicalFiltersProcessBase.html" title=" " alt="" coords="1072,2060,1325,2085"/>
+<area shape="rect" id="node99" href="$dd/da2/classitkFiltersBinaryCloseProcess.html" title=" " alt="" coords="1407,2011,1613,2036"/>
+<area shape="rect" id="node100" href="$d4/d13/classitkFiltersBinaryOpenProcess.html" title=" " alt="" coords="1407,2060,1613,2085"/>
+<area shape="rect" id="node101" href="$dd/d29/classitkFiltersDilateProcess.html" title=" " alt="" coords="1426,2109,1594,2135"/>
+<area shape="rect" id="node102" href="$d5/df8/classitkFiltersErodeProcess.html" title=" " alt="" coords="1427,2159,1593,2184"/>
+<area shape="rect" id="node103" href="$dc/d36/classitkFiltersGrayscaleCloseProcess.html" title=" " alt="" coords="1420,2209,1600,2249"/>
+<area shape="rect" id="node104" href="$d6/dd2/classitkFiltersGrayscaleOpenProcess.html" title=" " alt="" coords="1396,1961,1624,1987"/>
+<area shape="rect" id="node108" href="$de/dbe/classitkProcessRegistration.html" title="Base class for all registration plugins." alt="" coords="1115,2569,1283,2595"/>
+<area shape="rect" id="node109" href="$d5/d39/classLCCLogDemons.html" title="Registration process." alt="" coords="1448,2596,1572,2621"/>
+<area shape="rect" id="node110" href="$d9/dee/classdiffeomorphicDemons.html" title="Registration process using diffeomorphic demons from itk." alt="" coords="1427,2645,1593,2671"/>
+<area shape="rect" id="node111" href="$d6/dec/classitkProcessRegistrationOptimus.html" title=" " alt="" coords="1399,2448,1621,2473"/>
+<area shape="rect" id="node112" href="$d2/d5f/classmanualRegistration.html" title="Registration process using diffeomorphic demons from itk." alt="" coords="1435,2497,1585,2523"/>
+<area shape="rect" id="node113" href="$d3/dba/classundoRedoRegistration.html" title="Registration process." alt="" coords="1427,2547,1593,2572"/>
+<area shape="rect" id="node115" href="$d2/dea/classitkAndOperator.html" title=" " alt="" coords="1138,2421,1259,2447"/>
+<area shape="rect" id="node116" href="$df/dc3/classitkNotOperator.html" title=" " alt="" coords="1139,2471,1258,2496"/>
+<area shape="rect" id="node117" href="$d8/dfd/classitkOrOperator.html" title=" " alt="" coords="1143,2520,1254,2545"/>
+<area shape="rect" id="node118" href="$d7/da9/classitkXorOperator.html" title=" " alt="" coords="1139,2372,1258,2397"/>
+<area shape="rect" id="node128" title=" " alt="" coords="267,2721,396,2747"/>
+<area shape="rect" id="node129" href="$d8/d2b/classmedAbstractView.html" title="Base class for view types medAbstractView specializes a dtkAbstractView in the context of the applica..." alt="" coords="525,2721,662,2747"/>
+<area shape="rect" id="node130" href="$da/d70/classmedAbstractLayeredView.html" title=" " alt="" coords="803,2721,992,2747"/>
+<area shape="rect" id="node133" href="$d9/d05/classmedResliceViewer.html" title=" " alt="" coords="826,2672,969,2697"/>
+<area shape="rect" id="node131" href="$df/de5/classmedAbstractImageView.html" title="Base class for image view types medAbstractImageView specializes a medAbstractLayeredView." alt="" coords="1109,2671,1288,2696"/>
+<area shape="rect" id="node132" href="$d2/d57/classmedVtkView.html" title=" " alt="" coords="1457,2695,1563,2720"/>
+<area shape="rect" id="node134" title=" " alt="" coords="6,3101,198,3127"/>
+<area shape="rect" id="node135" href="$d1/dde/classmedAbstractInteractor.html" title="Base class for interactor types A medAbstractInteractor belongs to a medAbstractView and is responsib..." alt="" coords="247,3101,415,3127"/>
+<area shape="rect" id="node136" href="$da/df1/classmedAbstractViewInteractor.html" title=" " alt="" coords="493,3127,693,3152"/>
+<area shape="rect" id="node137" href="$dc/d41/classmedAbstractLayeredViewInteractor.html" title=" " alt="" coords="771,3177,1023,3203"/>
+<area shape="rect" id="node138" href="$db/d89/classmedAbstractImageViewInteractor.html" title=" " alt="" coords="1078,3228,1319,3253"/>
+<area shape="rect" id="node139" href="$db/d6a/classitkDataSHImageVtkViewInteractor.html" title="Extents a view by providing Spherical harmonics viewing/managing capabilities." alt="" coords="1387,3335,1633,3360"/>
+<area shape="rect" id="node140" href="$d3/d6a/classitkDataTensorImageVtkViewInteractor.html" title="Extents a view by providing tensor viewing/managing capabilities." alt="" coords="1407,3385,1613,3425"/>
+<area shape="rect" id="node141" href="$d6/d1e/classmedAnnotationInteractor.html" title="Interface between annotations and the mseg." alt="" coords="1417,3072,1603,3097"/>
+<area shape="rect" id="node142" href="$dc/de9/classmedVtkFibersDataInteractor.html" title="Class for view interactor to display fibers. Fiber visualization can be controlled with Regions of In..." alt="" coords="1407,3121,1613,3147"/>
+<area shape="rect" id="node143" href="$da/dbd/classmedVtkViewItkDataImageInteractor.html" title=" " alt="" coords="1381,3171,1639,3196"/>
+<area shape="rect" id="node145" href="$db/db0/classmedVtkViewItkVectorFieldInteractor.html" title=" " alt="" coords="1413,3221,1607,3261"/>
+<area shape="rect" id="node146" href="$d1/d3e/classvtkDataMeshInteractor.html" title=" " alt="" coords="1424,3285,1596,3311"/>
+<area shape="rect" id="node144" href="$d3/d02/classmedVtkViewItkDataImage4DInteractor.html" title=" " alt="" coords="1695,3171,1969,3196"/>
+<area shape="rect" id="node147" href="$d9/ddf/classvtkDataMesh4DInteractor.html" title=" " alt="" coords="1737,3285,1927,3311"/>
+<area shape="rect" id="node148" title=" " alt="" coords="5,2951,199,2976"/>
+<area shape="rect" id="node149" href="$d2/dc4/classmedAbstractNavigator.html" title=" " alt="" coords="247,2951,416,2976"/>
+<area shape="rect" id="node150" href="$de/d3a/classmedAbstractViewNavigator.html" title=" " alt="" coords="493,2975,694,3000"/>
+<area shape="rect" id="node154" href="$de/db4/classmedVtkViewItkDataImageNavigator.html" title=" " alt="" coords="464,2876,723,2901"/>
+<area shape="rect" id="node155" href="$de/d4a/classvtkDataMeshNavigator.html" title=" " alt="" coords="507,2925,680,2951"/>
+<area shape="rect" id="node151" href="$dc/dbc/classmedAbstractLayeredViewNavigator.html" title=" " alt="" coords="771,2924,1024,2949"/>
+<area shape="rect" id="node152" href="$d7/d63/classmedAbstractImageViewNavigator.html" title=" " alt="" coords="1077,2924,1320,2949"/>
+<area shape="rect" id="node153" href="$d4/d7e/classmedVtkViewNavigator.html" title=" " alt="" coords="1425,2924,1595,2949"/>
+<area shape="rect" id="node156" title=" " alt="" coords="1111,2823,1287,2848"/>
+</map>

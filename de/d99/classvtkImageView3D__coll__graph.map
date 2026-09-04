@@ -1,0 +1,9 @@
+<map id="vtkImageView3D" name="vtkImageView3D">
+<area shape="rect" id="node1" title="3D image 3D rendering viewer" alt="" coords="259,271,394,296"/>
+<area shape="rect" id="node2" href="$d0/d01/classvtkImageView.html" title="This class is a top&#45;level convenience class for displaying a scalar &#45; or RGB image in a 2D or 3D scen..." alt="" coords="173,175,289,201"/>
+<area shape="rect" id="node3" title=" " alt="" coords="5,80,91,105"/>
+<area shape="rect" id="node4" href="$dd/d82/classvtkImageViewCornerAnnotation.html" title=" " alt="" coords="115,80,346,105"/>
+<area shape="rect" id="node5" title=" " alt="" coords="152,5,309,31"/>
+<area shape="rect" id="node6" href="$d3/d6c/classvtkImageView3DCroppingBoxCallback.html" title=" " alt="" coords="315,168,533,208"/>
+<area shape="rect" id="node7" title=" " alt="" coords="370,80,481,105"/>
+</map>

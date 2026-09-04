@@ -1,0 +1,17 @@
+<map id="defaultLabelToolBox" name="defaultLabelToolBox">
+<area shape="rect" id="node1" title="Toolbox to manage list of contours label." alt="" coords="1256,232,1411,257"/>
+<area shape="rect" id="node2" href="$df/d6a/classmedToolBox.html" title="Toolbox that includes a title bar and a widget container." alt="" coords="201,228,304,253"/>
+<area shape="rect" id="node14" href="$d2/d80/classmedAbstractSelectableToolBox.html" title="Base class for custom toolboxes in combobox." alt="" coords="371,203,595,228"/>
+<area shape="rect" id="node3" title=" " alt="" coords="31,228,109,253"/>
+<area shape="rect" id="node4" href="$d5/dac/classbaseViewEvent.html" title=" " alt="" coords="965,131,1088,156"/>
+<area shape="rect" id="node5" href="$d9/d6d/classmedViewEventFilter.html" title=" " alt="" coords="659,5,812,31"/>
+<area shape="rect" id="node6" title=" " alt="" coords="413,5,552,31"/>
+<area shape="rect" id="node7" href="$dc/d1b/classpolygonLabel.html" title=" " alt="" coords="681,55,790,80"/>
+<area shape="rect" id="node8" title=" " alt="" coords="445,55,520,80"/>
+<area shape="rect" id="node9" href="$df/de5/classmedAbstractImageView.html" title="Base class for image view types medAbstractImageView specializes a medAbstractLayeredView." alt="" coords="646,104,825,129"/>
+<area shape="rect" id="node10" href="$da/d70/classmedAbstractLayeredView.html" title=" " alt="" coords="388,104,577,129"/>
+<area shape="rect" id="node11" href="$d8/d2b/classmedAbstractView.html" title="Base class for view types medAbstractView specializes a dtkAbstractView in the context of the applica..." alt="" coords="184,104,321,129"/>
+<area shape="rect" id="node12" title=" " alt="" coords="5,104,135,129"/>
+<area shape="rect" id="node13" href="$d8/d58/classpolygonRoiToolBox.html" title="Toolbox to create, use, interpolate Polygon ROI." alt="" coords="662,203,809,228"/>
+<area shape="rect" id="node15" href="$d6/d51/classmedMouseCrossPosition.html" title=" " alt="" coords="644,153,827,179"/>
+</map>

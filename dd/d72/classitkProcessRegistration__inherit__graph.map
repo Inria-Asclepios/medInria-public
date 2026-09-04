@@ -1,0 +1,12 @@
+<map id="itkProcessRegistration" name="itkProcessRegistration">
+<area shape="rect" id="node1" title="Base class for all registration plugins." alt="" coords="732,129,900,155"/>
+<area shape="rect" id="node5" href="$d5/d39/classLCCLogDemons.html" title="Registration process." alt="" coords="997,5,1121,31"/>
+<area shape="rect" id="node6" href="$d9/d9f/classPLUGIN__EXPORT.html" title="Registration process." alt="" coords="995,55,1124,80"/>
+<area shape="rect" id="node7" href="$d9/dee/classdiffeomorphicDemons.html" title="Registration process using diffeomorphic demons from itk." alt="" coords="976,104,1143,129"/>
+<area shape="rect" id="node8" href="$d6/dec/classitkProcessRegistrationOptimus.html" title=" " alt="" coords="948,153,1171,179"/>
+<area shape="rect" id="node9" href="$d2/d5f/classmanualRegistration.html" title="Registration process using diffeomorphic demons from itk." alt="" coords="984,203,1135,228"/>
+<area shape="rect" id="node10" href="$d3/dba/classundoRedoRegistration.html" title="Registration process." alt="" coords="976,252,1143,277"/>
+<area shape="rect" id="node2" href="$d6/d26/classmedAbstractRegistrationProcess.html" title=" " alt="" coords="449,129,684,155"/>
+<area shape="rect" id="node3" href="$d4/d76/classmedAbstractProcessLegacy.html" title=" " alt="" coords="200,129,401,155"/>
+<area shape="rect" id="node4" title=" " alt="" coords="5,129,152,155"/>
+</map>

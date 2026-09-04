@@ -1,0 +1,8 @@
+<map id="medAbstractLayeredView" name="medAbstractLayeredView">
+<area shape="rect" id="node1" title=" " alt="" coords="38,152,227,177"/>
+<area shape="rect" id="node4" href="$d9/d9f/classPLUGIN__EXPORT.html" title="Registration process." alt="" coords="5,299,135,324"/>
+<area shape="rect" id="node5" href="$df/de5/classmedAbstractImageView.html" title="Base class for image view types medAbstractImageView specializes a medAbstractLayeredView." alt="" coords="107,225,286,251"/>
+<area shape="rect" id="node2" href="$d8/d2b/classmedAbstractView.html" title="Base class for view types medAbstractView specializes a dtkAbstractView in the context of the applica..." alt="" coords="64,79,201,104"/>
+<area shape="rect" id="node3" title=" " alt="" coords="68,5,197,31"/>
+<area shape="rect" id="node6" href="$d2/d57/classmedVtkView.html" title=" " alt="" coords="159,299,264,324"/>
+</map>

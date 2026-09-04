@@ -1,0 +1,7 @@
+<map id="medDatabaseNonPersistentImporter" name="medDatabaseNonPersistentImporter">
+<area shape="rect" id="node1" title="Reads files and adds them to the medNonPersistentDatabase." alt="" coords="15,225,219,265"/>
+<area shape="rect" id="node2" href="$d7/dda/classmedAbstractDatabaseImporter.html" title="Base class for database importers. @medAbstractDatabaseImporter is in charge of importing (or indexin..." alt="" coords="5,152,228,177"/>
+<area shape="rect" id="node3" href="$de/d70/classmedJobItemL.html" title="Abstract base class for all QRunnables that should appear in the Job Toolbox." alt="" coords="63,79,171,104"/>
+<area shape="rect" id="node4" title=" " alt="" coords="26,5,101,31"/>
+<area shape="rect" id="node5" title=" " alt="" coords="125,5,218,31"/>
+</map>

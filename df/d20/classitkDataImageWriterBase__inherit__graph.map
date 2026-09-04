@@ -1,0 +1,13 @@
+<map id="itkDataImageWriterBase" name="itkDataImageWriterBase">
+<area shape="rect" id="node1" title=" " alt="" coords="221,179,404,204"/>
+<area shape="rect" id="node3" href="$d0/db2/classitkDicomDataImageWriter.html" title=" " alt="" coords="452,5,645,31"/>
+<area shape="rect" id="node5" href="$dc/dae/classitkGISDataImageWriter.html" title=" " alt="" coords="462,55,635,80"/>
+<area shape="rect" id="node6" href="$d8/d11/classitkGiplDataImageWriter.html" title=" " alt="" coords="460,104,637,129"/>
+<area shape="rect" id="node7" href="$d5/def/classitkINRDataImageWriter.html" title=" " alt="" coords="461,153,636,179"/>
+<area shape="rect" id="node8" href="$de/d79/classitkMetaDataImageWriter.html" title=" " alt="" coords="457,203,641,228"/>
+<area shape="rect" id="node9" href="$d7/d5f/classitkNiftiDataImageWriter.html" title=" " alt="" coords="459,252,638,277"/>
+<area shape="rect" id="node10" href="$d1/dd8/classitkNrrdDataImageWriter.html" title=" " alt="" coords="459,301,638,327"/>
+<area shape="rect" id="node11" href="$dc/d02/classitkVTKDataImageWriter.html" title=" " alt="" coords="460,351,637,376"/>
+<area shape="rect" id="node2" title=" " alt="" coords="5,179,173,204"/>
+<area shape="rect" id="node4" href="$dc/dfe/classDicomRtImageWriter.html" title=" " alt="" coords="693,5,852,31"/>
+</map>

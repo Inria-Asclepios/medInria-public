@@ -1,0 +1,74 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="node1" title=" " alt="" coords="413,31,622,56"/>
+<area shape="rect" id="node2" href="$d6/dfd/classITKProcessExampleToolBox.html" title=" " alt="" coords="709,5,910,31"/>
+<area shape="rect" id="node3" href="$dc/d38/classToolBox.html" title=" " alt="" coords="773,55,846,80"/>
+<area shape="rect" id="node4" title=" " alt="" coords="5,1464,84,1489"/>
+<area shape="rect" id="node5" href="$d7/daa/classEditCombo.html" title=" " alt="" coords="194,1020,287,1045"/>
+<area shape="rect" id="node6" href="$d7/d61/classVectorWidget.html" title=" " alt="" coords="186,1069,295,1095"/>
+<area shape="rect" id="node7" href="$d3/de3/classmedAbstractArea.html" title=" " alt="" coords="173,1119,308,1144"/>
+<area shape="rect" id="node8" href="$df/d35/classmedBrowserArea.html" title=" " alt="" coords="173,1168,308,1193"/>
+<area shape="rect" id="node9" href="$d1/d69/classmedButton.html" title="General custom button that loads shows an icon." alt="" coords="193,1217,288,1243"/>
+<area shape="rect" id="node10" href="$de/df9/classmedDatabaseCompactWidget.html" title=" " alt="" coords="132,1267,349,1292"/>
+<area shape="rect" id="node11" href="$d0/d48/classmedDoubleSliderSpinboxPair.html" title=" " alt="" coords="135,1316,346,1341"/>
+<area shape="rect" id="node12" href="$dd/d3f/classmedHomepageArea.html" title=" " alt="" coords="165,1365,317,1391"/>
+<area shape="rect" id="node13" href="$d3/d33/classmedLeftArrow.html" title=" " alt="" coords="184,1415,297,1440"/>
+<area shape="rect" id="node14" href="$db/dc0/classmedListItemWidget.html" title=" " alt="" coords="165,1464,316,1489"/>
+<area shape="rect" id="node16" href="$d4/d8f/classmedMessage.html" title=" " alt="" coords="186,1513,295,1539"/>
+<area shape="rect" id="node20" href="$d7/db2/classmedPacsSelector.html" title=" " alt="" coords="174,1563,307,1588"/>
+<area shape="rect" id="node21" href="$df/d33/classmedPoolIndicatorL.html" title=" " alt="" coords="169,1612,312,1637"/>
+<area shape="rect" id="node22" href="$d5/d6f/classmedProgressionStack.html" title="Creates JobWidgets that represent the progression of a jobItem. All visible jobs will be managed here..." alt="" coords="159,1661,322,1687"/>
+<area shape="rect" id="node23" href="$da/d42/classmedQuickAccessMenu.html" title=" " alt="" coords="156,1711,325,1736"/>
+<area shape="rect" id="node24" href="$d1/d93/classmedRootContainer.html" title=" " alt="" coords="169,1760,313,1785"/>
+<area shape="rect" id="node25" href="$dc/d64/classmedSettingsEditor.html" title="Edits the application and plugins settings." alt="" coords="169,1809,312,1835"/>
+<area shape="rect" id="node26" href="$d6/dd4/classmedSettingsWidget.html" title="AbstractClass for all Settings widgets." alt="" coords="165,1859,316,1884"/>
+<area shape="rect" id="node30" href="$da/d42/classmedSliderSpinboxPair.html" title=" " alt="" coords="159,1908,323,1933"/>
+<area shape="rect" id="node31" href="$df/d6a/classmedToolBox.html" title="Toolbox that includes a title bar and a widget container." alt="" coords="189,971,292,996"/>
+<area shape="rect" id="node72" href="$d1/d0b/classmedWorkspaceArea.html" title="Handles all connections between all elements of the Viewer area. In this Area or workspace all visual..." alt="" coords="165,1957,317,1983"/>
+<area shape="rect" id="node15" href="$d1/d23/classmedGroupWidget.html" title=" " alt="" coords="449,1451,585,1476"/>
+<area shape="rect" id="node17" href="$dc/dbd/classmedMessageError.html" title=" " alt="" coords="447,1500,587,1525"/>
+<area shape="rect" id="node18" href="$d2/d48/classmedMessageInfo.html" title=" " alt="" coords="450,1549,585,1575"/>
+<area shape="rect" id="node19" href="$d1/d98/classmedMessageProgress.html" title=" " alt="" coords="435,1599,600,1624"/>
+<area shape="rect" id="node27" href="$d9/df2/classmedDatabaseSettingsWidget.html" title=" " alt="" coords="411,1809,623,1835"/>
+<area shape="rect" id="node28" href="$da/d9e/classmedDevelopmentSettingsWidget.html" title=" " alt="" coords="398,1859,637,1884"/>
+<area shape="rect" id="node29" href="$de/d87/classmedStartupSettingsWidget.html" title=" " alt="" coords="419,1908,616,1933"/>
+<area shape="rect" id="node32" href="$db/df3/classdefaultLabelToolBox.html" title="Toolbox to manage list of contours label." alt="" coords="440,383,595,408"/>
+<area shape="rect" id="node34" href="$d2/d80/classmedAbstractSelectableToolBox.html" title="Base class for custom toolboxes in combobox." alt="" coords="405,672,629,697"/>
+<area shape="rect" id="node55" href="$d8/d2d/classmedActionsToolBox.html" title=" " alt="" coords="442,721,593,747"/>
+<area shape="rect" id="node56" href="$dc/d62/classmedBrowserPacsHostToolBox.html" title=" " alt="" coords="410,771,625,796"/>
+<area shape="rect" id="node57" href="$da/d22/classmedBrowserPacsNodesToolBox.html" title=" " alt="" coords="405,820,630,845"/>
+<area shape="rect" id="node58" href="$df/d74/classmedBrowserPacsSearchToolBox.html" title=" " alt="" coords="403,869,631,895"/>
+<area shape="rect" id="node59" href="$dc/d32/classmedBrowserSourceSelectorToolBox.html" title=" " alt="" coords="417,919,618,959"/>
+<area shape="rect" id="node60" href="$da/deb/classmedClutEditorToolBox.html" title=" " alt="" coords="434,984,601,1009"/>
+<area shape="rect" id="node61" href="$d5/d9e/classmedCompositeDataSetImporterAbstractToolBox.html" title=" " alt="" coords="403,1034,632,1074"/>
+<area shape="rect" id="node63" href="$de/d66/classmedCompositeDataSetImporterSelectorToolBox.html" title=" " alt="" coords="403,1098,632,1138"/>
+<area shape="rect" id="node64" href="$dc/d21/classmedDatabaseSearchPanel.html" title=" " alt="" coords="421,1163,613,1188"/>
+<area shape="rect" id="node65" href="$d4/d3b/classmedDiffusionSelectorToolBox.html" title=" " alt="" coords="411,1212,624,1237"/>
+<area shape="rect" id="node66" href="$db/dab/classmedRegistrationAbstractToolBox.html" title=" " alt="" coords="400,104,635,129"/>
+<area shape="rect" id="node68" href="$d9/dab/classmedSelectorToolBox.html" title=" " alt="" coords="440,1261,595,1287"/>
+<area shape="rect" id="node70" href="$d7/d46/classqtdcmDataSourceSerieToolBox.html" title=" " alt="" coords="406,1311,629,1336"/>
+<area shape="rect" id="node71" href="$da/dfb/classqtdcmDataSourceServersSettingsToolBox.html" title=" " alt="" coords="397,1361,637,1401"/>
+<area shape="rect" id="node33" href="$d3/dfc/classurologyLabelToolBox.html" title=" " alt="" coords="731,153,888,179"/>
+<area shape="rect" id="node35" href="$d9/d82/classLCCLogDemonsToolBox.html" title=" " alt="" coords="722,203,897,228"/>
+<area shape="rect" id="node36" href="$d7/d91/classdiffeomorphicDemonsToolBox.html" title=" " alt="" coords="701,252,918,277"/>
+<area shape="rect" id="node37" href="$d6/dce/classiterativeClosestPointToolBox.html" title="Toolbox to match two meshes using the ICP (Iterative Closest Point) algorithm." alt="" coords="705,301,914,327"/>
+<area shape="rect" id="node38" href="$d3/d10/classitkFiltersToolBox.html" title="Toolbox to apply some itk filters." alt="" coords="744,351,875,376"/>
+<area shape="rect" id="node39" href="$d7/d68/classitkMorphologicalFiltersToolBox.html" title="Toolbox to apply morphological filters to a volume." alt="" coords="698,400,921,425"/>
+<area shape="rect" id="node40" href="$d9/da6/classitkProcessRegistrationOptimusToolBox.html" title=" " alt="" coords="698,450,921,490"/>
+<area shape="rect" id="node41" href="$d1/d4c/classmanualRegistrationToolBox.html" title="Toolbox to register two images manually." alt="" coords="709,515,910,540"/>
+<area shape="rect" id="node42" href="$d2/d56/classmed_1_1AlgorithmPaintToolBox.html" title="Segmentation toolbox to apply manual painting of pixels." alt="" coords="706,564,913,589"/>
+<area shape="rect" id="node43" href="$dc/dab/classmedBinaryOperationToolBox.html" title="Toolbox to compute binary operations between masks (OR, AND, XOR, etc.)." alt="" coords="705,613,913,639"/>
+<area shape="rect" id="node44" href="$d2/da3/classmedCreateMeshFromMaskToolBox.html" title="Toolbox to convert a mask to a closed surface mesh." alt="" coords="685,663,933,688"/>
+<area shape="rect" id="node45" href="$df/d15/classmedCropToolBox.html" title=" " alt="" coords="743,712,875,737"/>
+<area shape="rect" id="node46" href="$df/d8a/classmedMaskApplicationToolBox.html" title="Toolbox to apply a mask to an image." alt="" coords="704,761,915,787"/>
+<area shape="rect" id="node47" href="$d5/d0d/classmedN4BiasCorrectionToolBox.html" title="Toolbox to apply a N4 bias field correction algorithm to a volume." alt="" coords="702,811,917,836"/>
+<area shape="rect" id="node48" href="$db/d6b/classmedRemeshingToolBox.html" title="Toolbox to refine, decimate, smooth, change the number of polygons in a mesh." alt="" coords="722,860,897,885"/>
+<area shape="rect" id="node49" href="$d8/ddd/classmeshManipulationToolBox.html" title="Toolbox to translate, rotate, manipulate meshes." alt="" coords="712,909,907,935"/>
+<area shape="rect" id="node50" href="$d8/d47/classmeshMappingToolBox.html" title="Toolbox to map data on a mesh: keep the intersection of the mesh and data, and set these values to th..." alt="" coords="727,959,892,984"/>
+<area shape="rect" id="node51" href="$da/d6b/classmseg_1_1VarSegToolBox.html" title="Segmentation toolbox to apply manual painting of pixels." alt="" coords="728,1008,891,1033"/>
+<area shape="rect" id="node52" href="$d8/d58/classpolygonRoiToolBox.html" title="Toolbox to create, use, interpolate Polygon ROI." alt="" coords="736,1057,883,1083"/>
+<area shape="rect" id="node53" href="$db/d4c/classresliceToolBox.html" title="Toolbox to reslice a volume." alt="" coords="751,1107,867,1132"/>
+<area shape="rect" id="node54" href="$d8/d29/classvoiCutterToolBox.html" title="Toolbox to cut a VOI (Volume of Interest)." alt="" coords="743,1156,876,1181"/>
+<area shape="rect" id="node62" href="$db/d82/classmedDiffusionSequenceCompositeDataToolBox.html" title=" " alt="" coords="688,1206,931,1246"/>
+<area shape="rect" id="node67" href="$d6/d39/classundoRedoRegistrationToolBox.html" title=" " alt="" coords="701,104,918,129"/>
+<area shape="rect" id="node69" href="$d6/d2a/classmedRegistrationSelectorToolBox.html" title=" " alt="" coords="692,1271,927,1296"/>
+</map>

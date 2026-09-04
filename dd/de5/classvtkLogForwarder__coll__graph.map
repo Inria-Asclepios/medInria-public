@@ -1,0 +1,4 @@
+<map id="vtkLogForwarder" name="vtkLogForwarder">
+<area shape="rect" id="node1" title="This class forwards all vtk messages (Warning, Error, Debug) to the dtkLogger class You only need to ..." alt="" coords="9,79,140,104"/>
+<area shape="rect" id="node2" title=" " alt="" coords="5,5,144,31"/>
+</map>

@@ -1,0 +1,42 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="node1" title=" " alt="" coords="5,392,88,417"/>
+<area shape="rect" id="node2" href="$db/d6d/classITKProcessExamplePlugin.html" title=" " alt="" coords="152,5,343,31"/>
+<area shape="rect" id="node3" href="$df/d00/classLCCLogDemonsPlugin.html" title=" " alt="" coords="165,55,329,80"/>
+<area shape="rect" id="node4" href="$db/df9/classPlugin.html" title=" " alt="" coords="216,104,279,129"/>
+<area shape="rect" id="node5" href="$d1/d5c/classitkDataDiffusionGradientListPlugin.html" title=" " alt="" coords="155,154,339,194"/>
+<area shape="rect" id="node6" href="$db/da3/classitkDataImagePlugin.html" title=" " alt="" coords="172,219,323,244"/>
+<area shape="rect" id="node7" href="$de/de1/classitkDataSHImagePlugin.html" title=" " alt="" coords="163,268,332,293"/>
+<area shape="rect" id="node8" href="$d4/d7f/classitkDataTensorImagePlugin.html" title=" " alt="" coords="151,317,344,343"/>
+<area shape="rect" id="node9" href="$d4/d38/classitkINRDataImageReaderPlugin.html" title=" " alt="" coords="137,367,357,392"/>
+<area shape="rect" id="node10" href="$d7/d58/classitkINRDataImageWriterPlugin.html" title=" " alt="" coords="140,416,355,441"/>
+<area shape="rect" id="node11" href="$dc/d74/classitkProcessRegistrationOptimusPlugin.html" title=" " alt="" coords="136,466,359,506"/>
+<area shape="rect" id="node12" href="$d5/dc3/classmedCompositeDataSetsPlugin.html" title=" " alt="" coords="137,531,357,556"/>
+<area shape="rect" id="node13" href="$d1/d83/classmedPluginLegacy.html" title=" " alt="" coords="179,580,316,605"/>
+<area shape="rect" id="node37" href="$d0/df0/classmedVtkFibersDataPlugin.html" title=" " alt="" coords="156,629,339,655"/>
+<area shape="rect" id="node38" href="$df/d04/classqtdcmDataSourcePlugin.html" title=" " alt="" coords="158,679,337,704"/>
+<area shape="rect" id="node39" href="$d3/d28/classundoRedoRegistrationPlugin.html" title=" " alt="" coords="144,728,351,753"/>
+<area shape="rect" id="node40" href="$df/de3/classvtkDataMeshPlugin.html" title=" " alt="" coords="173,777,322,803"/>
+<area shape="rect" id="node14" href="$d2/d5a/classdiffeomorphicDemonsPlugin.html" title=" " alt="" coords="422,37,629,63"/>
+<area shape="rect" id="node15" href="$d8/da5/classiterativeClosestPointPlugin.html" title=" " alt="" coords="426,87,625,112"/>
+<area shape="rect" id="node16" href="$d9/d28/classitkFiltersPlugin.html" title=" " alt="" coords="466,136,585,161"/>
+<area shape="rect" id="node17" href="$dd/d23/classmanualRegistrationPlugin.html" title=" " alt="" coords="430,185,621,211"/>
+<area shape="rect" id="node18" href="$d9/d6c/classmed_1_1AlgorithmPaintPlugin.html" title=" " alt="" coords="428,235,623,260"/>
+<area shape="rect" id="node19" href="$d8/d6b/classmed_1_1ExportVideoPlugin.html" title=" " alt="" coords="436,284,615,309"/>
+<area shape="rect" id="node20" href="$d5/d32/classmedBinaryOperationPlugin.html" title=" " alt="" coords="427,333,624,359"/>
+<area shape="rect" id="node21" href="$d4/d92/classmedCreateMeshFromMaskPlugin.html" title=" " alt="" coords="407,383,644,408"/>
+<area shape="rect" id="node22" href="$d9/d21/classmedFilteringWorkspaceLPlugin.html" title=" " alt="" coords="414,432,637,457"/>
+<area shape="rect" id="node23" href="$d3/d9f/classmedMaskApplicationPlugin.html" title=" " alt="" coords="426,481,625,507"/>
+<area shape="rect" id="node24" href="$d1/d59/classmedMeshingWorkspacePlugin.html" title=" " alt="" coords="417,531,634,556"/>
+<area shape="rect" id="node25" href="$d1/da8/classmedN4BiasCorrectionPlugin.html" title=" " alt="" coords="423,580,627,605"/>
+<area shape="rect" id="node26" href="$df/d9c/classmedRegistrationWorkspacePlugin.html" title=" " alt="" coords="425,630,626,670"/>
+<area shape="rect" id="node27" href="$d3/d06/classmedRemeshingPlugin.html" title=" " alt="" coords="443,695,607,720"/>
+<area shape="rect" id="node28" href="$df/d84/classmedSegmentationPlugin.html" title=" " alt="" coords="434,744,617,769"/>
+<area shape="rect" id="node29" href="$d5/d5b/classmedSegmentationWorkspacePlugin.html" title=" " alt="" coords="419,794,632,834"/>
+<area shape="rect" id="node30" href="$d9/df6/classmedVtkViewPlugin.html" title=" " alt="" coords="453,859,598,884"/>
+<area shape="rect" id="node31" href="$d7/d92/classmeshManipulationPlugin.html" title=" " alt="" coords="434,908,617,933"/>
+<area shape="rect" id="node32" href="$d6/d84/classmeshMappingPlugin.html" title=" " alt="" coords="448,957,603,983"/>
+<area shape="rect" id="node33" href="$d7/d60/classpolygonRoiPlugin.html" title=" " alt="" coords="458,1007,593,1032"/>
+<area shape="rect" id="node34" href="$d3/ddc/classreformatPlugin.html" title=" " alt="" coords="466,1056,585,1081"/>
+<area shape="rect" id="node35" href="$df/df7/classvariationalSegmentationPlugin.html" title=" " alt="" coords="414,1105,637,1131"/>
+<area shape="rect" id="node36" href="$d0/d30/classvoiCutterPlugin.html" title=" " alt="" coords="464,1155,587,1180"/>
+</map>

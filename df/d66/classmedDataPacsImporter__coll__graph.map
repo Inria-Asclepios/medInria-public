@@ -1,0 +1,9 @@
+<map id="medDataPacsImporter" name="medDataPacsImporter">
+<area shape="rect" id="node1" title="Reads files and adds them to the medNonPersistentDatabase." alt="" coords="131,271,298,296"/>
+<area shape="rect" id="node2" href="$d7/dda/classmedAbstractDatabaseImporter.html" title="Base class for database importers. @medAbstractDatabaseImporter is in charge of importing (or indexin..." alt="" coords="103,196,326,221"/>
+<area shape="rect" id="node3" href="$de/d70/classmedJobItemL.html" title="Abstract base class for all QRunnables that should appear in the Job Toolbox." alt="" coords="67,101,175,126"/>
+<area shape="rect" id="node4" title=" " alt="" coords="5,5,80,31"/>
+<area shape="rect" id="node5" title=" " alt="" coords="104,5,197,31"/>
+<area shape="rect" id="node6" title=" " alt="" coords="199,93,422,133"/>
+<area shape="rect" id="node7" href="$d1/d4d/classmedDataIndex.html" title="A small class to uniquely identify data stored in the datasources. The class contains 5 integer value..." alt="" coords="251,5,370,31"/>
+</map>

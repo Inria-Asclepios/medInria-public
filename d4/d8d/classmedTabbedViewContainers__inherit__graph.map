@@ -1,0 +1,4 @@
+<map id="medTabbedViewContainers" name="medTabbedViewContainers">
+<area shape="rect" id="node1" title="A QTabWidget that contains medViewContainers. There is one such stack per medViewWorkspace." alt="" coords="5,79,204,104"/>
+<area shape="rect" id="node2" title=" " alt="" coords="55,5,155,31"/>
+</map>

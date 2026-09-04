@@ -1,0 +1,9 @@
+<map id="medVtkViewItkDataImageInteractor" name="medVtkViewItkDataImageInteractor">
+<area shape="rect" id="node1" title=" " alt="" coords="14,372,271,397"/>
+<area shape="rect" id="node7" href="$d3/d02/classmedVtkViewItkDataImage4DInteractor.html" title=" " alt="" coords="5,445,280,471"/>
+<area shape="rect" id="node2" href="$db/d89/classmedAbstractImageViewInteractor.html" title=" " alt="" coords="22,299,263,324"/>
+<area shape="rect" id="node3" href="$dc/d41/classmedAbstractLayeredViewInteractor.html" title=" " alt="" coords="17,225,269,251"/>
+<area shape="rect" id="node4" href="$da/df1/classmedAbstractViewInteractor.html" title=" " alt="" coords="43,152,243,177"/>
+<area shape="rect" id="node5" href="$d1/dde/classmedAbstractInteractor.html" title="Base class for interactor types A medAbstractInteractor belongs to a medAbstractView and is responsib..." alt="" coords="59,79,227,104"/>
+<area shape="rect" id="node6" title=" " alt="" coords="47,5,239,31"/>
+</map>

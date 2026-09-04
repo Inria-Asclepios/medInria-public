@@ -1,0 +1,12 @@
+<map id="src/layers/legacy/medCoreLegacy/gui" name="src/layers/legacy/medCoreLegacy/gui">
+<area shape="rect" id="node2" href="dir_e156f6fd6baac0fdd989e1d22bd0e081.html" title="commonWidgets" alt="" coords="869,63,1001,88"/>
+<area shape="rect" id="node3" href="dir_e601405c0a798b0e3bf5eb3a528a8cce.html" title="database" alt="" coords="761,63,844,88"/>
+<area shape="rect" id="node4" href="dir_c8ddd3fc1580f84f0d9fe6d4c6147424.html" title="factories" alt="" coords="658,63,737,88"/>
+<area shape="rect" id="node5" href="dir_d11e0ea63f62a0242917b724bf650707.html" title="lookUpTables" alt="" coords="524,63,633,88"/>
+<area shape="rect" id="node6" href="dir_99f4a8b88cbfe26828f555c5e3abf319.html" title="settingsWidgets" alt="" coords="373,63,499,88"/>
+<area shape="rect" id="node7" href="dir_be029c7f16942353a7bef0e222eece32.html" title="tests" alt="" coords="294,63,349,88"/>
+<area shape="rect" id="node8" href="dir_74cd2dc3ccd95ccc9c2cad7a2fee0255.html" title="toolboxes" alt="" coords="184,63,269,88"/>
+<area shape="rect" id="node9" href="dir_3000e1fe90f6d7ab1e498b19a09d2be9.html" title="viewContainers" alt="" coords="37,63,160,88"/>
+<area shape="rect" id="clust2" href="dir_00c753b95c0d9bc36a9908fdd42afa62.html" alt="" coords="27,52,1079,99"/>
+<area shape="rect" id="clust1" href="dir_bf37fa11657acd6b2ff3b8c846176467.html" title="medCoreLegacy" alt="" coords="16,16,1089,109"/>
+</map>

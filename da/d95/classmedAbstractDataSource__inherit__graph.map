@@ -1,0 +1,8 @@
+<map id="medAbstractDataSource" name="medAbstractDataSource">
+<area shape="rect" id="node1" title="Abstract base class for dynamic data sources, e.g. plugins that act as database clients This class de..." alt="" coords="327,79,507,104"/>
+<area shape="rect" id="node3" href="$d3/da7/classmedDatabaseDataSource.html" title=" " alt="" coords="5,152,193,177"/>
+<area shape="rect" id="node4" href="$de/d90/classmedFileSystemDataSource.html" title=" " alt="" coords="217,152,416,177"/>
+<area shape="rect" id="node5" href="$db/d41/classmedPacsDataSource.html" title=" " alt="" coords="439,152,594,177"/>
+<area shape="rect" id="node6" href="$d7/d8b/classqtdcmDataSource.html" title=" " alt="" coords="618,152,757,177"/>
+<area shape="rect" id="node2" title=" " alt="" coords="379,5,454,31"/>
+</map>

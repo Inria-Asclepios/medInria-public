@@ -1,0 +1,10 @@
+<map id="medAnnIntImageMaskHelper" name="medAnnIntImageMaskHelper">
+<area shape="rect" id="node1" title=" " alt="" coords="25,541,237,567"/>
+<area shape="rect" id="node2" href="$de/d4b/classmsegAnnIntHelper.html" title=" " alt="" coords="60,467,203,492"/>
+<area shape="rect" id="node3" href="$d6/d1e/classmedAnnotationInteractor.html" title="Interface between annotations and the mseg." alt="" coords="39,379,224,404"/>
+<area shape="rect" id="node4" href="$db/d89/classmedAbstractImageViewInteractor.html" title=" " alt="" coords="11,304,252,329"/>
+<area shape="rect" id="node5" href="$dc/d41/classmedAbstractLayeredViewInteractor.html" title=" " alt="" coords="5,229,257,255"/>
+<area shape="rect" id="node6" href="$da/df1/classmedAbstractViewInteractor.html" title=" " alt="" coords="31,155,231,180"/>
+<area shape="rect" id="node7" href="$d1/dde/classmedAbstractInteractor.html" title="Base class for interactor types A medAbstractInteractor belongs to a medAbstractView and is responsib..." alt="" coords="47,80,215,105"/>
+<area shape="rect" id="node8" title=" " alt="" coords="35,5,227,31"/>
+</map>

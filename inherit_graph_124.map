@@ -1,0 +1,25 @@
+<map id="Graphical Class Hierarchy" name="Graphical Class Hierarchy">
+<area shape="rect" id="node1" title=" " alt="" coords="5,465,91,491"/>
+<area shape="rect" id="node2" href="$da/dda/classmanualRegistrationLandmark.html" title=" " alt="" coords="143,5,357,31"/>
+<area shape="rect" id="node3" href="$d3/dc1/classmanualRegistrationLandmarkController.html" title=" " alt="" coords="143,55,357,95"/>
+<area shape="rect" id="node4" href="$d3/d95/classvtkAxes2DWidget.html" title=" " alt="" coords="181,120,319,145"/>
+<area shape="rect" id="node5" href="$dc/d4d/classvtkDataManager.html" title="usefull class to handle several datasets, and dataset sequences" alt="" coords="185,169,315,195"/>
+<area shape="rect" id="node6" href="$d2/dd4/classvtkDataSet2DWidget.html" title=" " alt="" coords="171,219,329,244"/>
+<area shape="rect" id="node7" href="$d6/d67/classvtkFibersManager.html" title=" " alt="" coords="181,268,319,293"/>
+<area shape="rect" id="node9" href="$d8/d75/classvtkImage2DDisplay.html" title=" " alt="" coords="175,317,325,343"/>
+<area shape="rect" id="node10" href="$d2/d13/classvtkImage3DDisplay.html" title=" " alt="" coords="175,367,325,392"/>
+<area shape="rect" id="node11" href="$d4/dcf/classvtkImageToIsosurface.html" title=" " alt="" coords="167,416,333,441"/>
+<area shape="rect" id="node12" href="$d0/d01/classvtkImageView.html" title="This class is a top&#45;level convenience class for displaying a scalar &#45; or RGB image in a 2D or 3D scen..." alt="" coords="192,465,308,491"/>
+<area shape="rect" id="node15" href="$d1/dfa/classvtkIsosurfaceManager.html" title=" " alt="" coords="167,515,333,540"/>
+<area shape="rect" id="node16" href="$dd/d96/classvtkLookupTableManager.html" title=" " alt="" coords="160,564,340,589"/>
+<area shape="rect" id="node17" href="$db/d94/classvtkSphericalHarmonicManager.html" title=" " alt="" coords="139,613,361,639"/>
+<area shape="rect" id="node18" href="$d2/d73/classvtkSphericalHarmonicVisuManager.html" title=" " alt="" coords="153,663,347,703"/>
+<area shape="rect" id="node19" href="$d6/d6a/classvtkTensorManager.html" title=" " alt="" coords="179,728,321,753"/>
+<area shape="rect" id="node20" href="$de/db8/classvtkTensorVisuManager.html" title=" " alt="" coords="165,777,335,803"/>
+<area shape="rect" id="node21" href="$df/da6/classvtkTransferFunctionPresets.html" title=" " alt="" coords="151,827,349,852"/>
+<area shape="rect" id="node22" href="$de/d1f/classvtkVectorManager.html" title=" " alt="" coords="179,876,321,901"/>
+<area shape="rect" id="node23" href="$d4/de2/classvtkVectorVisuManager.html" title=" " alt="" coords="165,925,335,951"/>
+<area shape="rect" id="node8" href="$d9/d43/classvtkFiberDataSetManager.html" title=" " alt="" coords="409,268,593,293"/>
+<area shape="rect" id="node13" href="$de/d7a/classvtkImageView2D.html" title=" " alt="" coords="434,441,569,467"/>
+<area shape="rect" id="node14" href="$d5/d84/classvtkImageView3D.html" title="3D image 3D rendering viewer" alt="" coords="434,491,569,516"/>
+</map>

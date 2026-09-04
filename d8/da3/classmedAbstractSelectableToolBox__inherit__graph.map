@@ -1,0 +1,25 @@
+<map id="medAbstractSelectableToolBox" name="medAbstractSelectableToolBox">
+<area shape="rect" id="node1" title="Base class for custom toolboxes in combobox." alt="" coords="283,491,507,516"/>
+<area shape="rect" id="node4" href="$d9/d82/classLCCLogDemonsToolBox.html" title=" " alt="" coords="591,5,766,31"/>
+<area shape="rect" id="node5" href="$d7/d91/classdiffeomorphicDemonsToolBox.html" title=" " alt="" coords="570,55,787,80"/>
+<area shape="rect" id="node6" href="$d6/dce/classiterativeClosestPointToolBox.html" title="Toolbox to match two meshes using the ICP (Iterative Closest Point) algorithm." alt="" coords="574,104,783,129"/>
+<area shape="rect" id="node7" href="$d3/d10/classitkFiltersToolBox.html" title="Toolbox to apply some itk filters." alt="" coords="613,153,744,179"/>
+<area shape="rect" id="node8" href="$d7/d68/classitkMorphologicalFiltersToolBox.html" title="Toolbox to apply morphological filters to a volume." alt="" coords="567,203,790,228"/>
+<area shape="rect" id="node9" href="$d9/da6/classitkProcessRegistrationOptimusToolBox.html" title=" " alt="" coords="567,253,790,293"/>
+<area shape="rect" id="node10" href="$d1/d4c/classmanualRegistrationToolBox.html" title="Toolbox to register two images manually." alt="" coords="578,317,779,343"/>
+<area shape="rect" id="node11" href="$d2/d56/classmed_1_1AlgorithmPaintToolBox.html" title="Segmentation toolbox to apply manual painting of pixels." alt="" coords="575,367,782,392"/>
+<area shape="rect" id="node12" href="$dc/dab/classmedBinaryOperationToolBox.html" title="Toolbox to compute binary operations between masks (OR, AND, XOR, etc.)." alt="" coords="575,416,783,441"/>
+<area shape="rect" id="node13" href="$d2/da3/classmedCreateMeshFromMaskToolBox.html" title="Toolbox to convert a mask to a closed surface mesh." alt="" coords="555,465,803,491"/>
+<area shape="rect" id="node14" href="$df/d15/classmedCropToolBox.html" title=" " alt="" coords="613,515,745,540"/>
+<area shape="rect" id="node15" href="$df/d8a/classmedMaskApplicationToolBox.html" title="Toolbox to apply a mask to an image." alt="" coords="573,564,784,589"/>
+<area shape="rect" id="node16" href="$d5/d0d/classmedN4BiasCorrectionToolBox.html" title="Toolbox to apply a N4 bias field correction algorithm to a volume." alt="" coords="571,613,786,639"/>
+<area shape="rect" id="node17" href="$db/d6b/classmedRemeshingToolBox.html" title="Toolbox to refine, decimate, smooth, change the number of polygons in a mesh." alt="" coords="591,663,766,688"/>
+<area shape="rect" id="node18" href="$d8/ddd/classmeshManipulationToolBox.html" title="Toolbox to translate, rotate, manipulate meshes." alt="" coords="581,712,776,737"/>
+<area shape="rect" id="node19" href="$d8/d47/classmeshMappingToolBox.html" title="Toolbox to map data on a mesh: keep the intersection of the mesh and data, and set these values to th..." alt="" coords="596,761,761,787"/>
+<area shape="rect" id="node20" href="$da/d6b/classmseg_1_1VarSegToolBox.html" title="Segmentation toolbox to apply manual painting of pixels." alt="" coords="597,811,760,836"/>
+<area shape="rect" id="node21" href="$d8/d58/classpolygonRoiToolBox.html" title="Toolbox to create, use, interpolate Polygon ROI." alt="" coords="605,860,752,885"/>
+<area shape="rect" id="node22" href="$db/d4c/classresliceToolBox.html" title="Toolbox to reslice a volume." alt="" coords="621,909,737,935"/>
+<area shape="rect" id="node23" href="$d8/d29/classvoiCutterToolBox.html" title="Toolbox to cut a VOI (Volume of Interest)." alt="" coords="612,959,745,984"/>
+<area shape="rect" id="node2" href="$df/d6a/classmedToolBox.html" title="Toolbox that includes a title bar and a widget container." alt="" coords="132,491,235,516"/>
+<area shape="rect" id="node3" title=" " alt="" coords="5,491,84,516"/>
+</map>

@@ -1,0 +1,6 @@
+<map id="medCreateMeshFromMaskToolBox" name="medCreateMeshFromMaskToolBox">
+<area shape="rect" id="node1" title="Toolbox to convert a mask to a closed surface mesh." alt="" coords="5,225,253,251"/>
+<area shape="rect" id="node2" href="$d2/d80/classmedAbstractSelectableToolBox.html" title="Base class for custom toolboxes in combobox." alt="" coords="17,152,241,177"/>
+<area shape="rect" id="node3" href="$df/d6a/classmedToolBox.html" title="Toolbox that includes a title bar and a widget container." alt="" coords="78,79,181,104"/>
+<area shape="rect" id="node4" title=" " alt="" coords="90,5,169,31"/>
+</map>

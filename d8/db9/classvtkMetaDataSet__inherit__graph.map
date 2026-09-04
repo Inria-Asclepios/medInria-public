@@ -1,0 +1,7 @@
+<map id="vtkMetaDataSet" name="vtkMetaDataSet">
+<area shape="rect" id="node1" title="Abstract class for vtkDataset handling." alt="" coords="237,79,365,104"/>
+<area shape="rect" id="node3" href="$d8/d65/classvtkMetaDataSetSequence.html" title="usefull class to handle a sequence (series) of vtkMetaDataSet" alt="" coords="5,152,196,177"/>
+<area shape="rect" id="node4" href="$d9/d1b/classvtkMetaSurfaceMesh.html" title="Concrete implementation of vtkMetaDataSet for surface mesh handling." alt="" coords="221,152,381,177"/>
+<area shape="rect" id="node5" href="$dd/dec/classvtkMetaVolumeMesh.html" title="Concrete implementation of vtkMetaDataSet for volumic mesh handling." alt="" coords="405,152,565,177"/>
+<area shape="rect" id="node2" title=" " alt="" coords="243,5,359,31"/>
+</map>

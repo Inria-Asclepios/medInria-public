@@ -1,0 +1,10 @@
+<map id="medSelectorWorkspace" name="medSelectorWorkspace">
+<area shape="rect" id="node1" title=" " alt="" coords="399,104,573,129"/>
+<area shape="rect" id="node4" href="$d0/d03/classmedFilteringWorkspaceL.html" title="Workspace providing a comparative display of the input and output of image&#45;to&#45;image filtering process..." alt="" coords="637,5,819,31"/>
+<area shape="rect" id="node5" href="$df/d14/classmedMeshingWorkspace.html" title=" " alt="" coords="639,55,817,80"/>
+<area shape="rect" id="node6" href="$dd/d5f/classmedReformatWorkspace.html" title=" " alt="" coords="637,104,819,129"/>
+<area shape="rect" id="node7" href="$d6/d8e/classmedRegistrationWorkspace.html" title=" " alt="" coords="627,153,829,179"/>
+<area shape="rect" id="node8" href="$d4/db6/classmedSegmentationWorkspace.html" title=" " alt="" coords="621,203,835,228"/>
+<area shape="rect" id="node2" href="$da/df0/classmedAbstractWorkspaceLegacy.html" title=" " alt="" coords="128,104,351,129"/>
+<area shape="rect" id="node3" title=" " alt="" coords="5,104,80,129"/>
+</map>

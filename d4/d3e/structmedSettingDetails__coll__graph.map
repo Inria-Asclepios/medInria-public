@@ -1,0 +1,5 @@
+<map id="medSettingDetails" name="medSettingDetails">
+<area shape="rect" id="node1" title="Stores the details for a particular settingsWidget, and a function to allocate memory." alt="" coords="9,168,152,193"/>
+<area shape="rect" id="node2" href="$d6/dd4/classmedSettingsWidget.html" title="AbstractClass for all Settings widgets." alt="" coords="5,80,156,105"/>
+<area shape="rect" id="node3" title=" " alt="" coords="41,5,120,31"/>
+</map>

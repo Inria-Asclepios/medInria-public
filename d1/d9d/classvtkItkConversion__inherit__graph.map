@@ -1,0 +1,4 @@
+<map id="vtkItkConversion&lt; volumeType, imageDim &gt;" name="vtkItkConversion&lt; volumeType, imageDim &gt;">
+<area shape="rect" id="node1" title="Template for itk to vtk converter. It inherits vtkItkConversionInterface. @detail It keep inside the ..." alt="" coords="5,79,203,119"/>
+<area shape="rect" id="node2" href="$db/dbf/classvtkItkConversionInterface.html" title="Interface for itk to vtk converter. It is the base of template class vtkItkConversion...." alt="" coords="9,5,199,31"/>
+</map>
