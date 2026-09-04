@@ -30,7 +30,7 @@ jobs:
     uses: ./.github/workflows/musicardio-linux.yml
     with:
       REAL_TIME: 'ON'
-      BRANCH: ${{ inputs.BRANCH || 'master' }}
+      BRANCH: 'dev' # for now since only dev branch compiles with real time on the linux runner
 
   build-macos:
     uses: ./.github/workflows/musicardio-macos.yml
