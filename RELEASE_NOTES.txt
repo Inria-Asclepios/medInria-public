@@ -3,6 +3,7 @@ MUSICardio 4.2:
 - On Linux now we generate AppImages, instead of ZIP packages for Ubuntu and Fedora.
 - Switch to Github Action for continuous integration.
 - Switch to Python 3.12.14.
+- Update jsoncons version to v1.9.0.
 
 MUSICardio 4.1:
 - Switch to VTK "v9.3.1", ITK "v5.4.5", Qt "5.15",

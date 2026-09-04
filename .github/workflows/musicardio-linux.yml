@@ -33,7 +33,7 @@ on:
       SONARQUBE:
         description: 'Generate Sonarqube analysis'
         required: false
-        default: false
+        default: true
         type: boolean
   workflow_call:
     inputs:
