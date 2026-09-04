@@ -40,7 +40,7 @@ if (NOT USE_SYSTEM_${ep})
 ## #############################################################################
 
 set(git_url ${GITHUB_PREFIX}danielaparker/jsoncons.git)
-set(git_tag 0.118.0)
+set(git_tag v1.9.0)
 
 ## #############################################################################
 ## Add external-project
