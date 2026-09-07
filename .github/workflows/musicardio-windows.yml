@@ -120,7 +120,7 @@ jobs:
         cd D:/b
         binary=$(ls *.exe | head -n 1)
         base="${binary%.exe}"
-        if [ "$REAL_TIME" = "true" ]; then
+        if [ "${{env.REAL_TIME}}" = "ON" ]; then
           asset="${base}-rt.exe"
         else
           asset="$binary"

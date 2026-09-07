@@ -140,7 +140,7 @@ jobs:
         cd ${{github.workspace}}/build
         binary=$(ls *.AppImage | head -n 1)
         base="${binary%.AppImage}"
-        if [ "$REAL_TIME" = "true" ]; then
+        if [ "${{env.REAL_TIME}}" = "ON" ]; then
           asset="${base}-rt.AppImage"
         else
           asset="$binary"
