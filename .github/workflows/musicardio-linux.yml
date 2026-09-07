@@ -1,5 +1,7 @@
 # This starter workflow is for a CMake project running on a single platform. There is a different starter workflow if you need cross-platform coverage.
 # See: https://github.com/actions/starter-workflows/blob/main/ci/cmake-multi-platform.yml
+
+# See MSC documentation https://github.com/Inria-Asclepios/music/wiki/Github-Action
 name: MUSICardio on Linux
 
 on:
@@ -124,7 +126,7 @@ jobs:
           -DEP_CHECKBOX_ON_TOP_LEVEL:BOOL=OFF \
           -DEP_CHECKBOX_SIDE_BY_SIDE:BOOL=OFF \
           -DEXPIRATION_TIME:STRING=${{env.EXPIRATION_TIME}} \
-          -DUSE_RealTimeWorkspace=${{env.REAL_TIME}}
+          -DUSE_RealTimeWorkspace:BOOL=${{env.REAL_TIME}}
 
     - name: Build
       run: |
