@@ -4,6 +4,7 @@ MUSICardio 4.2:
 - Switch to Github Action for continuous integration.
 - Switch to Python 3.12.14.
 - Update jsoncons version to v1.9.0.
+- Pipelines: method "requires" in scripts becomes "requiresData".
 
 MUSICardio 4.1:
 - Switch to VTK "v9.3.1", ITK "v5.4.5", Qt "5.15",
