@@ -1,15 +1,24 @@
 # This starter workflow is for a CMake project running on a single platform. There is a different starter workflow if you need cross-platform coverage.
 # See: https://github.com/actions/starter-workflows/blob/main/ci/cmake-multi-platform.yml
+
+# See MSC documentation https://github.com/Inria-Asclepios/music/wiki/Github-Action
 name: MUSICardio on macOS
 
 on:
   push:
     branches: [ "dev" ]
+
+  # Parameters displayed for users for manual runs in Github Action GUI
   workflow_dispatch:
     inputs:
+      BRANCH:
+        description: 'Branch to checkout'
+        required: true
+        default: 'dev'
+        type: string
       EXPIRATION_TIME:
         description: 'Expiration time in month'
-        required: true
+        required: false
         default: '24'
         type: string
       REAL_TIME:
@@ -20,22 +29,19 @@ on:
         options:
           - 'OFF'
           - 'ON'
-      BRANCH:
-        description: 'Branch to checkout'
-        required: false
-        default: 'dev'
-        type: string
+
+  # Reusable workflow from other scripts (weekly, monthly, etc)
   workflow_call:
     inputs:
-      REAL_TIME:
-        required: true
-        type: string
       BRANCH:
-        required: false
+        required: true
         type: string
         default: 'dev'
+      REAL_TIME:
+        required: false
+        type: string
       EXPIRATION_TIME:
-        required: true
+        required: false
         type: string
 
 env:
@@ -51,7 +57,6 @@ env:
 jobs:
   build:
     # https://docs.github.com/en/actions/using-jobs/choosing-the-runner-for-a-job#standard-github-hosted-runners-for-public-repositories
-    # See documentation for our selfhosted runners https://github.com/Inria-Asclepios/music/wiki/Github-Action
     runs-on: macos-latest
 
     steps:
@@ -93,6 +98,7 @@ jobs:
         which dmgbuild
         cmake --version
         ls $QT5_DIR
+        swig -version
 
     ### Steps for macOS signing with self-signed certificate ###
     #
@@ -153,7 +159,7 @@ jobs:
           -DEP_CHECKBOX_ON_TOP_LEVEL:BOOL=OFF \
           -DEP_CHECKBOX_SIDE_BY_SIDE:BOOL=OFF \
           -DEXPIRATION_TIME:STRING=${{env.EXPIRATION_TIME}} \
-          -DUSE_RealTimeWorkspace=${{env.REAL_TIME}} \
+          -DUSE_RealTimeWorkspace:BOOL=${{env.REAL_TIME}} \
           -DQt5_DIR=$QT5_DIR \
           -DOpenMP_ROOT=$OpenMP_ROOT
 
@@ -171,7 +177,7 @@ jobs:
         cd ${{github.workspace}}/build
         binary=$(ls *.dmg | head -n 1)
         base="${binary%.dmg}"
-        if [ "$REAL_TIME" = "true" ]; then
+        if [ "${{env.REAL_TIME}}" = "ON" ]; then
           asset="${base}-rt.dmg"
         else
           asset="$binary"
