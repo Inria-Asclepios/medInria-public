@@ -20,13 +20,16 @@ jobs:
     with:
       BRANCH: ${{ inputs.BRANCH || 'dev' }}
       SONARQUBE: true
+    secrets: inherit
 
   build-macos:
     uses: ./.github/workflows/musicardio-macos.yml
     with:
       BRANCH: ${{ inputs.BRANCH || 'dev' }}
+    secrets: inherit
 
   build-windows:
     uses: ./.github/workflows/musicardio-windows.yml
     with:
       BRANCH: ${{ inputs.BRANCH || 'dev' }}
+    secrets: inherit
