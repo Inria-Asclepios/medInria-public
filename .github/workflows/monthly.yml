@@ -14,10 +14,10 @@ on:
         default: 'master'
         type: string
       DOXYGEN:
-        description: 'Decide if Doxygen documentation is going to be compiled'
+        description: 'Generate Doxygen documentation'
         required: false
-        default: 'master'
-        type: string
+        default: 'false'
+        type: boolean
 
 jobs:
   build-linux:
