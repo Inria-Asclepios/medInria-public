@@ -14,10 +14,10 @@ on:
         default: 'master'
         type: string
       DOXYGEN:
-        description: 'Decide if Doxygen documentation is going to be compiled'
+        description: 'Generate Doxygen documentation'
         required: false
-        default: 'master'
-        type: string
+        default: 'false'
+        type: boolean
 
 jobs:
   build-linux:
@@ -25,19 +25,23 @@ jobs:
     with:
       BRANCH: ${{ inputs.BRANCH || 'master' }}
       DOXYGEN: true
+    secrets: inherit
 
   build-linux-realtime:
     uses: ./.github/workflows/musicardio-linux.yml
     with:
       REAL_TIME: 'ON'
       BRANCH: 'dev' # for now since only dev branch compiles with real time on the linux runner
+    secrets: inherit
 
   build-macos:
     uses: ./.github/workflows/musicardio-macos.yml
     with:
       BRANCH: ${{ inputs.BRANCH || 'master' }}
+    secrets: inherit
 
   build-windows:
     uses: ./.github/workflows/musicardio-windows.yml
     with:
       BRANCH: ${{ inputs.BRANCH || 'master' }}
+    secrets: inherit
