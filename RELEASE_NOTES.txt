@@ -1,3 +1,5 @@
+MUSICardio 4.3:
+
 MUSICardio 4.2:
 - Removes FFMPEG to only keep OGV video export which is natively used by VTK.
 - On Linux now we generate AppImages, instead of ZIP packages for Ubuntu and Fedora.
