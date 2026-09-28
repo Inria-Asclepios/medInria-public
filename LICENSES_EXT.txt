@@ -39,6 +39,10 @@ license: https://github.com/Inria-Asclepios/TTK-Public/blob/master/LICENSE.txt
 sources: https://github.com/Kitware/VTK
 license: https://github.com/Kitware/VTK/blob/master/Copyright.txt
 
+* zlib
+sources: https://github.com/madler/zlib
+license: https://github.com/madler/zlib/blob/master/README
+
 ###################################
 External projects added by MUSICardio:
 
@@ -69,10 +73,6 @@ license: https://github.com/ufz/tetgen/blob/master/LICENSE
 * websocketpp
 sources: https://github.com/zaphoyd/websocketpp
 license: https://github.com/zaphoyd/websocketpp/blob/master/COPYING
-
-* zlib
-sources: https://github.com/madler/zlib
-license: https://github.com/madler/zlib/blob/master/README
 
 * libarchive
 sources: https://github.com/libarchive/libarchive
