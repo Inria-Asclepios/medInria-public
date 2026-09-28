@@ -83,8 +83,6 @@ jobs:
         brew install qt@5
         echo 'export PATH="/opt/homebrew/opt/qt@5/bin:$PATH"' >> /Users/runner/.bash_profile
         brew link --force qt@5
-        sudo ln -s /usr/local/Cellar/qt@5/5.15.18/mkspecs /usr/local/mkspecs
-        sudo ln -s /usr/local/Cellar/qt@5/5.15.18/plugins /usr/local/plugins
         brew install boost
         brew install swig
         brew install libomp
@@ -102,12 +100,31 @@ jobs:
 
     ### Steps for macOS signing with self-signed certificate ###
     #
-    # 1. Create a p12 certificate on a physical macOS https://github.com/Inria-Asclepios/music/wiki/Binaries-signature.
-    # 2. On the mac, copy the p12 certificate with: 'base64 -i MDS-certificate.p12 | pbcopy'.
-    # 3. On https://github.com/Inria-Asclepios/medInria-public/settings/secrets/actions/new
-    #   - add BUILD_CERTIFICATE_BASE64 with the previously encoded lines,
-    #   - add P12_PASSWORD with p12 password.
-    # 4. For test purposes you need to add the secrets also on your fork.
+    # 1. Create a p12 certificate on a physical macOS:
+    #    - Open /Applications/Utilities/Keychain Access.app or in /System/Library/CoreServices/Applications on newer macOS.
+    #    - Menu Keychain Access -> Certificate Assistant -> Create a Certificate...
+    #         - Name: MDS-certificate.
+    #         - Identity Type: Self‑Signed Root.
+    #         - Certificate Type: Code Signing.
+    #    - Switch the certificate to "Always Trust":
+    #         - Select the certificate in "login" and "Certificates".
+    #         - Double-click on it.
+    #         - In "Trust" section, choose "Always Trust" for "When using this certificate".
+    #         - Close the window and validate with admin password.
+    #         - If needed: restart computer.
+    # 2. Export the certificate as p12:
+    #    - In Keychain Access find the certificate line.
+    #    - Left click to display the private key.
+    #    - Right click on the private key -> Exporter "MDS-certificate".
+    #    - Choose a name (MDS-certificate) and the format (Personal Information Exchange .p12).
+    #    - Define a strong password and save MDS-certificate.p12.
+    #    - If necessary, keep them in a safe place.
+    # 3. Import certificate in CI/CD:
+    #    - On the physical macOS, copy the p12 certificate with: 'base64 -i MDS-certificate.p12 | pbcopy'.
+    #    - On https://github.com/medInria/medInria-public/settings/secrets/actions/new.
+    #        - add BUILD_CERTIFICATE_BASE64 with the previously encoded lines.
+    #        - add P12_PASSWORD with p12 password.
+    #    - For test purposes you need to add the secrets also on your forks.
     ###
 
     # https://github.com/marketplace/actions/import-code-signing-certificates
@@ -125,27 +142,23 @@ jobs:
         echo "$BUILD_CERTIFICATE_BASE64" | base64 --decode > /tmp/cert.p12
         openssl pkcs12 -legacy -in /tmp/cert.p12 -passin pass:"$P12_PASSWORD" -clcerts -nokeys -out /tmp/cert.pem
 
+        # Display a failure when the certificate is about to expire
+        openssl x509 -in /tmp/cert.pem -checkend 604800 -noout || {
+          echo "ERROR: certificate '$CERT_NAME' expires in less than 7 days"
+          echo "Current expiry date: $(openssl x509 -in /tmp/cert.pem -enddate -noout | cut -d= -f2)"
+          exit 1
+        }
+
         # Add trusted certificate to system keychain
         sudo security add-trusted-cert -d -r trustRoot -p codeSign \
           -k /Library/Keychains/System.keychain /tmp/cert.pem
 
-    - name: Add keychain from import-codesign-certs step to search list
-      shell: bash
-      run: |
-        security list-keychains -d user -s \
-          "$HOME/Library/Keychains/signing_temp.keychain-db" \
-          "$HOME/Library/Keychains/login.keychain-db" \
-          /Library/Keychains/System.keychain
-
     - name: Verify certificate
       shell: bash
       run: |
-        # List every identities
-        security find-identity -v -p codesigning
-
-        # Search for our certificate
         security find-identity -v -p codesigning | grep -F -q "$CERT_NAME" || {
-          echo "Error, certificate '$CERT_NAME' not found in valid identities"
+          echo "ERROR: certificate '$CERT_NAME' not found in valid identities"
+          security find-identity -v -p codesigning
           exit 1
         }
 
