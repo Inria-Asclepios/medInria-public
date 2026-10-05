@@ -1,4 +1,7 @@
 MUSICardio 4.3:
+- macOS 25 minimum compatibility.
+- Enhance box and landmarks of Cropping and Vessel Segmentation toolboxes.
+
 
 MUSICardio 4.2:
 - Removes FFMPEG to only keep OGV video export which is natively used by VTK.

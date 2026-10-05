@@ -12,13 +12,9 @@
 =========================================================================*/
 #include "baseViewEvent.h"
 
-
 // medInria
-
 #include <medUtilities.h>
 #include <medVtkViewBackend.h>
-
-// Qt
 
 // vtk
 #include <vtkAppendPolyData.h>
