@@ -74,7 +74,8 @@ typedef itk::ImageRegionIterator <Mask2dFloatType> Mask2dFloatIterator;
 * "Lower Threshold" : medDoubleParameter\n
 * "Activate 3D mode" : QCheckBox\n
 * "saveButton" : QPushButton\n
-* "clearMaskButton" : QPushButton
+* "clearMaskButton" : QPushButton\n
+* "containerLabels" : QWidget
 */
 class MEDALGORITMPAINT_EXPORT AlgorithmPaintToolBox : public medAbstractSelectableToolBox
 {

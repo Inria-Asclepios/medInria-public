@@ -418,9 +418,12 @@ AlgorithmPaintToolBox::AlgorithmPaintToolBox(QWidget *parent ) :
     connect (m_interpolateButton, SIGNAL(clicked()), this, SLOT(interpolate()));
 
     // Label widget group
-    QHBoxLayout *labelSelectionLayout = new QHBoxLayout();
+    QWidget* containerLabels = new QWidget();
+    containerLabels->setObjectName("containerLabels");
+    layoutPaint->addWidget(containerLabels);
+    QHBoxLayout *labelSelectionLayout = new QHBoxLayout(containerLabels);
     labelSelectionLayout->addStretch();
-    layoutPaint->addLayout(labelSelectionLayout);
+
     int defaultLabelValue = 1;
 
     m_colorLabel = new QLabel(tr("Label:"));
@@ -503,6 +506,10 @@ AlgorithmPaintToolBox::AlgorithmPaintToolBox(QWidget *parent ) :
     m_clearMaskButton = new QPushButton( tr("Clear Mask") );
     m_clearMaskButton->setToolTip(tr("Resets the mask."));
     m_clearMaskButton->setObjectName("clearMaskButton");
+    QIcon binIcon(":icons/bin_dark.png");
+    m_clearMaskButton->setIcon(binIcon);
+    m_clearMaskButton->setIconSize(QSize(16, 16));
+
     QHBoxLayout * dataButtonsLayout = new QHBoxLayout();
     dataButtonsLayout->addWidget(m_applyButton);
     dataButtonsLayout->addWidget(m_clearMaskButton);
@@ -623,7 +630,7 @@ void AlgorithmPaintToolBox::activateStroke(bool checked)
 
         setCurrentView(currentView);
 
-        if (!currentView || (currentView->layersCount()>2))
+        if (!currentView || (currentView->orientation() == medImageView::VIEW_ORIENTATION_3D))
         {
             tabWidget->setCurrentIndex(0); // Home
             displayMessageError("Error, please check your layers");
@@ -745,7 +752,7 @@ void AlgorithmPaintToolBox::deactivateCustomedCursor()
 
 void AlgorithmPaintToolBox::activateMagicWand(bool checked)
 {
-    if (currentView && (currentView->layersCount()<3))
+    if (currentView && (currentView->orientation() != medImageView::VIEW_ORIENTATION_3D))
     {
         if (!checked)
         {

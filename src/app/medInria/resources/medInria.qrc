@@ -163,6 +163,8 @@
         <file>icons/saveScene_white.png</file>
         <file>icons/saveScene_black.png</file>
         <file>icons/scene.png</file>
+        <file>icons/bin_dark.png</file>
+        <file>icons/bin_white.png</file>
 
         <file>../../../../LICENSE_MUSICardio.txt</file>
         <file>../../../../LICENSES_EXT.txt</file>

@@ -81,3 +81,8 @@ license: https://github.com/libarchive/libarchive/blob/master/COPYING
 * xz
 sources: https://github.com/tukaani-project/xz
 license: https://github.com/tukaani-project/xz/blob/master/COPYING
+
+###################################
+Icons:
+
+* Some icons are designed by Magnific www.magnific.com.
