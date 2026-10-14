@@ -935,6 +935,7 @@ void AlgorithmPaintToolBox::updateView()
         tabWidget->tabBar()->setTabEnabled(1, false);
         tabWidget->tabBar()->setTabEnabled(2, false);
         showButtons(false);
+        currentView = nullptr;
     }
 }
 

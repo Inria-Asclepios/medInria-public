@@ -1,7 +1,11 @@
 MUSICardio 4.3:
 - macOS 25 minimum compatibility.
 - Enhance GUI and interactors of Cropping, Vessel Segmentation and Paint toolboxes.
-- Adds pipeline step for basic filters.
+- Add pipeline step for basic filters.
+- In pipelines fix problems dropping results in some toolboxes, and fix a bug corrupting original data after dropping results.
+- Paint toolbox: fix a crash if the view was closed then switched to VOICutter.
+- Export scenes as 4.2 legacy VTKs, compatibility with Medtronic Affera mapping and ablation system.
+- Pipelines, adds a method in script to clone data.
 
 MUSICardio 4.2:
 - Removes FFMPEG to only keep OGV video export which is natively used by VTK.
