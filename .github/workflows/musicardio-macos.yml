@@ -90,6 +90,10 @@ jobs:
         pipx install dmgbuild
         pipx ensurepath
 
+        # for compatibilty with python version
+        brew uninstall --ignore-dependencies openssl@4
+        brew install openssl@3
+
     - name: Test dependencies
       run: |
         pipx --version
@@ -97,6 +101,8 @@ jobs:
         cmake --version
         ls $QT5_DIR
         swig -version
+        openssl --version
+        brew list --versions openssl
 
     ### Steps for macOS signing with self-signed certificate ###
     #
