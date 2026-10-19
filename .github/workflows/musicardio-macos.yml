@@ -90,9 +90,6 @@ jobs:
         pipx install dmgbuild
         pipx ensurepath
 
-        # for compatibilty with python version, we only need openssl@3 also installed
-        brew uninstall --ignore-dependencies openssl@4
-
     - name: Test dependencies
       run: |
         pipx --version
