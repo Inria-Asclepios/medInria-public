@@ -127,6 +127,44 @@ done
 echo "# DTK Deploy"
 @dtk_ROOT@/bin/dtkDeploy ${BUNDLE}.app $injectDirs &>/dev/null
 
+# Some Homebrew libraries name their dependencies as @rpath/[NAME].
+# macdeploytqt copies the libs but fails to copy its dependencies linked via rpath.
+echo "# Fix @rpath dependencies from Homebrew"
+BREW_PREFIX="$(brew --prefix)"
+copied=1
+while [ "$copied" = 1 ]; do
+    copied=0
+    while IFS= read -r dylib; do
+        for dependency in $(otool -L "$dylib" | tail -n +2 | awk '{ print $1 }' | grep -E '^@rpath/[^/]+$' || true); do
+            name="${dependency#@rpath/}"
+            target="@executable_path/../Frameworks/$name"
+
+            if [ ! -f "${FRAMEWORK_DIR}/$name" ]; then
+                src="${BREW_PREFIX}/lib/$name"
+                if [ ! -f "$src" ]; then
+                    src=$(find "${BREW_PREFIX}/opt" -maxdepth 3 -name "$name" 2>/dev/null | head -n1)
+                fi
+
+                if [ -z "$src" ] || [ ! -f "$src" ]; then
+                    echo "-- Unresolved dependency: $name (needed by $(basename "$dylib"))" >&2
+                    continue
+                fi
+
+                echo "-- Copying missing dependency: $name"
+                cp "$(readlink -f "$src")" "${FRAMEWORK_DIR}/$name" || {
+                    echo "-- Copy failed for $name" >&2
+                    continue
+                }
+                chmod u+w "${FRAMEWORK_DIR}/$name"
+                install_name_tool -id "$target" "${FRAMEWORK_DIR}/$name"
+                copied=1
+            fi
+
+            install_name_tool -change "$dependency" "$target" "$dylib"
+        done
+    done < <(find "${FRAMEWORK_DIR}" -maxdepth 1 -type f -name '*.dylib')
+done
+
 # Correct library paths, it's needed to load plugins and also for the signature
 echo "# Correct library paths for plugins"
 OLD_PREFIX="@medInria_ROOT@/bin/plugins_legacy" # absolute path before
