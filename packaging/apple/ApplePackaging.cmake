@@ -14,6 +14,7 @@
 set(CPACK_BINARY_TGZ ON)
 set(CPACK_BINARY_DRAGNDROP OFF)
 set(CPACK_BINARY_PACKAGEMAKER OFF)
+set(CPACK_GENERATOR "TGZ")
 
 ## #############################################################################
 ## Get distribution name and architecture
