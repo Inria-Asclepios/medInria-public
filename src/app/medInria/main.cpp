@@ -160,6 +160,11 @@ int main(int argc,char* argv[])
     medDataManager::instance().setDatabaseLocation();
 
 #ifdef USE_PYTHON
+
+    // This avoids Python to create .pyc cached files in the bundle after the first launch of the application,
+    // breaking the app signature for instance on macOS.
+    qputenv("PYTHONDONTWRITEBYTECODE", "1");
+
     pyncpp::Manager pythonManager;
     QString pythonHomePath = PYTHON_HOME;
     QDir applicationPath = qApp->applicationDirPath();

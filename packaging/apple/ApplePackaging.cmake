@@ -20,8 +20,14 @@ set(CPACK_GENERATOR "TGZ")
 ## Get distribution name and architecture
 ## #############################################################################
 
-set(CPACK_PACKAGE_FILE_NAME 
-  "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-macOS_${CMAKE_SYSTEM_VERSION}-${CMAKE_SYSTEM_PROCESSOR}"
+execute_process (
+  COMMAND sw_vers -productVersion
+  OUTPUT_VARIABLE MACOS_PRODUCT_VERSION
+  OUTPUT_STRIP_TRAILING_WHITESPACE
+)
+
+set(CPACK_PACKAGE_FILE_NAME
+  "${CPACK_PACKAGE_NAME}-${CPACK_PACKAGE_VERSION}-macOS_${MACOS_PRODUCT_VERSION}-${CMAKE_SYSTEM_PROCESSOR}"
    )
 
 ## #############################################################################
