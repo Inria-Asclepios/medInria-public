@@ -21,8 +21,9 @@
 #include <vtkDataMeshReader.h>
 #include <vtkDataMesh4DReader.h>
 
-#include <vtkDataMeshWriter.h>
 #include <vtkDataMesh4DWriter.h>
+#include <vtkDataMeshSimpleWriter.h>
+#include <vtkDataMeshWriter.h>
 
 #include <dtkLog/dtkLog.h>
 
@@ -73,8 +74,9 @@ bool vtkDataMeshPlugin::initialize()
   if ( ! vtkDataMeshReader::registered())   { qWarning() << "Unable to register vtkDataMeshReader type"; }
   if ( ! vtkDataMesh4DReader::registered()) { qWarning() << "Unable to register vtkDataMesh4DReader type"; }
   
-  if ( ! vtkDataMeshWriter::registered())   { qWarning() << "Unable to register vtkDataMeshWriter type"; }
-  if ( ! vtkDataMesh4DWriter::registered()) { qWarning() << "Unable to register vtkDataMesh4DWriter type"; }
+  if ( ! vtkDataMeshWriter::registered())      { qWarning() << "Unable to register vtkDataMeshWriter type"; }
+  if ( ! vtkDataMesh4DWriter::registered())    { qWarning() << "Unable to register vtkDataMesh4DWriter type"; }
+  if ( ! vtkDataMeshSimpleWriter::registered()){ qWarning() << "Unable to register vtkDataMeshSimpleWriter type"; }
   
   return true;
 }
