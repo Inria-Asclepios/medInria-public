@@ -17,6 +17,13 @@
 #include <medAbstractData.h>
 #include <medAbstractDataFactory.h>
 
+#include <vtkErrorCode.h>
+#include <vtkPolyData.h>
+#include <vtkPolyDataWriter.h>
+#include <vtkSmartPointer.h>
+#include <vtkUnstructuredGrid.h>
+#include <vtkUnstructuredGridWriter.h>
+
 const char vtkDataMeshSimpleWriter::ID[] = "vtkDataMeshSimpleWriter";
 
 vtkDataMeshSimpleWriter::vtkDataMeshSimpleWriter() : vtkDataMeshWriterBase()
@@ -43,7 +50,6 @@ bool vtkDataMeshSimpleWriter::write(const QString& path)
     qDebug().noquote() << "Can write with: " << this->identifier();
 
     medAbstractData * medData = dynamic_cast<medAbstractData*>(this->data());
-
     if(medData->identifier() != "vtkDataMesh")
     {
         return false;
@@ -55,28 +61,49 @@ bool vtkDataMeshSimpleWriter::write(const QString& path)
         return false;
     }
 
+    vtkDataSet* dataSet = mesh->GetDataSet();
+    if (!dataSet)
+    {
+        return false;
+    }
+
+    bool res = true;
     DataMeshHelper::prepareMetaDataForAsciiReadOrWrite(mesh, true);
-    bool success = true;
     try
     {
         setlocale(LC_NUMERIC, "C");
         QLocale::setDefault(QLocale("C"));
 
-        mesh->Write(path.toLocal8Bit().constData());
+        // Surface or volume mesh
+        if (auto poly = vtkPolyData::SafeDownCast(dataSet))
+        {
+            auto writer = vtkSmartPointer<vtkPolyDataWriter>::New();
+            writer->SetFileName(path.toUtf8().constData());
+            writer->SetInputData(poly);
+            writer->SetFileVersion(42);
+            writer->Write();
+        }
+        else if (auto grid = vtkUnstructuredGrid::SafeDownCast(dataSet))
+        {
+            auto writer = vtkSmartPointer<vtkUnstructuredGridWriter>::New();
+            writer->SetFileName(path.toLocal8Bit().constData());
+            writer->SetInputData(grid);
+            writer->Write();
+        }
     }
-    catch (...)
+    catch (vtkErrorCode::ErrorIds error)
     {
-        qDebug() << metaObject()->className() << ": error writing to " << path;
-        success = false;
+        qDebug() << metaObject()->className() << vtkErrorCode::GetStringFromErrorCode(error);
+        res = false;
     }
     DataMeshHelper::prepareMetaDataForAsciiReadOrWrite(mesh, false);
 
-    return success;
+    return res;
 }
 
 QString vtkDataMeshSimpleWriter::description() const
 {
-    return tr( "VTK without metadata Mesh Writer" );
+    return tr( "VTK without metadata legacy Writer" );
 }
 
 QString vtkDataMeshSimpleWriter::identifier() const
