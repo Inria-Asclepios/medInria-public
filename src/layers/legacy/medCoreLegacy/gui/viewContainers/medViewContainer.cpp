@@ -1211,6 +1211,7 @@ QString medViewContainer::saveScene()
         subDirName = "view" + QUuid::createUuid().toString();
         if(workingDir.mkdir(subDirName))
         {
+            // Mapping xml file
             workingDir.cd(subDirName);
             QString generatedPath = workingDir.canonicalPath() + "/mapping.xml";
             QDomElement layeredViewInfo = doc.createElement("layeredView");
@@ -1218,9 +1219,11 @@ QString medViewContainer::saveScene()
             layeredViewInfo.setAttribute("id", layeredView->identifier());
             root.appendChild(layeredViewInfo);
 
+            // VTKs
             layeredView->write(generatedPath);
-            workingDir.cdUp();
 
+            // Global Mapping xml file
+            workingDir.cdUp();
             QString generatedGlobalPath = workingDir.canonicalPath()+"/globalMapping.xml";
 
             QFile file(generatedGlobalPath);
