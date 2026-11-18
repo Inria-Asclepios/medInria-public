@@ -116,7 +116,8 @@ medCropToolBox::medCropToolBox(QWidget* parent)
     vtkNew<vtkBorderRepresentation> rep;
     rep->BuildRepresentation();
     rep->SetBorderColor(colors->GetColor3d("Chartreuse").GetData());
-    rep->SetBorderThickness(2.0);
+    auto dpr = parent->devicePixelRatioF(); // Could be different from 1, for instance on Retina screens
+    rep->SetBorderThickness(2.0 * dpr);
     d->borderWidget->SetRepresentation(rep);
 
     QWidget *cropToolBoxBody = new QWidget(this);
