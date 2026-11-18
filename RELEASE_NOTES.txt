@@ -1,5 +1,5 @@
 MUSICardio 4.3:
-- macOS 25 minimum compatibility.
+- macOS 26 compatibility.
 - Enhance GUI and interactors of Cropping, Vessel Segmentation and Paint toolboxes.
 - Add pipeline step for basic filters.
 - In pipelines fix problems dropping results in some toolboxes, and fix a bug corrupting original data after dropping results.
