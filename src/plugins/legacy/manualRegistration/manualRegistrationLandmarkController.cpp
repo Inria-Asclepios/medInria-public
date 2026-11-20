@@ -5,6 +5,7 @@
 #include <medVtkViewBackend.h>
 
 #include <vtkCellPicker.h>
+#include <vtkCursor2D.h>
 #include <vtkPointHandleRepresentation2D.h>
 #include <vtkPoints.h>
 #include <vtkProperty2D.h>
@@ -95,6 +96,20 @@ void manualRegistrationLandmarkControllerCommand::Execute(vtkObject *caller, uns
         /*************************************************/
         vtkPointHandleRepresentation2D * handleRep = vtkPointHandleRepresentation2D::New();
         handleRep->SetWorldPosition(position);
+
+        // Could be different from 1, for instance on Retina screens
+        auto dpr = this->Controller->GetTbx()->devicePixelRatioF();
+        handleRep->GetProperty()->SetLineWidth(2.0 * dpr);
+
+        // Needed to adapt cross cursor to pixel ratio different from 1
+        vtkNew<vtkCursor2D> cursor;
+        cursor->SetModelBounds(-10 * dpr, 10 * dpr, -10 * dpr, 10 * dpr, 0.0, 0.0);
+        cursor->AxesOn();     // display a cross
+        cursor->PointOff();   // avoid center point
+        cursor->OutlineOff(); // avoid box around
+        cursor->Update();
+        handleRep->SetCursorShape(cursor->GetOutput());
+
         vtkImageView2D * view = nullptr;
         if (this->Controller->GetInteractorCollection()->GetItemAsObject(0)==rwi )
         {
@@ -188,6 +203,11 @@ void manualRegistrationLandmarkController::SetViewFuse(medAbstractLayeredView* v
 void manualRegistrationLandmarkController::SetTbx(manualRegistrationToolBox* tbx)
 {
     Tbx = tbx;
+}
+
+manualRegistrationToolBox* manualRegistrationLandmarkController::GetTbx()
+{
+    return Tbx;
 }
 
 void manualRegistrationLandmarkController::AddPoint(manualRegistrationLandmark* landmark, unsigned int i)

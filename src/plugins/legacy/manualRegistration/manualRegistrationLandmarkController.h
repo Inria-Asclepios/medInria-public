@@ -61,6 +61,8 @@ public:
     QList<manualRegistrationLandmark*> * getPoints_Fixed();
     
     void SetTbx(manualRegistrationToolBox*);
+    manualRegistrationToolBox* GetTbx();
+
     void SetViewMoving(medAbstractLayeredView*);
     void SetViewFixed(medAbstractLayeredView*);
     void SetViewFuse(medAbstractLayeredView*);
