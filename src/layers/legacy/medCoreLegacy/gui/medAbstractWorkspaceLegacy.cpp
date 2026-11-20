@@ -129,6 +129,11 @@ medAbstractWorkspaceLegacy::~medAbstractWorkspaceLegacy(void)
     d = nullptr;
 }
 
+QWidget* medAbstractWorkspaceLegacy::getParent()
+{
+    return d->parent;
+}
+
 void medAbstractWorkspaceLegacy::addToolBox(medToolBox *toolbox)
 {
     insertToolBox(toolBoxes().count(), toolbox);

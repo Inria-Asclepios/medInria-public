@@ -87,7 +87,7 @@ public:
             const QString& id )const;
 
 public slots:
-    medToolBox *createToolBox(QString identifier, QWidget *parent=0);
+    medToolBox *createToolBox(QString identifier, QWidget *parent = nullptr);
 
 
 protected:

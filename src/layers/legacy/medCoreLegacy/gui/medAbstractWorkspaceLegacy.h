@@ -85,6 +85,7 @@ public:
 
     medProgressionStack *getProgressionStack();
 
+    QWidget* getParent();
     void addToolBox(medToolBox *toolbox);
     void insertToolBox(int index, medToolBox* toolbox);
     void removeToolBox(medToolBox *toolbox);
