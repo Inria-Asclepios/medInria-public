@@ -1,15 +1,17 @@
 MUSICardio 4.3:
 - macOS 26 compatibility.
-- Enhance GUI and interactors of Cropping, Vessel Segmentation and Paint toolboxes.
+- Enhance GUI of Paint toolbox.
+- Enhance interactors of Cropping, Vessel Segmentation and Manual Segmentation on Retina screens.
 - Add pipeline step for basic filters.
 - In pipelines fix problems dropping results in some toolboxes, and fix a bug corrupting original data after dropping results.
 - Paint toolbox: fix a crash if the view was closed then switched to VOICutter.
 - Export scenes as 4.2 legacy VTKs, compatibility with Medtronic Affera mapping and ablation system.
-- Pipelines, adds a method in script to clone data.
+- Pipelines: adds a method in script to clone data.
 - Export of NavX files: fixes a crash if the user exports an EPMap.
 - macOS: avoid error in the signature of the bundle after launch because of cached Python files.
 - Add VTK writer to export VTK without metadata.
 - Export non-metadata scenes from pipelines or EAM Export: avoid VTK overwriting creating security warnings on macOS.
+- Pipelines: fix changing the data windowing at start was sometimes not kept.
 
 MUSICardio 4.2:
 - Removes FFMPEG to only keep OGV video export which is natively used by VTK.
